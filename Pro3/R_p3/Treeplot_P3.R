@@ -17,6 +17,3 @@ for (phi in 1:replicate){
     dev.off()
     }
 }
-
-
-

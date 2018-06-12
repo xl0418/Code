@@ -1,8 +1,13 @@
 
-event2L = function(result){
+event2L = function(result,mode = 'R'){
+  if(mode == 'R'){
   ticks = result$log$sT[length(result$log$sT)]
-  
+  }
+  if(mode == 'Matlab'){
+    ticks = result$turnover
+  }
   L_raw = cbind(result$events$T,result$events$ancestor+1,result$events$sp+1)
+  
   L_raw[which(L_raw[,2]==0),2] = -1
   L_raw = rbind(c(0,0,1),c(0,1,2),L_raw)
   L_raw = cbind (L_raw,-1)
