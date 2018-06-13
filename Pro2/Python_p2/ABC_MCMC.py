@@ -1,3 +1,5 @@
+import sys, os
+sys.path.append('C:/Liang/Code/Pro2/Python_p2')
 import numpy as np
 from Trait_sim_in_branches_stat import traitsim, drawplot, dotplot
 import scipy.stats
@@ -105,7 +107,7 @@ def MCMC_ABC(startvalue, iterations,delta,obs,sort,priorpar,mode = 'uni'):
 
 
 # SMC ABC
-def SMC_ABC(timestep, particlesize, obs, prior,sort = 0):
+def SMC_ABC(timestep, particlesize, obs, epsilon, prior,sort = 0):
     d = np.zeros(shape = (timestep, particlesize))  #distance matrix of simulations and obs
     gamma = np.zeros(shape = (timestep, particlesize))  # gamma jumps
     a =  np.zeros(shape = (timestep, particlesize))     # a  jumps
@@ -115,21 +117,24 @@ def SMC_ABC(timestep, particlesize, obs, prior,sort = 0):
     a_prior_mean = prior[2]
     a_prior_var = prior[3]
     # Initial thredhold
-    epsilon = 1
+    epsilon = epsilon
     # Weight vectors for gamma and a
     weight_gamma = np.zeros(shape = (timestep, particlesize))
     weight_gamma.fill(1/particlesize)
     weight_a = np.zeros(shape = (timestep, particlesize))
     weight_a.fill(1/particlesize)
     for t in range(timestep):
+        str = 'Time step : %d;' % t
         #Initial round
-        if t == 1:
+        if t == 0:
             for i in range(particlesize):
+                str_p = str + ' Particle size : %d' % i
+                print(str_p)
                 d[t,i] = epsilon + 1
                 while d[t,i] > epsilon:
                     # draw parameters from prior information
-                    propose_gamma = scipy.stats.norm(gamma_prior_mean,gamma_prior_var)
-                    propose_a = scipy.stats.norm(a_prior_mean,a_prior_var)
+                    propose_gamma = abs(np.random.normal(gamma_prior_mean,gamma_prior_var))
+                    propose_a = abs(np.random.normal(a_prior_mean,a_prior_var))
                     par = [propose_gamma,propose_a]
                     # simulate under the parameters
                     sample = single_trait_sim(par)
@@ -144,14 +149,16 @@ def SMC_ABC(timestep, particlesize, obs, prior,sort = 0):
                 a[t,i] = propose_a
         else:
             # shrink the threshold by 75% for each time step
-            epsilon = np.append(epsilon, np.percentile(d[t,],75))
-            # weighted mean and variance of the parameters at previous time step
+            epsilon = np.append(epsilon, np.percentile(d[t-1,],75))
+            # calculate weighted variance of the parameters at previous time step
             gamma_pre_mean = np.sum(gamma[t-1,] * weight_gamma[t-1,])
             gamma_pre_var = np.sum(( gamma[t-1,] - gamma_pre_mean)**2 * weight_gamma[t-1,])
             a_pre_mean = np.sum(a[t - 1,] * weight_a[t - 1,])
             a_pre_var = np.sum((a[t - 1,] - a_pre_mean) ** 2 * weight_a[t - 1,])
             for i in range(particlesize):
-                d[t, i] = epsilon + 1
+                str_p = str + ' Particle size : %d' % i
+                print(str_p)
+                d[t, i] = epsilon[t] + 1
                 while d[t,i] > epsilon[t]:
                     # sample the parameters by the weight
                     sample_gamma_index = np.random.choice(particlesize,1, p = weight_gamma[t-1,])
@@ -159,11 +166,11 @@ def SMC_ABC(timestep, particlesize, obs, prior,sort = 0):
                     # mean of the sample for gamma
                     propose_gamma0 = gamma[t-1,sample_gamma_index-1]
                     # draw new gamma with mean and variance
-                    propose_gamma = scipy.stats.norm(propose_gamma0,np.sqrt(2*gamma_pre_var))
+                    propose_gamma = abs(np.random.normal(propose_gamma0,np.sqrt(2*gamma_pre_var)))
                     # mean of the sample for a
                     propose_a0 = a[t-1,sample_a_index-1]
                     # draw new a with mean and variance
-                    propose_a = scipy.stats.norm(propose_a0,np.sqrt(2* a_pre_var))
+                    propose_a = abs(np.random.normal(propose_a0,np.sqrt(2* a_pre_var)))
                     par = [propose_gamma,propose_a]
                     sample = single_trait_sim(par)
                     if sort == 0:
@@ -183,9 +190,9 @@ def SMC_ABC(timestep, particlesize, obs, prior,sort = 0):
                                                                                   np.sqrt(2 * a_pre_var)))
                 weight_a_numerator = norm.pdf(propose_a, a_prior_mean, a_prior_var)
                 weight_a[t, i] = weight_a_numerator / weight_a_denominator
-            # normalize the weights
-            weight_gamma[t,] = weight_gamma[t,]/sum(weight_gamma[t,])
-            weight_a[t,] = weight_a[t,]/sum(weight_a[t,])
+        # normalize the weights
+        weight_gamma[t,] = weight_gamma[t,]/sum(weight_gamma[t,])
+        weight_a[t,] = weight_a[t,]/sum(weight_a[t,])
     # create the list for output
     SMC_ABC = {'gamma': gamma, 'a': a, 'weight_gamma':weight_gamma,'weight_a':weight_a,'error':epsilon,'diff':d}
     return SMC_ABC

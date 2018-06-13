@@ -70,7 +70,7 @@ def traitsim(h,num_time, num_species, num_iteration, gamma1,gamma_K2, a, r, thet
 
         # trait evolution simulation
         for i in range(num_time):
-            print(i)
+            # print(i)
             # RI dynamic r model
             Gamma_RI_dr = ga_vector(gamma=gamma1, theta=theta, zi=trait_RI_dr[i], r=r)
             K_RI_dr = K
