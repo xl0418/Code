@@ -25,7 +25,7 @@ SMC_ABC_result = SMC_ABC(timestep = timestep, particlesize = particlesize, obs =
 pickle.dump( SMC_ABC_result, open( "c:/Liang/Googlebox/Research/Project2/python_p2/SMC_ABC/SMC_ABC_result.p", "wb" ) )
 
 
-SMC_ABC_resulttest = pickle.load( open( "c:/Liang/Googlebox/Research/Project2/python_p2/SMC_ABC/SMC_ABC_result.p", "rb" ) )
+SMC_ABC_result = pickle.load( open( "c:/Liang/Googlebox/Research/Project2/python_p2/SMC_ABC/SMC_ABC_result.p", "rb" ) )
 
 gamma = SMC_ABC_result['gamma'].flatten()
 a = SMC_ABC_result['a'].flatten()
