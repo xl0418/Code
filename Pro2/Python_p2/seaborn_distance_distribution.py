@@ -37,14 +37,6 @@ df_ori = pd.DataFrame(dict(dis_gamma_ori=dis_gamma_ori,dis_gamma_sort=dis_gamma_
                            label=label,gamma_label = gamma_label))
 
 
-#
-# # Create the data
-# rs = np.random.RandomState(1979)
-# x = rs.randn(500)
-# g = np.tile(list("ABCDEFGHIJ"), 50)
-# df = pd.DataFrame(dict(x=x, g=g))
-# m = df.g.map(ord)
-# df["x"] += m
 
 # Initialize the FacetGrid object
 pal = sns.cubehelix_palette(10, rot=-.25, light=.7)
