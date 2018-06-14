@@ -1,12 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-import os
 
 
 # Natural selection function
-def ga(gamma, theta, zi, r):
-    return r * np.exp(-gamma * (theta - zi) ** 2)
+def ga(gamma, theta, zi):
+    return -gamma * (theta - zi) ** 2
 
 # Dynamic carrying capacity
 def Kd(gamma_K, theta, zi, K):
@@ -27,18 +26,25 @@ def sigma(a, zi, zj, nj):
         zi_ret[0, n1] = np.sum(2 * a * (zi[n1]-np.array(zj)) * np.exp( -a * (zi[n1] - np.array(zj)) ** 2) * np.array(nj))
     return zi_ret
 
-# Trait simulation function under both Beverton-Holt model and Ricker model for dynamic carrying capacity
-def traitsim(h,num_time, num_species, num_iteration, gamma1,gamma_K2, a, r, theta,K , mean_trait, dev_trait, mean_pop, dev_pop,replicate):
+# Delta function
+def Delta(a, zi, zj, nj):
+    zi_ret = np.ndarray((1, len(zi)))
+    for n1 in range(len(zi)):
+        zi_ret[0, n1] = np.sum(-2 * a +4* a **2  * (zi[n1]-np.array(zj))**2 * np.exp( -a * (zi[n1] - np.array(zj)) ** 2)
+                               * np.array(nj))
+    return zi_ret
+
+
+
+# Trait simulation function under the new coevolution model with changing variance
+def traitsim_DV(num_time, num_species, num_iteration, gamma1, a, r, nu,Vmax, theta,K , mean_trait, dev_trait, mean_pop, dev_pop,replicate):
     j = 0   # initialize the iteration number
-    delta_trait = 0.1
     delta_pop = 0.001
     num_vec = np.arange(1,(num_iteration+1),1) # iteration vector
     nrow = len(num_vec)    # Row number of the trait evolution history matrix
     stat_rate_trait_RI_dr = np.empty((nrow,num_species))   # trait evolution matrix under BH
-    stat_rate_trait_RI_dk = np.empty((nrow,num_species))  # trait evolution matrix under RI
 
     stat_rate_popu_RI_dr = np.empty((nrow,num_species))  # population evolution matrix under BH
-    stat_rate_popu_RI_dk = np.empty((nrow,num_species)) # population evolution matrix under RI
     # vectorize ga function
     ga_vector = np.vectorize(ga)
     Kd_vector = np.vectorize(Kd)
@@ -51,64 +57,59 @@ def traitsim(h,num_time, num_species, num_iteration, gamma1,gamma_K2, a, r, thet
         # Matrices for trait and populations under BH and RI
         trait_RI_dr = np.zeros((num_time+1, num_species))
         population_RI_dr = np.zeros((num_time+1, num_species))
-        trait_RI_dk = np.zeros((num_time+1, num_species))
-        population_RI_dk = np.zeros((num_time+1, num_species))
+        V = np.zeros((num_time+1, num_species))
 
         # initialize the input for trait values and populations
         mu_trait, sigma_trait = mean_trait, dev_trait  # mean and standard deviation
         # trait_RI_dr[0] = np.random.normal(mu_trait, sigma_trait, num_species)
         trait_RI_dr[0] = np.zeros( num_species)
 
-        trait_RI_dk[0] = trait_RI_dr[0]
         mu_pop, sigma_pop = mean_pop, dev_pop  # mean and standard deviation
         # population_RI_dr[0] = np.random.normal(mu_pop, sigma_pop, num_species)
         pop_ini = np.empty(num_species)
         pop_ini.fill(10)
         population_RI_dr[0] = pop_ini
-        population_RI_dk[0] = population_RI_dr[0]
 
+        V.fill(1/num_species)
 
         # trait evolution simulation
         for i in range(num_time):
             # print(i)
             # RI dynamic r model
-            Gamma_RI_dr = ga_vector(gamma=gamma1, theta=theta, zi=trait_RI_dr[i], r=r)
+            Gamma_RI_dr = ga_vector(gamma=gamma1, theta=theta, zi=trait_RI_dr[i])
             K_RI_dr = K
             Beta_RI_dr = beta(a=a, zi=trait_RI_dr[i], zj=trait_RI_dr[i], nj=population_RI_dr[i])
             Sigma_RI_dr = sigma(a=a, zi=trait_RI_dr[i], zj=trait_RI_dr[i], nj=population_RI_dr[i])
-            trait_RI_dr[i + 1] = trait_RI_dr[i] + h*( 2 *gamma1* (theta - trait_RI_dr[i]) * Gamma_RI_dr * (1 -
-                              Beta_RI_dr / K_RI_dr) + Gamma_RI_dr * Sigma_RI_dr / K_RI_dr
-                                 + np.random.normal(0, delta_trait, num_species) )
-            population_RI_dr[i + 1] = population_RI_dr[i] * np.exp(Gamma_RI_dr * (1 - Beta_RI_dr / K_RI_dr) \
+            Delta_RI_dr = Delta(a=a, zi=trait_RI_dr[i], zj=trait_RI_dr[i], nj=population_RI_dr[i])
+            var_trait = V[i]/(2*population_RI_dr[i])
+            trait_RI_dr[i + 1] = trait_RI_dr[i] + V[i]*( (np.log(r) +Gamma_RI_dr)/K_RI_dr*Sigma_RI_dr
+                                +2*gamma1*(theta - trait_RI_dr[i])*(1 - Beta_RI_dr / K_RI_dr)) \
+                                +  np.random.normal(0, var_trait, num_species)
+            population_RI_dr[i + 1] = population_RI_dr[i] * r **(1 - Beta_RI_dr / K_RI_dr) *\
+                                      np.exp(Gamma_RI_dr * (1 - Beta_RI_dr / K_RI_dr) \
                                       + np.random.normal(0, delta_pop, num_species))
+            V[i+1] = V[i]**2 * (-2* gamma1 * ( 1 - Beta_RI_dr / K_RI_dr) +                         # V^2 w''/w
+                                1/ K_RI_dr * ( -Gamma_RI_dr - np.log(r) ) * Delta_RI_dr +
+                                4 * gamma1 * (theta - trait_RI_dr[i]) * Sigma_RI_dr +
+                                (np.log(r)/K_RI_dr * Sigma_RI_dr)**2 +
+                                2 * gamma1 * np.log(r) *(theta - trait_RI_dr[i])/K_RI_dr **2 * Sigma_RI_dr *
+                                (2 * K_RI_dr - 2 * Beta_RI_dr - (theta - trait_RI_dr[i])*Sigma_RI_dr) +
+                                (2* gamma1 * (theta - trait_RI_dr[i])/ K_RI_dr *(1 - Beta_RI_dr / K_RI_dr) +
+                                 Gamma_RI_dr / K_RI_dr**2 * Sigma_RI_dr)**2) - \
+             V[i]/2 + 2 * population_RI_dr[i] * nu * Vmax/(1+4*population_RI_dr[i]*nu)  #loss due to sexual selection; gain from mutation
+
             # population_RI_dr[i + 1, np.where(population_RI_dr[i + 1] < 1)] = 0
             ext_index_RI_dr = np.where(population_RI_dr[i +1] == 0)[0]
             if len(ext_index_RI_dr) > 0:
                 trait_RI_dr[i+1][ext_index_RI_dr] = 0
 
-            #RI dynamic k model
-            Gamma_RI = r
-            K_RI = Kd_vector(gamma_K=gamma_K2, theta=theta, zi=trait_RI_dk[i], K=K)
-            Beta_RI = beta(a=a, zi=trait_RI_dk[i], zj=trait_RI_dk[i], nj=population_RI_dk[i])
-            Sigma_RI = sigma(a=a, zi=trait_RI_dk[i], zj=trait_RI_dk[i], nj=population_RI_dk[i])
-            trait_RI_dk[i+1] = trait_RI_dk[i] + h*( 2 *r* gamma_K2 * (theta - trait_RI_dk[i]) / K_RI * Beta_RI \
-                                 + r * Sigma_RI/ K_RI\
-                              +  np.random.normal(0, delta_trait, num_species) )
-            population_RI_dk[i+1] = population_RI_dk[i] * np.exp(Gamma_RI*(1-Beta_RI/K_RI)\
-                              +  np.random.normal(0, delta_pop, num_species))
-            population_RI_dk[i+1,np.where(population_RI_dk[i+1]<1)] = 0
-            ext_index_RI_dk = np.where(population_RI_dk[i + 1] == 0)[0]
-            if len(ext_index_RI_dk) > 0:
-                trait_RI_dk[i + 1][ext_index_RI_dk] = 0
 
         # Diversity statistics
         stat_rate_trait_RI_dr[j,:] =trait_RI_dr[num_time,:]
-        stat_rate_trait_RI_dk[j, :] = trait_RI_dk[num_time, :]
         stat_rate_popu_RI_dr[j, :] = population_RI_dr[num_time, :]
-        stat_rate_popu_RI_dk[j, :] = population_RI_dk[num_time, :]
         j += 1
 
-    return stat_rate_trait_RI_dr, stat_rate_trait_RI_dk,stat_rate_popu_RI_dr, stat_rate_popu_RI_dk
+    return stat_rate_trait_RI_dr,stat_rate_popu_RI_dr,
 
 
 
