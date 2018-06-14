@@ -46,7 +46,7 @@ pal = sns.cubehelix_palette(10, rot=-.25, light=.7)
 
 g_ori = sns.FacetGrid(df_ori, col = "parlabel"  ,row="tlabel", hue="tlabel", aspect=15, size=.5,
                       palette=pal,
-                      xlim=[0,5])
+                      xlim=[-1,5])
 
 # Draw the densities in a few steps
 g_ori.map(sns.kdeplot, "par", clip_on=False, shade=True, alpha=1, lw=1.5, bw=.2)
