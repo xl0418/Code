@@ -37,7 +37,7 @@ def Delta(a, zi, zj, nj):
 
 
 # Trait simulation function under the new coevolution model with changing variance
-def traitsim_DV(num_time, num_species, num_iteration, gamma1, a, r, nu,Vmax, theta,K , mean_trait, dev_trait, mean_pop, dev_pop,replicate):
+def traitsim_DV(num_time, num_species, num_iteration, gamma1, a, r, nu,Vmax, theta,K ,replicate = 1):
     j = 0   # initialize the iteration number
     delta_pop = 0.001
     num_vec = np.arange(1,(num_iteration+1),1) # iteration vector
@@ -47,7 +47,6 @@ def traitsim_DV(num_time, num_species, num_iteration, gamma1, a, r, nu,Vmax, the
     stat_rate_popu_RI_dr = np.empty((nrow,num_species))  # population evolution matrix under BH
     # vectorize ga function
     ga_vector = np.vectorize(ga)
-    Kd_vector = np.vectorize(Kd)
 
     # loop for preset iteration
     for loop in num_vec:
@@ -60,14 +59,14 @@ def traitsim_DV(num_time, num_species, num_iteration, gamma1, a, r, nu,Vmax, the
         V = np.zeros((num_time+1, num_species))
 
         # initialize the input for trait values and populations
-        mu_trait, sigma_trait = mean_trait, dev_trait  # mean and standard deviation
+        # mu_trait, sigma_trait = mean_trait, dev_trait  # mean and standard deviation
         # trait_RI_dr[0] = np.random.normal(mu_trait, sigma_trait, num_species)
         trait_RI_dr[0] = np.zeros( num_species)
 
-        mu_pop, sigma_pop = mean_pop, dev_pop  # mean and standard deviation
+        # mu_pop, sigma_pop = mean_pop, dev_pop  # mean and standard deviation
         # population_RI_dr[0] = np.random.normal(mu_pop, sigma_pop, num_species)
         pop_ini = np.empty(num_species)
-        pop_ini.fill(10)
+        pop_ini.fill(1000)
         population_RI_dr[0] = pop_ini
 
         V.fill(1/num_species)
