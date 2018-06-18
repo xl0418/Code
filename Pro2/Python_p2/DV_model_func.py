@@ -26,6 +26,13 @@ def sigma(a, zi, zj, nj):
         zi_ret[0, n1] = np.sum(2 * a * (zi[n1]-np.array(zj)) * np.exp( -a * (zi[n1] - np.array(zj)) ** 2) * np.array(nj))
     return zi_ret
 
+# Derivative of the competition function
+def sigmasqr(a, zi, zj, nj):
+    zi_ret = np.ndarray((1, len(zi)))
+    for n1 in range(len(zi)):
+        zi_ret[0, n1] = np.sum(4 * a**2 * (zi[n1]-np.array(zj))**2 * np.exp( -a * (zi[n1] - np.array(zj)) ** 2) * np.array(nj))
+    return zi_ret
+
 # Delta function
 def Delta(a, zi, zj, nj):
     zi_ret = np.ndarray((1, len(zi)))
@@ -66,7 +73,7 @@ def traitsim_DV(num_time, num_species, num_iteration, gamma1, a, r, nu,Vmax, the
         # mu_pop, sigma_pop = mean_pop, dev_pop  # mean and standard deviation
         # population_RI_dr[0] = np.random.normal(mu_pop, sigma_pop, num_species)
         pop_ini = np.empty(num_species)
-        pop_ini.fill(1000)
+        pop_ini.fill(100)
         population_RI_dr[0] = pop_ini
 
         V.fill(1/num_species)
@@ -75,26 +82,21 @@ def traitsim_DV(num_time, num_species, num_iteration, gamma1, a, r, nu,Vmax, the
         for i in range(num_time):
             # print(i)
             # RI dynamic r model
-            Gamma_RI_dr = ga_vector(gamma=gamma1, theta=theta, zi=trait_RI_dr[i])
             K_RI_dr = K
             Beta_RI_dr = beta(a=a, zi=trait_RI_dr[i], zj=trait_RI_dr[i], nj=population_RI_dr[i])
             Sigma_RI_dr = sigma(a=a, zi=trait_RI_dr[i], zj=trait_RI_dr[i], nj=population_RI_dr[i])
+            Sigmasqr_RI_dr = sigmasqr(a=a, zi=trait_RI_dr[i], zj=trait_RI_dr[i], nj=population_RI_dr[i])
             Delta_RI_dr = Delta(a=a, zi=trait_RI_dr[i], zj=trait_RI_dr[i], nj=population_RI_dr[i])
             var_trait = V[i]/(2*population_RI_dr[i])
-            trait_RI_dr[i + 1] = trait_RI_dr[i] + V[i]*( (np.log(r) +Gamma_RI_dr)/K_RI_dr*Sigma_RI_dr
-                                +2*gamma1*(theta - trait_RI_dr[i])*(1 - Beta_RI_dr / K_RI_dr)) \
+            trait_RI_dr[i + 1] = trait_RI_dr[i] + V[i]*(2*gamma1*(theta - trait_RI_dr[i])+1/K_RI_dr *
+                                                        Sigma_RI_dr) \
                                 +  np.random.normal(0, var_trait, num_species)
-            population_RI_dr[i + 1] = population_RI_dr[i] * r **(1 - Beta_RI_dr / K_RI_dr) *\
-                                      np.exp(Gamma_RI_dr * (1 - Beta_RI_dr / K_RI_dr) \
+            population_RI_dr[i + 1] = population_RI_dr[i] * r * \
+                                      np.exp(-gamma1*(theta - trait_RI_dr[i])**2 + (1 - Beta_RI_dr / K_RI_dr) \
                                       + np.random.normal(0, delta_pop, num_species))
-            V[i+1] = V[i]**2 * (-2* gamma1 * ( 1 - Beta_RI_dr / K_RI_dr) +                         # V^2 w''/w
-                                1/ K_RI_dr * ( -Gamma_RI_dr - np.log(r) ) * Delta_RI_dr +
-                                4 * gamma1 * (theta - trait_RI_dr[i]) * Sigma_RI_dr +
-                                (np.log(r)/K_RI_dr * Sigma_RI_dr)**2 +
-                                2 * gamma1 * np.log(r) *(theta - trait_RI_dr[i])/K_RI_dr **2 * Sigma_RI_dr *
-                                (2 * K_RI_dr - 2 * Beta_RI_dr - (theta - trait_RI_dr[i])*Sigma_RI_dr) +
-                                (2* gamma1 * (theta - trait_RI_dr[i])/ K_RI_dr *(1 - Beta_RI_dr / K_RI_dr) +
-                                 Gamma_RI_dr / K_RI_dr**2 * Sigma_RI_dr)**2) - \
+            V[i+1] = V[i]+ V[i]**2 * (-2* gamma1 + 4* gamma1**2 * (theta - trait_RI_dr[i])**2+ 1/K_RI_dr *      #V^2 w''/w
+                                (Sigma_RI_dr-Sigmasqr_RI_dr) +4*gamma1/K_RI_dr *(theta - trait_RI_dr[i])*Sigma_RI_dr +
+                                Sigma_RI_dr**2/K_RI_dr**2) - \
              V[i]/2 + 2 * population_RI_dr[i] * nu * Vmax/(1+4*population_RI_dr[i]*nu)  #loss due to sexual selection; gain from mutation
 
             # population_RI_dr[i + 1, np.where(population_RI_dr[i + 1] < 1)] = 0
