@@ -255,7 +255,7 @@ ax01.set_xlim(0, evo_time)
 
 # Turn on grids
 ax01.grid(True)
-ax02.grid(True)
+# ax02.grid(True)
 
 
 #
@@ -369,7 +369,7 @@ time_text = ax01.text(0.05, 1, '', transform=ax01.transAxes)
 #
 ani = animation.FuncAnimation(f0, animate, interval= 1, frames= 3000, repeat=False, blit=False) #, init_func=init)
 plt.show()
-#
+# #
 # Writer = animation.writers['ffmpeg']
 # writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
-# ani.save('/Users/dudupig/Google 云端硬盘/Python/Project2/S+C.mp4', writer=writer)
+# ani.save('C:\\Liang\\DVmodel.mp4', writer=writer)
