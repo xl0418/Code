@@ -15,7 +15,7 @@ result = sddsim(n=2,parsN=c(2,0),age=15,pars=c(0.8,0.3,10) , seed_fun = 29, lamb
 filename = 'C:/Liang/Googlebox/Research/Project2/R-tree_sim/Treedata1.Rdata'
 save(result,file = filename)
 print(dim(result$L))
-plottree(file = filename)
+plottree(file = filename,dropextinct = F)
 
 
 L = result$L

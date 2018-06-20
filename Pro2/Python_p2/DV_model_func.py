@@ -44,7 +44,7 @@ def Delta(a, zi, zj, nj):
 
 
 # Trait simulation function under the new coevolution model with changing variance
-def traitsim_DV(num_time, num_species, num_iteration, gamma1, a, r, nu,Vmax, theta,K ,replicate = 1):
+def DVtraitsim_branch(num_time, num_species, num_iteration, gamma1, a, r, nu,Vmax, theta,K ,replicate = 1):
     j = 0   # initialize the iteration number
     delta_pop = 0.001
     num_vec = np.arange(1,(num_iteration+1),1) # iteration vector
