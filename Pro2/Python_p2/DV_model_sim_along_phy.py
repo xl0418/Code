@@ -98,17 +98,17 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
 
     #  initialize condition for species trait and population
     trait_RI_dr[0, (0,1)] = 0
-    print(trait_RI_dr[0])
+    # print(trait_RI_dr[0])
     mu_pop, sigma_pop = 500, 10  # mean and standard deviation
     population_RI_dr[0, (0,1)] = np.random.normal(mu_pop, sigma_pop, 2)
-    print(population_RI_dr[0])
+    # print(population_RI_dr[0])
     V = np.zeros((evo_time + 1, total_species))
     V.fill(1 / total_species)
     # Existing species matrix
     existing_species = traittable
 
     for i in range(evo_time):
-        print(i)
+        # print(i)
         num_event = len(np.where(evo_timelist <= i)[0])
         node = num_event - 2
         index_existing_species = np.where(existing_species[node] == 1)[0]
