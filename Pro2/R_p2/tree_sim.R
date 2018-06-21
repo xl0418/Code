@@ -15,8 +15,9 @@ result = sddsim(n=2,parsN=c(2,0),age=15,pars=c(0.8,0.3,10) , seed_fun = 29, lamb
 filename = 'C:/Liang/Googlebox/Research/Project2/R-tree_sim/Treedata1.Rdata'
 save(result,file = filename)
 print(dim(result$L))
-plottree(file = filename,dropextinct = F)
+plottree(file = filename,dropextinct =F)
 
+load(file = filename)
 
 L = result$L
 time.list = c(sort(c(L[,1],L[which(L[,4]!= -1),4]),decreasing = TRUE),0)
@@ -38,16 +39,16 @@ for(i in 1:num.species){
 }
 trait.table = rbind(trait.table,trait.table[dim(trait.table)[1],])
 trait.table[,1] = time.list
-existing.species.table = trait.table[-1,-1]
+existing_species_table = trait.table[-1,-1]
 
 
 write.csv(timelist, file = "C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\timelist.csv")
 write.csv(timebranch, file = "C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\timebranch.csv")
 write.csv(timeend, file = "C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\timeend.csv")
-write.csv(existing.species.table, file = "C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\traittable.csv")
+write.csv(existing_species_table, file = "C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\traittable.csv")
 write.csv(L, file = "C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\Ltable.csv")
 
 
-output = list( timelist= time.list, timebranch = time.branching, timeend = time.end, survivaltime = survival.time)
-save(output, file = "C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\treedata.Rdata")
+output = list(L=L, timelist= timelist, timebranch = timebranch, timeend = timeend,traittable = existing_species_table)
+write.csv(output, file = "C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\treedata.csv")
 
