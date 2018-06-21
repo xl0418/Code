@@ -89,8 +89,8 @@ def MCMC_ABC(startvalue, iterations,delta,obs,sort,priorpar, file,mode = 'uni'):
     par_jump = np.empty(2)
     if mode == 'uni':
         for i in range(iterations):
-            par_jump[0] = abs(np.random.normal(loc=MCMC[i,0], scale= 0.01 ))
-            par_jump[1] = abs(np.random.normal(loc=MCMC[i,1], scale= 0.01 ))
+            par_jump[0] = abs(np.random.normal(loc=MCMC[i,0], scale= 0.0001 ))
+            par_jump[1] = abs(np.random.normal(loc=MCMC[i,1], scale= 0.0001 ))
 
             if (ABC_acceptance(par_jump,delta = delta, obs = obs,sort = sort, file = file)):
                 MCMC[i+1,] = par_jump
@@ -101,8 +101,8 @@ def MCMC_ABC(startvalue, iterations,delta,obs,sort,priorpar, file,mode = 'uni'):
                 print("MCMC : %d Rejected" % (i+1))
     elif mode == 'nor':
         for i in range(iterations):
-            par_jump[0] = abs(np.random.normal(loc=MCMC[i, 0], scale=0.01))
-            par_jump[1] = abs(np.random.normal(loc=MCMC[i, 1], scale=0.01))
+            par_jump[0] = abs(np.random.normal(loc=MCMC[i, 0], scale=0.0001))
+            par_jump[1] = abs(np.random.normal(loc=MCMC[i, 1], scale=0.0001))
 
             pro = np.random.uniform(0,1,1)[0]
             pro_gamma1 = scipy.stats.norm(priorpar[0], priorpar[1]).pdf(par_jump[0])
