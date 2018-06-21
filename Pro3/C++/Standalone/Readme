@@ -1,0 +1,47 @@
+jc 1.0.0
+
+to compile under linux:
+
+$ cd jc
+$ make
+
+to compile on the cluster:
+
+$ cd jc
+$ chmod u+x compile.sh
+$ ./compile.sh
+
+then try
+$ ./jc --help
+
+
+Usage: jc [OPTION]... [OPTIONAL PARAMETER]... PARAMETER... file
+Options:
+  --help           prints this text and exits
+  --version        prints version information and exits
+  -v, --verbose    event output to console
+  -i, --implicit   run spacial implicit model
+  -d, --dominant   run model at least until first specie isn't dominant
+
+Optional parameter:
+  L                grid size, defaults to 333
+  v                speciation rate, defaults to 0.00001
+  log              log interval [events] for M, D and R, defaults to 10
+  log_first        always log the first n events, defaults to 0
+
+Parameter:
+  phi              strength of phylogenetic effect
+  psi              strength of abundance effect
+  sA               abundance Gaussian standard deviation
+  sB               distribution Gaussian standard deviation
+  ticks            time steps (turnovers)
+  file             data file name
+
+If option -i, --implicit is given, parameter sA and sB are ignored.
+
+If option -d, --dominant is given, 'ticks' are the additional time steps
+after first specie isn't dominant anymore.
+
+Example:
+jc phi=0.01 psi=0.1 sA=5 sB=0.5 ticks=10e7 seed=96 file="res.m"
+
