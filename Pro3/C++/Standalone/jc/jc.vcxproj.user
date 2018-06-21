@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerCommandArguments>-i --profile v=0.001 sA=1e10 sB=1e10 L=101 phi=0.1 psi=0 ticks=20e6 seed=96 log=100000 file=res01s.m</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalDebuggerCommandArguments>rep=1 seed=96 --verbose -i v=0.0001 N=100000 phi=0 psi=0 ticks=2e9 log=10000 file=yres.m</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerAmpDefaultAccelerator>
+    </LocalDebuggerAmpDefaultAccelerator>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments>rep=1 seed=96 --verbose -i v=0.0001 N=100000 phi=0 psi=0 ticks=2e9 log=10000 file=yres.m</LocalDebuggerCommandArguments>
+  </PropertyGroup>
+</Project>
