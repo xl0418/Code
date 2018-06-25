@@ -20,12 +20,19 @@ scalor = 1000
 
 # trait evolution plot
 file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
-simresult = DVtraitsim_tree(file = file, gamma1 = 0.01)
+simresult = DVtraitsim_tree(file = file, gamma1 = 0.01, a = 0.01)
 evo_time, total_species = simresult[0].shape
 evo_time = evo_time-1
 trait_RI_dr = simresult[0]
 population_RI_dr = simresult[1]
 
+
+trait_dr_tips = trait_RI_dr[evo_time,:][~np.isnan(trait_RI_dr[evo_time,:])]
+population_tips = population_RI_dr[evo_time,:][~np.isnan(population_RI_dr[evo_time,:])]
+
+trait_RI_dr[np.where(trait_RI_dr == 0)[0],np.where(trait_RI_dr == 0)[1]] = None
+
+population_RI_dr[np.where(population_RI_dr == 0)[0],np.where(population_RI_dr == 0)[1]] = None
 num_plots = total_species
 
 # Have a look at the colormaps here and decide which one you'd like:
@@ -39,10 +46,7 @@ num_plots = total_species
 # Plot several different functions...
 
 
-trait_dr_tips = trait_RI_dr[evo_time,:][~np.isnan(trait_RI_dr[evo_time,:])]
-population_tips = population_RI_dr[evo_time,:][~np.isnan(population_RI_dr[evo_time,:])]
-
-population_RI_dr[population_RI_dr == 0] = None
+# population_RI_dr[population_RI_dr == 0] = None
 
 
 
