@@ -8,7 +8,7 @@ source(paste0('C:/Liang/Googlebox/Research/Project1/R_pro1/Final/L2phylo_loc.R')
 source(paste0('C:/Liang/Googlebox/Research/Project1/R_pro1/Final/splitAt.R'))
 
 #cycle = T: open tree label that is tree tips will be labeled by cycles; cycle = F: close
-#ls = 1: legend, crown age and titles will be drawn.
+#ls = 1: legend, crown age and titles will be drawn
 
 plottree <- function(age = 15, dropextinct = T,file = filename, ls = 1,cycle = T){
       maps_loc_new = list()
