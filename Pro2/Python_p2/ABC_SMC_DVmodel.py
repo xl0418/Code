@@ -7,7 +7,13 @@ from scipy.stats import norm
 import timeit
 
 def single_trait_sim(par,file):
-    sim = DVtraitsim_tree(file = file, gamma1 = par[0],a = par[1])
+    do = 0
+    while(do == 0):
+        sim = DVtraitsim_tree(file = file, gamma1 = par[0],a = par[1])
+        if len(sim[0]) == 1 and sim[0] == False:
+            do = 0
+        else:
+            do = 1
     trait_RI_dr = sim[0]
     population_RI_dr = sim[1]
     evo_time, total_species = sim[0].shape
