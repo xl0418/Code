@@ -49,6 +49,7 @@ def Delta(a, zi, zj, nj):
 
 
 def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.01,scalor = 1000, K = 5000, delta_pop = 0.001, nu = 0.0001, Vmax = 1 ):
+    valid = True
     if replicate == 1:
         np.random.seed(13)  # set random seed
     file = file
@@ -150,12 +151,10 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
         ext_index_RI_dr = np.where(population_RI_dr[i + 1,index_existing_species] == 0)[0]
         negative_v = np.where(V[i + 1, index_existing_species] < 0)[0]
         if len(ext_index_RI_dr) > 0:
-            trait_RI_dr = False
-            population_RI_dr = False
+            valid = False
             break
         if len(negative_v) > 0:
-            trait_RI_dr = False
-            population_RI_dr = False
+            valid = False
             break
         if (i+1) in speciate_time:
             spe_event_index = len(np.where(speciate_time <= (i+1))[0])
@@ -172,5 +171,5 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
             trait_RI_dr[i+1, extinct_species] = None
             population_RI_dr[i+1, extinct_species] = 0
     # trait_RI_dr[np.where(trait_RI_dr == 0)[0],np.where(trait_RI_dr == 0)[1]] = None
-    return trait_RI_dr, population_RI_dr
+    return trait_RI_dr, population_RI_dr, valid
 

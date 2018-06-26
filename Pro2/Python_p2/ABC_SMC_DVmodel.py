@@ -10,18 +10,19 @@ def single_trait_sim(par,file):
     do = 0
     while(do == 0):
         sim = DVtraitsim_tree(file = file, gamma1 = par[0],a = par[1])
-        if len(sim[0]) == 1 and sim[0] == False:
-            do = 0
-        else:
+        if sim[2]:
             do = 1
+        else:
+            do = 0
     trait_RI_dr = sim[0]
     population_RI_dr = sim[1]
     evo_time, total_species = sim[0].shape
     evo_time = evo_time - 1
+    valid = sim[2]
     # empirical data for trait and population
     trait_dr_tips = trait_RI_dr[evo_time, :][~np.isnan(trait_RI_dr[evo_time, :])]
     population_tips = population_RI_dr[evo_time, :][~np.isnan(population_RI_dr[evo_time, :])]
-    simtips = np.array([trait_dr_tips,population_tips])
+    simtips = np.array([trait_dr_tips,population_tips,valid])
     return simtips
 
 def PosNormal(mean, sigma):
@@ -58,12 +59,12 @@ def calibrication(samplesize, priorpar, obs, file, mode = 'uni'):
             par_cal[0] = uniform_gamma[i]
             par_cal[1] = uniform_a[i]
             sample_cal =  single_trait_sim(par = par_cal,file = file)
-            if len(sample_cal[0]) == 1 and sample_cal[0] == False:
-                diff = np.inf
-                diff_sort = np.inf
-            else:
+            if sample_cal[2]:
                 diff =  np.linalg.norm(sample_cal[0]-obs[0])
                 diff_sort = np.linalg.norm(np.sort(sample_cal[0])-np.sort(obs[0]))
+            else:
+                diff = np.inf
+                diff_sort = np.inf
             collection[i] = np.concatenate((par_cal,[diff],[diff_sort]))
         return collection
 
@@ -72,12 +73,10 @@ def calibrication(samplesize, priorpar, obs, file, mode = 'uni'):
 
 def ABC_acceptance(par,delta,obs,sort, file):
     sample = single_trait_sim(par = par,file = file)
-    if len(sample[0]) == 1 and sample[0] == False:
-        return False
-    else:
+    if sample[2]:
         if sort == 0:
             diff = np.linalg.norm(sample[0] - obs[0])
-            if diff<delta:
+            if diff < delta:
                 return True
             else:
                 return False
@@ -87,6 +86,10 @@ def ABC_acceptance(par,delta,obs,sort, file):
                 return True
             else:
                 return False
+
+    else:
+        return False
+
 
 def MCMC_ABC(startvalue, iterations,delta,obs,sort,priorpar, file,mode = 'uni'):
     tic = timeit.default_timer()
@@ -167,14 +170,14 @@ def SMC_ABC(timestep, particlesize, obs, epsilon, prior, file, sort = 0):
                     par = [propose_gamma,propose_a]
                     # simulate under the parameters
                     sample = single_trait_sim(par = par, file = file)
-                    if len(sample[0]) == 1 and sample[0] == False:
-                        diff = np.inf
-                    else:
+                    if sample[2]:
                         # calculate the distance between simulation and obs
                         if sort == 0:
                             diff = np.linalg.norm(sample[0] - obs[0])
                         else:
                             diff = np.linalg.norm(np.sort(sample[0]) - np.sort(obs[0]))
+                    else:
+                        diff = np.inf
                     d[t,i] = diff
                 # record the accepted values
                 gamma[t, i] = propose_gamma
@@ -206,13 +209,13 @@ def SMC_ABC(timestep, particlesize, obs, epsilon, prior, file, sort = 0):
                     propose_a = abs(np.random.normal(propose_a0,np.sqrt(2* a_pre_var)))
                     par = [propose_gamma,propose_a]
                     sample = single_trait_sim(par, file = file)
-                    if len(sample[0]) == 1 and sample[0] == False:
-                        diff = np.inf
-                    else:
+                    if sample[2]:
                         if sort == 0:
                             diff = np.linalg.norm(sample[0] - obs[0])
                         else:
                             diff = np.linalg.norm(np.sort(sample[0]) - np.sort(obs[0]))
+                    else:
+                        diff = np.inf
                     d[t,i] = diff
                 gamma[t, i] = propose_gamma
                 a[t,i] = propose_a
