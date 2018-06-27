@@ -27,13 +27,13 @@ obs = np.array([trait_dr_tips,population_tips])
 
 
 # Calibrication step
-cal_size = 100000
+cal_size = 40000
 # TEST1: Uniform prior distribution example
 priorpar = [0.0001,1,0.0001,1]
 collection = calibrication(samplesize = cal_size, priorpar = priorpar, obs = obs, file = file)
 file1 = file + 'cal10w_DV.txt'
 np.savetxt(file1,collection)
-# collection = np.loadtxt("c:/Liang/Googlebox/Research/Project2/python_p2/testcal.txt")
+collection = np.loadtxt("c:/Liang/Googlebox/Research/Project2/DVmodel/DVmodelcalresult4w/cal4w_DV.txt")
 
 
 #TEST2: Normal prior distribution example
@@ -48,36 +48,34 @@ np.savetxt(file1,collection)
 # np.savetxt("c:/Liang/Googlebox/Research/Project2/python_p2/testcal.txt",collection)
 # collection = np.loadtxt("c:/Liang/Googlebox/Research/Project2/python_p2/MCMC3/calibration2w_3chains.txt")
 
-
-
-# collection = filtered_coll
+collection = filtered_coll
 
 # distance distribution
-# P.figure()
-# dis_data = collection[:,[2,3]]
-# n, bins, patches = P.hist(dis_data, 15, density=1, histtype='bar',
-#                             color=['crimson', 'burlywood'],
-#                             label=['distance', 'sorted distance'])
-# P.legend()
-# plt.show()
-# Estimate prior distribution of parameters
+P.figure()
+dis_data = collection[:,[2,3]]
+n, bins, patches = P.hist(dis_data, 15, density=1, histtype='bar',
+                            color=['crimson', 'burlywood'],
+                            label=['distance', 'sorted distance'])
+P.legend()
+plt.show()
+#Estimate prior distribution of parameters
 # Generate random samples from a mixture of 2 Gaussians
 # with modes at 5 and 10
-# data = np.array(collection[:,1])
-# data = data.reshape(-1,1)
-# # Plot the true distribution
-# x = np.linspace(0, 1, 100)[:, np.newaxis]
-# norm_vals = mlab.normpdf(x, 0.1, 0.4)
-# plt.plot(x, norm_vals)
-# # Plot the data using a normalized histogram
-# plt.hist(data, 50, density=True)
-# # Do kernel density estimation
-# kd = KernelDensity(kernel='gaussian', bandwidth=0.75).fit(data)
-# # Plot the estimated densty
-# kd_vals = np.exp(kd.score_samples(x))
-# plt.plot(x, kd_vals,'--r')
-# # Show the plots
-# plt.show()
+data = np.array(collection[:,0])
+data = data.reshape(-1,1)
+# Plot the true distribution
+x = np.linspace(0, 1, 100)[:, np.newaxis]
+norm_vals = mlab.normpdf(x, 0.1, 0.4)
+plt.plot(x, norm_vals)
+# Plot the data using a normalized histogram
+plt.hist(data, 50, density=True)
+# Do kernel density estimation
+kd = KernelDensity(kernel='gaussian', bandwidth=0.75).fit(data)
+# Plot the estimated densty
+kd_vals = np.exp(kd.score_samples(x))
+plt.plot(x, kd_vals,'--r')
+# Show the plots
+plt.show()
 
 
 
