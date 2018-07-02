@@ -50,8 +50,8 @@ def Delta(a, zi, zj, nj):
 
 def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.01,scalor = 1000, K = 5000, delta_pop = 0.001, nu = 0.0001, Vmax = 1 ):
     valid = True
-    if replicate == 1:
-        np.random.seed(13)  # set random seed
+    if replicate > 0:
+        np.random.seed(replicate)  # set random seed
     file = file
     # load data
     timelist = np.genfromtxt(file+'timelist.csv', delimiter=',')

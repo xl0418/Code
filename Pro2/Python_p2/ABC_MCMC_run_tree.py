@@ -33,7 +33,7 @@ priorpar = [0.0001,1,0.0001,1]
 collection = calibrication(samplesize = cal_size, priorpar = priorpar, obs = obs, file = file)
 file1 = file + 'cal10w_DV.txt'
 np.savetxt(file1,collection)
-collection = np.loadtxt("c:/Liang/Googlebox/Research/Project2/DVmodel/DVmodelcalresult4w/cal4w_DV.txt")
+collection = np.loadtxt("c:/Liang/Googlebox/Research/Project2/DVmodel/cal4w_DVseed13.txt")
 
 
 #TEST2: Normal prior distribution example
@@ -61,7 +61,7 @@ plt.show()
 #Estimate prior distribution of parameters
 # Generate random samples from a mixture of 2 Gaussians
 # with modes at 5 and 10
-data = np.array(collection[:,0])
+data = np.array(collection[:,1])
 data = data.reshape(-1,1)
 # Plot the true distribution
 x = np.linspace(0, 1, 100)[:, np.newaxis]
