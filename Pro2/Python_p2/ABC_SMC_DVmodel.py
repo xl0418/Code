@@ -393,10 +393,10 @@ def SMC_ABC_MS(timestep, particlesize, obs, epsilon, prior, file, sort = 0):
         weight_gamma[t,] = weight_gamma[t,]/sum(weight_gamma[t,])
         weight_a[t,] = weight_a[t,]/sum(weight_a[t,])
     # create the list for output
-    SMC_ABC = {'gamma': gamma, 'a': a, 'model': model, 'weight_gamma':weight_gamma,'weight_a':weight_a,'error':epsilon,'diff':d,
+    SMC_ABC_model = {'gamma': gamma, 'a': a, 'model': model, 'weight_gamma':weight_gamma,'weight_a':weight_a,'error':epsilon,'diff':d,
                'tot_sim':total_simulation}
     toc = timeit.default_timer()
     elapse = toc - tic
     timetext = 'Elapsed time: %.2f' % elapse
     print(timetext)
-    return SMC_ABC
+    return SMC_ABC_model
