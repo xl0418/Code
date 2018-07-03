@@ -99,7 +99,7 @@ def MCMC_ABC(startvalue, iterations,delta,obs,sort,priorpar, file,mode = 'uni'):
     if mode == 'uni':
         for i in range(iterations):
             par_jump[0] = np.random.uniform(priorpar[0],priorpar[1])
-            par_jump[1] = np.random.uniform(priorpar[0],priorpar[1])
+            par_jump[1] = np.random.uniform(priorpar[2],priorpar[3])
 
             if (ABC_acceptance(par_jump,delta = delta, obs = obs,sort = sort, file = file)):
                 MCMC[i+1,] = par_jump
@@ -116,8 +116,8 @@ def MCMC_ABC(startvalue, iterations,delta,obs,sort,priorpar, file,mode = 'uni'):
             pro = np.random.uniform(0,1,1)[0]
             pro_gamma1 = scipy.stats.norm(priorpar[0], priorpar[1]).pdf(par_jump[0])
             pro_gamma2 = scipy.stats.norm(priorpar[0], priorpar[1]).pdf(MCMC[i ,0])
-            pro_a1 = scipy.stats.norm(priorpar[0], priorpar[1]).pdf(par_jump[1])
-            pro_a2 = scipy.stats.norm(priorpar[0], priorpar[1]).pdf(MCMC[i ,1])
+            pro_a1 = scipy.stats.norm(priorpar[2], priorpar[3]).pdf(par_jump[1])
+            pro_a2 = scipy.stats.norm(priorpar[2], priorpar[3]).pdf(MCMC[i ,1])
 
             pro_ratio = (pro_gamma1*pro_a1)/(pro_gamma2*pro_a2)
             accept_criterion = np.min([1,pro_ratio])
