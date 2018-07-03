@@ -49,14 +49,13 @@ pal1 = sns.cubehelix_palette(9, rot=-.25, light=.7)
 
 
 g_ori = sns.FacetGrid(df_ori, col = "gamma_label"  ,row="label", hue="label", aspect=15, size=.5,
-                      palette=pal,
-                      xlim=[10,70])
+                      palette=pal)
 
 # Draw the densities in a few steps
-g_ori.map(sns.kdeplot, "dis_gamma_ori", clip_on=False, shade=True, alpha=1, lw=1.5, bw=.2)
-# g_ori.map(sns.kdeplot, "dis_gamma_ori", clip_on=False, color="w", lw=2, bw=.2)
+g_ori.map(sns.kdeplot, "dis_gamma_ori", clip_on=False, shade=True, alpha=1, lw=1.5, bw=2, )
+# g_ori.map(sns.kdeplot, "dis_gamma_ori", clip_on=False, color="w", lw=.01, bw=.01)
 
-
+# g_ori.set(xlim = (0,70), aspect="equal")
 # g_ori.map(sns.kdeplot, "dis_gamma_sort", clip_on=False, shade=True, alpha=1, lw=1.5, bw=.2)
 # g_ori.map(sns.kdeplot, "dis_gamma_sort", clip_on=False, color="w", lw=2, bw=.2)
 g_ori.map(plt.axhline, y=0, lw=2, clip_on=False)
