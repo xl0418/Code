@@ -26,7 +26,7 @@ startvalue_par = collection[idx,:2]
 # ABC_MCMC step
 iterations = 20000
 
-posterior = MCMC_ABC(startvalue= startvalue_par, iterations = iterations, delta = delta, obs = obs,sort = 1,
+posterior = MCMC_ABC(startvalue= startvalue_par, iterations = iterations, delta = delta, obs = obs,sort = 0,
                      priorpar=priorpar, mode='nor')
 np.savetxt("/home/p274981/Python_p2/posterior_nor.txt",posterior)
 # posterior = np.loadtxt("c:/Liang/Googlebox/Research/Project2/python_p2/posterior.txt")

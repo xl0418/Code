@@ -24,7 +24,7 @@ for gamma1 in gamma_vec:
     for a in a_vec:
         count += 1
         print(count)
-        simresult = DVtraitsim_tree(file = file, gamma1 = gamma1, a = a,scalor = 5000)
+        simresult = DVtraitsim_tree(file = file, gamma1 = gamma1, a = a,scalor = 1000)
         evo_time, total_species = simresult[0].shape
         evo_time = evo_time-1
         trait_RI_dr = simresult[0]

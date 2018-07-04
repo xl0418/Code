@@ -59,9 +59,9 @@ plottree <- function(age = 15, dropextinct = T,file = filename, ls = 1,cycle = T
       
       #add legend for the colors
       if(ls == 1)  {
-        plotSimmap(phy,cols,offset = 10,ylim=c(-4,Ntip(phy)),fsize = 1,mar = c(4,1,1,1),split.vertical=TRUE)
+        plotSimmap(phy,cols,offset = 100,ylim=c(-4,Ntip(phy)),fsize = 1,mar = c(4,1,1,1),split.vertical=TRUE)
         cols_legend = cols 
-      names(cols_legend) = c("   Endemic","   Endemic","   Widespread")
+      names(cols_legend) = c("   Endemic","   Endemic"," Widespread")
       add.simmap.legend(colors=cols_legend,prompt=FALSE,x=0,y=-2,vertical=FALSE)
       axis(1)
       #add the title
