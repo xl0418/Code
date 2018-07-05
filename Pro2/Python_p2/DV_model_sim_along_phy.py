@@ -153,9 +153,11 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
         negative_v = np.where(V[i + 1, index_existing_species] < 0)[0]
         if len(ext_index_RI_dr) > 0:
             valid = False
+            print('Inconsistent zero population')
             break
         if len(negative_v) > 0:
             valid = False
+            print('Negative variance')
             break
         if (i+1) in speciate_time:
             spe_event_index = len(np.where(speciate_time <= (i+1))[0])
