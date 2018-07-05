@@ -130,12 +130,13 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
                                                                     trait_RI_dr[i, index_existing_species]) + 1 / K_RI_dr *
                                                       Sigma_RI_dr) \
                                                      + np.random.normal(0, var_trait, len(index_existing_species))
-        population_RI_dr[i + 1, index_existing_species] = population_RI_dr[i, index_existing_species] * r * \
+        possion_lambda = population_RI_dr[i, index_existing_species] * r * \
                                                           np.exp(-gamma1 * (
                                                                       theta - trait_RI_dr[i, index_existing_species]) ** 2 +
-                                                                 (1 - Beta_RI_dr / K_RI_dr) \
-                                                                 + np.random.normal(0, delta_pop,
-                                                                                    len(index_existing_species)))
+                                                                 (1 - Beta_RI_dr / K_RI_dr))
+                                                               #  + np.random.normal(0, delta_pop,
+                                                                #                    len(index_existing_species)))
+        population_RI_dr[i + 1, index_existing_species] = np.random.poisson(lam = possion_lambda[0],size = (1,len(index_existing_species)))
         V[i + 1, index_existing_species] = V[i, index_existing_species] + V[i, index_existing_species] ** 2 * (
                     -2 * gamma1 + 4 * gamma1 ** 2 * (theta - trait_RI_dr[i, index_existing_species]) ** 2 +
                     1 / K_RI_dr *  # V^2 w''/w
