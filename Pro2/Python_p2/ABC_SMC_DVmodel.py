@@ -6,23 +6,26 @@ import scipy.stats
 from scipy.stats import norm
 import timeit
 
-def single_trait_sim(par,file):
+def single_trait_sim(par,file,replicate):
     do = 0
     while(do == 0):
-        sim = DVtraitsim_tree(file = file, gamma1 = par[0],a = par[1])
+        sim = DVtraitsim_tree(file = file, replicate = replicate,K = 10000000, gamma1 = par[0],a = par[1])
         if sim[2]:
             do = 1
         else:
+            print('Retry')
             do = 0
     trait_RI_dr = sim[0]
     population_RI_dr = sim[1]
+    traitVar = sim[3]
     evo_time, total_species = sim[0].shape
     evo_time = evo_time - 1
     valid = sim[2]
     # empirical data for trait and population
     trait_dr_tips = trait_RI_dr[evo_time, :][~np.isnan(trait_RI_dr[evo_time, :])]
     population_tips = population_RI_dr[evo_time, :][~np.isnan(population_RI_dr[evo_time, :])]
-    simtips = np.array([trait_dr_tips,population_tips,valid])
+    traitVar_tips = traitVar[evo_time, :][~np.isnan(traitVar[evo_time, :])]
+    simtips = np.array([trait_dr_tips,population_tips,valid,traitVar_tips])
     return simtips
 
 def PosNormal(mean, sigma):
