@@ -96,6 +96,7 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
     # Initialize trait evolution and population evolution matrices
     trait_RI_dr = np.zeros((evo_time + 1, total_species))
     population_RI_dr = np.zeros((evo_time + 1, total_species))
+    phynotypictrait_var = np.zeros((evo_time + 1, total_species))
 
     #  initialize condition for species trait and population
     trait_RI_dr[0, (0,1)] = 0
@@ -104,7 +105,7 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
     population_RI_dr[0, (0,1)] = np.random.normal(mu_pop, sigma_pop, 2)
     # print(population_RI_dr[0])
     V = np.zeros((evo_time + 1, total_species))
-    V.fill(1 / total_species)
+    V[0] = (1 / total_species)
     # Existing species matrix
     existing_species = traittable
 
@@ -122,8 +123,8 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
                             nj=population_RI_dr[i, index_existing_species])
         Sigmasqr_RI_dr = sigmasqr(a=a, zi=trait_RI_dr[i, index_existing_species], zj=trait_RI_dr[i, index_existing_species],
                                   nj=population_RI_dr[i, index_existing_species])
-        Delta_RI_dr = Delta(a=a, zi=trait_RI_dr[i, index_existing_species], zj=trait_RI_dr[i, index_existing_species],
-                            nj=population_RI_dr[i, index_existing_species])
+        # Delta_RI_dr = Delta(a=a, zi=trait_RI_dr[i, index_existing_species], zj=trait_RI_dr[i, index_existing_species],
+        #                     nj=population_RI_dr[i, index_existing_species])
         var_trait = V[i, index_existing_species] / (2 * population_RI_dr[i, index_existing_species])
         trait_RI_dr[i + 1, index_existing_species] = trait_RI_dr[i, index_existing_species] + V[i, index_existing_species] * \
                                                      (2 * gamma1 * (theta -
@@ -147,7 +148,7 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
                                                i, index_existing_species] * nu * Vmax / (
                                                    1 + 4 * population_RI_dr[
                                                i, index_existing_species] * nu)  # loss due to sexual selection; gain from mutation
-
+        phynotypictrait_var[i+1,index_existing_species] = var_trait + V[i, index_existing_species]
         # population_RI_dr[i + 1, np.where(population_RI_dr[i + 1] < 1)] = 0
         ext_index_RI_dr = np.where(population_RI_dr[i + 1,index_existing_species] == 0)[0]
         negative_v = np.where(V[i + 1, index_existing_species] < 0)[0]
@@ -174,5 +175,5 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
             trait_RI_dr[i+1, extinct_species] = None
             population_RI_dr[i+1, extinct_species] = 0
     # trait_RI_dr[np.where(trait_RI_dr == 0)[0],np.where(trait_RI_dr == 0)[1]] = None
-    return trait_RI_dr, population_RI_dr, valid
+    return trait_RI_dr, population_RI_dr, valid , V
 

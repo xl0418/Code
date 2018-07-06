@@ -68,7 +68,7 @@ if sort == 0:
     ind = 2
 else:
     ind = 3
-threshold = 0.001
+threshold = 0.05
 num = threshold*cal_size-1
 delta = np.sort(collection[:,ind])[int(num)]
 mn,idx = min( (collection[i,ind],i) for i in range(len(collection[:,ind])) )
