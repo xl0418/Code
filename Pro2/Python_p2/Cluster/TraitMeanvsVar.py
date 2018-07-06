@@ -16,7 +16,9 @@ a_vec = gamma_vec
 # traitvar_data = ()
 # Observation generated
 #  load the data for a given tree
-file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
+# file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
+file = 'D:\\Googlebox\\Python\\Project2\\R-tree_sim\\'
+
 num = 6
 trait_w = []
 trait_v = []
@@ -48,6 +50,55 @@ for gamma in gamma_vec:
         pop_w.append(population_data)
 
 num_tips = len(trait_tips)
+
+normed_trait = []
+normed_traitvar = []
+normed_pop = []
+
+for i in range(0,25):
+    normed_trait.append((trait_w[i]- np.min(trait_w[i])) / (np.max(trait_w[i]) - np.min(trait_w[i])))
+    normed_traitvar.append((trait_v[i]- np.min(trait_v[i])) / (np.max(trait_v[i]) - np.min(trait_v[i])))
+    normed_pop.append((pop_w[i] - np.min(pop_w[i])) / (np.max(pop_w[i]) - np.min(pop_w[i])))
+
+np.max(normed_pop)
+np.min(normed_pop)
+count = 0
+label_a = (['a=.001','a=.01','a=.01','a=.1','a=.5'])
+label_gamma = (['$\gamma$=.001','$\gamma$=.01','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5'])
+
+# Set up the matplotlib figure
+f, axes = plt.subplots(5, 5, figsize=(9, 9)) #, sharex=True, sharey=True
+
+# Rotate the starting point around the cubehelix hue circle
+for ax, s in zip(axes.flat, np.linspace(0, 3, 25)):
+    # Create a cubehelix colormap to use with kdeplot
+    cmap = sns.cubehelix_palette(start=s, light=1, as_cmap=True)
+    # trait = trait_w[count]
+    # traitvar = trait_v[count]
+    # pop = pop_w[count]
+    trait = normed_trait[count]
+    traitvar = normed_traitvar[count]
+    pop = normed_pop[count]
+    ax.set_xlim([0,1])
+    # Generate and plot a random bivariate dataset
+    sns.kdeplot(trait, traitvar, cmap=cmap, shade=True, cut=5, ax=ax)
+    if count in range(0,5):
+        ax.title.set_text(label_a[count])
+
+    if count in ([4,9,14,19,24]):
+        ax.set_ylabel(label_gamma[int(count/5)])
+        ax.yaxis.set_label_position("right")
+    count += 1
+f.text(0.5, 0, 'Trait', ha='center')
+f.text(0.02, 0.5, 'Trait variance', va='center', rotation='vertical')
+f.tight_layout()
+
+f.savefig('C:/Liang/Googlebox/Research/Project2/DVmodel/1stClusterStudy/traitvsvar.png')
+
+
+sns.jointplot(x, y, kind="kde", stat_func=None, color="#4CB391")
+
+
 #
 # gamma_label = np.repeat(['gamma=.001','gamma=.01'], (num-1)*num_tips*len(a_vec)) #,'$\gamma$=.01','$\gamma$=.1','$\gamma$=.5'
 # label_a = np.repeat(['a=.001','a=.01'], (num-1)*num_tips) #,'a=.01','a=.1','a=.5'
@@ -65,45 +116,6 @@ num_tips = len(trait_tips)
 # df_ori[(df_ori['gamma_label']== 'gamma=.01') & (df_ori['a_label']== 'a=.01')]['pop'].values]
 # np.max(x)
 # np.min(x)
-
-
-count = 0
-label_a = (['a=.001','a=.01','a=.01','a=.1','a=.5'])
-label_gamma = (['$\gamma$=.001','$\gamma$=.01','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5'])
-
-# Set up the matplotlib figure
-f, axes = plt.subplots(5, 5, figsize=(9, 9)) #, sharex=True, sharey=True
-
-# Rotate the starting point around the cubehelix hue circle
-for ax, s in zip(axes.flat, np.linspace(0, 3, 25)):
-    # Create a cubehelix colormap to use with kdeplot
-    cmap = sns.cubehelix_palette(start=s, light=1, as_cmap=True)
-    trait = trait_w[count]
-    traitvar = trait_v[count]
-    # Generate and plot a random bivariate dataset
-    sns.kdeplot(trait, traitvar, cmap=cmap, shade=True, cut=5, ax=ax)
-    # ax.set(xlim=(np.min(x), np.max(x)), ylim=(np.min(y), np.max(y)))
-    if count in range(0,5):
-        ax.title.set_text(label_a[count])
-
-    if count in ([0,5,10,15,20]):
-        ax.set_ylabel(label_gamma[int(count/5)])
-
-    count += 1
-
-#
-# for j in range(0,5):
-#     titles = axes.Axes.get_title()
-#     axes[j,0].title(label_a[j])
-#     axes[0,5*j].set(ylabel=label_gamma[j])
-
-f.tight_layout()
-f.savefig('C:/Liang/Googlebox/Research/Project2/DVmodel/1stClusterStudy/traitvsvar.png')
-
-
-sns.jointplot(x, y, kind="kde", stat_func=None, color="#4CB391")
-
-
 
 
 tvmap = sns.FacetGrid(df_ori, col = "gamma_label"  ,row="label", hue="label", aspect=15, size=.5,
