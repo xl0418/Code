@@ -81,7 +81,7 @@ for ax, s in zip(axes.flat, np.linspace(0, 3, 25)):
     pop = normed_pop[count]
     ax.set_xlim([0,1])
     # Generate and plot a random bivariate dataset
-    sns.kdeplot(trait, traitvar, cmap=cmap, shade=True, cut=5, ax=ax)
+    sns.kdeplot(trait, pop, cmap=cmap, shade=True, cut=5, ax=ax)
     if count in range(0,5):
         ax.title.set_text(label_a[count])
 
@@ -90,13 +90,13 @@ for ax, s in zip(axes.flat, np.linspace(0, 3, 25)):
         ax.yaxis.set_label_position("right")
     count += 1
 f.text(0.5, 0, 'Trait', ha='center')
-f.text(0.02, 0.5, 'Trait variance', va='center', rotation='vertical')
+f.text(0.01, 0.5, 'Population', va='center', rotation='vertical')
 f.tight_layout()
 
 f.savefig('C:/Liang/Googlebox/Research/Project2/DVmodel/1stClusterStudy/traitvsvar.png')
 
 
-sns.jointplot(x, y, kind="kde", stat_func=None, color="#4CB391")
+sns.jointplot(trait_w[5], trait_v[5], kind="kde", stat_func=None, color="#4CB391")
 
 
 #

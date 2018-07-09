@@ -3,13 +3,13 @@ import numpy as np
 
 
 # Natural selection function
-def ga(gamma, theta, zi):
-    return -gamma * (theta - zi) ** 2
+# def ga(gamma, theta, zi):
+#     return -gamma * (theta - zi) ** 2
 
 
 # Dynamic carrying capacity
-def Kd(gamma_K, theta, zi, K):
-    return max(K * np.exp(-gamma_K * (theta - zi) ** 2), 1)
+# def Kd(gamma_K, theta, zi, K):
+#     return max(K * np.exp(-gamma_K * (theta - zi) ** 2), 1)
 
 
 # Competition function
@@ -29,7 +29,6 @@ def sigma(a, zi, zj, nj):
     return zi_ret
 
 
-# Derivative of the competition function
 def sigmasqr(a, zi, zj, nj):
     zi_ret = np.ndarray((1, len(zi)))
     for n1 in range(len(zi)):
@@ -39,21 +38,21 @@ def sigmasqr(a, zi, zj, nj):
 
 
 # Delta function
-def Delta(a, zi, zj, nj):
-    zi_ret = np.ndarray((1, len(zi)))
-    for n1 in range(len(zi)):
-        zi_ret[0, n1] = np.sum(
-            -2 * a + 4 * a ** 2 * (zi[n1] - np.array(zj)) ** 2 * np.exp(-a * (zi[n1] - np.array(zj)) ** 2)
-            * np.array(nj))
-    return zi_ret
+# def Delta(a, zi, zj, nj):
+#     zi_ret = np.ndarray((1, len(zi)))
+#     for n1 in range(len(zi)):
+#         zi_ret[0, n1] = np.sum(
+#             -2 * a + 4 * a ** 2 * (zi[n1] - np.array(zj)) ** 2 * np.exp(-a * (zi[n1] - np.array(zj)) ** 2)
+#             * np.array(nj))
+#     return zi_ret
 
 
-def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.01,scalor = 1000, K = 100000, nu = 0.0001, Vmax = 1 ):
+def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.01,scalar = 1000, K = 100000, nu = 0.0001, Vmax = 1 ):
     valid = True
     if replicate > 0:
         np.random.seed(replicate)  # set random seed
     file = file
-    # load data
+    # load tree data
     timelist = np.genfromtxt(file+'timelist.csv', delimiter=',')
     timebranch = np.genfromtxt(file+'timebranch.csv', delimiter=',')
     timeend = np.genfromtxt(file+'timeend.csv', delimiter=',')
@@ -73,7 +72,7 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
     evo_timelist = timelist[:,1]
     evo_timelist = np.delete(evo_timelist,0)
     evo_timelist = max(evo_timelist)-evo_timelist
-    evo_timelist = evo_timelist * scalor
+    evo_timelist = evo_timelist * scalar
     evo_timelist = evo_timelist.astype(int)
 
     timebranch = timebranch[:,1]
@@ -94,29 +93,25 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
     total_species = len(speciate_time)
 
     # Initialize trait evolution and population evolution matrices
-    trait_RI_dr = np.zeros((evo_time + 1, total_species))
-    population_RI_dr = np.zeros((evo_time + 1, total_species))
-    phynotypictrait_var = np.zeros((evo_time + 1, total_species))
+    trait_RI_dr = np.zeros((evo_time + 1, total_species))    # trait
+    population_RI_dr = np.zeros((evo_time + 1, total_species))   # population
+    V = np.zeros((evo_time + 1, total_species))          # trait vairance
 
     #  initialize condition for species trait and population
-    trait_RI_dr[0, (0,1)] = 0
-    # print(trait_RI_dr[0])
+    trait_RI_dr[0, (0,1)] = 0    #trait for species
     mu_pop, sigma_pop = 500, 10  # mean and standard deviation
     population_RI_dr[0, (0,1)] = np.random.normal(mu_pop, sigma_pop, 2)
-    # print(population_RI_dr[0])
-    V = np.zeros((evo_time + 1, total_species))
     V[0] = (1 / total_species)
     # Existing species matrix
     existing_species = traittable
 
     for i in range(evo_time):
-        # print(i)
         num_event = len(np.where(evo_timelist <= i)[0])
         node = num_event - 2
         index_existing_species = np.where(existing_species[node] == 1)[0]
 
-        # RI dynamic r model
-        K_RI_dr = K
+        # trait-population coevolution model
+        K_RI_dr = K   # constant carrying capacity
         Beta_RI_dr = beta(a=a, zi=trait_RI_dr[i, index_existing_species], zj=trait_RI_dr[i, index_existing_species],
                           nj=population_RI_dr[i, index_existing_species])
         Sigma_RI_dr = sigma(a=a, zi=trait_RI_dr[i, index_existing_species], zj=trait_RI_dr[i, index_existing_species],
@@ -135,20 +130,19 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
                                                           np.exp(-gamma1 * (
                                                                       theta - trait_RI_dr[i, index_existing_species]) ** 2 +
                                                                  (1 - Beta_RI_dr / K_RI_dr))
-                                                               #  + np.random.normal(0, delta_pop,
-                                                                #                    len(index_existing_species)))
+
         population_RI_dr[i + 1, index_existing_species] = np.random.poisson(lam = possion_lambda[0],size = (1,len(index_existing_species)))
-        V[i + 1, index_existing_species] = V[i, index_existing_species] + V[i, index_existing_species] ** 2 * (
-                    -2 * gamma1 + 4 * gamma1 ** 2 * (theta - trait_RI_dr[i, index_existing_species]) ** 2 +
-                    1 / K_RI_dr *  # V^2 w''/w
-                    (Sigma_RI_dr - Sigmasqr_RI_dr) + 4 * gamma1 / K_RI_dr * (
-                            theta - trait_RI_dr[i, index_existing_species]) * Sigma_RI_dr +
-                    Sigma_RI_dr ** 2 / K_RI_dr ** 2) - \
-                                           V[i, index_existing_species] / 2 + 2 * population_RI_dr[
-                                               i, index_existing_species] * nu * Vmax / (
+        V[i + 1, index_existing_species] = V[i, index_existing_species] / 2 +\
+                                           2 * population_RI_dr[i, index_existing_species] * nu * Vmax / (
                                                    1 + 4 * population_RI_dr[
-                                               i, index_existing_species] * nu)  # loss due to sexual selection; gain from mutation
-        phynotypictrait_var[i+1,index_existing_species] = var_trait + V[i, index_existing_species]
+                                               i, index_existing_species] * nu) +\
+                                           V[i, index_existing_species] ** 2 * (
+                                            -2 * gamma1 + 4 * gamma1 ** 2 * (theta - trait_RI_dr[i, index_existing_species]) ** 2 +
+                                            1 / K_RI_dr *
+                                            (Sigma_RI_dr - Sigmasqr_RI_dr) + 4 * gamma1 / K_RI_dr * (
+                                                    theta - trait_RI_dr[i, index_existing_species]) * Sigma_RI_dr +
+                                            Sigma_RI_dr ** 2 / K_RI_dr ** 2)
+
         # population_RI_dr[i + 1, np.where(population_RI_dr[i + 1] < 1)] = 0
         ext_index_RI_dr = np.where(population_RI_dr[i + 1,index_existing_species] == 0)[0]
         negative_v = np.where(V[i + 1, index_existing_species] < 0)[0]

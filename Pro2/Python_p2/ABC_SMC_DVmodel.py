@@ -32,7 +32,7 @@ def PosNormal(mean, sigma):
     x = np.random.normal(mean,sigma,1)
     return(x if x>=0 else PosNormal(mean,sigma))
 
-def calibrication(samplesize, priorpar, obs, file, mode = 'uni'):
+def calibration(samplesize, priorpar, obs, file, mode = 'uni'):
     collection = np.zeros(shape=(samplesize,4))
     if mode == 'uni':
         uniform_gamma = np.random.uniform(priorpar[0],priorpar[1],samplesize)
