@@ -13,16 +13,19 @@ par_obs = np.array([0.01,0.1])
 # Observation generated
 #  load the data for a given tree
 file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
-simresult = DVtraitsim_tree(file = file,replicate = 3, gamma1 = par_obs[0], a = par_obs[1],scalor = 1000)
+simresult = DVtraitsim_tree(file = file,replicate = 3, gamma1 = par_obs[0], a = par_obs[1],scalar = 1000)
 evo_time, total_species = simresult[0].shape
 evo_time = evo_time-1
 trait_RI_dr = simresult[0]
 population_RI_dr = simresult[1]
+traitvar = simresult[3]
 # empirical data for trait and population
 trait_dr_tips = trait_RI_dr[evo_time,:][~np.isnan(trait_RI_dr[evo_time,:])]
 population_tips = population_RI_dr[evo_time,:][~np.isnan(population_RI_dr[evo_time,:])]
+traitvar = traitvar[evo_time,:][~np.isnan(traitvar[evo_time,:])]
+
 # observation data
-obs = np.array([trait_dr_tips,population_tips])
+obs = np.array([trait_dr_tips,population_tips,traitvar])
 
 
 epsilon = 30

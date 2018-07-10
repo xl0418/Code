@@ -20,12 +20,12 @@ def single_trait_sim(par,file,replicate):
     traitVar = sim[3]
     evo_time, total_species = sim[0].shape
     evo_time = evo_time - 1
-    valid = sim[2]
+    # valid = sim[2]
     # empirical data for trait and population
     trait_dr_tips = trait_RI_dr[evo_time, :][~np.isnan(trait_RI_dr[evo_time, :])]
     population_tips = population_RI_dr[evo_time, :][~np.isnan(population_RI_dr[evo_time, :])]
     traitVar_tips = traitVar[evo_time, :][~np.isnan(traitVar[evo_time, :])]
-    simtips = np.array([trait_dr_tips,population_tips,valid,traitVar_tips])
+    simtips = np.array([trait_dr_tips,population_tips,traitVar_tips])
     return simtips
 
 def PosNormal(mean, sigma):
@@ -61,13 +61,13 @@ def calibration(samplesize, priorpar, obs, file, mode = 'uni'):
             par_cal = np.zeros(2)
             par_cal[0] = uniform_gamma[i]
             par_cal[1] = uniform_a[i]
-            sample_cal =  single_trait_sim(par = par_cal,file = file)
-            if sample_cal[2]:
-                diff =  np.linalg.norm(sample_cal[0]-obs[0])
-                diff_sort = np.linalg.norm(np.sort(sample_cal[0])-np.sort(obs[0]))
-            else:
-                diff = np.inf
-                diff_sort = np.inf
+            sample_cal =  single_trait_sim(par = par_cal,file = file,replicate=0)
+            samplearray = np.array([sample_cal[0], sample_cal[2]])
+            obsarray = np.array([obs[0], obs[2]])
+            diff = np.linalg.norm(samplearray - obsarray)
+            samplearray_sort = samplearray[:, samplearray[0, :].argsort()]
+            obsarray_sort = obsarray[:, obsarray[0, :].argsort()]
+            diff_sort = np.linalg.norm(samplearray_sort - obsarray_sort)
             collection[i] = np.concatenate((par_cal,[diff],[diff_sort]))
         return collection
 
@@ -75,23 +75,27 @@ def calibration(samplesize, priorpar, obs, file, mode = 'uni'):
 
 
 def ABC_acceptance(par,delta,obs,sort, file):
-    sample = single_trait_sim(par = par,file = file)
-    if sample[2]:
-        if sort == 0:
-            diff = np.linalg.norm(sample[0] - obs[0])
-            if diff < delta:
-                return True
-            else:
-                return False
+    sample = single_trait_sim(par = par,file = file,replicate=0)
+    if sort == 0:
+        samplearray = np.array([sample[0],sample[2]])
+        obsarray = np.array([obs[0],obs[2]])
+        diff = np.linalg.norm(samplearray - obsarray)
+        if diff < delta:
+            return True
         else:
-            diff_sort = np.linalg.norm(np.sort(sample[0]) - np.sort(obs[0]))
-            if diff_sort < delta:
-                return True
-            else:
-                return False
-
+            return False
     else:
-        return False
+        samplearray = np.array([sample[0], sample[2]])
+        obsarray = np.array([obs[0], obs[2]])
+        samplearray_sort = samplearray[:,samplearray[0,:].argsort()]
+        obsarray_sort = obsarray[:,obsarray[0,:].argsort()]
+        diff_sort = np.linalg.norm(samplearray_sort-obsarray_sort)
+        if diff_sort < delta:
+            return True
+        else:
+            return False
+
+
 
 
 def MCMC_ABC(startvalue, iterations,delta,obs,sort,priorpar, file,mode = 'uni'):
@@ -172,7 +176,7 @@ def SMC_ABC(timestep, particlesize, obs, epsilon, prior, file, sort = 0):
                     propose_a = abs(np.random.normal(a_prior_mean,a_prior_var))
                     par = [propose_gamma,propose_a]
                     # simulate under the parameters
-                    sample = single_trait_sim(par = par, file = file)
+                    sample = single_trait_sim(par = par, file = file,replicate=0)
                     if sample[2]:
                         # calculate the distance between simulation and obs
                         if sort == 0:
@@ -211,7 +215,7 @@ def SMC_ABC(timestep, particlesize, obs, epsilon, prior, file, sort = 0):
                     # draw new a with mean and variance
                     propose_a = abs(np.random.normal(propose_a0,np.sqrt(2* a_pre_var)))
                     par = [propose_gamma,propose_a]
-                    sample = single_trait_sim(par, file = file)
+                    sample = single_trait_sim(par, file = file,replicate=0)
                     if sample[2]:
                         if sort == 0:
                             diff = np.linalg.norm(sample[0] - obs[0])
@@ -288,24 +292,24 @@ def SMC_ABC_MS(timestep, particlesize, obs, epsilon, prior, file, sort = 0):
                         propose_a = 0
                         par = [propose_gamma, propose_a]
                         # simulate under the parameters
-                        sample = single_trait_sim(par=par, file=file)
+                        sample = single_trait_sim(par=par, file=file,replicate=0)
                     elif propose_model == 1:  # Competition model
                         # draw parameters from prior information
                         propose_gamma = 0
                         par = [propose_gamma, propose_a]
                         # simulate under the parameters
-                        sample = single_trait_sim(par=par, file=file)
+                        sample = single_trait_sim(par=par, file=file,replicate=0)
                     elif propose_model == 2: # OU model / Natural selection model
                         # draw parameters from prior information
                         propose_a = 0
                         par = [propose_gamma, propose_a]
                         # simulate under the parameters
-                        sample = single_trait_sim(par=par, file=file)
+                        sample = single_trait_sim(par=par, file=file,replicate=0)
                     elif propose_model == 3: # Natural selection & competition model
                         # draw parameters from prior information
                         par = [propose_gamma,propose_a]
                         # simulate under the parameters
-                        sample = single_trait_sim(par = par, file = file)
+                        sample = single_trait_sim(par = par, file = file,replicate=0)
                     if sample[2]:
                         # calculate the distance between simulation and obs
                         if sort == 0:
@@ -352,24 +356,24 @@ def SMC_ABC_MS(timestep, particlesize, obs, epsilon, prior, file, sort = 0):
                         propose_a = 0
                         par = [propose_gamma, propose_a]
                         # simulate under the parameters
-                        sample = single_trait_sim(par=par, file=file)
+                        sample = single_trait_sim(par=par, file=file,replicate=0)
                     elif propose_model == 1:  # Competition model
                         # draw parameters from prior information
                         propose_gamma = 0
                         par = [propose_gamma, propose_a]
                         # simulate under the parameters
-                        sample = single_trait_sim(par=par, file=file)
+                        sample = single_trait_sim(par=par, file=file,replicate=0)
                     elif propose_model == 2:  # OU model / Natural selection model
                         # draw parameters from prior information
                         propose_a = 0
                         par = [propose_gamma, propose_a]
                         # simulate under the parameters
-                        sample = single_trait_sim(par=par, file=file)
+                        sample = single_trait_sim(par=par, file=file,replicate=0)
                     elif propose_model == 3:  # Natural selection & competition model
                         # draw parameters from prior information
                         par = [propose_gamma, propose_a]
                         # simulate under the parameters
-                        sample = single_trait_sim(par=par, file=file)
+                        sample = single_trait_sim(par=par, file=file,replicate=0)
                     if sample[2]:
                         if sort == 0:
                             diff = np.linalg.norm(sample[0] - obs[0])

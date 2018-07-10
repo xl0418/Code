@@ -168,6 +168,10 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
             extinct_species = int(np.where(extinct_time == (i+1))[0])
             trait_RI_dr[i+1, extinct_species] = None
             population_RI_dr[i+1, extinct_species] = 0
-    # trait_RI_dr[np.where(trait_RI_dr == 0)[0],np.where(trait_RI_dr == 0)[1]] = None
+    row_ext = np.where(population_RI_dr == 0)[0]
+    col_ext = np.where(population_RI_dr == 0)[1]
+    trait_RI_dr[row_ext,col_ext] = None
+    population_RI_dr[row_ext,col_ext] = None
+    V[row_ext,col_ext] = None
     return trait_RI_dr, population_RI_dr, valid , V
 
