@@ -34,6 +34,10 @@ def PosNormal(mean, sigma):
 
 def calibration(samplesize, priorpar, obs, file, mode = 'uni'):
     collection = np.zeros(shape=(samplesize,4))
+    cali_traitdata = ([])
+    cali_popdata = ([])
+    cali_vardata = ([])
+
     if mode == 'uni':
         uniform_gamma = np.random.uniform(priorpar[0],priorpar[1],samplesize)
         uniform_a = np.random.uniform(priorpar[2],priorpar[3],samplesize)
@@ -69,6 +73,15 @@ def calibration(samplesize, priorpar, obs, file, mode = 'uni'):
             obsarray_sort = obsarray[:, obsarray[0, :].argsort()]
             diff_sort = np.linalg.norm(samplearray_sort - obsarray_sort)
             collection[i] = np.concatenate((par_cal,[diff],[diff_sort]))
+            cali_traitdata.append(sample_cal[0])
+            cali_popdata.append(sample_cal[1])
+            cali_vardata.append(sample_cal[2])
+        cali_traitdataarray = np.asarray(cali_traitdata)
+        cali_popdataarray = np.asarray(cali_popdata)
+        cali_vardataarray = np.asarray(cali_vardata)
+        calipar=collection[:,:2]
+        calidata_file = file + 'calibration_data'
+        np.savez(calidata_file,calipar = calipar, calitrait=cali_traitdataarray, calipop =cali_popdataarray, calivar=cali_vardataarray)
         return collection
 
 
@@ -177,14 +190,15 @@ def SMC_ABC(timestep, particlesize, obs, epsilon, prior, file, sort = 0):
                     par = [propose_gamma,propose_a]
                     # simulate under the parameters
                     sample = single_trait_sim(par = par, file = file,replicate=0)
-                    if sample[2]:
-                        # calculate the distance between simulation and obs
-                        if sort == 0:
-                            diff = np.linalg.norm(sample[0] - obs[0])
-                        else:
-                            diff = np.linalg.norm(np.sort(sample[0]) - np.sort(obs[0]))
+                    samplearray = np.array([sample[0], sample[2]])
+                    obsarray = np.array([obs[0], obs[2]])
+                    # calculate the distance between simulation and obs
+                    if sort == 0:
+                        diff = np.linalg.norm(samplearray - obsarray)
                     else:
-                        diff = np.inf
+                        samplearray_sort = samplearray[:, samplearray[0, :].argsort()]
+                        obsarray_sort = obsarray[:, obsarray[0, :].argsort()]
+                        diff = np.linalg.norm(samplearray_sort - obsarray_sort)
                     d[t,i] = diff
                 # record the accepted values
                 gamma[t, i] = propose_gamma
@@ -216,14 +230,16 @@ def SMC_ABC(timestep, particlesize, obs, epsilon, prior, file, sort = 0):
                     propose_a = abs(np.random.normal(propose_a0,np.sqrt(2* a_pre_var)))
                     par = [propose_gamma,propose_a]
                     sample = single_trait_sim(par, file = file,replicate=0)
-                    if sample[2]:
-                        if sort == 0:
-                            diff = np.linalg.norm(sample[0] - obs[0])
-                        else:
-                            diff = np.linalg.norm(np.sort(sample[0]) - np.sort(obs[0]))
+                    samplearray = np.array([sample[0], sample[2]])
+                    obsarray = np.array([obs[0], obs[2]])
+                    # calculate the distance between simulation and obs
+                    if sort == 0:
+                        diff = np.linalg.norm(samplearray - obsarray)
                     else:
-                        diff = np.inf
-                    d[t,i] = diff
+                        samplearray_sort = samplearray[:, samplearray[0, :].argsort()]
+                        obsarray_sort = obsarray[:, obsarray[0, :].argsort()]
+                        diff = np.linalg.norm(samplearray_sort - obsarray_sort)
+                    d[t, i] = diff
                 gamma[t, i] = propose_gamma
                 a[t,i] = propose_a
                 # compute new weights for gamma and a
@@ -310,15 +326,17 @@ def SMC_ABC_MS(timestep, particlesize, obs, epsilon, prior, file, sort = 0):
                         par = [propose_gamma,propose_a]
                         # simulate under the parameters
                         sample = single_trait_sim(par = par, file = file,replicate=0)
-                    if sample[2]:
-                        # calculate the distance between simulation and obs
-                        if sort == 0:
-                            diff = np.linalg.norm(sample[0] - obs[0])
-                        else:
-                            diff = np.linalg.norm(np.sort(sample[0]) - np.sort(obs[0]))
+
+                    samplearray = np.array([sample[0], sample[2]])
+                    obsarray = np.array([obs[0], obs[2]])
+                    # calculate the distance between simulation and obs
+                    if sort == 0:
+                        diff = np.linalg.norm(samplearray - obsarray)
                     else:
-                        diff = np.inf
-                    d[t,i] = diff
+                        samplearray_sort = samplearray[:, samplearray[0, :].argsort()]
+                        obsarray_sort = obsarray[:, obsarray[0, :].argsort()]
+                        diff = np.linalg.norm(samplearray_sort - obsarray_sort)
+                    d[t, i] = diff
                 # record the accepted values
                 gamma[t, i] = propose_gamma
                 a[t,i] = propose_a
@@ -374,14 +392,16 @@ def SMC_ABC_MS(timestep, particlesize, obs, epsilon, prior, file, sort = 0):
                         par = [propose_gamma, propose_a]
                         # simulate under the parameters
                         sample = single_trait_sim(par=par, file=file,replicate=0)
-                    if sample[2]:
-                        if sort == 0:
-                            diff = np.linalg.norm(sample[0] - obs[0])
-                        else:
-                            diff = np.linalg.norm(np.sort(sample[0]) - np.sort(obs[0]))
+                    samplearray = np.array([sample[0], sample[2]])
+                    obsarray = np.array([obs[0], obs[2]])
+                    # calculate the distance between simulation and obs
+                    if sort == 0:
+                        diff = np.linalg.norm(samplearray - obsarray)
                     else:
-                        diff = np.inf
-                    d[t,i] = diff
+                        samplearray_sort = samplearray[:, samplearray[0, :].argsort()]
+                        obsarray_sort = obsarray[:, obsarray[0, :].argsort()]
+                        diff = np.linalg.norm(samplearray_sort - obsarray_sort)
+                    d[t, i] = diff
                 gamma[t, i] = propose_gamma
                 a[t,i] = propose_a
                 model[t,i] = propose_model

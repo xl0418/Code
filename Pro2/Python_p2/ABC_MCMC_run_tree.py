@@ -37,7 +37,11 @@ collection = calibration(samplesize = cal_size, priorpar = priorpar, obs = obs, 
 file1 = file + 'cal10w_DV.txt'
 np.savetxt(file1,collection)
 collection = np.loadtxt("c:/Liang/Googlebox/Research/Project2/DVmodel/cal4w_DVseed13.txt")
-
+# calidata_file = file + 'calibration_data.npz'
+# cali = np.load(calidata_file)
+# cali['calitrait']
+# cali['calipop']
+# cali['calivar']
 
 #TEST2: Normal prior distribution example
 # priorpar = [0.1,0.2,0.1,0.3]
