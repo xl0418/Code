@@ -32,24 +32,24 @@ def PosNormal(mean, sigma):
     x = np.random.normal(mean,sigma,1)
     return(x if x>=0 else PosNormal(mean,sigma))
 
-def calibration(samplesize, priorpar, obs, file, mode = 'uni'):
+def calibration(samplesize, priorpar, obs, file, calmode = 'uni'):
     collection = np.zeros(shape=(samplesize,4))
     cali_traitdata = ([])
     cali_popdata = ([])
     cali_vardata = ([])
 
-    if mode == 'uni':
+    if calmode == 'uni':
         uniform_gamma = np.random.uniform(priorpar[0],priorpar[1],samplesize)
         uniform_a = np.random.uniform(priorpar[2],priorpar[3],samplesize)
         do = True
-    elif mode == 'nor':
+    elif calmode == 'nor':
         uniform_gamma = np.zeros(samplesize)
         uniform_a = np.zeros(samplesize)
         for i in range(samplesize):
             uniform_gamma[i] = PosNormal(priorpar[0],priorpar[1])
             uniform_a[i] = PosNormal(priorpar[2],priorpar[3])
         do = True
-    elif mode == 'self':
+    elif calmode == 'self':
         uniform_gamma = np.repeat(priorpar[0],samplesize)
         uniform_a = np.repeat(priorpar[1],samplesize)
         do = True
@@ -66,13 +66,13 @@ def calibration(samplesize, priorpar, obs, file, mode = 'uni'):
             par_cal[0] = uniform_gamma[i]
             par_cal[1] = uniform_a[i]
             sample_cal =  single_trait_sim(par = par_cal,file = file,replicate=0)
-            samplearray = np.array([sample_cal[0], sample_cal[2]])
-            obsarray = np.array([obs[0], obs[2]])
-            diff = np.linalg.norm(samplearray - obsarray)
-            samplearray_sort = samplearray[:, samplearray[0, :].argsort()]
-            obsarray_sort = obsarray[:, obsarray[0, :].argsort()]
-            diff_sort = np.linalg.norm(samplearray_sort - obsarray_sort)
-            collection[i] = np.concatenate((par_cal,[diff],[diff_sort]))
+            # samplearray = np.array([sample_cal[0], sample_cal[2]])
+            # obsarray = np.array([obs[0], obs[2]])
+            # diff = np.linalg.norm(samplearray - obsarray)
+            # samplearray_sort = samplearray[:, samplearray[0, :].argsort()]
+            # obsarray_sort = obsarray[:, obsarray[0, :].argsort()]
+            # diff_sort = np.linalg.norm(samplearray_sort - obsarray_sort)
+            collection[i] = np.concatenate((par_cal))  #,[diff],[diff_sort]
             cali_traitdata.append(sample_cal[0])
             cali_popdata.append(sample_cal[1])
             cali_vardata.append(sample_cal[2])
@@ -87,12 +87,20 @@ def calibration(samplesize, priorpar, obs, file, mode = 'uni'):
 
 
 
-def ABC_acceptance(par,delta,obs,sort, file):
+def ABC_acceptance(par,delta,obs,sort, file,abcmode='mean'):
     sample = single_trait_sim(par = par,file = file,replicate=0)
     if sort == 0:
         samplearray = np.array([sample[0],sample[2]])
         obsarray = np.array([obs[0],obs[2]])
-        diff = np.linalg.norm(samplearray - obsarray)
+        if abcmode == 'mean':
+            diff = np.linalg.norm(sample[0] - obs[0])
+        elif abcmode == 'variance':
+            diff = np.linalg.norm(sample[2] - obs[2])
+        elif abcmode == 'both':
+            diff = np.linalg.norm(samplearray - obsarray)
+        else:
+            print('Please indicate mode')
+            diff = np.inf
         if diff < delta:
             return True
         else:
@@ -102,7 +110,15 @@ def ABC_acceptance(par,delta,obs,sort, file):
         obsarray = np.array([obs[0], obs[2]])
         samplearray_sort = samplearray[:,samplearray[0,:].argsort()]
         obsarray_sort = obsarray[:,obsarray[0,:].argsort()]
-        diff_sort = np.linalg.norm(samplearray_sort-obsarray_sort)
+        if abcmode == 'mean':
+            diff_sort = np.linalg.norm(np.sort(sample[0]) - np.sort(obs[0]))
+        elif abcmode == 'variance':
+            diff_sort = np.linalg.norm(np.sort(sample[2]) - np.sort(obs[2]))
+        elif abcmode == 'both':
+            diff_sort = np.linalg.norm(samplearray_sort - obsarray_sort)
+        else:
+            print('Please indicate mode')
+            diff_sort = np.inf
         if diff_sort < delta:
             return True
         else:
@@ -111,24 +127,24 @@ def ABC_acceptance(par,delta,obs,sort, file):
 
 
 
-def MCMC_ABC(startvalue, iterations,delta,obs,sort,priorpar, file,mode = 'uni'):
+def MCMC_ABC(startvalue, iterations,delta,obs,sort,priorpar, file, mcmcmode = 'uni',abcmode='mean'):
     tic = timeit.default_timer()
     MCMC = np.zeros(shape=(iterations+1,2))
     MCMC[0,] = startvalue
     par_jump = np.empty(2)
-    if mode == 'uni':
+    if mcmcmode == 'uni':
         for i in range(iterations):
             par_jump[0] = np.random.uniform(priorpar[0],priorpar[1])
             par_jump[1] = np.random.uniform(priorpar[2],priorpar[3])
 
-            if (ABC_acceptance(par_jump,delta = delta, obs = obs,sort = sort, file = file)):
+            if (ABC_acceptance(par_jump,delta = delta, obs = obs,sort = sort, file = file,abcmode=abcmode)):
                 MCMC[i+1,] = par_jump
                 print("MCMC : %d Accepted" % (i+1))
 
             else:
                 MCMC[i + 1,] = MCMC[i ,]
                 print("MCMC : %d Rejected" % (i+1))
-    elif mode == 'nor':
+    elif mcmcmode == 'nor':
         for i in range(iterations):
             par_jump[0] = abs(np.random.normal(loc=MCMC[i, 0], scale=0.01))
             par_jump[1] = abs(np.random.normal(loc=MCMC[i, 1], scale=0.01))
@@ -141,7 +157,8 @@ def MCMC_ABC(startvalue, iterations,delta,obs,sort,priorpar, file,mode = 'uni'):
 
             pro_ratio = (pro_gamma1*pro_a1)/(pro_gamma2*pro_a2)
             accept_criterion = np.min([1,pro_ratio])
-            if ABC_acceptance(par = par_jump, delta=delta, obs=obs, sort=sort, file = file) and (pro <= accept_criterion):
+            if ABC_acceptance(par = par_jump, delta=delta, obs=obs, sort=sort, file = file,abcmode=abcmode
+                              ) and (pro <= accept_criterion):
                 MCMC[i + 1,] = par_jump
                 print("MCMC : %d Accepted" % (i + 1))
             else:
