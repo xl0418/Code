@@ -32,8 +32,8 @@ def PosNormal(mean, sigma):
     x = np.random.normal(mean,sigma,1)
     return(x if x>=0 else PosNormal(mean,sigma))
 
-def calibration(samplesize, priorpar, obs, file, calmode = 'uni'):
-    collection = np.zeros(shape=(samplesize,4))
+def calibration(samplesize, priorpar, treefile,calidata_file, calmode = 'uni'):
+    collection = np.zeros(shape=(samplesize,2))
     cali_traitdata = ([])
     cali_popdata = ([])
     cali_vardata = ([])
@@ -65,14 +65,14 @@ def calibration(samplesize, priorpar, obs, file, calmode = 'uni'):
             par_cal = np.zeros(2)
             par_cal[0] = uniform_gamma[i]
             par_cal[1] = uniform_a[i]
-            sample_cal =  single_trait_sim(par = par_cal,file = file,replicate=0)
+            sample_cal =  single_trait_sim(par = par_cal,file = treefile,replicate=0)
             # samplearray = np.array([sample_cal[0], sample_cal[2]])
             # obsarray = np.array([obs[0], obs[2]])
             # diff = np.linalg.norm(samplearray - obsarray)
             # samplearray_sort = samplearray[:, samplearray[0, :].argsort()]
             # obsarray_sort = obsarray[:, obsarray[0, :].argsort()]
             # diff_sort = np.linalg.norm(samplearray_sort - obsarray_sort)
-            collection[i] = np.concatenate((par_cal))  #,[diff],[diff_sort]
+            collection[i] = par_cal  #,[diff],[diff_sort]
             cali_traitdata.append(sample_cal[0])
             cali_popdata.append(sample_cal[1])
             cali_vardata.append(sample_cal[2])
@@ -80,7 +80,6 @@ def calibration(samplesize, priorpar, obs, file, calmode = 'uni'):
         cali_popdataarray = np.asarray(cali_popdata)
         cali_vardataarray = np.asarray(cali_vardata)
         calipar=collection[:,:2]
-        calidata_file = file + 'calibration_data'
         np.savez(calidata_file,calipar = calipar, calitrait=cali_traitdataarray, calipop =cali_popdataarray, calivar=cali_vardataarray)
         return collection
 
