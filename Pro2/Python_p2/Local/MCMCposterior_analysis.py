@@ -6,7 +6,7 @@ from sklearn.neighbors import KernelDensity
 # Observation parameters [gamma,a]
 par_obs = np.array([0.001,0.1])
 
-cal_size = 40000
+cal_size = 20000
 dir = 'c:/Liang/Googlebox/Research/Project2/DVmodel/1stClusterStudy/'
 calfile = dir+'cal4w_DVseed13.txt'
 collection = np.loadtxt(calfile)
@@ -105,13 +105,13 @@ fig_filter.savefig(figfil, dpi=fig_filter.dpi)
 # ABC_MCMC analysis
 
 posfile = dir + 'posterior4w_DV.txt'
-iterations = 40000
+iterations = 5000
 # Statistic
 posterior = np.loadtxt(posfile)
 
 # Distribution plots for parameters
-gamma_samples = posterior[5000::,0]
-a_samples = posterior[5000::, 1]
+gamma_samples = posterior[::10,0]
+a_samples = posterior[::10, 1]
 figdis = plt.figure(figsize=(12, 8))
 
 plt.subplot(211)

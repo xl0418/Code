@@ -69,8 +69,8 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
 
         var_trait = a
         trait_RI_dr[i + 1, index_existing_species] = trait_RI_dr[i, index_existing_species] + gamma1 * (theta -
-                                                                    trait_RI_dr[i, index_existing_species]) +\
-                                                     np.random.normal(0, var_trait, len(index_existing_species))
+                                                                    trait_RI_dr[i, index_existing_species]) + \
+                                                     var_trait*np.random.normal(0, 1, len(index_existing_species))
         possion_lambda = population_RI_dr[i, index_existing_species] * r * \
                                                           np.exp(1 - np.sum(np.array(population_RI_dr[i, index_existing_species])) / K_RI_dr)
 

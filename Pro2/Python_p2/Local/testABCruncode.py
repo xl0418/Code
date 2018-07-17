@@ -53,7 +53,7 @@ for i in range(0,cal_size):
     coll1[i] = np.concatenate((calipara1[i],[meandiff_trait],[meandiff_trait_sort],[meandiff_var],[meandiff_var_sort]))
 
 # Data filtered by trait mean
-threshold = 0.1
+threshold = 0.01
 num = threshold*cal_size-1
 # ln = 2: unsorted distance; ln = 3: sorted distance.
 ln=3
@@ -63,9 +63,9 @@ startvalue_par = coll1[idx,:2]
 
 filtered_coll1 = coll1[coll1[:,ln]<=delta]
 priorpar_var = [np.mean(filtered_coll1[:,0]),np.std(filtered_coll1[:,0]),np.mean(filtered_coll1[:,1]),np.std(filtered_coll1[:,1])]
-
+priorpar_var[3] = 1
 # ABC_MCMC step
-iterations = 50000
+iterations = 5000
 posterior = MCMC_ABC(startvalue= startvalue_par, iterations = iterations, delta = delta, obs = obs,sort = 1,
                      priorpar=priorpar_var, file = file, mcmcmode = 'nor')
 file2 = file + 'testABCMCMC.txt'

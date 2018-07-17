@@ -1,15 +1,13 @@
 import numpy as np
-import sys
-sys.path.append('C:/Liang/Code/Pro2/Python_p2')
-from ABC_SMC_DVmodel import SMC_ABC, single_trait_sim,calibration, MCMC_ABC
-from DV_model_sim_along_phy import DVtraitsim_tree
+from ABC_SMC_DVmodel1 import SMC_ABC, single_trait_sim,calibration, MCMC_ABC
+from DV_model_sim_along_phy1 import DVtraitsim_tree
 
 # Observation parameters [gamma,a]
 par_obs = np.array([0.001,0.1])
 
 # Observation generated
 #  load the data for a given tree
-file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
+file ='/home/p274981/Python_p2/DVmodel/'
 simresult = DVtraitsim_tree(file = file,replicate = 13, gamma1 = par_obs[0], a = par_obs[1],scalar = 1000)
 evo_time, total_species = simresult[0].shape
 evo_time = evo_time-1
@@ -24,8 +22,8 @@ traitvar = traitvar[evo_time,:][~np.isnan(traitvar[evo_time,:])]
 # observation data
 obs = np.array([trait_dr_tips,population_tips,traitvar])
 
-calimean_file= 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\calimean'
-cal_size = 100
+calimean_file= '/home/p274981/Python_p2/DVmodel/calimean'
+cal_size = 30000
 
 cali1 = np.load(calimean_file+'.npz')
 calitrait1 = cali1['calitrait']
@@ -45,7 +43,7 @@ for i in range(0,cal_size):
     coll1[i] = np.concatenate((calipara1[i],[meandiff_trait],[meandiff_trait_sort],[meandiff_var],[meandiff_var_sort]))
 
 # Data filtered by trait mean
-threshold = 0.1
+threshold = 0.05
 num = threshold*cal_size-1
 # ln = 2: unsorted distance; ln = 3: sorted distance.
 ln=3
@@ -54,12 +52,11 @@ mn,idx = min( (coll1[i,ln],i) for i in range(len(coll1[:,ln])) )
 startvalue_par = coll1[idx,:2]
 
 filtered_coll1 = coll1[coll1[:,ln]<=delta]
-
 # Calibrication step 1: rejection process based on trait variance with normal prior.
 # Prior information of parameters through the first filter.
 priorpar_var = [np.mean(filtered_coll1[:,0]),np.std(filtered_coll1[:,0]),np.mean(filtered_coll1[:,1]),np.std(filtered_coll1[:,1])]
 calivar_file= 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\calivar'
-collection_var = calibration(samplesize = cal_size, priorpar = priorpar_trait, treefile = file,calidata_file =calivar_file, calmode = 'nor')
+collection_var = calibration(samplesize = cal_size, priorpar = priorpar_var, treefile = file,calidata_file =calivar_file, calmode = 'nor')
 # cali2 = np.load(calivar_file+'.npz')
 # calitrait2 = cali2['calitrait']
 # calipop2 = cali2['calipop']

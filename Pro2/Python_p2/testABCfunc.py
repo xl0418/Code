@@ -145,8 +145,8 @@ def MCMC_ABC(startvalue, iterations,delta,obs,sort,priorpar, file, mcmcmode = 'u
                 print("MCMC : %d Rejected" % (i+1))
     elif mcmcmode == 'nor':
         for i in range(iterations):
-            par_jump[0] = abs(np.random.normal(loc=MCMC[i, 0], scale=0.01))
-            par_jump[1] = abs(np.random.normal(loc=MCMC[i, 1], scale=0.01))
+            par_jump[0] = abs(np.random.normal(loc=MCMC[i, 0], scale=0.5))
+            par_jump[1] = abs(np.random.normal(loc=MCMC[i, 1], scale=0.5))
 
             pro = np.random.uniform(0,1,1)[0]
             pro_gamma1 = scipy.stats.norm(priorpar[0], priorpar[1]).pdf(par_jump[0])
