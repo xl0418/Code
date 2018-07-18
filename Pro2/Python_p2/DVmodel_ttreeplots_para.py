@@ -1,6 +1,7 @@
 import sys, os
 sys.path.append('C:/Liang/Code/Pro2/Python_p2')
 from DV_model_sim_along_phy import DVtraitsim_tree
+# from testABC_sim import DVtraitsim_tree
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
@@ -24,7 +25,7 @@ for gamma1 in gamma_vec:
     for a in a_vec:
         count += 1
         print(count)
-        simresult = DVtraitsim_tree(file = file, gamma1 = gamma1, a = a,scalor = 1000)
+        simresult = DVtraitsim_tree(file = file, gamma1 = gamma1, a = a,scalar = 1000)
         evo_time, total_species = simresult[0].shape
         evo_time = evo_time-1
         trait_RI_dr = simresult[0]

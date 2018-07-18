@@ -63,12 +63,12 @@ fig_raw.savefig(figraw, dpi=fig_raw.dpi)
 
 
 # Filtered data analysis
-sort = 0
+sort = 1
 if sort == 0:
     ind = 2
 else:
     ind = 3
-threshold = 0.05
+threshold = 0.01
 num = threshold*cal_size-1
 delta = np.sort(collection[:,ind])[int(num)]
 mn,idx = min( (collection[i,ind],i) for i in range(len(collection[:,ind])) )
@@ -105,13 +105,13 @@ fig_filter.savefig(figfil, dpi=fig_filter.dpi)
 # ABC_MCMC analysis
 
 posfile = dir + 'posterior4w_DV.txt'
-iterations = 5000
+iterations = 10000
 # Statistic
 posterior = np.loadtxt(posfile)
 
 # Distribution plots for parameters
-gamma_samples = posterior[::10,0]
-a_samples = posterior[::10, 1]
+gamma_samples = posterior[::100,0]
+a_samples = posterior[::100, 1]
 figdis = plt.figure(figsize=(12, 8))
 
 plt.subplot(211)
