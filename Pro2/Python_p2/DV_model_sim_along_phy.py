@@ -24,41 +24,6 @@ class DVTreeData:
         return np.delete(tmp, (0), axis=1)
 
 
-# Natural selection function
-# def ga(gamma, theta, zi):
-#     return -gamma * (theta - zi) ** 2
-
-
-# Dynamic carrying capacity
-# def Kd(gamma_K, theta, zi, K):
-#     return max(K * np.exp(-gamma_K * (theta - zi) ** 2), 1)
-
-
-# Competition function
-def _beta(a, zi, zj, nj):
-    zi_ret = np.ndarray((1, len(zi)))
-    for n1 in range(len(zi)):
-        zi_ret[0, n1] = np.sum(np.exp(-a * (zi[n1] - np.array(zj)) ** 2) * np.array(nj))
-    return zi_ret
-
-
-# Derivative of the competition function
-def _sigma(a, zi, zj, nj):
-    zi_ret = np.ndarray((1, len(zi)))
-    for n1 in range(len(zi)):
-        zi_ret[0, n1] = np.sum(
-            2 * a * (zi[n1] - np.array(zj)) * np.exp(-a * (zi[n1] - np.array(zj)) ** 2) * np.array(nj))
-    return zi_ret
-
-
-def _sigmasqr(a, zi, zj, nj):
-    zi_ret = np.ndarray((1, len(zi)))
-    for n1 in range(len(zi)):
-        zi_ret[0, n1] = np.sum(
-            4 * a ** 2 * (zi[n1] - np.array(zj)) ** 2 * np.exp(-a * (zi[n1] - np.array(zj)) ** 2) * np.array(nj))
-    return zi_ret
-
-
 # competition functions
 # returns beta = Sum_j( exp(-a(zi-zj)^2) * Nj)
 #         sigma = Sum_j( 2a * (zi-zj) * exp(-a(zi-zj)^2) * Nj)
