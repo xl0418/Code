@@ -1,10 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pylab as P
+import seaborn as sns
+import pandas as pd
 import matplotlib.mlab as mlab
 from sklearn.neighbors import KernelDensity
 # Observation parameters [gamma,a]
-par_obs = np.array([0.001,0.1])
+par_obs = np.array([0.1,0.5])
 
 cal_size = 20000
 dir = 'c:/Liang/Googlebox/Research/Project2/DVmodel/1stClusterStudy/'
@@ -20,6 +22,23 @@ n, bins, patches = P.hist(dis_data, 15, density=1, histtype='bar',
                             label=['distance', 'sorted distance'])
 P.legend()
 plt.show()
+
+#Sampling region
+cali6wfile = dir+'ABCtestcali4w'
+cali1 = np.load(cali6wfile+'.npz')
+calitrait1 = cali1['calitrait']
+calipop1 = cali1['calipop']
+calivar1 = cali1['calivar']
+calipara1 = cali1['calipar']
+
+sns.jointplot(calipara1[:,0], calipara1[:,1], kind="kde", stat_func=None, color="#4CB391")
+
+df = pd.DataFrame(calipara1, columns=["x","y"])
+value = (df['x'] < df['y'])
+df['color'] = np.where(value == True, "#9b59b6", "#3498db")
+
+# plot
+sns.regplot(data=df, x="x", y="y", fit_reg=False, scatter_kws={'facecolors': df['color']})
 
 #Estimate prior distribution of parameters
 # Generate random samples from a mixture of 2 Gaussians
@@ -63,7 +82,7 @@ fig_raw.savefig(figraw, dpi=fig_raw.dpi)
 
 
 # Filtered data analysis
-sort = 1
+sort = 0
 if sort == 0:
     ind = 2
 else:
@@ -104,8 +123,8 @@ fig_filter.savefig(figfil, dpi=fig_filter.dpi)
 
 # ABC_MCMC analysis
 
-posfile = dir + 'posterior4w_DV.txt'
-iterations = 10000
+posfile = dir + 'ABCtestcali4w.txt'
+iterations = 100000
 # Statistic
 posterior = np.loadtxt(posfile)
 
@@ -118,7 +137,7 @@ plt.subplot(211)
 plt.title(r"""Distribution of $\gamma$ with %d samples""" % iterations)
 
 plt.hist(gamma_samples, histtype='stepfilled',
-         color = 'darkred', bins=30, alpha=0.8, density=True)
+         color = 'darkred', bins=100, alpha=0.8, density=True)
 plt.axvline(par_obs[0],color = 'r',linestyle = '--')
 plt.ylabel('Probability Density')
 
@@ -126,7 +145,7 @@ plt.ylabel('Probability Density')
 plt.subplot(212)
 plt.title(r"""Distribution of $a$ with %d samples""" % iterations)
 plt.hist(a_samples, histtype='stepfilled',
-         color = 'darkblue', bins=30, alpha=0.8, density=True)
+         color = 'darkblue', bins=100, alpha=0.8, density=True)
 plt.ylabel('Probability Density')
 plt.axvline(par_obs[1],color = 'r',linestyle = '--')
 

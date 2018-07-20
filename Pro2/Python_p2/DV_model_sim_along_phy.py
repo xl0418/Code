@@ -1,3 +1,4 @@
+from operator import itemgetter, attrgetter
 from matplotlib.pylab import *
 import numpy as np
 
@@ -17,11 +18,42 @@ class DVTreeData:
         self.evo_timelist = (scalar * (max(self.timelist[:, 0]) - self.timelist[:, 0])).astype(int)
         self.timebranch = self.timebranch[:, 0].astype(int) - 1
         self.timeend = self.timeend[:, 0].astype(int) - 1
+        # evolution time: speciation time
+        self.evo_time = max(self.evo_timelist)
+        self.speciate_time = self.evo_timelist[self.timebranch]
+        self.extinct_time = self.evo_timelist[self.timeend]
+        self.extinct_time[self.extinct_time == self.evo_time] = -1
+        self.extinct_time = self.extinct_time[self.extinct_time < self.evo_time]
+        self.total_species = len(self.speciate_time)
+        # sanity check
+        event_times = np.append(self.speciate_time[1:,], self.extinct_time[self.extinct_time != -1]) # omit first '0' in speciation times
+        assert len(event_times) == len(np.unique(event_times)), \
+               'Scalar is not sufficiently big to distinguish some adjacent evolutionary events'
+        # create event list: [time, parent, daughter]
+        # extinction event if daughter == -1, speciation event otherwise
+        self.events = sorted(self._speciation_events() + self._extinction_events())
+        self.events.append([-1,-1,-1])  # guard
 
     # returns trimmed table as numpy.ndarray
     def _from_txt(self, file):
         tmp = np.genfromtxt(file, delimiter=',', skip_header=1)
         return np.delete(tmp, (0), axis=1)
+
+    # creates list of speciation events [time, parent, daughter]
+    def _speciation_events(self):
+        speciation_events = list()
+        for sp in range(2, len(self.speciate_time)):
+            speciation_events.append([self.speciate_time[sp], self.parent_index[sp] - 1, self.daughter_index[sp]- 1])
+        return speciation_events
+
+    # creates list of extinction events [time, specie, -1]
+    def _extinction_events(self):
+        extinction_events = list()
+        for se in range(0, len(self.extinct_time)):
+            time = self.extinct_time[se]
+            if time != -1:
+                extinction_events.append([time, np.where(self.extinct_time == time)[0][0], -1])
+        return extinction_events
 
 
 # competition functions
@@ -44,34 +76,26 @@ def DVtraitsim_tree(file, replicate=0, theta=0, gamma1=0.001, r=1, a=0.01, scala
         np.random.seed(replicate)  # set random seed
     td = DVTreeData(file, scalar)
 
-    # evolution time: speciation time
-    evo_time = max(td.evo_timelist)
-    speciate_time = td.evo_timelist[td.timebranch]
-    extinct_time = td.evo_timelist[td.timeend]
-    extinct_time[np.where(extinct_time == evo_time)[0]] = -1
-    extinct_time = np.delete(extinct_time, np.where(extinct_time == evo_time)[0])
-    total_species = len(speciate_time)
-
     # Initialize trait evolution and population evolution matrices
-    trait_RI_dr = np.zeros((evo_time + 1, total_species))  # trait
-    population_RI_dr = np.zeros((evo_time + 1, total_species))  # population
-    V = np.zeros((evo_time + 1, total_species))  # trait vairance
+    trait_RI_dr = np.zeros((td.evo_time + 1, td.total_species))  # trait
+    population_RI_dr = np.zeros((td.evo_time + 1, td.total_species))  # population
+    V = np.zeros((td.evo_time + 1, td.total_species))  # trait vairance
 
     #  initialize condition for species trait and population
     trait_RI_dr[0, (0, 1)] = 0  # trait for species
     mu_pop, sigma_pop = 500, 10  # mean and standard deviation
     population_RI_dr[0, (0, 1)] = np.random.normal(mu_pop, sigma_pop, 2)
-    V[0] = (1 / total_species)
-    # Existing species matrix
+    V[0] = (1 / td.total_species)
+    # pull event list
+    events = td.events.copy()
+    next_event = events.pop(0)   # remove the first item of the list, e.g. events, and give the removed iterm to next_event
+    # existing species matrix
     existing_species = td.traittable
-
-    for i in range(evo_time):
-        num_event = len(np.where(td.evo_timelist <= i)[0])
-        node = num_event - 2
-
-        # trait-population coevolution model
+    node = 0
+    idx = np.where(existing_species[node] == 1)[0]    # existing species
+    # trait-population coevolution model
+    for i in range(td.evo_time):
         # pull current state
-        idx = np.where(existing_species[node] == 1)[0]  # index existing species
         Ni = population_RI_dr[i, idx]
         Vi = V[i, idx]
         zi = trait_RI_dr[i, idx]
@@ -81,48 +105,45 @@ def DVtraitsim_tree(file, replicate=0, theta=0, gamma1=0.001, r=1, a=0.01, scala
 
         # update
         var_trait = Vi / (2 * Ni)
-        trait_RI_dr[i + 1, idx] = zi + Vi * (2 * gamma1 * (theta - zi) + 1 / Ki * sigma) + np.random.normal(0,
-                                                                                                            var_trait,
-                                                                                                            len(idx))
-        possion_lambda = Ni * r * np.exp(-gamma1 * (theta - zi) ** 2 + (1 - beta / Ki))
+        trait_RI_dr[i + 1, idx] = zi + Vi * (2 * gamma1 * dtz + 1 / Ki * sigma) + np.random.normal(0, var_trait, len(idx))
+        possion_lambda = Ni * r * np.exp(-gamma1 * dtz**2 + (1 - beta / Ki))
         population_RI_dr[i + 1, idx] = np.random.poisson(lam=possion_lambda, size=(1, len(idx)))
         V[i + 1, idx] = Vi / 2 + 2 * Ni * nu * Vmax / (1 + 4 * Ni * nu) \
                         + Vi ** 2 * (
-                            -2 * gamma1 + 4 * gamma1 ** 2 * dtz ** 2 +
-                             1 / Ki * (sigma - sigmasqr) + 4 * gamma1 / Ki *
-                             dtz * sigma + sigma ** 2 / Ki ** 2
+                            -2 * gamma1 + 4 * gamma1**2 * dtz ** 2 +
+                                1 / Ki * (sigma - sigmasqr) + 4 * gamma1 / Ki *
+                                dtz * sigma + sigma ** 2 / Ki**2
                             )
-
-        # population_RI_dr[i + 1, np.where(population_RI_dr[i + 1] < 1)] = 0
-        ext_index_RI_dr = np.where(population_RI_dr[i + 1, idx] == 0)[0]
-        negative_v = np.where(V[i + 1, idx] < 0)[0]
-        if len(ext_index_RI_dr) > 0:
+        # sanity check
+        if np.any(population_RI_dr[i + 1, idx] < 1):
             valid = False
             print('Inconsistent zero population')
             break
-        if len(negative_v) > 0:
+        if np.any(V[i + 1, idx] < 0):
             valid = False
             print('Negative variance')
             break
-        if (i + 1) in speciate_time:
-            spe_event_index = len(np.where(speciate_time <= (i + 1))[0])
-            trait_RI_dr[i + 1, td.daughter_index[spe_event_index - 1] - 1] = trait_RI_dr[
-                i + 1, td.parent_index[spe_event_index - 1] - 1]
-            population_RI_dr[i + 1, td.daughter_index[spe_event_index - 1] - 1] = 1 / 2 * population_RI_dr[i + 1,
-                                                                                                           td.parent_index[
-                                                                                                               spe_event_index - 1] - 1]
-            population_RI_dr[i + 1, td.parent_index[spe_event_index - 1] - 1] = 1 / 2 * population_RI_dr[i + 1,
-                                                                                                         td.parent_index[
-                                                                                                             spe_event_index - 1] - 1]
-            V[i + 1, td.daughter_index[spe_event_index - 1] - 1] = 1 / 2 * V[
-                i + 1, td.parent_index[spe_event_index - 1] - 1]
-            V[i + 1, td.parent_index[spe_event_index - 1] - 1] = 1 / 2 * V[
-                i + 1, td.parent_index[spe_event_index - 1] - 1]
+        # events
+        if (i + 1) == next_event[0]:
+            parent = next_event[1]
+            daughter = next_event[2]
+            if (daughter == -1):
+                # extinction
+                extinct_species = next_event[1]
+                trait_RI_dr[i + 1, extinct_species] = None
+                population_RI_dr[i + 1, extinct_species] = 0
+            else:
+                # speciation
+                trait_RI_dr[i + 1, daughter] = trait_RI_dr[i + 1, parent]
+                population_RI_dr[i + 1, parent] = 1 / 2 * population_RI_dr[i + 1, parent]
+                population_RI_dr[i + 1, daughter] = population_RI_dr[i + 1, parent]
+                V[i + 1, parent] = 1 / 2 * V[i + 1, parent]
+                V[i + 1, daughter] = V[i + 1, parent]
+            # advance to next event/node
+            next_event = events.pop(0)
+            node = node + 1
+            idx = np.where(existing_species[node] == 1)[0]
 
-        if (i + 1) in extinct_time:
-            extinct_species = int(np.where(extinct_time == (i + 1))[0])
-            trait_RI_dr[i + 1, extinct_species] = None
-            population_RI_dr[i + 1, extinct_species] = 0
     row_ext = np.where(population_RI_dr == 0)[0]
     col_ext = np.where(population_RI_dr == 0)[1]
     trait_RI_dr[row_ext, col_ext] = None

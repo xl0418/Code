@@ -1,7 +1,7 @@
 import sys, os
 sys.path.append('C:/Liang/Code/Pro2/Python_p2')
 import numpy as np
-from testABC_sim import DVtraitsim_tree
+from testABC_sim2 import DVtraitsim_tree
 import scipy.stats
 from scipy.stats import norm
 import timeit
