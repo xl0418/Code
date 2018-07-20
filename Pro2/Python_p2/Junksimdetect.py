@@ -24,6 +24,8 @@ junk_ratio = 1- np.sum(junk,axis=1)/100
 junk_ratio.reshape((6,6))
 
 piror = [0,1,0,1]
-
-datafile = file + 'cali4w'
-cali_4w = calibration(samplesize=40000, priorpar=piror, treefile=file,calidata_file=datafile)
+samplesize = 20000
+K_vec = [100000,1000000,10000000]
+for i in range(len(K_vec)):
+    datafile = file + 'cali%dK' % (i+1)
+    cali= calibration(samplesize=samplesize, priorpar=piror,K=K_vec[i], treefile=file,calidata_file=datafile)

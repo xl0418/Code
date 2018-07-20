@@ -78,7 +78,7 @@ def PosNormal(mean, sigma):
 #         return collection
 
 
-def calibration(samplesize, priorpar, treefile,calidata_file):
+def calibration(samplesize, priorpar, treefile,calidata_file,K):
     collection = np.zeros(shape=(samplesize,2))
     cali_traitdata = ([])
     cali_popdata = ([])
@@ -94,7 +94,7 @@ def calibration(samplesize, priorpar, treefile,calidata_file):
             par_cal[0] = uniform_gamma
             par_cal[1] = uniform_a
             par_picked.append(par_cal)
-            sample_cal =  DVtraitsim_tree(file = treefile, replicate = 0,K = 100000, gamma1 = uniform_gamma,a = uniform_a)
+            sample_cal =  DVtraitsim_tree(file = treefile, replicate = 0,K = K, gamma1 = uniform_gamma,a = uniform_a)
             if sample_cal[2]:
                 do = 1
             else:
