@@ -31,58 +31,95 @@ def single_trait_sim(par,file,replicate):
 def PosNormal(mean, sigma):
     x = np.random.normal(mean,sigma,1)
     return(x if x>=0 else PosNormal(mean,sigma))
+#
+# def calibration(samplesize, priorpar, treefile,calidata_file, calmode = 'uni'):
+#     collection = np.zeros(shape=(samplesize,2))
+#     cali_traitdata = ([])
+#     cali_popdata = ([])
+#     cali_vardata = ([])
+#
+#     if calmode == 'uni':
+#         uniform_gamma = np.random.uniform(priorpar[0],priorpar[1],samplesize)
+#         uniform_a = np.random.uniform(priorpar[2],priorpar[3],samplesize)
+#         do = True
+#     elif calmode == 'nor':
+#         uniform_gamma = np.zeros(samplesize)
+#         uniform_a = np.zeros(samplesize)
+#         for i in range(samplesize):
+#             uniform_gamma[i] = PosNormal(priorpar[0],priorpar[1])
+#             uniform_a[i] = PosNormal(priorpar[2],priorpar[3])
+#         do = True
+#     elif calmode == 'self':
+#         uniform_gamma = np.repeat(priorpar[0],samplesize)
+#         uniform_a = np.repeat(priorpar[1],samplesize)
+#         do = True
+#     else:
+#         print('Please indicate one mode!')
+#         uniform_a = 0
+#         uniform_gamma = 0
+#         do = False
+#
+#     if do == True:
+#         for i in range(samplesize):
+#             print(i)
+#             par_cal = np.zeros(2)
+#             par_cal[0] = uniform_gamma[i]
+#             par_cal[1] = uniform_a[i]
+#             sample_cal =  single_trait_sim(par = par_cal,file = treefile,replicate=0)
+#             collection[i] = par_cal  #,[diff],[diff_sort]
+#             cali_traitdata.append(sample_cal[0])
+#             cali_popdata.append(sample_cal[1])
+#             cali_vardata.append(sample_cal[2])
+#         cali_traitdataarray = np.asarray(cali_traitdata)
+#         cali_popdataarray = np.asarray(cali_popdata)
+#         cali_vardataarray = np.asarray(cali_vardata)
+#         calipar=collection[:,:2]
+#         np.savez(calidata_file,calipar = calipar, calitrait=cali_traitdataarray, calipop =cali_popdataarray, calivar=cali_vardataarray)
+#         return collection
 
-def calibration(samplesize, priorpar, treefile,calidata_file, calmode = 'uni'):
+
+def calibration(samplesize, priorpar, treefile,calidata_file):
     collection = np.zeros(shape=(samplesize,2))
     cali_traitdata = ([])
     cali_popdata = ([])
     cali_vardata = ([])
-
-    if calmode == 'uni':
-        uniform_gamma = np.random.uniform(priorpar[0],priorpar[1],samplesize)
-        uniform_a = np.random.uniform(priorpar[2],priorpar[3],samplesize)
-        do = True
-    elif calmode == 'nor':
-        uniform_gamma = np.zeros(samplesize)
-        uniform_a = np.zeros(samplesize)
-        for i in range(samplesize):
-            uniform_gamma[i] = PosNormal(priorpar[0],priorpar[1])
-            uniform_a[i] = PosNormal(priorpar[2],priorpar[3])
-        do = True
-    elif calmode == 'self':
-        uniform_gamma = np.repeat(priorpar[0],samplesize)
-        uniform_a = np.repeat(priorpar[1],samplesize)
-        do = True
-    else:
-        print('Please indicate one mode!')
-        uniform_a = 0
-        uniform_gamma = 0
-        do = False
-
-    if do == True:
-        for i in range(samplesize):
+    par_picked = ([])
+    for i in range(samplesize):
+        do = 0
+        while(do==0):
+            uniform_gamma = np.random.uniform(priorpar[0], priorpar[1], 1)
+            uniform_a = np.random.uniform(priorpar[2], priorpar[3], 1)
             print(i)
             par_cal = np.zeros(2)
-            par_cal[0] = uniform_gamma[i]
-            par_cal[1] = uniform_a[i]
-            sample_cal =  single_trait_sim(par = par_cal,file = treefile,replicate=0)
-            # samplearray = np.array([sample_cal[0], sample_cal[2]])
-            # obsarray = np.array([obs[0], obs[2]])
-            # diff = np.linalg.norm(samplearray - obsarray)
-            # samplearray_sort = samplearray[:, samplearray[0, :].argsort()]
-            # obsarray_sort = obsarray[:, obsarray[0, :].argsort()]
-            # diff_sort = np.linalg.norm(samplearray_sort - obsarray_sort)
-            collection[i] = par_cal  #,[diff],[diff_sort]
-            cali_traitdata.append(sample_cal[0])
-            cali_popdata.append(sample_cal[1])
-            cali_vardata.append(sample_cal[2])
-        cali_traitdataarray = np.asarray(cali_traitdata)
-        cali_popdataarray = np.asarray(cali_popdata)
-        cali_vardataarray = np.asarray(cali_vardata)
-        calipar=collection[:,:2]
-        np.savez(calidata_file,calipar = calipar, calitrait=cali_traitdataarray, calipop =cali_popdataarray, calivar=cali_vardataarray)
-        return collection
-
+            par_cal[0] = uniform_gamma
+            par_cal[1] = uniform_a
+            par_picked.append(par_cal)
+            sample_cal =  DVtraitsim_tree(file = treefile, replicate = 0,K = 100000, gamma1 = uniform_gamma,a = uniform_a)
+            if sample_cal[2]:
+                do = 1
+            else:
+                print('Retry')
+                do = 0
+        trait_RI_dr = sample_cal[0]
+        population_RI_dr = sample_cal[1]
+        traitVar = sample_cal[3]
+        evo_time, total_species = sample_cal[0].shape
+        evo_time = evo_time - 1
+        trait_dr_tips = trait_RI_dr[evo_time, :][~np.isnan(trait_RI_dr[evo_time, :])]
+        population_tips = population_RI_dr[evo_time, :][~np.isnan(population_RI_dr[evo_time, :])]
+        traitVar_tips = traitVar[evo_time, :][~np.isnan(traitVar[evo_time, :])]
+        collection[i] = np.array(par_cal)
+        cali_traitdata.append(trait_dr_tips)
+        cali_popdata.append(population_tips)
+        cali_vardata.append(traitVar_tips)
+    cali_traitdataarray = np.asarray(cali_traitdata)
+    cali_popdataarray = np.asarray(cali_popdata)
+    cali_vardataarray = np.asarray(cali_vardata)
+    calipar=collection[:,:2]
+    par_pickedarray = np.asarray(par_picked)
+    np.savez(calidata_file+'picked',picked = par_pickedarray)
+    np.savez(calidata_file,calipar = calipar, calitrait=cali_traitdataarray, calipop =cali_popdataarray, calivar=cali_vardataarray)
+    return collection
 
 
 

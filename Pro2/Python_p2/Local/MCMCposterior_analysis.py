@@ -23,15 +23,23 @@ n, bins, patches = P.hist(dis_data, 15, density=1, histtype='bar',
 P.legend()
 plt.show()
 
+
 #Sampling region
+#Complete simulation parameter space
 cali6wfile = dir+'ABCtestcali4w'
 cali1 = np.load(cali6wfile+'.npz')
 calitrait1 = cali1['calitrait']
 calipop1 = cali1['calipop']
 calivar1 = cali1['calivar']
 calipara1 = cali1['calipar']
-
 sns.jointplot(calipara1[:,0], calipara1[:,1], kind="kde", stat_func=None, color="#4CB391")
+#Tried simulation parameter space
+cali_tryfile = dir+'picked'
+cali_try = np.load(cali_tryfile+'.npz')
+calipara_try = cali1['picked']
+sns.jointplot(calipara_try[:,0], calipara_try[:,1], kind="kde", stat_func=None, color="#4CB391")
+
+
 
 df = pd.DataFrame(calipara1, columns=["x","y"])
 value = (df['x'] < df['y'])
