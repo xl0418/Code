@@ -9,13 +9,13 @@ from DV_model_sim_along_phy import DVtraitsim_tree
 #  a = (0,0.001,0.01,0.1,0.5,1)
 #  K = 100000
 par_obs = np.array([0.001,0.1,100000])
-
+scalar = 10000
 # Observation generated
 # Load the data for a given tree
 # The directory of the tree data
-file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
+file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\example12\\'
 # Simulate data
-simresult = DVtraitsim_tree(file = file,replicate = 3, gamma1 = par_obs[0], a = par_obs[1],K = par_obs[2])
+simresult = DVtraitsim_tree(file = file,replicate = 3, gamma1 = par_obs[0], a = par_obs[1],K = par_obs[2],scalar = scalar)
 # We only need the data at tips.
 evo_time, total_species = simresult[0].shape
 evo_time = evo_time-1
@@ -34,7 +34,8 @@ cal_size = 10
 calidata_file = file+'savedata'
 # TEST1: Uniform prior distribution example
 priorpar = [0,1,0,1]
-collection = calibration(samplesize = cal_size, priorpar = priorpar, treefile = file,calidata_file=calidata_file,K=par_obs[2])
+collection = calibration(samplesize = cal_size, priorpar = priorpar, treefile = file,calidata_file=calidata_file,
+                         K=par_obs[2],scalar = scalar)
 
 # Processing the calibration data. We would like to chose the 5% closest simulation data to the observation
 # to provide the prior information for MCMC step.
@@ -82,7 +83,7 @@ startvalue_var = coll[idx_var,:2]
 # Chain 1 by criterion of trait mean
 iterations = 10
 posterior_mean = MCMC_ABC(startvalue= startvalue_mean,K=par_obs[2], iterations = iterations, delta = delta_mean, obs = obs,sort = 1,
-                     priorpar=priorpar_mean, file = file, mcmcmode = 'nor',abcmode='mean')
+                     priorpar=priorpar_mean, file = file, mcmcmode = 'nor',abcmode='mean',scalar = scalar)
 file2 = file + 'posterior_mean.txt'
 np.savetxt(file2,posterior_mean)
 
@@ -94,6 +95,6 @@ priorpar_var = [np.mean(posterior_mean[::gap,0]),np.std(posterior_mean[::gap,0])
 # Chain 2 by criterion of trait variance
 iterations = 10
 posterior_var = MCMC_ABC(startvalue= startvalue_var,K=par_obs[2], iterations = iterations, delta = delta_var, obs = obs,sort = 1,
-                     priorpar=priorpar_var, file = file, mcmcmode = 'nor',abcmode='variance')
+                     priorpar=priorpar_var, file = file, mcmcmode = 'nor',abcmode='variance',scalar = scalar)
 file2 = file + 'posterior_var.txt'
 np.savetxt(file2,posterior_mean)

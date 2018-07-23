@@ -4,10 +4,10 @@ import scipy.stats
 import timeit
 
 # par = (gamma1, a, K)
-def single_trait_sim(par,file,replicate):
+def single_trait_sim(par,scalar,file,replicate):
     do = 0
     while(do == 0):
-        sim = DVtraitsim_tree(file = file, replicate = replicate, gamma1 = par[0],a = par[1],K = par[2])
+        sim = DVtraitsim_tree(file = file, scalar=scalar,replicate = replicate, gamma1 = par[0],a = par[1],K = par[2])
         if sim[2]:
             do = 1
         else:
@@ -30,7 +30,7 @@ def PosNormal(mean, sigma):
     x = np.random.normal(mean,sigma,1)
     return(x if x>=0 else PosNormal(mean,sigma))
 
-def calibration(samplesize, priorpar, treefile,calidata_file,K):
+def calibration(samplesize, priorpar, treefile,calidata_file,K,scalar):
     collection = np.zeros(shape=(samplesize,2))
     cali_traitdata = ([])
     cali_popdata = ([])
@@ -46,7 +46,7 @@ def calibration(samplesize, priorpar, treefile,calidata_file,K):
             par_cal[0] = uniform_gamma
             par_cal[1] = uniform_a
             par_picked.append(par_cal)
-            sample_cal =  DVtraitsim_tree(file = treefile, replicate = 0,K = K, gamma1 = uniform_gamma,a = uniform_a)
+            sample_cal =  DVtraitsim_tree(file = treefile,scalar=scalar, replicate = 0,K = K, gamma1 = uniform_gamma,a = uniform_a)
             if sample_cal[2]:
                 do = 1
             else:
@@ -74,8 +74,8 @@ def calibration(samplesize, priorpar, treefile,calidata_file,K):
 
 
 # par = (gamma1, a, K)
-def ABC_acceptance(par,delta,obs,sort, file,abcmode='mean'):
-    sample = single_trait_sim(par = par,file = file,replicate=0)
+def ABC_acceptance(par,delta,obs,sort, scalar,file,abcmode='mean'):
+    sample = single_trait_sim(par = par,scalar=scalar,file = file,replicate=0)
     if sort == 0:
         if abcmode == 'mean':
             diff = np.linalg.norm(sample[0] - obs[0])
@@ -104,7 +104,7 @@ def ABC_acceptance(par,delta,obs,sort, file,abcmode='mean'):
 
 
 
-def MCMC_ABC(startvalue, iterations,delta,obs,sort,priorpar, file,K, mcmcmode = 'uni',abcmode='mean'):
+def MCMC_ABC(startvalue, iterations,delta,obs,sort,priorpar, file,K,scalar, mcmcmode = 'uni',abcmode='mean'):
     tic = timeit.default_timer()
     MCMC = np.zeros(shape=(iterations+1,2))
     MCMC[0,] = startvalue
@@ -115,7 +115,7 @@ def MCMC_ABC(startvalue, iterations,delta,obs,sort,priorpar, file,K, mcmcmode = 
             par_jump[0] = np.random.uniform(priorpar[0],priorpar[1])
             par_jump[1] = np.random.uniform(priorpar[2],priorpar[3])
 
-            if (ABC_acceptance(par = par_jump,delta = delta, obs = obs,sort = sort, file = file,abcmode=abcmode)):
+            if (ABC_acceptance(par = par_jump,delta = delta, obs = obs,sort = sort, file = file,abcmode=abcmode,scalar=scalar)):
                 MCMC[i+1,] = par_jump[:2]
                 print("MCMC : %d Accepted" % (i+1))
 
@@ -135,8 +135,8 @@ def MCMC_ABC(startvalue, iterations,delta,obs,sort,priorpar, file,K, mcmcmode = 
 
             pro_ratio = (pro_gamma1*pro_a1)/(pro_gamma2*pro_a2)
             accept_criterion = np.min([1,pro_ratio])
-            if ABC_acceptance(par = par_jump, delta=delta, obs=obs, sort=sort, file = file,abcmode=abcmode
-                              ) and (pro <= accept_criterion):
+            if ABC_acceptance(par = par_jump, delta=delta, obs=obs, sort=sort, file = file,abcmode=abcmode,
+                     scalar=scalar) and (pro <= accept_criterion):
                 MCMC[i + 1,] = par_jump[:2]
                 print("MCMC : %d Accepted" % (i + 1))
             else:

@@ -6,13 +6,14 @@ library(DDD)
 library(MASS)
 library(rgl)
 library(stringr)
-library(matrixcalc)
+# library(matrixcalc)
 library("reshape2")
 library('Matrix')
 library(plyr) 
-library(twitteR)
-result = sddsim(n=2,parsN=c(2,0),age=15,pars=c(0.8,0.3,10) , seed_fun = 29, lambda_allo0 = 0.2, M0=0,K_fix = 1)
-filename = 'C:/Liang/Googlebox/Research/Project2/R-tree_sim/Treedata1.Rdata'
+# library(twitteR)
+result = sddsim(n=2,parsN=c(2,0),age=15,pars=c(0.8,0.2,100) , seed_fun = 29, lambda_allo0 = 0.2, M0=0,K_fix = 1)
+dir = 'C:/Liang/Googlebox/Python/Project2/R-tree_sim/example12/'
+filename = paste0(dir, 'Treedata.Rdata')
 save(result,file = filename)
 print(dim(result$L))
 plottree(file = filename,dropextinct =F)
@@ -42,13 +43,13 @@ trait.table[,1] = time.list
 existing_species_table = trait.table[-1,-1]
 
 
-write.csv(timelist, file = "C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\timelist.csv")
-write.csv(timebranch, file = "C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\timebranch.csv")
-write.csv(timeend, file = "C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\timeend.csv")
-write.csv(existing_species_table, file = "C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\traittable.csv")
-write.csv(L, file = "C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\Ltable.csv")
+write.csv(timelist, file = paste0(dir,"timelist.csv"))
+write.csv(timebranch, file = paste0(dir,"timebranch.csv"))
+write.csv(timeend, file = paste0(dir,"timeend.csv"))
+write.csv(existing_species_table, file = paste0(dir,"traittable.csv"))
+write.csv(L, file = paste0(dir,"Ltable.csv"))
 
-
-output = list(L=L, timelist= timelist, timebranch = timebranch, timeend = timeend,traittable = existing_species_table)
-write.csv(output, file = "C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\treedata.csv")
+# 
+# output = list(L=L, timelist= timelist, timebranch = timebranch, timeend = timeend,traittable = existing_species_table)
+# write.csv(output, file = paste0(dir,"treedata.csv"))
 
