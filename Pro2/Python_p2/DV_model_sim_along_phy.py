@@ -69,6 +69,10 @@ def competition_functions(a, zi, nj):
     sigmasqr = np.sum(t2 ** 2 * t1, axis=1)
     return beta, sigma, sigmasqr
 
+# Sample function within a specific range (0,1)
+def PopsplitNormal(mean, sigma):
+    x = np.random.normal(mean,sigma,1)
+    return(x if x>0 and x<1 else PopsplitNormal(mean,sigma))
 
 def DVtraitsim_tree(file, replicate=0, theta=0, gamma1=0.001, r=1, a=0.01, scalar=1000, K=100000, nu=0.0001, Vmax=1):
     valid = True
@@ -134,9 +138,10 @@ def DVtraitsim_tree(file, replicate=0, theta=0, gamma1=0.001, r=1, a=0.01, scala
                 population_RI_dr[i + 1, extinct_species] = 0
             else:
                 # speciation
+                splitratio = PopsplitNormal(mean=0.5, sigma=1)
                 trait_RI_dr[i + 1, daughter] = trait_RI_dr[i + 1, parent]
-                population_RI_dr[i + 1, parent] = 1 / 2 * population_RI_dr[i + 1, parent]
-                population_RI_dr[i + 1, daughter] = population_RI_dr[i + 1, parent]
+                population_RI_dr[i + 1, parent] = splitratio * population_RI_dr[i + 1, parent]
+                population_RI_dr[i + 1, daughter] = (1-splitratio)*population_RI_dr[i + 1, parent]
                 V[i + 1, parent] = 1 / 2 * V[i + 1, parent]
                 V[i + 1, daughter] = V[i + 1, parent]
             # advance to next event/node

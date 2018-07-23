@@ -117,8 +117,7 @@ def calibration(samplesize, priorpar, treefile,calidata_file,K):
     cali_vardataarray = np.asarray(cali_vardata)
     calipar=collection[:,:2]
     par_pickedarray = np.asarray(par_picked)
-    np.savez(calidata_file+'picked',picked = par_pickedarray)
-    np.savez(calidata_file,calipar = calipar, calitrait=cali_traitdataarray, calipop =cali_popdataarray, calivar=cali_vardataarray)
+    np.savez(calidata_file,calipar = calipar, calitrait=cali_traitdataarray, calipop =cali_popdataarray, calivar=cali_vardataarray,picked = par_pickedarray)
     return collection
 
 
