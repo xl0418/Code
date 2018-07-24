@@ -1,6 +1,6 @@
 #Import desired functions
 import numpy as np
-from ABC_SMC_DVmodel import single_trait_sim,calibration, MCMC_ABC
+from ABC_SMC_DVmodel import calibration, MCMC_ABC
 from DV_model_sim_along_phy import DVtraitsim_tree
 
 # Observation parameters [gamma,a]

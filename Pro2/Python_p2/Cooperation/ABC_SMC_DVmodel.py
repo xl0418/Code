@@ -3,29 +3,6 @@ from DV_model_sim_along_phy import DVtraitsim_tree
 import scipy.stats
 import timeit
 
-# par = (gamma1, a, K)
-def single_trait_sim(par,scalar,file,replicate):
-    do = 0
-    while(do == 0):
-        sim = DVtraitsim_tree(file = file, scalar=scalar,replicate = replicate, gamma1 = par[0],a = par[1],K = par[2])
-        if sim[2]:
-            do = 1
-        else:
-            print('Retry')
-            do = 0
-    trait_RI_dr = sim[0]
-    population_RI_dr = sim[1]
-    traitVar = sim[3]
-    evo_time, total_species = sim[0].shape
-    evo_time = evo_time - 1
-    # valid = sim[2]
-    # empirical data for trait and population
-    trait_dr_tips = trait_RI_dr[evo_time, :][~np.isnan(trait_RI_dr[evo_time, :])]
-    population_tips = population_RI_dr[evo_time, :][~np.isnan(population_RI_dr[evo_time, :])]
-    traitVar_tips = traitVar[evo_time, :][~np.isnan(traitVar[evo_time, :])]
-    simtips = np.array([trait_dr_tips,population_tips,traitVar_tips])
-    return simtips
-
 def PosNormal(mean, sigma):
     x = np.random.normal(mean,sigma,1)
     return(x if x>=0 else PosNormal(mean,sigma))
@@ -75,31 +52,45 @@ def calibration(samplesize, priorpar, treefile,calidata_file,K,scalar):
 
 # par = (gamma1, a, K)
 def ABC_acceptance(par,delta,obs,sort, scalar,file,abcmode='mean'):
-    sample = single_trait_sim(par = par,scalar=scalar,file = file,replicate=0)
-    if sort == 0:
-        if abcmode == 'mean':
-            diff = np.linalg.norm(sample[0] - obs[0])
-        elif abcmode == 'variance':
-            diff = np.linalg.norm(sample[2] - obs[2])
+    sim = DVtraitsim_tree(file=file, scalar=scalar, replicate=0, gamma1=par[0], a=par[1], K=par[2])
+    if sim[2]:
+        trait_RI_dr = sim[0]
+        population_RI_dr = sim[1]
+        traitVar = sim[3]
+        evo_time, total_species = sim[0].shape
+        evo_time = evo_time - 1
+        trait_dr_tips = trait_RI_dr[evo_time, :][~np.isnan(trait_RI_dr[evo_time, :])]
+        population_tips = population_RI_dr[evo_time, :][~np.isnan(population_RI_dr[evo_time, :])]
+        traitVar_tips = traitVar[evo_time, :][~np.isnan(traitVar[evo_time, :])]
+        sample = np.array([trait_dr_tips, population_tips, traitVar_tips])
+
+        if sort == 0:
+            if abcmode == 'mean':
+                diff = np.linalg.norm(sample[0] - obs[0])
+            elif abcmode == 'variance':
+                diff = np.linalg.norm(sample[2] - obs[2])
+            else:
+                print('Please indicate mode')
+                diff = np.inf
+            if diff < delta:
+                return True
+            else:
+                return False
         else:
-            print('Please indicate mode')
-            diff = np.inf
-        if diff < delta:
-            return True
-        else:
-            return False
+            if abcmode == 'mean':
+                diff_sort = np.linalg.norm(np.sort(sample[0]) - np.sort(obs[0]))
+            elif abcmode == 'variance':
+                diff_sort = np.linalg.norm(np.sort(sample[2]) - np.sort(obs[2]))
+            else:
+                print('Please indicate mode')
+                diff_sort = np.inf
+            if diff_sort < delta:
+                return True
+            else:
+                return False
     else:
-        if abcmode == 'mean':
-            diff_sort = np.linalg.norm(np.sort(sample[0]) - np.sort(obs[0]))
-        elif abcmode == 'variance':
-            diff_sort = np.linalg.norm(np.sort(sample[2]) - np.sort(obs[2]))
-        else:
-            print('Please indicate mode')
-            diff_sort = np.inf
-        if diff_sort < delta:
-            return True
-        else:
-            return False
+        return False
+
 
 
 
