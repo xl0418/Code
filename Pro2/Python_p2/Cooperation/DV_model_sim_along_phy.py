@@ -123,10 +123,10 @@ def DVtraitsim_tree(file, gamma1, a, K, scalar, nu=0.0001, r=1,theta=0, Vmax=1, 
             valid = False
             print('Inconsistent zero population')
             break
-        # if np.any(V[i + 1, idx] < 0):
-        #     valid = False
-        #     print('Negative variance')
-        #     break
+        if np.any(V[i + 1, idx] < 0):
+            valid = False
+            print('Negative variance')
+            break
         # events
         if (i + 1) == next_event[0]:
             parent = next_event[1]
@@ -140,8 +140,9 @@ def DVtraitsim_tree(file, gamma1, a, K, scalar, nu=0.0001, r=1,theta=0, Vmax=1, 
                 # speciation
                 splitratio = PopsplitNormal(mean=0.5, sigma=0.2)
                 trait_RI_dr[i + 1, daughter] = trait_RI_dr[i + 1, parent]
-                population_RI_dr[i + 1, parent] = splitratio * population_RI_dr[i + 1, parent]
-                population_RI_dr[i + 1, daughter] = (1-splitratio)*population_RI_dr[i + 1, parent]
+                tmp_pop=population_RI_dr[i + 1, parent]
+                population_RI_dr[i + 1, parent] = splitratio * tmp_pop
+                population_RI_dr[i + 1, daughter] = (1-splitratio)*tmp_pop
                 V[i + 1, parent] = 1 / 2 * V[i + 1, parent]
                 V[i + 1, daughter] = V[i + 1, parent]
             # advance to next event/node

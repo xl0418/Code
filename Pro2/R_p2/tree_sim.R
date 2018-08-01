@@ -14,7 +14,7 @@ library(plyr)
 result = sddsim(n=2,parsN=c(2,0),age=15,pars=c(0.8,0.2,100) , seed_fun = 29, lambda_allo0 = 0.2, M0=0,K_fix = 1)
 dir = 'C:/Liang/Googlebox/Python/Project2/R-tree_sim/example12/'
 filename = paste0(dir, 'Treedata.Rdata')
-save(result,file = filename)
+save(result,file = filename)plot( dpois( x=0:10, lambda=6 ))
 print(dim(result$L))
 plottree(file = filename,dropextinct =F)
 
