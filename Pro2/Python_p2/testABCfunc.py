@@ -315,36 +315,19 @@ def SMC_ABC_MS(timestep, particlesize, obs, epsilon, prior, file, sort = 0):
                 while d[t,i] > epsilon:
                     sim_count += 1
                     # Sample model and parameters
-                    propose_model = np.random.randint(4)
-                    propose_gamma = abs(np.random.normal(gamma_prior_mean, gamma_prior_var))
-                    propose_a = abs(np.random.normal(a_prior_mean, a_prior_var))
-                    if propose_model == 0:  # BM model
-                        # draw parameters from prior information
-                        propose_gamma = 0
-                        propose_a = 0
-                        par = [propose_gamma, propose_a]
+                    propose_model = np.random.randint(2)
+                    propose_gamma = np.random.uniform(gamma_prior_mean, gamma_prior_var,1)
+                    propose_a = np.random.uniform(gamma_prior_mean, gamma_prior_var,1)
+                    if propose_model == 0:  #M1
                         # simulate under the parameters
-                        sample = single_trait_sim(par=par, file=file,replicate=0)
+                        sample = DVtraitsim_tree(gamma1=propose_gamma,a=propose_a, file=file,model=propose_model)
                     elif propose_model == 1:  # Competition model
-                        # draw parameters from prior information
-                        propose_gamma = 0
-                        par = [propose_gamma, propose_a]
                         # simulate under the parameters
-                        sample = single_trait_sim(par=par, file=file,replicate=0)
-                    elif propose_model == 2: # OU model / Natural selection model
-                        # draw parameters from prior information
-                        propose_a = 0
-                        par = [propose_gamma, propose_a]
-                        # simulate under the parameters
-                        sample = single_trait_sim(par=par, file=file,replicate=0)
-                    elif propose_model == 3: # Natural selection & competition model
-                        # draw parameters from prior information
-                        par = [propose_gamma,propose_a]
-                        # simulate under the parameters
-                        sample = single_trait_sim(par = par, file = file,replicate=0)
+                        sample = DVtraitsim_tree(gamma1=propose_gamma,a=propose_a, file=file,model=propose_model)
 
-                    samplearray = np.array([sample[0], sample[2]])
-                    obsarray = np.array([obs[0], obs[2]])
+
+                    samplearray = sample[0]
+                    obsarray = obs[0]
                     # calculate the distance between simulation and obs
                     if sort == 0:
                         diff = np.linalg.norm(samplearray - obsarray)
@@ -358,8 +341,8 @@ def SMC_ABC_MS(timestep, particlesize, obs, epsilon, prior, file, sort = 0):
                 a[t,i] = propose_a
                 model[t,i] = propose_model
         else:
-            # shrink the threshold by 75% for each time step
-            epsilon = np.append(epsilon, np.percentile(d[t-1,],75))
+            # shrink the threshold by 40% for each time step
+            epsilon = np.append(epsilon, np.percentile(d[t-1,],40))
             # calculate weighted variance of the parameters at previous time step
             gamma_pre_mean = np.sum(gamma[t-1,] * weight_gamma[t-1,])
             gamma_pre_var = np.sum(( gamma[t-1,] - gamma_pre_mean)**2 * weight_gamma[t-1,])
@@ -372,7 +355,7 @@ def SMC_ABC_MS(timestep, particlesize, obs, epsilon, prior, file, sort = 0):
                 while d[t,i] > epsilon[t]:
                     sim_count += 1
                     # Sample model
-                    propose_model = np.random.randint(4)
+                    propose_model = np.random.randint(2)
                     # sample the parameters by the weight
                     sample_gamma_index = np.random.choice(particlesize,1, p = weight_gamma[t-1,])
                     sample_a_index = np.random.choice(particlesize,1, p = weight_a[t-1,])
@@ -384,32 +367,16 @@ def SMC_ABC_MS(timestep, particlesize, obs, epsilon, prior, file, sort = 0):
                     propose_a0 = a[t-1,sample_a_index-1]
                     # draw new a with mean and variance
                     propose_a = abs(np.random.normal(propose_a0,np.sqrt(2* a_pre_var)))
-                    if propose_model == 0:  # BM model
-                        # draw parameters from prior information
-                        propose_gamma = 0
-                        propose_a = 0
-                        par = [propose_gamma, propose_a]
+                    if propose_model == 0:  #M1
                         # simulate under the parameters
-                        sample = single_trait_sim(par=par, file=file,replicate=0)
+                        sample = DVtraitsim_tree(gamma1=propose_gamma,a=propose_a, file=file,model=propose_model)
                     elif propose_model == 1:  # Competition model
-                        # draw parameters from prior information
-                        propose_gamma = 0
-                        par = [propose_gamma, propose_a]
                         # simulate under the parameters
-                        sample = single_trait_sim(par=par, file=file,replicate=0)
-                    elif propose_model == 2:  # OU model / Natural selection model
-                        # draw parameters from prior information
-                        propose_a = 0
-                        par = [propose_gamma, propose_a]
-                        # simulate under the parameters
-                        sample = single_trait_sim(par=par, file=file,replicate=0)
-                    elif propose_model == 3:  # Natural selection & competition model
-                        # draw parameters from prior information
-                        par = [propose_gamma, propose_a]
-                        # simulate under the parameters
-                        sample = single_trait_sim(par=par, file=file,replicate=0)
-                    samplearray = np.array([sample[0], sample[2]])
-                    obsarray = np.array([obs[0], obs[2]])
+                        sample = DVtraitsim_tree(gamma1=propose_gamma,a=propose_a, file=file,model=propose_model)
+
+
+                    samplearray = sample[0]
+                    obsarray = obs[0]
                     # calculate the distance between simulation and obs
                     if sort == 0:
                         diff = np.linalg.norm(samplearray - obsarray)

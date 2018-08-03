@@ -1,7 +1,7 @@
 from matplotlib.pylab import *
 import numpy as np
 
-def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.01,scalar = 1000, K = 100000, nu = 0.0001, Vmax = 1 ):
+def DVtraitsim_tree(file, model, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.01,scalar = 1000, K = 100000, nu = 0.0001, Vmax = 1 ):
     valid = True
     if replicate > 0:
         np.random.seed(replicate)  # set random seed
@@ -48,7 +48,8 @@ def DVtraitsim_tree(file, replicate = 0,theta = 0, gamma1 = 0.001, r = 1, a = 0.
 
     # Initialize trait evolution and population evolution matrices
     trait_RI_dr = np.zeros((2, total_species))   # population
-    trait_RI_dr[1,] = np.random.normal(loc = gamma1,scale = a,size = total_species)    # trait
+    trait_RI_dr[1,] = (model==0)*np.random.normal(loc = gamma1,scale = a,size = total_species) +\
+    (model == 1)* np.random.uniform(low=gamma1, high=a, size=total_species)
     population_RI_dr = np.zeros((2, total_species))   # population
     V = np.zeros((2, total_species))          # trait vairance
 
