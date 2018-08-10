@@ -13,7 +13,7 @@ gamma_list = []
 a_list = []
 
 # Create the data
-filedir = 'C:/Liang/Code/Pro2/Python_p2/abcpp/abcpp/smcdata/tree2/'
+filedir = 'C:/Liang/Code/Pro2/abcpp/abcpp/smcdata/tree2/'
 for gamma_index in range(len(gamma_vec)):
     for a_index in range(len(a_vec)):
         file = filedir + 'smc%dg%da.npy' % (gamma_index, a_index)
@@ -64,17 +64,16 @@ for ax, s in zip(axes.flat, np.linspace(0, 3, row_a*row_gamma)):
     if count in ([5,11,17,23,29,35]):
         ax.set_ylabel(label_gamma[int(count/row_a)])
         ax.yaxis.set_label_position("right")
-    # ax.yaxis.set_major_locator(plt.NullLocator())
+    ax.yaxis.set_major_locator(plt.NullLocator())
     ax.xaxis.set_major_locator(plt.NullLocator())
-    ax.yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
+    # ax.yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
 
     count += 1
 f.text(0.5, 0, '', ha='center')
 f.text(0.01, 0.5, '', va='center', rotation='vertical')
 f.tight_layout()
 
-# f.savefig('C:/Liang/Googlebox/Research/Project2/DVmodel/1stClusterStudy/traitvsvar.png')
-
+# f.savefig('C:/Liang/Code/Pro2/abcpp/abcpp/smcdata/Tree2plot.png')
 
 # sns.jointplot(gamma, a, kind="hex", stat_func=None, color="#4CB391")
 
