@@ -33,7 +33,7 @@ label_a = (['a=0','a=.001','a=.01','a=.1','a=.5','a=1'])
 label_gamma = (['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5','$\gamma$=1'])
 row_a = len(label_a)
 row_gamma = len(label_gamma)
-pos = ['$\gamma$','a']
+pos = [0,1]
 # Set up the matplotlib figure
 f, axes = plt.subplots(row_a, row_gamma, figsize=(9, 9), sharex=True, sharey=True) #
 gamma_vec_point = np.repeat(gamma_vec,len(a_vec))
