@@ -2,6 +2,8 @@ source('C:/Liang/Googlebox/Research/Project1/R_pro1/Final/Nindex.R', echo=TRUE)
 source('C:/Liang/Googlebox/Research/Project1/R_pro1/Final/sddsim.R', echo=TRUE)
 source('C:/Liang/Googlebox/Research/Project1/R_pro1/Final/event_matrix.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/Plottree_single_Pro1.R', echo=TRUE)
+source('C:/Liang/Code/Pro2/R_p2/prunetree.R', echo=TRUE)
+
 library(DDD)
 library(MASS)
 library(rgl)
@@ -11,7 +13,8 @@ library("reshape2")
 library('Matrix')
 library(plyr) 
 # library(twitteR)
-result = sddsim(n=2,parsN=c(2,0),age=15,pars=c(0.8,0.5,10) , seed_fun = 29, lambda_allo0 = 0.2, M0=0,K_fix = 1)
+prune=0
+result = sddsim(n=2,parsN=c(2,0),age=15,pars=c(0.8,0.2,100) , seed_fun = 29, lambda_allo0 = 0.2, M0=0,K_fix = 1)
 dir = 'C:/Liang/Googlebox/Python/Project2/R-tree_sim/example13/'
 filename = paste0(dir, 'Treedata.Rdata')
 save(result,file = filename)
@@ -21,6 +24,10 @@ plottree(file = filename,dropextinct =T)
 load(file = filename)
 
 L = result$L
+if (prune==1){
+  L=prunetree(L)
+}
+
 time.list = c(sort(c(L[,1],L[which(L[,4]!= -1),4]),decreasing = TRUE),0)
 #total number of species
 num.species = nrow(L)
