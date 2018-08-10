@@ -2,7 +2,6 @@ import numpy as np
 from DV_model_sim_along_phy import DVtraitsim_tree
 import scipy.stats
 from scipy.stats import norm
-
 import timeit
 
 def PosNormal(mean, sigma):
