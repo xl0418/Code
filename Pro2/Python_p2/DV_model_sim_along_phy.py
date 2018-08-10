@@ -74,7 +74,7 @@ def PopsplitNormal(mean, sigma):
     x = np.random.normal(mean,sigma,1)
     return(x if x>0 and x<1 else PopsplitNormal(mean,sigma))
 
-def DVtraitsim_tree(file, replicate=0, theta=0, gamma1=0.001, r=1, a=0.01, scalar=1000, K=100000, nu=0.0001, Vmax=1):
+def DVtraitsim_tree(file, gamma1, a, K, scalar, nu=0.0001, r=1,theta=0, Vmax=1, replicate=0):
     valid = True
     if replicate > 0:
         np.random.seed(replicate)  # set random seed
@@ -138,10 +138,11 @@ def DVtraitsim_tree(file, replicate=0, theta=0, gamma1=0.001, r=1, a=0.01, scala
                 population_RI_dr[i + 1, extinct_species] = 0
             else:
                 # speciation
-                splitratio = PopsplitNormal(mean=0.5, sigma=1)
+                splitratio = PopsplitNormal(mean=0.5, sigma=0.2)
                 trait_RI_dr[i + 1, daughter] = trait_RI_dr[i + 1, parent]
-                population_RI_dr[i + 1, parent] = splitratio * population_RI_dr[i + 1, parent]
-                population_RI_dr[i + 1, daughter] = (1-splitratio)*population_RI_dr[i + 1, parent]
+                tmp_pop = population_RI_dr[i + 1, parent]
+                population_RI_dr[i + 1, parent] = splitratio * tmp_pop
+                population_RI_dr[i + 1, daughter] = (1 - splitratio) * tmp_pop
                 V[i + 1, parent] = 1 / 2 * V[i + 1, parent]
                 V[i + 1, daughter] = V[i + 1, parent]
             # advance to next event/node
