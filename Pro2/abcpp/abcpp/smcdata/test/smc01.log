@@ -1,0 +1,51 @@
+slurmstepd: error: Unable to create TMPDIR [/local/1853654]: Permission denied
+slurmstepd: error: Setting TMPDIR to /tmp
+try to find a completed true simulation with gamma = 0.0 and a = 1.0 ...
+Generation = 0  gamma = 0.036575  a = 0.581756  fitness = 0.420503
+Generation = 1  gamma = 0.003452  a = 0.419279  fitness = 1.134946
+Generation = 2  gamma = 0.000479  a = 0.453241  fitness = 1.574695
+Generation = 3  gamma = 0.000063  a = 0.566830  fitness = 1.782476
+Generation = 4  gamma = 0.000008  a = 0.634576  fitness = 1.836726
+Generation = 5  gamma = 0.000003  a = 0.653560  fitness = 1.857554
+Generation = 6  gamma = 0.000002  a = 0.638488  fitness = 1.809877
+Generation = 7  gamma = 0.000002  a = 0.628813  fitness = 1.804912
+Generation = 8  gamma = 0.000002  a = 0.592420  fitness = 1.758914
+Generation = 9  gamma = 0.000002  a = 0.670080  fitness = 1.806599
+
+
+###############################################################################
+Peregrine Cluster
+Job 1853656 for user 'p274981'
+Finished at: Tue Aug  7 13:15:28 CEST 2018
+
+Job details:
+============
+
+Name                : smc01
+User                : p274981
+Partition           : regular
+Nodes               : pg-node074
+Cores               : 24
+State               : COMPLETED
+Submit              : 2018-08-07T13:12:25
+Start               : 2018-08-07T13:12:26
+End                 : 2018-08-07T13:15:28
+Reserved walltime   : 05:59:00
+Used walltime       : 00:03:02
+Used CPU time       : 01:10:18 (efficiency: 96.57%)
+% User (Computation): 99.86%
+% System (I/O)      :  0.15%
+Mem reserved        : 1G/core
+Max Mem used        : 38.77M (pg-node074)
+Max Disk Write      : 20.48K (pg-node074)
+Max Disk Read       : 7.40M (pg-node074)
+
+
+Acknowledgements:
+=================
+
+Please see this page if you want to acknowledge Peregrine in your publications:
+
+https://redmine.hpc.rug.nl/redmine/projects/peregrine/wiki/ScientificOutput
+
+################################################################################
