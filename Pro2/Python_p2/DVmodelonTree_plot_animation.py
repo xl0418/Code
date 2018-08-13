@@ -1,5 +1,9 @@
 import sys, os
-sys.path.append('C:/Liang/Code/Pro2/Python_p2')
+import platform
+if platform.system()=='Windows':
+    sys.path.append('C:/Liang/Code/Pro2/Python_p2')
+elif platform.system()=='Darwin':
+    sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
 from DV_model_sim_along_phy import DVtraitsim_tree
 import seaborn as sns
 from matplotlib.pylab import *
@@ -17,8 +21,13 @@ Vmax = 1
 scalar = 1000
 
 
+
 # trait evolution plot
-file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example3\\'
+if platform.system()=='Windows':
+    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example3\\'
+elif platform.system()=='Darwin':
+    file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/example3/'
+
 simresult = DVtraitsim_tree(file = file, gamma1 = gamma1, a = a,K=K, scalar=scalar,replicate=1)
 if simresult[2]:
     evo_time, total_species = simresult[0].shape
