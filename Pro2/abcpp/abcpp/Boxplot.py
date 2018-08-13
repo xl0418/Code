@@ -30,14 +30,13 @@ for gamma_index in range(len(gamma_vec)):
         else:
             gamma_list.append([0])
             a_list.append([0])
-#
-# label_a = (['a=.5','a=1'])
-# label_gamma = (['$\gamma$=0','$\gamma$=.001'])
+
 label_a = (['a=0','a=.001','a=.01','a=.1','a=.5','a=1'])
 label_gamma = (['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5','$\gamma$=1'])
 row_a = len(label_a)
 row_gamma = len(label_gamma)
 pos = [0,1]
+pos_label=['','$\gamma$','a']
 # Set up the matplotlib figure
 f, axes = plt.subplots(row_a, row_gamma, figsize=(9, 9), sharex=True, sharey=True) #
 gamma_vec_point = np.repeat(gamma_vec,len(a_vec))
@@ -60,9 +59,9 @@ for ax in axes.flat:
         # sns.kdeplot(a, gamma, cmap=cmap, shade=True, cut=5, ax=ax)
         # sns.violinplot(data=d, palette=cmap, inner="points",ax=ax)
         ax.violinplot(dataset=d, positions=pos, points=20, widths=0.3,
-                    showmeans=True, showextrema=True, showmedians=True)
-        # ax.hlines(a_vec_point[count],colors='k', linestyles='--',)
-        # ax.hlines(gamma_vec_point[count],colors='k', linestyles='--',)
+                    showmeans=True, showextrema=True, showmedians=False)
+        ax.scatter(x=0,y=gamma_vec_point[count],color='r',s=10,alpha=1)
+        ax.scatter(x=1,y=a_vec_point[count],color='r',s=10,alpha=1)
 
     if count in range(0,row_a):
         ax.title.set_text(label_a[count])
@@ -74,6 +73,7 @@ for ax in axes.flat:
     # ax.xaxis.set_major_locator(plt.NullLocator())
     # ax.yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
     ax.set(ylim=(-.2,1.2))
+    ax.set_xticklabels(pos_label)
     count += 1
 
 f.text(0.5, 0, '', ha='center')

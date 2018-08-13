@@ -15,7 +15,7 @@ a_list = []
 
 # Create the data
 if platform.system()=='Windows':
-    filedir = 'C:/Liang/Code/Pro2/abcpp/abcpp/smcdata/tree2/'
+    filedir = 'C:/Liang/Code/Pro2/abcpp/abcpp/smcdata/tree13/'
 elif platform.system()=='Darwin':
     filedir = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/abcpp/smcdata/tree2/'
 for gamma_index in range(len(gamma_vec)):
@@ -37,15 +37,7 @@ label_a = (['a=0','a=.001','a=.01','a=.1','a=.5','a=1'])
 label_gamma = (['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5','$\gamma$=1'])
 row_a = len(label_a)
 row_gamma = len(label_gamma)
-label_a_list = np.repeat(label_a,population)
-label_a_list = np.tile(label_a_list,generation)
-label_gamma_list = np.tile(label_gamma,generation)
-label_gamma_list = np.repeat(label_gamma_list,population)
-group = ['a','gamma']
-group = np.repeat(group,population*row_gamma*row_a)
-
-
-pos = ['a','$\gamma$']
+pos = ['$\gamma$','a']
 # Set up the matplotlib figure
 f, axes = plt.subplots(row_a, row_gamma, figsize=(9, 9), sharex=True, sharey=True) #
 gamma_vec_point = np.repeat(gamma_vec,len(a_vec))
@@ -57,20 +49,19 @@ count = 0
 for ax in axes.flat:
     gamma = gamma_list[count]
     a = a_list[count]
-    # d=np.column_stack((gamma,a))
-    d=[gamma,a]
+    d=np.concatenate((gamma,a),axis=None)
+    d_label = ['gamma','a']
+    d_label = np.repeat(d_label,population)
+    df={'par':d,'label':d_label}
+    df=pd.DataFrame(df)
     if len(gamma)==1:
         ax.text(0.45,0.45,"X")
 
     # Create a cubehelix colormap to use with kdeplot
     else:
-        # Generate and plot a random bivariate dataset
-        # sns.kdeplot(a, gamma, cmap=cmap, shade=True, cut=5, ax=ax)
-        sns.violinplot(data=d, palette='Set2', inner="quartile",ax=ax,bw=.2)
-        # ax.hlines(a_vec_point[count],colors='k', linestyles='--',)
-        # ax.hlines(gamma_vec_point[count],colors='k', linestyles='--',)
-        ax.scatter(x=0,y=gamma_vec_point[count],color='r',s=5)
-        ax.scatter(x=1,y=a_vec_point[count],color='r',s=5)
+        sns.violinplot(data=df, palette='Set2', inner="quartile",ax=ax,bw=.2)
+        ax.scatter(x=0,y=gamma_vec_point[count],color='r',s=8,alpha=.8)
+        ax.scatter(x=1,y=a_vec_point[count],color='r',s=8,alpha=.8)
 
     if count in range(0,row_a):
         ax.title.set_text(label_a[count])
