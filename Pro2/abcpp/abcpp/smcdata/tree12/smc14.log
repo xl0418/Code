@@ -1,0 +1,43 @@
+slurmstepd: error: Unable to create TMPDIR [/local/1860327]: Permission denied
+slurmstepd: error: Setting TMPDIR to /tmp
+slurmstepd: error: *** JOB 1860338 ON pg-node085 CANCELLED AT 2018-08-11T14:04:13 DUE TO TIME LIMIT ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+slurmstepd: error: *** STEP 1860338.0 ON pg-node085 CANCELLED AT 2018-08-11T14:04:13 DUE TO TIME LIMIT ***
+
+
+###############################################################################
+Peregrine Cluster
+Job 1860338 for user 'p274981'
+Finished at: Sat Aug 11 14:04:15 CEST 2018
+
+Job details:
+============
+
+Name                : smc14
+User                : p274981
+Partition           : regular
+Nodes               : pg-node085
+Cores               : 24
+State               : CANCELLED,TIMEOUT
+Submit              : 2018-08-09T11:36:34
+Start               : 2018-08-09T14:05:09
+End                 : 2018-08-11T14:04:14
+Reserved walltime   : 1-23:59:00
+Used walltime       : 1-23:59:05
+Used CPU time       : 47-11:36:46 (efficiency: 98.96%)
+% User (Computation): 99.98%
+% System (I/O)      :  0.02%
+Mem reserved        : 1G/core
+Max Mem used        : 267.14M (pg-node085)
+Max Disk Write      : 20.48K (pg-node085)
+Max Disk Read       : 7.56M (pg-node085)
+
+
+Acknowledgements:
+=================
+
+Please see this page if you want to acknowledge Peregrine in your publications:
+
+https://redmine.hpc.rug.nl/redmine/projects/peregrine/wiki/ScientificOutput
+
+################################################################################

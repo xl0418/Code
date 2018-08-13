@@ -1,0 +1,44 @@
+slurmstepd: error: Unable to create TMPDIR [/local/1860327]: Permission denied
+slurmstepd: error: Setting TMPDIR to /tmp
+try to find a completed true simulation with gamma = 0.01 and a = 0.001 ...
+hopeless, does not compute.
+srun: error: pg-node042: task 0: Exited with exit code 255
+srun: Terminating job step 1860341.0
+
+
+###############################################################################
+Peregrine Cluster
+Job 1860341 for user 'p274981'
+Finished at: Thu Aug  9 16:44:51 CEST 2018
+
+Job details:
+============
+
+Name                : smc21
+User                : p274981
+Partition           : regular
+Nodes               : pg-node042
+Cores               : 24
+State               : FAILED
+Submit              : 2018-08-09T11:36:34
+Start               : 2018-08-09T16:23:53
+End                 : 2018-08-09T16:44:51
+Reserved walltime   : 1-23:59:00
+Used walltime       :   00:20:58
+Used CPU time       :   00:20:57 (efficiency:  4.16%)
+% User (Computation): 99.95%
+% System (I/O)      :  0.05%
+Mem reserved        : 1G/core
+Max Mem used        : 37.79M (pg-node042)
+Max Disk Write      : 20.48K (pg-node042)
+Max Disk Read       : 7.56M (pg-node042)
+
+
+Acknowledgements:
+=================
+
+Please see this page if you want to acknowledge Peregrine in your publications:
+
+https://redmine.hpc.rug.nl/redmine/projects/peregrine/wiki/ScientificOutput
+
+################################################################################

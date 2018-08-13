@@ -1,0 +1,8 @@
+#!/bin/bash
+#SBATCH --time=1-23:59:00
+#SBATCH --ntasks=1
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=24
+module load Python
+srun python3 evo_loop.py 2 4
+rm zMLjob24
