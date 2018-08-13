@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import platform
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -13,7 +14,10 @@ gamma_list = []
 a_list = []
 
 # Create the data
-filedir = 'C:/Liang/Code/Pro2/abcpp/abcpp/smcdata/tree2/'
+if platform.system()=='Windows':
+    filedir = 'C:/Liang/Code/Pro2/abcpp/abcpp/smcdata/tree2/'
+elif platform.system()=='Darwin':
+    filedir = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/abcpp/smcdata/tree2/'
 for gamma_index in range(len(gamma_vec)):
     for a_index in range(len(a_vec)):
         file = filedir + 'smc%dg%da.npy' % (gamma_index, a_index)

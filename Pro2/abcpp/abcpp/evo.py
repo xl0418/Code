@@ -1,7 +1,10 @@
 import os
 import sys
-sys.path.append('C:/Liang/Code/Pro2/abcpp/abcpp')
-
+import platform
+if platform.system()=='Windows':
+    sys.path.append('C:/Liang/Code/Pro2/Python_p2')
+elif platform.system()=='Darwin':
+    sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
 import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParam
 import dvtraitsim_cpp as dvcpp
