@@ -60,8 +60,12 @@ params[:, 0] = np.random.uniform(0.0, 1.0, params.shape[0])  # randomize 'gamma'
 params[:, 1] = np.random.uniform(0.0, 1.0, params.shape[0])  # randomize 'a'
 gamma_data = np.zeros(shape=(generations, population))
 a_data = np.zeros(shape=(generations, population))
-fitness_data = np.zeros(shape=(generations, population))
 
+# Initialize the weights.
+weight_gamma = np.zeros(population)
+weight_gamma.fill(1 / population)
+weight_a = np.zeros(population)
+weight_a.fill(1 / population)
 for g in range(generations):
     gamma_data[g, :] = params[:, 0]
     a_data[g, :] = params[:, 1]
@@ -70,25 +74,27 @@ for g in range(generations):
     # access fitness
     fitness = np.zeros(population)
     valid = np.where(pop['sim_time'] == td.evo_time)[0]
+    if len(valid)<20:
+        print("WARNING:Valid simulations are too scarce!")
     if valid.size > 0:
         Z = pop['Z'][valid]
         i, j = argsort2D(Z)
         Z = Z[i, j]
         V = pop['V'][valid][i, j]
+        Z = np.nan_to_num(Z)
+        V = np.nan_to_num(V)
         fitness[valid] += 1.0 - normalized_norm(Z, obsZ)
         fitness[valid] += 1.0 - normalized_norm(V, obsV)
-    fitness_data[g,:]=fitness
+
     # print something...
-    q5 = np.argsort(fitness)[-population // 20]  # best 5%
-    fit_index = np.where(fitness >= fitness[q5])[0]
+    q5 = np.argsort(fitness)[-population// 20]  # best 5%
+    fit_index = np.where(fitness > fitness[q5])[0]
 
     print('Generation = %d  gamma = %f  a = %f  fitness = %f' % (g, np.mean(params[fit_index, 0]),
                                                                  np.mean(params[fit_index, 1]), np.mean(fitness[q5])))
 
-    weight_gamma = np.zeros(len(fit_index))
-    weight_gamma.fill(1 / len(fit_index))
-    weight_a = np.zeros(len(fit_index))
-    weight_a.fill(1 / len(fit_index))
+    weight_gamma = weight_gamma[fit_index]/sum(weight_gamma[fit_index])
+    weight_a = weight_a[fit_index]/sum(weight_a[fit_index])
 
     gamma_pre_mean = np.sum(params[fit_index, 0] * weight_gamma)
     gamma_pre_var = np.sum((params[fit_index, 0] - gamma_pre_mean) ** 2 * weight_gamma)
