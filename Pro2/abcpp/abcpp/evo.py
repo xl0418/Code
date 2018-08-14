@@ -2,7 +2,7 @@ import os
 import sys
 import platform
 if platform.system()=='Windows':
-    sys.path.append('C:/Liang/Code/Pro2/Python_p2')
+    sys.path.append('C:/Liang/Code/Pro2/abcpp/abcpp')
 elif platform.system()=='Darwin':
     sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
 import numpy as np
@@ -29,9 +29,9 @@ def normalized_norm(x, y):
 # dir_path = os.path.dirname(os.path.realpath(__file__))
 # files = dir_path + '/../tree_data/example1/'
 dir_path = 'c:/Liang/Code/Pro2/abcpp'
-files = dir_path + '/tree_data/example13/'
+files = dir_path + '/tree_data/example1/'
 
-td = DVTreeData(path=files, scalar=5000)
+td = DVTreeData(path=files, scalar=1000)
 
 prior = [0.5, 0.5, 0.5, 0.5]
 gamma_prior_mean = prior[0]
@@ -66,6 +66,12 @@ params[:, 0] = np.random.uniform(0.0, 1.0, params.shape[0])  # randomize 'gamma'
 params[:, 1] = np.random.uniform(0.0, 1.0, params.shape[0])  # randomize 'a'
 gamma_data = np.zeros(shape=(generations, population))
 a_data = np.zeros(shape=(generations, population))
+
+# Initialize the weights.
+weight_gamma = np.zeros(population)
+weight_gamma.fill(1 / population)
+weight_a = np.zeros(population)
+weight_a.fill(1 / population)
 for g in range(generations):
     gamma_data[g, :] = params[:, 0]
     a_data[g, :] = params[:, 1]
@@ -93,10 +99,8 @@ for g in range(generations):
     print('Generation = %d  gamma = %f  a = %f  fitness = %f' % (g, np.mean(params[fit_index, 0]),
                                                                  np.mean(params[fit_index, 1]), np.mean(fitness[q5])))
 
-    weight_gamma = np.zeros(len(fit_index))
-    weight_gamma.fill(1 / len(fit_index))
-    weight_a = np.zeros(len(fit_index))
-    weight_a.fill(1 / len(fit_index))
+    weight_gamma = weight_gamma[fit_index]/sum(weight_gamma[fit_index])
+    weight_a = weight_a[fit_index]/sum(weight_a[fit_index])
 
     gamma_pre_mean = np.sum(params[fit_index, 0] * weight_gamma)
     gamma_pre_var = np.sum((params[fit_index, 0] - gamma_pre_mean) ** 2 * weight_gamma)

@@ -45,3 +45,22 @@ y <- dnorm(x, population_mean, population_sd)
 plot(x, y, type="n", xlab = "", ylab = "", main = "")
 lines(x, y)
 
+
+f <- function(x,y){exp(-x*y^2)}
+x <- seq(0,1,.05)
+y <- seq(0,10,.5)
+m <- length(x)
+n <- length(y)
+z <- matrix(0, nrow=m, ncol=n)
+for(i in 1:m)for(j in 1:n)z[i,j] <- f(x[i],y[j])
+persp(x,y,z,theta=120, phi=30, expand=0.5,
+      col="lightblue", zlab="Competition",xlab = 'a',ylab = 'Trait diff',
+      ticktype="detailed",
+      shade=.75, lphi=45, ltheta=90)
+
+library(rgl)
+open3d()
+bg3d("white")
+surface3d(x, y, z, col="lightgreen")
+aspect3d(1,1,0.5)
+bbox3d(back="lines")
