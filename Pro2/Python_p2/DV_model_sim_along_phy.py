@@ -115,7 +115,7 @@ def DVtraitsim_tree(file, gamma1, a, K, scalar, nu=0.0001, r=1,theta=0, Vmax=1, 
         V[i + 1, idx] = Vi / 2 + 2 * Ni * nu * Vmax / (1 + 4 * Ni * nu) \
                         + Vi ** 2 * (
                             -2 * gamma1 + 4 * gamma1**2 * dtz ** 2 +
-                                1 / Ki * (sigma - sigmasqr) + 4 * gamma1 / Ki *
+                                1 / Ki * (2*a*beta - sigmasqr) + 4 * gamma1 / Ki *
                                 dtz * sigma + sigma ** 2 / Ki**2
                             )
         # sanity check

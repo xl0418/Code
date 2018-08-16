@@ -71,7 +71,7 @@ def DVSim(td, param):
         V[i + 1, idx] = Vi / 2 + 2 * Ni * nu * Vmax / (1 + 4 * Ni * nu) \
                         + Vi ** 2 * (
                             -2 * gamma + 4 * gamma**2 * dtz ** 2 +
-                                1 / Ki * (sigma - sigmasqr) + 4 * gamma / Ki *
+                                1 / Ki * (2*a*beta - sigmasqr) + 4 * gamma / Ki *
                                 dtz * sigma + sigma ** 2 / Ki**2
                             )
         # sanity check

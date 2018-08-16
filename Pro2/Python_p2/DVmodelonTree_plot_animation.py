@@ -24,7 +24,7 @@ scalar = 1000
 
 # trait evolution plot
 if platform.system()=='Windows':
-    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example3\\'
+    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example4\\'
 elif platform.system()=='Darwin':
     file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/example3/'
 
@@ -243,8 +243,8 @@ if simresult[2]:
     ani = animation.FuncAnimation(f0, animate, interval= 1, frames= evo_time, repeat=False, blit=False) #, init_func=init)
     plt.show()
     #
-    # Writer = animation.writers['ffmpeg']
-    # writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
-    # ani.save('C:\\Liang\\DVmodel_alongtree.mp4', writer=writer)
+    Writer = animation.writers['ffmpeg']
+    writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+    ani.save('C:\\Liang\\DVmodeltree4.mp4', writer=writer)
 else:
     print('Junk simulation! Please try again or elevate K.')
