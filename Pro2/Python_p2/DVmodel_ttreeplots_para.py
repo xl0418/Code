@@ -12,8 +12,8 @@ theta = 0  # optimum of natural selection
 r = 1  # growth rate
 delta_pop = .001  # Variance of random walk of population
 Vmax = 1
-scalor = 1000
-K=10000000
+scalor = 20000
+K=1000000000
 nu=1/(100*K)
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
 a_vec = gamma_vec
@@ -22,9 +22,9 @@ count = 0
 # trait evolution plot
 # file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
 if platform.system()=='Windows':
-    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example4\\'
+    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example17\\'
 elif platform.system()=='Darwin':
-    file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/example3/'
+    file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/example12/'
 
 f, axes = plt.subplots(row_gamma, row_gamma, figsize=(9, 9)) #
 label_a = (['a=0','a=.001','a=.01','a=.1','a=.5','a=1'])
