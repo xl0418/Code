@@ -12,7 +12,7 @@ theta = 0  # optimum of natural selection
 r = 1  # growth rate
 delta_pop = .001  # Variance of random walk of population
 Vmax = 1
-scalor = 5000
+scalor = 1000
 K=10000000
 nu=1/(100*K)
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
@@ -66,7 +66,9 @@ for index_g in range(len(gamma_vec)):
             axes[index_g,index_a].text(0.45, 0.45, "X")
         # axes[index_g, index_a].yaxis.set_major_locator(plt.NullLocator())
         axes[index_g, index_a].xaxis.set_major_locator(plt.NullLocator())
-        axes[index_g, index_a].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
+        # axes[index_g, index_a].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1f'))
+        # axes[index_g, index_a].set_yscale('log')
+        axes[index_g, index_a].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 
         if count in range(0, row_gamma):
             axes[index_g, index_a].title.set_text(label_a[count])
