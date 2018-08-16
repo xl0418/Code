@@ -6,13 +6,15 @@ elif platform.system()=='Darwin':
     sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
 from DV_model_sim_along_phy import DVtraitsim_tree
 from matplotlib.pylab import *
+import matplotlib.ticker as mtick
 
 theta = 0  # optimum of natural selection
 r = 1  # growth rate
 delta_pop = .001  # Variance of random walk of population
-nu = 0.0001
 Vmax = 1
-scalor = 1000
+scalor = 5000
+K=10000000
+nu=1/(100*K)
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
 a_vec = gamma_vec
 row_gamma=len(gamma_vec)
@@ -20,7 +22,7 @@ count = 0
 # trait evolution plot
 # file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
 if platform.system()=='Windows':
-    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example1\\'
+    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example4\\'
 elif platform.system()=='Darwin':
     file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/example3/'
 
@@ -32,11 +34,11 @@ for index_g in range(len(gamma_vec)):
     gamma1=gamma_vec[index_g]
     for index_a in range(len(a_vec)):
         a=a_vec[index_a]
-        pic=0
         print(count)
         for r in range(100):
-            simresult = DVtraitsim_tree(file=file, gamma1=gamma1, a=a, K=10000000, scalar=scalor)
+            simresult = DVtraitsim_tree(file=file, gamma1=gamma1, a=a, K=K,nu=nu, scalar=scalor)
             if simresult[2]:
+                pic = 0
                 break
             else:
                 pic=1
@@ -60,9 +62,12 @@ for index_g in range(len(gamma_vec)):
                 axes[index_g,index_a].plot(x, trait_RI_dr[:, i - 1])
 
         else:
+            print('No complete simulation with count =', count)
             axes[index_g,index_a].text(0.45, 0.45, "X")
-        axes[index_g, index_a].yaxis.set_major_locator(plt.NullLocator())
+        # axes[index_g, index_a].yaxis.set_major_locator(plt.NullLocator())
         axes[index_g, index_a].xaxis.set_major_locator(plt.NullLocator())
+        axes[index_g, index_a].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
+
         if count in range(0, row_gamma):
             axes[index_g, index_a].title.set_text(label_a[count])
 

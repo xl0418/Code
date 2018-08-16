@@ -1,0 +1,71 @@
+slurmstepd: error: Unable to create TMPDIR [/local/1939966]: Permission denied
+slurmstepd: error: Setting TMPDIR to /tmp
+try to find a completed true simulation with gamma = 0.1 and a = 0.001 ...
+Generation = 0  gamma = 0.187643  a = 0.252841  fitness = 1.593715
+Generation = 1  gamma = 0.132443  a = 0.159691  fitness = 1.718209
+Generation = 2  gamma = 0.106833  a = 0.119734  fitness = 1.760928
+Generation = 3  gamma = 0.108544  a = 0.087747  fitness = 1.757056
+Generation = 4  gamma = 0.108126  a = 0.063024  fitness = 1.804341
+Generation = 5  gamma = 0.110183  a = 0.052264  fitness = 1.839510
+Generation = 6  gamma = 0.105190  a = 0.043150  fitness = 1.797827
+Generation = 7  gamma = 0.102732  a = 0.045468  fitness = 1.829013
+Generation = 8  gamma = 0.102842  a = 0.042076  fitness = 1.810372
+Generation = 9  gamma = 0.104529  a = 0.045140  fitness = 1.838939
+Generation = 10  gamma = 0.102093  a = 0.048333  fitness = 1.836565
+Generation = 11  gamma = 0.100822  a = 0.039446  fitness = 1.828767
+Generation = 12  gamma = 0.101208  a = 0.040770  fitness = 1.805078
+Generation = 13  gamma = 0.100739  a = 0.041973  fitness = 1.841520
+Generation = 14  gamma = 0.098215  a = 0.039938  fitness = 1.798984
+Generation = 15  gamma = 0.099875  a = 0.045866  fitness = 1.841940
+Generation = 16  gamma = 0.101753  a = 0.043266  fitness = 1.837131
+Generation = 17  gamma = 0.101813  a = 0.035710  fitness = 1.830763
+Generation = 18  gamma = 0.098598  a = 0.034741  fitness = 1.832549
+Generation = 19  gamma = 0.102000  a = 0.039442  fitness = 1.811437
+Generation = 20  gamma = 0.103008  a = 0.039026  fitness = 1.860664
+Generation = 21  gamma = 0.102169  a = 0.044093  fitness = 1.832468
+Generation = 22  gamma = 0.103444  a = 0.046930  fitness = 1.828365
+Generation = 23  gamma = 0.105350  a = 0.046179  fitness = 1.817182
+Generation = 24  gamma = 0.105065  a = 0.043890  fitness = 1.819189
+Generation = 25  gamma = 0.104868  a = 0.044415  fitness = 1.819646
+Generation = 26  gamma = 0.103215  a = 0.041950  fitness = 1.843429
+Generation = 27  gamma = 0.101436  a = 0.040454  fitness = 1.818617
+Generation = 28  gamma = 0.101506  a = 0.042691  fitness = 1.796133
+Generation = 29  gamma = 0.099895  a = 0.041849  fitness = 1.814549
+
+
+###############################################################################
+Peregrine Cluster
+Job 1939986 for user 'p274981'
+Finished at: Tue Aug 14 20:37:08 CEST 2018
+
+Job details:
+============
+
+Name                : smc31
+User                : p274981
+Partition           : regular
+Nodes               : pg-node030
+Cores               : 24
+State               : COMPLETED
+Submit              : 2018-08-14T10:52:56
+Start               : 2018-08-14T13:31:17
+End                 : 2018-08-14T20:37:08
+Reserved walltime   : 1-23:59:00
+Used walltime       :   07:05:51
+Used CPU time       : 6-23:09:07 (efficiency: 98.13%)
+% User (Computation): 99.98%
+% System (I/O)      :  0.02%
+Mem reserved        : 1G/core
+Max Mem used        : 53.93M (pg-node030)
+Max Disk Write      : 20.48K (pg-node030)
+Max Disk Read       : 7.42M (pg-node030)
+
+
+Acknowledgements:
+=================
+
+Please see this page if you want to acknowledge Peregrine in your publications:
+
+https://redmine.hpc.rug.nl/redmine/projects/peregrine/wiki/ScientificOutput
+
+################################################################################

@@ -74,7 +74,7 @@ def PopsplitNormal(mean, sigma):
     x = np.random.normal(mean,sigma,1)
     return(x if x>0 and x<1 else PopsplitNormal(mean,sigma))
 
-def DVtraitsim_tree(file, gamma1, a, K, scalar, nu=0.0001, r=1,theta=0, Vmax=1, replicate=0):
+def DVtraitsim_tree(file, gamma1, a, K, scalar, nu=0.00000001, r=1,theta=0, Vmax=1, replicate=0):
     valid = True
     if replicate > 0:
         np.random.seed(replicate)  # set random seed

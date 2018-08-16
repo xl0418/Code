@@ -1,0 +1,74 @@
+Submitted batch job 1939967
+Submitted batch job 1939968
+Submitted batch job 1939969
+Submitted batch job 1939970
+Submitted batch job 1939971
+Submitted batch job 1939972
+Submitted batch job 1939973
+Submitted batch job 1939974
+Submitted batch job 1939975
+Submitted batch job 1939976
+Submitted batch job 1939977
+Submitted batch job 1939978
+Submitted batch job 1939979
+Submitted batch job 1939980
+Submitted batch job 1939981
+Submitted batch job 1939982
+Submitted batch job 1939983
+Submitted batch job 1939984
+Submitted batch job 1939985
+Submitted batch job 1939986
+Submitted batch job 1939987
+Submitted batch job 1939988
+Submitted batch job 1939989
+Submitted batch job 1939990
+Submitted batch job 1939991
+Submitted batch job 1939992
+Submitted batch job 1939993
+Submitted batch job 1939994
+Submitted batch job 1939995
+Submitted batch job 1939996
+Submitted batch job 1939997
+Submitted batch job 1939998
+Submitted batch job 1939999
+Submitted batch job 1940000
+Submitted batch job 1940001
+Submitted batch job 1940002
+
+
+###############################################################################
+Peregrine Cluster
+Job 1939966 for user 'p274981'
+Finished at: Tue Aug 14 10:52:56 CEST 2018
+
+Job details:
+============
+
+Name                : allocation
+User                : p274981
+Partition           : 
+Nodes               : pg-node006
+Cores               : 1
+State               : COMPLETED
+Submit              : 2018-08-14T10:52:55
+Start               : 2018-08-14T10:52:55
+End                 : 2018-08-14T10:52:56
+Reserved walltime   : --
+Used walltime       : 00:00:01
+Used CPU time       : --
+% User (Computation): 52.42%
+% System (I/O)      : 47.27%
+Mem reserved        : 0/node
+Max Mem used        : 0.00  (pg-node006)
+Max Disk Write      : 0.00  (pg-node006)
+Max Disk Read       : 0.00  (pg-node006)
+
+
+Acknowledgements:
+=================
+
+Please see this page if you want to acknowledge Peregrine in your publications:
+
+https://redmine.hpc.rug.nl/redmine/projects/peregrine/wiki/ScientificOutput
+
+################################################################################

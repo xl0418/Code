@@ -11,5 +11,8 @@ elif platform.system()=='Darwin':
     file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/example3/'
 gamma1=0
 a=1
-scalor=1000
-simresult = DVtraitsim_tree(file=file, gamma1=gamma1, a=a, K=10000000, scalar=scalor)
+scalor=2000
+K=10000000
+nu=1/(100*K)
+simresult = DVtraitsim_tree(file=file, gamma1=gamma1, a=a, K=K, scalar=scalor,nu=nu)
+simresult[0]

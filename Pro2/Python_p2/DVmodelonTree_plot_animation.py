@@ -13,10 +13,10 @@ theta = 0  # optimum of natural selection
 gamma1 = 0.001  # intensity of natural selection
 r = 1  # growth rate
 a = 0.1  # intensity of competition
-K = 100000  # carrying capacity
-kscale=100
+K = 10000000  # carrying capacity
+kscale=1000
 delta_pop = .001  # Variance of random walk of population
-nu = 0.0001
+nu=1/(100*K)
 Vmax = 1
 scalar = 1000
 
@@ -245,6 +245,6 @@ if simresult[2]:
     #
     Writer = animation.writers['ffmpeg']
     writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
-    ani.save('C:\\Liang\\DVmodeltree4.mp4', writer=writer)
+    ani.save('C:\\Liang\\DVmodeltree4_n.mp4', writer=writer)
 else:
     print('Junk simulation! Please try again or elevate K.')
