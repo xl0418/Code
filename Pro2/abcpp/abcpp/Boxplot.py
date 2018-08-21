@@ -15,9 +15,9 @@ a_list = []
 
 # Create the data
 if platform.system()=='Windows':
-    filedir = 'C:/Liang/Code/Pro2/abcpp/abcpp/smcndata/tree1E/'
+    filedir = 'C:/Liang/Code/Pro2/abcpp/abcpp/smcndata/tree1/'
 elif platform.system()=='Darwin':
-    filedir = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/abcpp/smcdata/tree1/'
+    filedir = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/abcpp/smcndata/tree1/'
 for gamma_index in range(len(gamma_vec)):
     for a_index in range(len(a_vec)):
         file = filedir + 'smc%dg%da.npy' % (gamma_index, a_index)
