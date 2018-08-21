@@ -10,10 +10,10 @@ from matplotlib.pylab import *
 from matplotlib import animation
 
 theta = 0  # optimum of natural selection
-gamma1 = 0.001  # intensity of natural selection
+gamma1 = 0.00  # intensity of natural selection
 r = 1  # growth rate
-a = 0.1  # intensity of competition
-K = 10000000  # carrying capacity
+a = 0.00  # intensity of competition
+K = 1000000000  # carrying capacity
 kscale=1000
 delta_pop = .001  # Variance of random walk of population
 nu=1/(100*K)
@@ -24,11 +24,18 @@ scalar = 1000
 
 # trait evolution plot
 if platform.system()=='Windows':
-    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example4\\'
+    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example2\\'
 elif platform.system()=='Darwin':
-    file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/example3/'
+    file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/example2/'
 
-simresult = DVtraitsim_tree(file = file, gamma1 = gamma1, a = a,K=K, scalar=scalar,replicate=1)
+for rep in range(100):
+    simresult = DVtraitsim_tree(file = file, gamma1 = gamma1, a = a,K=K, scalar=scalar,replicate=1)
+    if simresult[2]:
+        break
+    else:
+        print('%d simulations are all junks! Try more!' % rep)
+
+
 if simresult[2]:
     evo_time, total_species = simresult[0].shape
     evo_time = evo_time-1
