@@ -1,0 +1,74 @@
+Submitted batch job 1980574
+Submitted batch job 1980575
+Submitted batch job 1980576
+Submitted batch job 1980577
+Submitted batch job 1980578
+Submitted batch job 1980579
+Submitted batch job 1980580
+Submitted batch job 1980581
+Submitted batch job 1980582
+Submitted batch job 1980583
+Submitted batch job 1980584
+Submitted batch job 1980585
+Submitted batch job 1980586
+Submitted batch job 1980587
+Submitted batch job 1980588
+Submitted batch job 1980589
+Submitted batch job 1980590
+Submitted batch job 1980591
+Submitted batch job 1980592
+Submitted batch job 1980593
+Submitted batch job 1980594
+Submitted batch job 1980595
+Submitted batch job 1980596
+Submitted batch job 1980597
+Submitted batch job 1980598
+Submitted batch job 1980599
+Submitted batch job 1980600
+Submitted batch job 1980601
+Submitted batch job 1980602
+Submitted batch job 1980603
+Submitted batch job 1980604
+Submitted batch job 1980605
+Submitted batch job 1980606
+Submitted batch job 1980607
+Submitted batch job 1980608
+Submitted batch job 1980609
+
+
+###############################################################################
+Peregrine Cluster
+Job 1980573 for user 'p274981'
+Finished at: Tue Aug 21 13:36:28 CEST 2018
+
+Job details:
+============
+
+Name                : loopjob_pro2.bash
+User                : p274981
+Partition           : regular
+Nodes               : pg-node083
+Cores               : 1
+State               : COMPLETED
+Submit              : 2018-08-21T13:36:26
+Start               : 2018-08-21T13:36:27
+End                 : 2018-08-21T13:36:28
+Reserved walltime   : 00:30:00
+Used walltime       : 00:00:01
+Used CPU time       : --
+% User (Computation): 55.42%
+% System (I/O)      : 44.27%
+Mem reserved        : 2000M/core
+Max Mem used        : 0.00  (pg-node083)
+Max Disk Write      : 0.00  (pg-node083)
+Max Disk Read       : 0.00  (pg-node083)
+
+
+Acknowledgements:
+=================
+
+Please see this page if you want to acknowledge Peregrine in your publications:
+
+https://redmine.hpc.rug.nl/redmine/projects/peregrine/wiki/ScientificOutput
+
+################################################################################
