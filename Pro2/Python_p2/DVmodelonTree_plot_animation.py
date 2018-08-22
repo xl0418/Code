@@ -24,9 +24,9 @@ scalar = 1000
 
 # trait evolution plot
 if platform.system()=='Windows':
-    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example2\\'
+    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example3\\'
 elif platform.system()=='Darwin':
-    file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/example2/'
+    file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/example3/'
 
 for rep in range(100):
     simresult = DVtraitsim_tree(file = file, gamma1 = gamma1, a = a,K=K, scalar=scalar,replicate=1)
