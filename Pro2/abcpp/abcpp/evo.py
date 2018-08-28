@@ -10,7 +10,7 @@ from dvtraitsim_shared import DVTreeData, DVParam
 import dvtraitsim_cpp as dvcpp
 from scipy.stats import norm
 
-gamma = 0.001
+gamma = 0.01
 a = 0.5
 
 # argsort of 2-dimensional arrays is awkward
@@ -29,9 +29,9 @@ def normalized_norm(x, y):
 # dir_path = os.path.dirname(os.path.realpath(__file__))
 # files = dir_path + '/../tree_data/example1/'
 dir_path = 'c:/Liang/Code/Pro2/abcpp'
-files = dir_path + '/tree_data/example1/'
+files = dir_path + '/tree_data/example2/'
 
-td = DVTreeData(path=files, scalar=1000)
+td = DVTreeData(path=files, scalar=10000)
 
 prior = [0.5, 0.5, 0.5, 0.5]
 gamma_prior_mean = prior[0]
@@ -89,15 +89,16 @@ for g in range(generations):
         V = pop['V'][valid][i, j]
         Z = np.nan_to_num(Z)
         V = np.nan_to_num(V)
+        #GOF: Goodness of fit
         fitness[valid] += 1.0 - normalized_norm(Z, obsZ)
-        fitness[valid] += 1.0 - normalized_norm(V, obsV)
+        fitness[valid] += 1.0 - normalized_norm(np.sqrt(V), np.sqrt(obsV))
 
     # print something...
     q5 = np.argsort(fitness)[-population// 20]  # best 5%
     fit_index = np.where(fitness > fitness[q5])[0]
 
     print('Generation = %d  gamma = %f  a = %f  fitness = %f' % (g, np.mean(params[fit_index, 0]),
-                                                                 np.mean(params[fit_index, 1]), np.mean(fitness[q5])))
+                                                                 np.mean(params[fit_index, 1]), np.mean(fitness[fit_index])))
 
     weight_gamma = weight_gamma[fit_index]/sum(weight_gamma[fit_index])
     weight_a = weight_a[fit_index]/sum(weight_a[fit_index])
@@ -140,9 +141,9 @@ for g in range(generations):
     params[:, 1] = propose_a
 #
 # para_data = {'gamma': gamma_data, 'a': a_data}
-# # file='C:/Liang/Code/Pro2/Python_p2/abcpp/abcpp/smcdata/'
-# file = '/home/p274981/abcpp/abcpp/'
-# file2 = file + 'smc.npy'
+# file='C:/Liang/Code/Pro2/abcpp/abcpp/smcndata/'
+# # file = '/home/p274981/abcpp/abcpp/'
+# file2 = file + 'paraT11.npy'
 # np.save(file2,para_data)
 #
 # smc = np.load(file2).item()

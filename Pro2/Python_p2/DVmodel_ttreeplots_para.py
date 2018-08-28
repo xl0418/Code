@@ -12,8 +12,8 @@ theta = 0  # optimum of natural selection
 r = 1  # growth rate
 delta_pop = .001  # Variance of random walk of population
 Vmax = 1
-scalor = 1000
-K=2000000000
+scalor = 10000
+K=1000000000
 nu=1/(100*K)
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
 a_vec = gamma_vec
@@ -51,9 +51,9 @@ for index_g in range(len(gamma_vec)):
             trait_dr_tips = trait_RI_dr[evo_time, :][~np.isnan(trait_RI_dr[evo_time, :])]
             population_tips = population_RI_dr[evo_time, :][~np.isnan(population_RI_dr[evo_time, :])]
 
-            trait_RI_dr[np.where(trait_RI_dr == 0)[0], np.where(trait_RI_dr == 0)[1]] = None
+            # trait_RI_dr[np.where(trait_RI_dr == 0)[0], np.where(trait_RI_dr == 0)[1]] = None
 
-            population_RI_dr[np.where(population_RI_dr == 0)[0], np.where(population_RI_dr == 0)[1]] = None
+            # population_RI_dr[np.where(population_RI_dr == 0)[0], np.where(population_RI_dr == 0)[1]] = None
             num_lines = total_species
 
             x = np.arange(evo_time + 1)
