@@ -1,0 +1,44 @@
+slurmstepd: error: Unable to create TMPDIR [/local/2101041]: Permission denied
+slurmstepd: error: Setting TMPDIR to /tmp
+try to find a completed true simulation with gamma = 0.01 and a = 0.5 ...
+Generation = 0  gamma = 0.094011  a = 0.702416  fitness = 1.309250
+Generation = 1  gamma = 0.024619  a = 0.937518  fitness = 1.515833
+Generation = 2  gamma = 0.017900  a = 0.995763  fitness = 1.616868
+Generation = 3  gamma = 0.017172  a = 0.932748  fitness = 1.643559
+Generation = 4  gamma = 0.016633  a = 0.913647  fitness = 1.653333
+Generation = 5  gamma = 0.016205  a = 0.907437  fitness = 1.645476
+Generation = 6  gamma = 0.015212  a = 0.863498  fitness = 1.639486
+Generation = 7  gamma = 0.015953  a = 0.876374  fitness = 1.656588
+Generation = 8  gamma = 0.016145  a = 0.882523  fitness = 1.654401
+Generation = 9  gamma = 0.016269  a = 0.870358  fitness = 1.663641
+Generation = 10  gamma = 0.016745  a = 0.884219  fitness = 1.659752
+Generation = 11  gamma = 0.016696  a = 0.889477  fitness = 1.668410
+Generation = 12  gamma = 0.016201  a = 0.879825  fitness = 1.644522
+Generation = 13  gamma = 0.016023  a = 0.887082  fitness = 1.650984
+Generation = 14  gamma = 0.016601  a = 0.889860  fitness = 1.655069
+Generation = 15  gamma = 0.016735  a = 0.896735  fitness = 1.654157
+Generation = 16  gamma = 0.016364  a = 0.905857  fitness = 1.656873
+Generation = 17  gamma = 0.016956  a = 0.890763  fitness = 1.669129
+Generation = 18  gamma = 0.015993  a = 0.892143  fitness = 1.647268
+Generation = 19  gamma = 0.016514  a = 0.871485  fitness = 1.675393
+
+
+###############################################################################
+Peregrine Cluster
+Job 2101058 for user 'p274981'
+Finished at: Thu Aug 30 02:54:45 CEST 2018
+
+Job details:
+============
+
+
+
+
+Acknowledgements:
+=================
+
+Please see this page if you want to acknowledge Peregrine in your publications:
+
+https://redmine.hpc.rug.nl/redmine/projects/peregrine/wiki/ScientificOutput
+
+################################################################################

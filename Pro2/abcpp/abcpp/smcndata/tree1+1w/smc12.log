@@ -1,0 +1,27 @@
+
+libgomp: Invalid value for environment variable OMP_NUM_THREADS
+try to find a completed true simulation with gamma = 0.001 and a = 0.01 ...
+hopeless, does not compute.
+srun: error: pg-node216: task 0: Exited with exit code 255
+srun: Terminating job step 2100649.0
+
+
+###############################################################################
+Peregrine Cluster
+Job 2100649 for user 'p274981'
+Finished at: Wed Aug 29 15:55:52 CEST 2018
+
+Job details:
+============
+
+
+
+
+Acknowledgements:
+=================
+
+Please see this page if you want to acknowledge Peregrine in your publications:
+
+https://redmine.hpc.rug.nl/redmine/projects/peregrine/wiki/ScientificOutput
+
+################################################################################

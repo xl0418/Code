@@ -1,0 +1,44 @@
+
+libgomp: Invalid value for environment variable OMP_NUM_THREADS
+try to find a completed true simulation with gamma = 0.001 and a = 0.001 ...
+Generation = 0  gamma = 0.580135  a = 0.684363  fitness = 1.825906
+Generation = 1  gamma = 0.695701  a = 0.881406  fitness = 1.826787
+Generation = 2  gamma = 0.739394  a = 0.974314  fitness = 1.828916
+Generation = 3  gamma = 0.778282  a = 1.006178  fitness = 1.828603
+Generation = 4  gamma = 0.846604  a = 1.055667  fitness = 1.812429
+Generation = 5  gamma = 0.877106  a = 1.102055  fitness = 1.808824
+Generation = 6  gamma = 0.859777  a = 1.124033  fitness = 1.831224
+Generation = 7  gamma = 0.881952  a = 1.134768  fitness = 1.829642
+Generation = 8  gamma = 0.837713  a = 1.121384  fitness = 1.840927
+Generation = 9  gamma = 0.873174  a = 1.115737  fitness = 1.830080
+Generation = 10  gamma = 0.888138  a = 1.104302  fitness = 1.825271
+Generation = 11  gamma = 0.890133  a = 1.125222  fitness = 1.823215
+Generation = 12  gamma = 0.903138  a = 1.129202  fitness = 1.824975
+Generation = 13  gamma = 0.904528  a = 1.153104  fitness = 1.821546
+Generation = 14  gamma = 0.938298  a = 1.169718  fitness = 1.827967
+Generation = 15  gamma = 0.911972  a = 1.134340  fitness = 1.824127
+Generation = 16  gamma = 0.873760  a = 1.128816  fitness = 1.827719
+Generation = 17  gamma = 0.906429  a = 1.141060  fitness = 1.821546
+Generation = 18  gamma = 0.913677  a = 1.135604  fitness = 1.820817
+Generation = 19  gamma = 0.911940  a = 1.150081  fitness = 1.826455
+
+
+###############################################################################
+Peregrine Cluster
+Job 2100648 for user 'p274981'
+Finished at: Wed Aug 29 16:55:02 CEST 2018
+
+Job details:
+============
+
+
+
+
+Acknowledgements:
+=================
+
+Please see this page if you want to acknowledge Peregrine in your publications:
+
+https://redmine.hpc.rug.nl/redmine/projects/peregrine/wiki/ScientificOutput
+
+################################################################################

@@ -1,0 +1,25 @@
+try to find a completed true simulation with gamma = 0.01 and a = 0.1 ...
+hopeless, does not compute.
+srun: error: pg-node219: task 0: Exited with exit code 255
+srun: Terminating job step 2101057.0
+
+
+###############################################################################
+Peregrine Cluster
+Job 2101057 for user 'p274981'
+Finished at: Thu Aug 30 00:49:17 CEST 2018
+
+Job details:
+============
+
+
+
+
+Acknowledgements:
+=================
+
+Please see this page if you want to acknowledge Peregrine in your publications:
+
+https://redmine.hpc.rug.nl/redmine/projects/peregrine/wiki/ScientificOutput
+
+################################################################################

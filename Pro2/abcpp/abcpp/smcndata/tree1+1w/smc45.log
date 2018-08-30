@@ -1,0 +1,46 @@
+slurmstepd: error: Unable to create TMPDIR [/local/2100640]: Permission denied
+slurmstepd: error: Setting TMPDIR to /tmp
+
+libgomp: Invalid value for environment variable OMP_NUM_THREADS
+try to find a completed true simulation with gamma = 0.5 and a = 1.0 ...
+Generation = 0  gamma = 0.443472  a = 0.664854  fitness = 1.914318
+Generation = 1  gamma = 0.504006  a = 0.802886  fitness = 1.929027
+Generation = 2  gamma = 0.543221  a = 0.889096  fitness = 1.930771
+Generation = 3  gamma = 0.568710  a = 0.951748  fitness = 1.933532
+Generation = 4  gamma = 0.586648  a = 0.978015  fitness = 1.929647
+Generation = 5  gamma = 0.574068  a = 0.984787  fitness = 1.930473
+Generation = 6  gamma = 0.593838  a = 0.999962  fitness = 1.927961
+Generation = 7  gamma = 0.596645  a = 0.999478  fitness = 1.933202
+Generation = 8  gamma = 0.606541  a = 0.995663  fitness = 1.929691
+Generation = 9  gamma = 0.622082  a = 1.038757  fitness = 1.924461
+Generation = 10  gamma = 0.601218  a = 1.040439  fitness = 1.930125
+Generation = 11  gamma = 0.594600  a = 1.028799  fitness = 1.927721
+Generation = 12  gamma = 0.583732  a = 1.001025  fitness = 1.931905
+Generation = 13  gamma = 0.575955  a = 0.984827  fitness = 1.929314
+Generation = 14  gamma = 0.579733  a = 0.983417  fitness = 1.933434
+Generation = 15  gamma = 0.572414  a = 0.999553  fitness = 1.932769
+Generation = 16  gamma = 0.594274  a = 1.008973  fitness = 1.931381
+Generation = 17  gamma = 0.600459  a = 1.023193  fitness = 1.928236
+Generation = 18  gamma = 0.609355  a = 1.035942  fitness = 1.929174
+Generation = 19  gamma = 0.592362  a = 1.021778  fitness = 1.928489
+
+
+###############################################################################
+Peregrine Cluster
+Job 2100670 for user 'p274981'
+Finished at: Wed Aug 29 17:04:02 CEST 2018
+
+Job details:
+============
+
+
+
+
+Acknowledgements:
+=================
+
+Please see this page if you want to acknowledge Peregrine in your publications:
+
+https://redmine.hpc.rug.nl/redmine/projects/peregrine/wiki/ScientificOutput
+
+################################################################################

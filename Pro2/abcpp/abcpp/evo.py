@@ -29,7 +29,7 @@ def normalized_norm(x, y):
 # dir_path = os.path.dirname(os.path.realpath(__file__))
 # files = dir_path + '/../tree_data/example1/'
 dir_path = 'c:/Liang/Code/Pro2/abcpp'
-files = dir_path + '/tree_data/example2/'
+files = dir_path + '/tree_data/example11/'
 
 td = DVTreeData(path=files, scalar=10000)
 

@@ -1,0 +1,42 @@
+try to find a completed true simulation with gamma = 0.01 and a = 0.001 ...
+Generation = 0  gamma = 0.554714  a = 0.553145  fitness = 1.837625
+Generation = 1  gamma = 0.673300  a = 0.715659  fitness = 1.843698
+Generation = 2  gamma = 0.699922  a = 0.881104  fitness = 1.845347
+Generation = 3  gamma = 0.768464  a = 0.930187  fitness = 1.836160
+Generation = 4  gamma = 0.763285  a = 0.933652  fitness = 1.846181
+Generation = 5  gamma = 0.774935  a = 1.005087  fitness = 1.834366
+Generation = 6  gamma = 0.804363  a = 0.994693  fitness = 1.856002
+Generation = 7  gamma = 0.776828  a = 1.000918  fitness = 1.852297
+Generation = 8  gamma = 0.796869  a = 1.062051  fitness = 1.858548
+Generation = 9  gamma = 0.793448  a = 1.078728  fitness = 1.853428
+Generation = 10  gamma = 0.812777  a = 1.048237  fitness = 1.855437
+Generation = 11  gamma = 0.787938  a = 1.006858  fitness = 1.854108
+Generation = 12  gamma = 0.757086  a = 1.000410  fitness = 1.848301
+Generation = 13  gamma = 0.776461  a = 0.998420  fitness = 1.855630
+Generation = 14  gamma = 0.781654  a = 1.036985  fitness = 1.859155
+Generation = 15  gamma = 0.796637  a = 1.028645  fitness = 1.853612
+Generation = 16  gamma = 0.742780  a = 0.968825  fitness = 1.859805
+Generation = 17  gamma = 0.775072  a = 1.014298  fitness = 1.850125
+Generation = 18  gamma = 0.769193  a = 1.040814  fitness = 1.860022
+Generation = 19  gamma = 0.783002  a = 1.030570  fitness = 1.854641
+
+
+###############################################################################
+Peregrine Cluster
+Job 2101013 for user 'p274981'
+Finished at: Wed Aug 29 23:38:20 CEST 2018
+
+Job details:
+============
+
+
+
+
+Acknowledgements:
+=================
+
+Please see this page if you want to acknowledge Peregrine in your publications:
+
+https://redmine.hpc.rug.nl/redmine/projects/peregrine/wiki/ScientificOutput
+
+################################################################################
