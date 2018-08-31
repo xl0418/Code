@@ -29,18 +29,19 @@ def normalized_norm(x, y):
 # dir_path = os.path.dirname(os.path.realpath(__file__))
 # files = dir_path + '/../tree_data/example1/'
 dir_path = 'c:/Liang/Code/Pro2/abcpp'
-files = dir_path + '/tree_data/example11/'
+files = dir_path + '/tree_data/example9/'
 
-td = DVTreeData(path=files, scalar=10000)
+td = DVTreeData(path=files, scalar=1000)
 
 prior = [0.5, 0.5, 0.5, 0.5]
 gamma_prior_mean = prior[0]
 gamma_prior_var = prior[1]
 a_prior_mean = prior[2]
 a_prior_var = prior[3]
-
+K=1000000000
+nu=0.000001
 # let's try to find a true simulation:
-obs_param = DVParam(gamma=gamma, a=a, K=100000000, nu=0.0001, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
+obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
                     split_stddev=0.2)
 print('try to find a completed true simulation with gamma =', obs_param[0], 'and a =', obs_param[1], '...')
 for r in range(100):
@@ -66,7 +67,7 @@ params[:, 0] = np.random.uniform(0.0, 1.0, params.shape[0])  # randomize 'gamma'
 params[:, 1] = np.random.uniform(0.0, 1.0, params.shape[0])  # randomize 'a'
 gamma_data = np.zeros(shape=(generations, population))
 a_data = np.zeros(shape=(generations, population))
-
+fitness= np.zeros(shape=(generations, population))
 # Initialize the weights.
 weight_gamma = np.zeros(population)
 weight_gamma.fill(1 / population)
@@ -78,7 +79,7 @@ for g in range(generations):
     pop = dvcpp.DVSim(td, params)
 
     # access fitness
-    fitness = np.zeros(population)
+    # fitness = np.zeros(population)
     valid = np.where(pop['sim_time'] == td.evo_time)[0]
     if len(valid)<20:
         print("WARNING:Valid simulations are too scarce!")
@@ -90,15 +91,18 @@ for g in range(generations):
         Z = np.nan_to_num(Z)
         V = np.nan_to_num(V)
         #GOF: Goodness of fit
-        fitness[valid] += 1.0 - normalized_norm(Z, obsZ)
-        fitness[valid] += 1.0 - normalized_norm(np.sqrt(V), np.sqrt(obsV))
+        fitness[g,valid] += 1.0 - normalized_norm(Z, obsZ)
+        fitness[g,valid] += 1.0 - normalized_norm(np.sqrt(V), np.sqrt(obsV))
 
     # print something...
-    q5 = np.argsort(fitness)[-population// 20]  # best 5%
-    fit_index = np.where(fitness > fitness[q5])[0]
+    q5 = np.argsort(fitness[g,:])[-population// 20]  # best 5%
+    fit_index = np.where(fitness[g,:] > fitness[g,q5])[0]
 
-    print('Generation = %d  gamma = %f  a = %f  fitness = %f' % (g, np.mean(params[fit_index, 0]),
-                                                                 np.mean(params[fit_index, 1]), np.mean(fitness[fit_index])))
+    print('Iteration = %d 5th gamma = %f  a = %f  fitness = %f' % (g, np.mean(params[fit_index, 0]),
+                                                                 np.mean(params[fit_index, 1]), np.mean(fitness[g,fit_index])))
+    print('Iteration = %d all gamma = %f  a = %f  fitness = %f' % (g, np.mean(params[:, 0]),
+                                                                 np.mean(params[:, 1]),
+                                                                 np.mean(fitness[g,:])))
 
     weight_gamma = weight_gamma[fit_index]/sum(weight_gamma[fit_index])
     weight_a = weight_a[fit_index]/sum(weight_a[fit_index])
@@ -140,7 +144,7 @@ for g in range(generations):
     params[:, 0] = propose_gamma
     params[:, 1] = propose_a
 #
-# para_data = {'gamma': gamma_data, 'a': a_data}
+para_data = {'gamma': gamma_data, 'a': a_data,'fitness': fitness}
 # file='C:/Liang/Code/Pro2/abcpp/abcpp/smcndata/'
 # # file = '/home/p274981/abcpp/abcpp/'
 # file2 = file + 'paraT11.npy'
