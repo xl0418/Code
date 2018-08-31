@@ -15,7 +15,7 @@ a_list = []
 fit_list = []
 # Create the data
 if platform.system()=='Windows':
-    filedir = 'C:/Liang/Googlebox/Research/Project2/smcndata/tree9+1w/'
+    filedir = 'C:/Liang/Googlebox/Research/Project2/smcndata/tree1+1wnu/'
 elif platform.system()=='Darwin':
     filedir = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/abcpp/smcndata/tree9+1q/'
 for gamma_index in range(len(gamma_vec)):
@@ -39,6 +39,7 @@ label_a = (['a=0','a=.001','a=.01','a=.1','a=.5','a=1'])
 label_gamma = (['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5','$\gamma$=1'])
 row_a = len(label_a)
 row_gamma = len(label_gamma)
+pos=[1,2,3,4]
 pos1 = [1,2]
 pos2 = [3,4]
 pos_label=['$\gamma$','a','$\gamma$','a']
@@ -61,6 +62,7 @@ for ax in axes.flat:
     gamma5th=gamma_list[count][fit_index]
     a5th = a_list[count][fit_index]
     d5th=[gamma5th,a5th]
+    dg=[gamma,a,gamma5th,a5th]
     if len(gamma)==1:
         ax.text(0.45,0.45,"X")
 
@@ -69,14 +71,14 @@ for ax in axes.flat:
         # Generate and plot a random bivariate dataset
         # sns.kdeplot(a, gamma, cmap=cmap, shade=True, cut=5, ax=ax)
         # sns.violinplot(data=d, palette=cmap, inner="points",ax=ax)
-        ax.violinplot(dataset=d, positions=pos1, points=20, widths=0.3,
-                    showmeans=True, showextrema=True, showmedians=False,palette=['r'])
-        ax.violinplot(dataset=d5th, positions=pos2, points=20, widths=0.3,
-                      showmeans=True, showextrema=True, showmedians=False,palette=['g'])
-        ax.scatter(x=0,y=gamma_vec_point[count],color='r',s=10,alpha=1)
-        ax.scatter(x=1,y=a_vec_point[count],color='r',s=10,alpha=1)
-        ax.scatter(x=2,y=gamma_vec_point[count],color='r',s=10,alpha=1)
-        ax.scatter(x=3,y=a_vec_point[count],color='r',s=10,alpha=1)
+        ax.violinplot(dataset=dg, positions=pos, points=20, widths=0.3,
+                    showmeans=True, showextrema=True, showmedians=False)
+        # ax.violinplot(dataset=d5th, positions=pos2, points=20, widths=0.3,
+        #               showmeans=True, showextrema=True, showmedians=False)
+        ax.scatter(x=1,y=gamma_vec_point[count],color='r',s=5,alpha=1)
+        ax.scatter(x=2,y=a_vec_point[count],color='r',s=5,alpha=1)
+        ax.scatter(x=3,y=gamma_vec_point[count],color='g',s=5,alpha=1)
+        ax.scatter(x=4,y=a_vec_point[count],color='g',s=5,alpha=1)
     if count in range(0,row_a):
         ax.title.set_text(label_a[count])
 
