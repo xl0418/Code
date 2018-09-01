@@ -10,11 +10,10 @@ import matplotlib.ticker as mtick
 
 theta = 0  # optimum of natural selection
 r = 1  # growth rate
-delta_pop = .001  # Variance of random walk of population
 Vmax = 1
-scalor = 10000
+scalar = 10000
 K=1000000000
-nu=1/(100*K)
+nu=0.000001
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
 a_vec = gamma_vec
 row_gamma=len(gamma_vec)
@@ -22,7 +21,7 @@ count = 0
 # trait evolution plot
 # file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
 if platform.system()=='Windows':
-    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example12\\'
+    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example1\\'
 elif platform.system()=='Darwin':
     file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/example4/'
 
@@ -36,7 +35,7 @@ for index_g in range(len(gamma_vec)):
         a=a_vec[index_a]
         print(count)
         for r in range(100):
-            simresult = DVtraitsim_tree(file=file, gamma1=gamma1, a=a, K=K,nu=nu, scalar=scalor)
+            simresult = DVtraitsim_tree(file=file, gamma1=gamma1, a=a, K=K,nu=nu, scalar=scalar)
             if simresult[2]:
                 pic = 0
                 break
@@ -47,9 +46,10 @@ for index_g in range(len(gamma_vec)):
             evo_time = evo_time - 1
             trait_RI_dr = simresult[0]
             population_RI_dr = simresult[1]
-
+            V_dr = simresult[3]
             trait_dr_tips = trait_RI_dr[evo_time, :][~np.isnan(trait_RI_dr[evo_time, :])]
             population_tips = population_RI_dr[evo_time, :][~np.isnan(population_RI_dr[evo_time, :])]
+            V_tips = V_dr[evo_time, :][~np.isnan(V_dr[evo_time, :])]
 
             # trait_RI_dr[np.where(trait_RI_dr == 0)[0], np.where(trait_RI_dr == 0)[1]] = None
 
@@ -59,7 +59,9 @@ for index_g in range(len(gamma_vec)):
             x = np.arange(evo_time + 1)
             labels = []
             for i in range(1, num_lines + 1):
-                axes[index_g,index_a].plot(x, trait_RI_dr[:, i - 1])
+                # axes[index_g,index_a].plot(x, trait_RI_dr[:, i - 1])
+                # axes[index_g,index_a].plot(x, population_RI_dr[:, i - 1])
+                axes[index_g,index_a].plot(x, V_tips[:, i - 1])
 
         else:
             print('No complete simulation with count =', count)

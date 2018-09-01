@@ -10,8 +10,8 @@ from dvtraitsim_shared import DVTreeData, DVParam
 import dvtraitsim_cpp as dvcpp
 from scipy.stats import norm
 
-gamma = 0
-a = 1
+gamma = 0.01
+a = 0.5
 
 # argsort of 2-dimensional arrays is awkward
 # returns i,j so that X[i,j] == np.sort(X)
@@ -29,9 +29,9 @@ def normalized_norm(x, y):
 # dir_path = os.path.dirname(os.path.realpath(__file__))
 # files = dir_path + '/../tree_data/example1/'
 dir_path = 'c:/Liang/Code/Pro2/abcpp'
-files = dir_path + '/tree_data/example2/'
+files = dir_path + '/tree_data/example9/'
 
-td = DVTreeData(path=files, scalar=10000)
+td = DVTreeData(path=files, scalar=1000)
 
 prior = [0.5, 0.5, 0.5, 0.5]
 gamma_prior_mean = prior[0]

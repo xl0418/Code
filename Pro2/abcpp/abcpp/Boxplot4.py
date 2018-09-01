@@ -15,7 +15,7 @@ a_list = []
 fit_list = []
 # Create the data
 if platform.system()=='Windows':
-    filedir = 'C:/Liang/Googlebox/Research/Project2/smcndata/tree1+1wnu/'
+    filedir = 'C:/Liang/Googlebox/Research/Project2/smcndata/tree2+1wnu/'
 elif platform.system()=='Darwin':
     filedir = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/abcpp/smcndata/tree9+1q/'
 for gamma_index in range(len(gamma_vec)):
@@ -71,7 +71,7 @@ for ax in axes.flat:
         # Generate and plot a random bivariate dataset
         # sns.kdeplot(a, gamma, cmap=cmap, shade=True, cut=5, ax=ax)
         # sns.violinplot(data=d, palette=cmap, inner="points",ax=ax)
-        ax.violinplot(dataset=dg, positions=pos, points=20, widths=0.3,
+        ax.violinplot(dataset=dg, positions=pos, points=20, widths=0.8,
                     showmeans=True, showextrema=True, showmedians=False)
         # ax.violinplot(dataset=d5th, positions=pos2, points=20, widths=0.3,
         #               showmeans=True, showextrema=True, showmedians=False)
@@ -88,7 +88,7 @@ for ax in axes.flat:
     # ax.yaxis.set_major_locator(plt.NullLocator())
     # ax.xaxis.set_major_locator(plt.NullLocator())
     # ax.yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
-    ax.set(ylim=(-.2,1.2))
+    ax.set(ylim=(-.2,1.5))
     ax.set_xticklabels(pos_label)
     count += 1
 

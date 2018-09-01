@@ -111,7 +111,7 @@ def DVtraitsim_tree(file, gamma1, a, K, scalar, nu=0.00000001, r=1,theta=0, Vmax
         var_trait = Vi / (2 * Ni)
         trait_RI_dr[i + 1, idx] = zi + Vi * (2 * gamma1 * dtz + 1 / Ki * sigma) + np.random.normal(0, var_trait, len(idx))
         possion_lambda = Ni * r * np.exp(-gamma1 * dtz**2 + (1 - beta / Ki))
-        population_RI_dr[i + 1, idx] = np.random.poisson(lam=possion_lambda, size=(1, len(idx)))
+        population_RI_dr[i + 1, idx] = np.random.poisson(lam=possion_lambda)  #, size=(1, len(idx))
         V[i + 1, idx] = Vi / 2 + 2 * Ni * nu * Vmax / (1 + 4 * Ni * nu) \
                         + Vi ** 2 * (
                             -2 * gamma1 + 4 * gamma1**2 * dtz ** 2 +
@@ -127,6 +127,10 @@ def DVtraitsim_tree(file, gamma1, a, K, scalar, nu=0.00000001, r=1,theta=0, Vmax
             valid = False
             print('Negative variance')
             break
+        # if np.any(V[i + 1, idx] > 10):
+        #     valid = False
+        #     print('variance>1 ')
+        #     break
         # events
         if (i + 1) == next_event[0]:
             parent = next_event[1]
