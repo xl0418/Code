@@ -127,10 +127,10 @@ def DVtraitsim_tree(file, gamma1, a, K, scalar, nu=0.00000001, r=1,theta=0, Vmax
             valid = False
             print('Negative variance')
             break
-        # if np.any(V[i + 1, idx] > 10):
-        #     valid = False
-        #     print('variance>1 ')
-        #     break
+        if np.any(V[i + 1, idx] > 100000):
+            valid = False
+            print('variance>100000 ')
+            break
         # events
         if (i + 1) == next_event[0]:
             parent = next_event[1]

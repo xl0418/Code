@@ -12,7 +12,7 @@ from scipy.stats import norm
 
 gamma = 0.01
 a = 0.5
-
+nu=1/(100*K)
 # argsort of 2-dimensional arrays is awkward
 # returns i,j so that X[i,j] == np.sort(X)
 def argsort2D(X):
@@ -33,13 +33,14 @@ files = dir_path + '/tree_data/example9/'
 
 td = DVTreeData(path=files, scalar=1000)
 
-prior = [0.5, 0.5, 0.5, 0.5]
+prior = [0.5, 0.5, 0.5, 0.5,0.00000001,0.0000001]
 gamma_prior_mean = prior[0]
 gamma_prior_var = prior[1]
 a_prior_mean = prior[2]
 a_prior_var = prior[3]
+nu_prior_mean = prior[4]
+nu_prior_var = prior[5]
 K=1000000000
-nu=0.000001
 # let's try to find a true simulation:
 obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
                     split_stddev=0.2)
@@ -65,17 +66,23 @@ generations = 10
 params = np.tile(obs_param, (population, 1))  # duplicate
 params[:, 0] = np.random.uniform(0.0, 1.0, params.shape[0])  # randomize 'gamma'
 params[:, 1] = np.random.uniform(0.0, 1.0, params.shape[0])  # randomize 'a'
+params[:, 2] = np.random.uniform(0.0, 0.00000001, params.shape[0])  # randomize 'nu'
+
 gamma_data = np.zeros(shape=(generations, population))
 a_data = np.zeros(shape=(generations, population))
+nu_data = np.zeros(shape=(generations, population))
 fitness= np.zeros(shape=(generations, population))
 # Initialize the weights.
 weight_gamma = np.zeros(population)
 weight_gamma.fill(1 / population)
 weight_a = np.zeros(population)
 weight_a.fill(1 / population)
+weight_nu = np.zeros(population)
+weight_nu.fill(1 / population)
 for g in range(generations):
     gamma_data[g, :] = params[:, 0]
     a_data[g, :] = params[:, 1]
+    nu_data = params[:,2]
     pop = dvcpp.DVSim(td, params)
 
     # access fitness
@@ -98,23 +105,28 @@ for g in range(generations):
     q5 = np.argsort(fitness[g,:])[-population// 20]  # best 5%
     fit_index = np.where(fitness[g,:] > fitness[g,q5])[0]
 
-    print('Iteration = %d 5th gamma = %f  a = %f  fitness = %f' % (g, np.mean(params[fit_index, 0]),
-                                                                 np.mean(params[fit_index, 1]), np.mean(fitness[g,fit_index])))
-    print('Iteration = %d all gamma = %f  a = %f  fitness = %f' % (g, np.mean(params[:, 0]),
-                                                                 np.mean(params[:, 1]),
-                                                                 np.mean(fitness[g,:])))
+    print('Iteration = %d 5th gamma = %f  a = %f nu = %f fitness = %f' % (g, np.mean(params[fit_index, 0]),
+                                                                 np.mean(params[fit_index, 1]),np.mean(params[fit_index, 2])
+                                                                          , np.mean(fitness[g,fit_index])))
+    # print('Iteration = %d all gamma = %f  a = %f  fitness = %f' % (g, np.mean(params[:, 0]),
+    #                                                              np.mean(params[:, 1]),
+    #                                                              np.mean(fitness[g,:])))
 
     weight_gamma = weight_gamma[fit_index]/sum(weight_gamma[fit_index])
     weight_a = weight_a[fit_index]/sum(weight_a[fit_index])
+    weight_nu = weight_nu[fit_index]/sum(weight_nu[fit_index])
 
     gamma_pre_mean = np.sum(params[fit_index, 0] * weight_gamma)
     gamma_pre_var = np.sum((params[fit_index, 0] - gamma_pre_mean) ** 2 * weight_gamma)
     a_pre_mean = np.sum(params[fit_index, 1] * weight_a)
     a_pre_var = np.sum((params[fit_index, 1] - a_pre_mean) ** 2 * weight_a)
-
+    nu_pre_mean = np.sum(params[fit_index, 2] * weight_nu)
+    nu_pre_var = np.sum((params[fit_index, 2] - nu_pre_mean) ** 2 * weight_nu)
     # sample parameters by the weights computed in last loop.
     sample_gamma_index = np.random.choice(fit_index, population, p=weight_gamma)
     sample_a_index = np.random.choice(fit_index, population, p=weight_a)
+    sample_nu_index = np.random.choice(fit_index, population, p=weight_nu)
+
     # mean of the sample for gamma
     propose_gamma0 = params[sample_gamma_index, 0]
     # draw new gamma with mean and variance
@@ -123,9 +135,14 @@ for g in range(generations):
     propose_a0 = params[sample_a_index, 1]
     # draw new a with mean and variance
     propose_a = abs(np.random.normal(propose_a0, np.sqrt(2 * a_pre_var)))
+    # mean of the sample for nu
+    propose_nu0 = params[sample_nu_index, 1]
+    # draw new nu with mean and variance
+    propose_nu = abs(np.random.normal(propose_nu0, np.sqrt(2 * nu_pre_var)))
 
     extend_weight_gamma = weight_gamma[fit_index.searchsorted(sample_gamma_index)]
     extend_weight_a = weight_a[fit_index.searchsorted(sample_a_index)]
+    extend_weight_nu = weight_nu[fit_index.searchsorted(sample_nu_index)]
 
     # compute new weights for gamma and a
     weight_gamma_denominator = np.sum(extend_weight_gamma * norm.pdf(propose_gamma, params[:, 0],
@@ -137,14 +154,23 @@ for g in range(generations):
                                                              np.sqrt(2 * a_pre_var)))
     weight_a_numerator = norm.pdf(propose_a, a_prior_mean, a_prior_var)
     weight_a = weight_a_numerator / weight_a_denominator
+
+    weight_nu_denominator = np.sum(extend_weight_nu * norm.pdf(propose_nu, params[:, 2],
+                                                             np.sqrt(2 * nu_pre_var)))
+    weight_nu_numerator = norm.pdf(propose_nu, nu_prior_mean, nu_prior_var)
+    weight_nu = weight_nu_numerator / weight_nu_denominator
     # normalize the weights
     # total_simulation[t] = sim_count
     weight_gamma = weight_gamma / sum(weight_gamma)
     weight_a = weight_a / sum(weight_a)
+    weight_nu = weight_nu / sum(weight_nu)
+
     params[:, 0] = propose_gamma
     params[:, 1] = propose_a
+    params[:, 2] = propose_nu
+
 #
-para_data = {'gamma': gamma_data, 'a': a_data,'fitness': fitness}
+para_data = {'gamma': gamma_data, 'a': a_data, 'nu': nu_data,'fitness': fitness}
 # file='C:/Liang/Code/Pro2/abcpp/abcpp/smcndata/'
 # # file = '/home/p274981/abcpp/abcpp/'
 # file2 = file + 'paraT11.npy'

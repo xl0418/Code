@@ -39,7 +39,7 @@ gamma_prior_var = prior[1]
 a_prior_mean = prior[2]
 a_prior_var = prior[3]
 K=1000000000
-nu=0.000001
+nu=0.0001
 # let's try to find a true simulation:
 obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
                     split_stddev=0.2)
