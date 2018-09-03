@@ -13,19 +13,25 @@ r = 1  # growth rate
 Vmax = 1
 scalar = 10000
 K=1000000000
-nu=0.000001
+nu=1/(100*K)
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
 a_vec = gamma_vec
 row_gamma=len(gamma_vec)
 count = 0
 # trait evolution plot
 # file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
+no_tree= 4
+tree = 'tree'+'%d' % no_tree
+example = 'example'+'%d' % no_tree
 if platform.system()=='Windows':
-    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example1\\'
+    file = 'C:/Liang/Code/Pro2/abcpp/tree_data/'+example+'/'
 elif platform.system()=='Darwin':
-    file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/example4/'
+    file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/'+example+'/'
 
-f, axes = plt.subplots(row_gamma, row_gamma, figsize=(9, 9)) #
+f1, axes1 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9)) #
+f2, axes2 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9)) #
+f3, axes3 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9)) #
+
 label_a = (['a=0','a=.001','a=.01','a=.1','a=.5','a=1'])
 label_gamma = (['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5','$\gamma$=1'])
 
@@ -59,35 +65,43 @@ for index_g in range(len(gamma_vec)):
             x = np.arange(evo_time + 1)
             labels = []
             for i in range(1, num_lines + 1):
-                # axes[index_g,index_a].plot(x, trait_RI_dr[:, i - 1])
-                # axes[index_g,index_a].plot(x, population_RI_dr[:, i - 1])
-                axes[index_g,index_a].plot(x, V_tips[:, i - 1])
+                axes1[index_g,index_a].plot(x, trait_RI_dr[:, i - 1])
+                axes2[index_g,index_a].plot(x, population_RI_dr[:, i - 1])
+                axes3[index_g,index_a].plot(x, V_dr[:, i - 1])
 
         else:
             print('No complete simulation with count =', count)
-            axes[index_g,index_a].text(0.45, 0.45, "X")
+            axes1[index_g,index_a].text(0.45, 0.45, "X")
+            axes2[index_g,index_a].text(0.45, 0.45, "X")
+            axes3[index_g,index_a].text(0.45, 0.45, "X")
+
         # axes[index_g, index_a].yaxis.set_major_locator(plt.NullLocator())
-        axes[index_g, index_a].xaxis.set_major_locator(plt.NullLocator())
+        axes1[index_g, index_a].xaxis.set_major_locator(plt.NullLocator())
+        axes2[index_g, index_a].xaxis.set_major_locator(plt.NullLocator())
+        axes3[index_g, index_a].xaxis.set_major_locator(plt.NullLocator())
+
         # axes[index_g, index_a].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1f'))
         # axes[index_g, index_a].set_yscale('log')
-        axes[index_g, index_a].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+        axes1[index_g, index_a].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+        axes2[index_g, index_a].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+        axes3[index_g, index_a].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 
         if count in range(0, row_gamma):
-            axes[index_g, index_a].title.set_text(label_a[count])
+            axes1[index_g, index_a].title.set_text(label_a[count])
+            axes2[index_g, index_a].title.set_text(label_a[count])
+            axes3[index_g, index_a].title.set_text(label_a[count])
 
         if count in ([5, 11, 17, 23, 29, 35]):
-            axes[index_g, index_a].set_ylabel(label_gamma[int(count / row_gamma)])
-            axes[index_g, index_a].yaxis.set_label_position("right")
+            axes1[index_g, index_a].set_ylabel(label_gamma[int(count / row_gamma)])
+            axes1[index_g, index_a].yaxis.set_label_position("right")
+            axes2[index_g, index_a].set_ylabel(label_gamma[int(count / row_gamma)])
+            axes2[index_g, index_a].yaxis.set_label_position("right")
+            axes3[index_g, index_a].set_ylabel(label_gamma[int(count / row_gamma)])
+            axes3[index_g, index_a].yaxis.set_label_position("right")
         count += 1
+dir_fig = 'C:/Liang/Googlebox/Research/Project2/PicResults/'+tree
 
-
-
-
-        # plt.subplot(2, 2, 2)
-        # for i in range(1, num_plots + 1):
-        #     plt.plot(x, population_RI_dr[:,i-1])
-        # plt.subplot(2, 2, 3)
-        # sns.distplot(trait_dr_tips, hist=False, rug=True)
-        #
-        # plt.subplot(2, 2, 4)
-        # sns.distplot(population_tips, hist=False, rug=True)
+f1.savefig(dir_fig+'TP.png')
+f2.savefig(dir_fig+'NP.png')
+f3.savefig(dir_fig+'VP.png')
+plt.close('all')
