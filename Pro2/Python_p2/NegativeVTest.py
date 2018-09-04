@@ -9,11 +9,11 @@ if platform.system()=='Windows':
     file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example2\\'
 elif platform.system()=='Darwin':
     file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/example3/'
-gamma1=0
-a=1
+gamma1=0.001
+a=0.5
 scalor=10000
-K=1000000000
-nu=1/(1000*K)
+K=10e8
+nu=1e-15
 
 simresult = DVtraitsim_tree(file=file, gamma1=gamma1, a=a, K=K, scalar=scalor,nu=nu,Vmax=1)
 simresult[3]

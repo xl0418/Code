@@ -15,7 +15,7 @@ a_list = []
 
 # Create the data
 if platform.system()=='Windows':
-    filedir = 'C:/Liang/Googlebox/Research/Project2/smcndata/tree2+1wnu/'
+    filedir = 'C:/Liang/Googlebox/Research/Project2/smcvdata/tree3/'
 elif platform.system()=='Darwin':
     filedir = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/abcpp/smcndata/tree9+1q/'
 for gamma_index in range(len(gamma_vec)):

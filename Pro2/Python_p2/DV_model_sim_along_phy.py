@@ -102,6 +102,7 @@ def DVtraitsim_tree(file, gamma1, a, K, scalar, nu=0.00000001, r=1,theta=0, Vmax
         # pull current state
         Ni = population_RI_dr[i, idx]
         Vi = V[i, idx]
+        # Vmax = np.max(Vi)
         zi = trait_RI_dr[i, idx]
         Ki = K
         dtz = theta - zi

@@ -20,7 +20,7 @@ row_gamma=len(gamma_vec)
 count = 0
 # trait evolution plot
 # file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
-no_tree= 4
+no_tree= 8
 tree = 'tree'+'%d' % no_tree
 example = 'example'+'%d' % no_tree
 if platform.system()=='Windows':

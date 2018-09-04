@@ -11,7 +11,7 @@ import dvtraitsim_cpp as dvcpp
 from scipy.stats import norm
 
 gamma = 0
-a = 1
+a = 0.001
 
 # argsort of 2-dimensional arrays is awkward
 # returns i,j so that X[i,j] == np.sort(X)
@@ -29,7 +29,7 @@ def normalized_norm(x, y):
 # dir_path = os.path.dirname(os.path.realpath(__file__))
 # files = dir_path + '/../tree_data/example1/'
 dir_path = 'c:/Liang/Code/Pro2/abcpp'
-files = dir_path + '/tree_data/example2/'
+files = dir_path + '/tree_data/example1/'
 
 td = DVTreeData(path=files, scalar=10000)
 
@@ -39,7 +39,7 @@ gamma_prior_var = prior[1]
 a_prior_mean = prior[2]
 a_prior_var = prior[3]
 K=1000000000
-nu=0.0001
+nu=0
 # let's try to find a true simulation:
 obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
                     split_stddev=0.2)
