@@ -83,7 +83,7 @@ weight_nu.fill(1 / population)
 for g in range(generations):
     gamma_data[g, :] = params[:, 0]
     a_data[g, :] = params[:, 1]
-    nu_data = params[:,3]
+    nu_data[g,:] = params[:,3]
     pop = dvcpp.DVSim(td, params)
 
     # access fitness
