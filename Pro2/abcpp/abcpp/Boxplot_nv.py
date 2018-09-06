@@ -14,9 +14,11 @@ gamma_list = []
 a_list = []
 nv_list = []
 truenv=1e-12
+lowylim=truenv*(-0.4)
+upperylim=2*truenv*6/5
 # Create the data
 if platform.system()=='Windows':
-    filedir = 'C:/Liang/Googlebox/Research/Project2/smcvdata/tree1+nv/'
+    filedir = 'C:/Liang/Googlebox/Research/Project2/smcvdata/tree2+nv/'
 elif platform.system()=='Darwin':
     filedir = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/abcpp/smcndata/tree9+1q/'
 for gamma_index in range(len(gamma_vec)):
@@ -43,7 +45,7 @@ pos = [0,1]
 posnv = [2]
 pos_label=['$\gamma$','a','$\\nu$']
 # Set up the matplotlib figure
-f, axes = plt.subplots(row_a, row_gamma, figsize=(9, 9), sharex=True, sharey=True) #
+f, axes = plt.subplots(row_a, row_gamma, figsize=(9, 9)) #, sharex=True, sharey=True
 gamma_vec_point = np.repeat(gamma_vec,len(a_vec))
 a_vec_point = np.tile(a_vec,len(gamma_vec))
 cmap = sns.cubehelix_palette(p, rot=-.5, dark=.3)
@@ -56,49 +58,47 @@ for ax in axes.flat:
     nv = nv_list[count]
     # d=np.column_stack((gamma,a))
     d=[gamma,a]
+    axnv = ax.twinx()  # instantiate a second axes that shares the same x-axis
     if len(gamma)==1:
-        ax.text(0.45,0.45,"X")
-
+        axnv.plot()
+        if count in ([5,11,17,23,29,35]):
+            axnv.set_ylabel(label_gamma[int(count/row_a)])
     # Create a cubehelix colormap to use with kdeplot
     else:
         # Generate and plot a random bivariate dataset
-        # sns.kdeplot(a, gamma, cmap=cmap, shade=True, cut=5, ax=ax)
-        # sns.violinplot(data=d, palette=cmap, inner="points",ax=ax)
         ax.violinplot(dataset=d, positions=pos, points=20, widths=0.3,
                     showmeans=True, showextrema=True, showmedians=False)
         ax.scatter(x=0,y=gamma_vec_point[count],color='r',s=10,alpha=1)
         ax.scatter(x=1,y=a_vec_point[count],color='r',s=10,alpha=1)
-        axnv = ax.twinx()  # instantiate a second axes that shares the same x-axis
-
-        color = 'tab:blue'
-        # axnv.set_ylabel('sin', color=color)  # we already handled the x-label with ax1
         axnv.violinplot(dataset=nv, positions=posnv, points=20, widths=0.3,
                     showmeans=True, showextrema=True, showmedians=False)
-        axnv.get_yaxis().set_ticks([])
+        # axnv.get_yaxis().set_ticks([])
         # ax.get_yaxis().set_ticks([])
-        # axnv.tick_params(axis='y',  bottom=False,  # ticks along the bottom edge are off
-        #     top=False,  # ticks along the top edge are off
-        #     labelbottom=False)
-
-        # axnv.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
         axnv.scatter(x=2,y=truenv,color='r',s=10,alpha=1)
-
+        if count in ([5, 11, 17, 23, 29, 35]):
+            axnv.set_ylabel(label_gamma[int(count / row_a)])
     if count in range(0,row_a):
         ax.title.set_text(label_a[count])
+        # ax.yaxis.set_label_position("right")
+        # ax.tick_params(axis='y', which='both', labelleft='off', labelright='on')
+    if count in ([0,1,2,3,4,6,7,8,9,10,12,13,14,15,16,18,19,20,21,22,24,25,26,27,28,30,31,32,33,34]):
+        axnv.get_yaxis().set_ticks([])
+    if count in ([1, 2, 3, 4,5, 7, 8, 9, 10,11, 13, 14, 15, 16,17, 19, 20, 21, 22,23, 25, 26, 27, 28,29, 31, 32, 33, 34,35]):
+        ax.get_yaxis().set_ticks([])
+    if count in range(30):
+        ax.get_xaxis().set_ticks([])
+    if count in range(30,36):
+        plt.xticks([0, 1, 2], pos_label)
 
-    if count in ([5,11,17,23,29,35]):
-        ax.set_ylabel(label_gamma[int(count/row_a)])
-        ax.yaxis.set_label_position("right")
-    # ax.yaxis.set_major_locator(plt.NullLocator())
-    # ax.xaxis.set_major_locator(plt.NullLocator())
+    #  ax.xaxis.set_major_locator(plt.NullLocator())
     # ax.yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
     ax.set(ylim=(-.2,1.2))
-    # ax.set_xticklabels([1,2,3],pos_label)
-    plt.xticks([0,1,2],pos_label)
+    axnv.set_ylim(lowylim, upperylim)
     count += 1
 
 f.text(0.5, 0, '', ha='center')
 f.text(0.01, 0.5, '', va='center', rotation='vertical')
-f.tight_layout()
+# f.tight_layout()
+plt.show(f)
 
 # f.savefig('C:/Liang/Code/Pro2/abcpp/abcpp/smcdata/Tree2plot.png')
