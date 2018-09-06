@@ -13,12 +13,12 @@ a_vec =  [0,0.001,0.01,0.1,0.5,1]
 gamma_list = []
 a_list = []
 nv_list = []
-truenv=1e-12
+truenv=1e-11
 lowylim=truenv*(-0.4)
 upperylim=2*truenv*6/5
 # Create the data
 if platform.system()=='Windows':
-    filedir = 'C:/Liang/Googlebox/Research/Project2/smcvdata/tree2+nv/'
+    filedir = 'C:/Liang/Googlebox/Research/Project2/smcvdata/tree9+nv/'
 elif platform.system()=='Darwin':
     filedir = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/abcpp/smcndata/tree9+1q/'
 for gamma_index in range(len(gamma_vec)):

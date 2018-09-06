@@ -20,7 +20,7 @@ row_gamma=len(gamma_vec)
 count = 0
 # trait evolution plot
 # file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
-no_tree= 8
+no_tree= 1
 tree = 'tree'+'%d' % no_tree
 example = 'example'+'%d' % no_tree
 if platform.system()=='Windows':
@@ -28,9 +28,9 @@ if platform.system()=='Windows':
 elif platform.system()=='Darwin':
     file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/'+example+'/'
 
-f1, axes1 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9)) #
-f2, axes2 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9)) #
-f3, axes3 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9)) #
+f1, axes1 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9),sharex=True) #
+f2, axes2 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9),sharex=True) #
+f3, axes3 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9),sharex=True) #
 
 label_a = (['a=0','a=.001','a=.01','a=.1','a=.5','a=1'])
 label_gamma = (['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5','$\gamma$=1'])
@@ -47,33 +47,33 @@ for index_g in range(len(gamma_vec)):
                 break
             else:
                 pic=1
-        if pic==0:
-            evo_time, total_species = simresult[0].shape
-            evo_time = evo_time - 1
-            trait_RI_dr = simresult[0]
-            population_RI_dr = simresult[1]
-            V_dr = simresult[3]
-            trait_dr_tips = trait_RI_dr[evo_time, :][~np.isnan(trait_RI_dr[evo_time, :])]
-            population_tips = population_RI_dr[evo_time, :][~np.isnan(population_RI_dr[evo_time, :])]
-            V_tips = V_dr[evo_time, :][~np.isnan(V_dr[evo_time, :])]
+        # if pic==0:
+        evo_time, total_species = simresult[0].shape
+        evo_time = evo_time - 1
+        trait_RI_dr = simresult[0]
+        population_RI_dr = simresult[1]
+        V_dr = simresult[3]
+        trait_dr_tips = trait_RI_dr[evo_time, :][~np.isnan(trait_RI_dr[evo_time, :])]
+        population_tips = population_RI_dr[evo_time, :][~np.isnan(population_RI_dr[evo_time, :])]
+        V_tips = V_dr[evo_time, :][~np.isnan(V_dr[evo_time, :])]
 
-            # trait_RI_dr[np.where(trait_RI_dr == 0)[0], np.where(trait_RI_dr == 0)[1]] = None
+        # trait_RI_dr[np.where(trait_RI_dr == 0)[0], np.where(trait_RI_dr == 0)[1]] = None
 
-            # population_RI_dr[np.where(population_RI_dr == 0)[0], np.where(population_RI_dr == 0)[1]] = None
-            num_lines = total_species
+        # population_RI_dr[np.where(population_RI_dr == 0)[0], np.where(population_RI_dr == 0)[1]] = None
+        num_lines = total_species
 
-            x = np.arange(evo_time + 1)
-            labels = []
-            for i in range(1, num_lines + 1):
-                axes1[index_g,index_a].plot(x, trait_RI_dr[:, i - 1])
-                axes2[index_g,index_a].plot(x, population_RI_dr[:, i - 1])
-                axes3[index_g,index_a].plot(x, V_dr[:, i - 1])
+        x = np.arange(evo_time + 1)
+        labels = []
+        for i in range(1, num_lines + 1):
+            axes1[index_g,index_a].plot(x, trait_RI_dr[:, i - 1])
+            axes2[index_g,index_a].plot(x, population_RI_dr[:, i - 1])
+            axes3[index_g,index_a].plot(x, V_dr[:, i - 1])
 
-        else:
-            print('No complete simulation with count =', count)
-            axes1[index_g,index_a].text(0.45, 0.45, "X")
-            axes2[index_g,index_a].text(0.45, 0.45, "X")
-            axes3[index_g,index_a].text(0.45, 0.45, "X")
+        # else:
+        #     print('No complete simulation with count =', count)
+        #     axes1[index_g,index_a].text(0.45, 0.45, "X")
+        #     axes2[index_g,index_a].text(0.45, 0.45, "X")
+        #     axes3[index_g,index_a].text(0.45, 0.45, "X")
 
         # axes[index_g, index_a].yaxis.set_major_locator(plt.NullLocator())
         axes1[index_g, index_a].xaxis.set_major_locator(plt.NullLocator())
