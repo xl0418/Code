@@ -20,7 +20,7 @@ row_gamma=len(gamma_vec)
 count = 0
 # trait evolution plot
 # file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
-no_tree= 8
+no_tree= 9
 tree = 'tree'+'%d' % no_tree
 example = 'example'+'%d' % no_tree
 if platform.system()=='Windows':
@@ -40,7 +40,7 @@ for index_g in range(len(gamma_vec)):
     for index_a in range(len(a_vec)):
         a=a_vec[index_a]
         print(count)
-        for r in range(100):
+        for r in range(10):
             simresult = DVtraitsim_tree(file=file, gamma1=gamma1, a=a, K=K,nu=nu, scalar=scalar)
             if simresult[2]:
                 pic = 0
@@ -53,21 +53,23 @@ for index_g in range(len(gamma_vec)):
         trait_RI_dr = simresult[0]
         population_RI_dr = simresult[1]
         V_dr = simresult[3]
-        trait_dr_tips = trait_RI_dr[evo_time, :][~np.isnan(trait_RI_dr[evo_time, :])]
-        population_tips = population_RI_dr[evo_time, :][~np.isnan(population_RI_dr[evo_time, :])]
-        V_tips = V_dr[evo_time, :][~np.isnan(V_dr[evo_time, :])]
+        # trait_dr_tips = trait_RI_dr[evo_time, :][~np.isnan(trait_RI_dr[evo_time, :])]
+        # population_tips = population_RI_dr[evo_time, :][~np.isnan(population_RI_dr[evo_time, :])]
+        # V_tips = V_dr[evo_time, :][~np.isnan(V_dr[evo_time, :])]
 
         # trait_RI_dr[np.where(trait_RI_dr == 0)[0], np.where(trait_RI_dr == 0)[1]] = None
 
         # population_RI_dr[np.where(population_RI_dr == 0)[0], np.where(population_RI_dr == 0)[1]] = None
         num_lines = total_species
 
-        x = np.arange(evo_time + 1)
+        # x = np.arange(evo_time + 1)
+        x = np.arange(evo_time/10+1)
+
         labels = []
         for i in range(1, num_lines + 1):
-            axes1[index_g,index_a].plot(x, trait_RI_dr[:, i - 1])
-            axes2[index_g,index_a].plot(x, population_RI_dr[:, i - 1])
-            axes3[index_g,index_a].plot(x, V_dr[:, i - 1])
+            axes1[index_g,index_a].plot(x, trait_RI_dr[::10, i - 1])
+            axes2[index_g,index_a].plot(x, population_RI_dr[::10, i - 1])
+            axes3[index_g,index_a].plot(x, V_dr[::10, i - 1])
 
         # else:
         #     print('No complete simulation with count =', count)
@@ -103,8 +105,8 @@ dir_fig = 'C:/Liang/Googlebox/Research/Project2/PicResults/'+tree
 
 f1.savefig(dir_fig+'TP.png')
 plt.close(f1)
-# f2.savefig(dir_fig+'NP.png')
-# plt.close(f2)
-# f3.savefig(dir_fig+'VP.png')
-# plt.close(f3)
-# plt.close('all')
+f2.savefig(dir_fig+'NP.png')
+plt.close(f2)
+f3.savefig(dir_fig+'VP.png')
+plt.close(f3)
+plt.close('all')
