@@ -20,7 +20,7 @@ row_gamma=len(gamma_vec)
 count = 0
 # trait evolution plot
 # file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
-no_tree= 1
+no_tree= 8
 tree = 'tree'+'%d' % no_tree
 example = 'example'+'%d' % no_tree
 if platform.system()=='Windows':
@@ -28,9 +28,9 @@ if platform.system()=='Windows':
 elif platform.system()=='Darwin':
     file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/'+example+'/'
 
-f1, axes1 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9),sharex=True) #
-f2, axes2 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9),sharex=True) #
-f3, axes3 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9),sharex=True) #
+f1, axes1 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9),sharey=True,sharex=True) #
+f2, axes2 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9),sharey=True,sharex=True) #
+f3, axes3 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9),sharey=True,sharex=True) #
 
 label_a = (['a=0','a=.001','a=.01','a=.1','a=.5','a=1'])
 label_gamma = (['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5','$\gamma$=1'])
@@ -102,6 +102,9 @@ for index_g in range(len(gamma_vec)):
 dir_fig = 'C:/Liang/Googlebox/Research/Project2/PicResults/'+tree
 
 f1.savefig(dir_fig+'TP.png')
-f2.savefig(dir_fig+'NP.png')
-f3.savefig(dir_fig+'VP.png')
-plt.close('all')
+plt.close(f1)
+# f2.savefig(dir_fig+'NP.png')
+# plt.close(f2)
+# f3.savefig(dir_fig+'VP.png')
+# plt.close(f3)
+# plt.close('all')
