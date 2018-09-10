@@ -13,7 +13,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import kendalltau
-sns.set(style="ticks")
+sns.set(style="white")
 #
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
 a_vec = gamma_vec
@@ -24,7 +24,7 @@ files = dir_path + '/tree_data/example1/'
 td = DVTreeData(path=files, scalar=10000)
 K = 10e8
 nu=1/(100*K)
-num = 6
+num = 10
 trait_w = []
 trait_v = []
 pop_w = []
@@ -91,16 +91,19 @@ for ax, s in zip(axes.flat, np.linspace(0, 3,36)):
     cmap = sns.cubehelix_palette(start=s, light=1, as_cmap=True)
     if len(normed_trait[count]) == 1:
         ax.plot()
-    # trait = trait_w[count]
-    # traitvar = trait_v[count]
-    # pop = pop_w[count]
+
     else:
+        # trait = trait_w[count]
+        # traitvar = trait_v[count]
+        # pop = pop_w[count]
         trait = normed_trait[count]
         traitvar = normed_traitvar[count]
         pop = normed_pop[count]
         ax.set_xlim([0,1])
         # Generate and plot a random bivariate dataset
-        sns.kdeplot(trait, pop, cmap=cmap, shade=True, cut=5, ax=ax)
+        # sns.kdeplot(trait, pop, cmap=cmap, shade=True, cut=5, ax=ax)
+        sns.scatterplot(trait, pop,ax=ax)
+
     if count in range(0,6):
         ax.title.set_text(label_a[count])
 
@@ -112,53 +115,4 @@ f.text(0.5, 0, 'Trait', ha='center')
 f.text(0.01, 0.5, 'Population', va='center', rotation='vertical')
 f.tight_layout()
 
-f.savefig('C:/Liang/Googlebox/Research/Project2/DVmodel/1stClusterStudy/traitvsvar.png')
-
-
-sns.jointplot(trait_w[5], trait_v[5], kind="kde", stat_func=None, color="#4CB391")
-
-
-#
-# gamma_label = np.repeat(['gamma=.001','gamma=.01'], (num-1)*num_tips*len(a_vec)) #,'$\gamma$=.01','$\gamma$=.1','$\gamma$=.5'
-# label_a = np.repeat(['a=.001','a=.01'], (num-1)*num_tips) #,'a=.01','a=.1','a=.5'
-# a_label =np.tile(label_a,len(gamma_vec))
-# df_ori = pd.DataFrame(dict(trait=trait_data,pop=population_data,traitvar=traitvar_data,
-#                            a_label=a_label,gamma_label = gamma_label))
-#
-# x = [df_ori[(df_ori['gamma_label']== 'gamma=.001') & (df_ori['a_label']== 'a=.001')]['trait'].values,
-# df_ori[(df_ori['gamma_label']== 'gamma=.01') & (df_ori['a_label']== 'a=.001')]['trait'].values,
-# df_ori[(df_ori['gamma_label']== 'gamma=.001') & (df_ori['a_label']== 'a=.01')]['trait'].values,
-# df_ori[(df_ori['gamma_label']== 'gamma=.01') & (df_ori['a_label']== 'a=.01')]['trait'].values]
-# y = [df_ori[(df_ori['gamma_label']== 'gamma=.001') & (df_ori['a_label']== 'a=.001')]['pop'].values,
-# df_ori[(df_ori['gamma_label']== 'gamma=.01') & (df_ori['a_label']== 'a=.001')]['pop'].values,
-# df_ori[(df_ori['gamma_label']== 'gamma=.001') & (df_ori['a_label']== 'a=.01')]['pop'].values,
-# df_ori[(df_ori['gamma_label']== 'gamma=.01') & (df_ori['a_label']== 'a=.01')]['pop'].values]
-# np.max(x)
-# np.min(x)
-
-
-tvmap = sns.FacetGrid(df_ori, col = "gamma_label"  ,row="label", hue="label", aspect=15, size=.5,
-                      palette=pal)
-
-# Draw the densities in a few steps
-tvmap.map(sns.kdeplot, "dis_gamma_sort", clip_on=False, shade=True, alpha=1, lw=1, bw=2)
-
-
-gamma_str = ['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5']
-# gamma_str = ['$\gamma$=0','$\gamma$=.001']
-
-for i in range(len(gamma_str)):
-    tvmap.axes[0,i].text(1, 0.8, s = gamma_str[i], fontweight="bold", color = pal[0],
-                          ha="right", va="center", transform=tvmap.axes[0,i].transAxes)
-a_str = ['a=0','a=.001','a=.01','a=.1','a=.5']
-for i in range(len(a_str)):
-    tvmap.axes[i, 4].text(1, .2, s = a_str[i], fontweight="bold", color = pal[i],
-                          ha="right", va="center", transform=tvmap.axes[i, 4].transAxes)
-# Set the subplots to overlap
-tvmap.fig.subplots_adjust(hspace=-.25)
-
-# Remove axes details that don't play will with overlap
-tvmap.set_titles("")
-tvmap.set(yticks=[])
-tvmap.despine(bottom=True, left=True)
-# g_ori.set_xlabels("Distance")
+# f.savefig('C:/Liang/Googlebox/Research/Project2/DVmodel/1stClusterStudy/traitvsvar.png')
