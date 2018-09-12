@@ -18,101 +18,140 @@ sns.set(style="white")
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
 a_vec = gamma_vec
 
-dir_path = 'c:/Liang/Code/Pro2/abcpp'
-files = dir_path + '/tree_data/example1/'
+for no_tree in range(16,18):
+    print(no_tree)
+# no_tree= 5
 
-td = DVTreeData(path=files, scalar=10000)
-K = 10e8
-nu=1/(100*K)
-num = 10
-trait_w = []
-trait_v = []
-pop_w = []
+    dir_path = 'c:/Liang/Code/Pro2/abcpp'
+    files = dir_path + '/tree_data/example%d/' % no_tree
 
-for gamma in gamma_vec:
-    for a in a_vec:
-        # let's try to find a true simulation:
-        obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
-                            split_stddev=0.2)
-        trait_data = ()
-        population_data = ()
-        traitvar_data = ()
-        for loop in range(1,num):
-            str = 'gamma = %.3f; a = %.3f; loop = %d' % (gamma,a,loop)
-            print(str)
-            par_obs = np.array([gamma, a])
-            simresult = dvcpp.DVSim(td, obs_param)
-            if simresult['sim_time'] == td.evo_time:
-                trait_tips = simresult['Z']
-                population_tips = simresult['N']
-                traitvar_tips = simresult['V']
-                # empirical data for trait and population
-                trait_tips = trait_tips[trait_tips != np.nan]
-                population_tips = population_tips[population_tips != np.nan]
-                traitvar_tips = traitvar_tips[traitvar_tips != np.nan]
+    td = DVTreeData(path=files, scalar=20000)
+    K = 10e8
+    nu=1/(100*K)
+    num = 100
+    trait_w = []
+    trait_v = []
+    pop_w = []
 
-                trait_data = np.append(trait_data, trait_tips)
-                population_data = np.append(population_data, population_tips)
-                traitvar_data = np.append(traitvar_data, traitvar_tips)
-            if simresult['sim_time'] < td.evo_time:
-                print('Jump to the next loop')
+    for gamma in gamma_vec:
+        for a in a_vec:
+            # let's try to find a true simulation:
+            obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
+                                split_stddev=0.2)
+            trait_data = ()
+            population_data = ()
+            traitvar_data = ()
+            for loop in range(1,num):
+                str = 'gamma = %.3f; a = %.3f; loop = %d' % (gamma,a,loop)
+                print(str)
+                par_obs = np.array([gamma, a])
+                simresult = dvcpp.DVSim(td, obs_param)
+                if simresult['sim_time'] == td.evo_time:
+                    trait_tips = simresult['Z']
+                    population_tips = simresult['N']
+                    traitvar_tips = simresult['V']
+                    # empirical data for trait and population
+                    trait_tips = trait_tips[~np.isnan(trait_tips)]
+                    population_tips = population_tips[~np.isnan(population_tips)]
+                    traitvar_tips = traitvar_tips[~np.isnan(traitvar_tips)]
+                    assert len(trait_tips) == len(population_tips)
+                    assert len(trait_tips) == len(traitvar_tips)
+                    trait_data = np.append(trait_data, trait_tips)
+                    population_data = np.append(population_data, population_tips)
+                    traitvar_data = np.append(traitvar_data, traitvar_tips)
+                if simresult['sim_time'] < td.evo_time:
+                    print('Jump to the next loop')
 
-        trait_w.append(trait_data)
-        trait_v.append(traitvar_data)
-        pop_w.append(population_data)
+            trait_w.append(trait_data)
+            trait_v.append(traitvar_data)
+            pop_w.append(population_data)
 
-num_tips = len(trait_tips)
+    num_tips = len(trait_tips)
 
-normed_trait = []
-normed_traitvar = []
-normed_pop = []
+    normed_trait = []
+    normed_traitvar = []
+    normed_pop = []
 
-for i in range(0,36):
-    if len(trait_w[i])==0:
-        normed_trait.append([0])
-        normed_traitvar.append([0])
-        normed_pop.append([0])
-    else:
-        normed_trait.append((trait_w[i]- np.min(trait_w[i])) / (np.max(trait_w[i]) - np.min(trait_w[i])))
-        normed_traitvar.append((trait_v[i]- np.min(trait_v[i])) / (np.max(trait_v[i]) - np.min(trait_v[i])))
-        normed_pop.append((pop_w[i] - np.min(pop_w[i])) / (np.max(pop_w[i]) - np.min(pop_w[i])))
+    for i in range(0,36):
+        if len(trait_w[i])==0:
+            normed_trait.append([0])
+            normed_traitvar.append([0])
+            normed_pop.append([0])
+        else:
+            normed_trait.append((trait_w[i]- np.min(trait_w[i])) / (np.max(trait_w[i]) - np.min(trait_w[i])))
+            normed_traitvar.append((trait_v[i]- np.min(trait_v[i])) / (np.max(trait_v[i]) - np.min(trait_v[i])))
+            normed_pop.append((pop_w[i] - np.min(pop_w[i])) / (np.max(pop_w[i]) - np.min(pop_w[i])))
 
 
-count = 0
-label_a = (['a=0','a=.001','a=.01','a=.01','a=.1','a=.5'])
-label_gamma = (['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5'])
+    count = 0
+    label_a = (['a=0','a=.001','a=.01','a=.01','a=.1','a=.5'])
+    label_gamma = (['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5'])
 
-# Set up the matplotlib figure
-f, axes = plt.subplots(6, 6, figsize=(9, 9), sharex=True, sharey=True) #, sharex=True, sharey=True
+    # Set up the matplotlib figure
+    f1, axes1 = plt.subplots(6, 6, figsize=(9, 9), sharex=True, sharey=True) #, sharex=True, sharey=True
+    f2, axes2 = plt.subplots(6, 6, figsize=(9, 9), sharex=True, sharey=True)
+    f3, axes3 = plt.subplots(6, 6, figsize=(9, 9), sharex=True, sharey=True)
+    # Rotate the starting point around the cubehelix hue circle
+    # for ax,ax2,ax3, s in zip(axes.flat,axes2.flat,axes3.flat, np.linspace(0, 3,36)):
+        # Create a cubehelix colormap to use with kdeplot
+    for index_g in range(len(gamma_vec)):
+        gamma1=gamma_vec[index_g]
+        for index_a in range(len(a_vec)):
+            a=a_vec[index_a]
+            print(count)
+            if len(normed_trait[count]) == 1:
+                axes1[index_g,index_a].plot()
+                axes2[index_g,index_a].plot()
+                axes3[index_g,index_a].plot()
 
-# Rotate the starting point around the cubehelix hue circle
-for ax, s in zip(axes.flat, np.linspace(0, 3,36)):
-    # Create a cubehelix colormap to use with kdeplot
-    cmap = sns.cubehelix_palette(start=s, light=1, as_cmap=True)
-    if len(normed_trait[count]) == 1:
-        ax.plot()
+            else:
+                # trait = trait_w[count]
+                # traitvar = trait_v[count]
+                # pop = pop_w[count]
+                trait = normed_trait[count]
+                traitvar = normed_traitvar[count]
+                pop = normed_pop[count]
+                axes1[index_g, index_a].set_xlim([0,1])
+                axes2[index_g, index_a].set_xlim([0,1])
+                axes3[index_g, index_a].set_xlim([0,1])
 
-    else:
-        # trait = trait_w[count]
-        # traitvar = trait_v[count]
-        # pop = pop_w[count]
-        trait = normed_trait[count]
-        traitvar = normed_traitvar[count]
-        pop = normed_pop[count]
-        ax.set_xlim([0,1])
-        # Generate and plot a random bivariate dataset
-        # sns.kdeplot(trait, pop, cmap=cmap, shade=True, cut=5, ax=ax)
-        sns.scatterplot(trait, pop,ax=ax)
+                # Generate and plot a random bivariate dataset
+                # sns.kdeplot(trait, pop, cmap=cmap, shade=True, cut=5, ax=ax)
+                sns.scatterplot(trait, pop,ax=axes1[index_g, index_a])
+                sns.scatterplot(trait, traitvar,ax=axes2[index_g, index_a])
+                sns.scatterplot(pop, traitvar,ax=axes3[index_g, index_a])
 
-    if count in range(0,6):
-        ax.title.set_text(label_a[count])
+            if count in range(0,6):
+                axes1[index_g, index_a].title.set_text(label_a[count])
+                axes2[index_g, index_a].title.set_text(label_a[count])
+                axes3[index_g, index_a].title.set_text(label_a[count])
 
-    if count in ([5, 11, 17, 23, 29, 35]):
-        ax.set_ylabel(label_gamma[int(count/6)])
-        ax.yaxis.set_label_position("right")
-    count += 1
-f.text(0.5, 0, 'Trait', ha='center')
-f.text(0.01, 0.5, 'Population', va='center', rotation='vertical')
-f.tight_layout()
+            if count in ([5, 11, 17, 23, 29, 35]):
+                axes1[index_g, index_a].set_ylabel(label_gamma[int(count/6)])
+                axes1[index_g, index_a].yaxis.set_label_position("right")
+                axes2[index_g, index_a].set_ylabel(label_gamma[int(count/6)])
+                axes2[index_g, index_a].yaxis.set_label_position("right")
+                axes3[index_g, index_a].set_ylabel(label_gamma[int(count/6)])
+                axes3[index_g, index_a].yaxis.set_label_position("right")
+            count += 1
+    f1.text(0.5, 0, 'Trait mean', ha='center')
+    f1.text(0.01, 0.5, 'Population', va='center', rotation='vertical')
+    f1.tight_layout()
+    f2.text(0.5, 0, 'Trait mean', ha='center')
+    f2.text(0.01, 0.5, 'Trait variance', va='center', rotation='vertical')
+    f2.tight_layout()
+    f3.text(0.5, 0, 'Trait variance', ha='center')
+    f3.text(0.01, 0.5, 'Population', va='center', rotation='vertical')
+    f3.tight_layout()
 
-# f.savefig('C:/Liang/Googlebox/Research/Project2/DVmodel/1stClusterStudy/traitvsvar.png')
+
+    tree = 'tree'+'%d' % no_tree
+    dir_fig = 'C:/Liang/Googlebox/Research/Project2/PicResults/'+tree
+
+    f1.savefig(dir_fig+'+meanpopscatter.png')
+    plt.close(f1)
+    f2.savefig(dir_fig+'+meanvarscatter.png')
+    plt.close(f2)
+    f3.savefig(dir_fig+'+varpopscatter.png')
+    plt.close(f3)
+    # f.savefig('C:/Liang/Googlebox/Research/Project2/DVmodel/1stClusterStudy/traitvsvar.png')

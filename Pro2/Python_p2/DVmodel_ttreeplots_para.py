@@ -20,7 +20,7 @@ row_gamma=len(gamma_vec)
 count = 0
 # trait evolution plot
 # file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
-no_tree= 9
+no_tree= 11
 tree = 'tree'+'%d' % no_tree
 example = 'example'+'%d' % no_tree
 if platform.system()=='Windows':
@@ -40,7 +40,7 @@ for index_g in range(len(gamma_vec)):
     for index_a in range(len(a_vec)):
         a=a_vec[index_a]
         print(count)
-        for r in range(10):
+        for r in range(100):
             simresult = DVtraitsim_tree(file=file, gamma1=gamma1, a=a, K=K,nu=nu, scalar=scalar)
             if simresult[2]:
                 pic = 0

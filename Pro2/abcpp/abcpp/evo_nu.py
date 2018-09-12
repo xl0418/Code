@@ -29,7 +29,7 @@ def normalized_norm(x, y):
 # dir_path = os.path.dirname(os.path.realpath(__file__))
 # files = dir_path + '/../tree_data/example1/'
 dir_path = 'c:/Liang/Code/Pro2/abcpp'
-files = dir_path + '/tree_data/example1/'
+files = dir_path + '/tree_data/example12/'
 
 td = DVTreeData(path=files, scalar=10000)
 
@@ -41,7 +41,7 @@ a_prior_var = prior[3]
 nu_prior_mean = prior[4]
 nu_prior_var = prior[5]
 K=10e8
-nu=1e-12
+nu=1/(100*K)
 # let's try to find a true simulation:
 obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
                     split_stddev=0.2)
@@ -62,7 +62,7 @@ obsZ = np.nan_to_num(obsZ)
 obsV = np.nan_to_num(obsV)
 
 
-population = 10000
+population = 1000
 generations = 10
 params = np.tile(obs_param, (population, 1))  # duplicate
 params[:, 0] = np.random.uniform(0.0, 1.0, params.shape[0])  # randomize 'gamma'
