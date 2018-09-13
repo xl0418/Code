@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
 sns.set(style="white")
-treeno_vec = [4,8]
+treeno_vec = [9,11]
 gno_vec = [0,0,0,0,1,1,1,2,2,3]
 ano_vec = [2,3,4,5,3,4,5,4,5,5]
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
@@ -81,7 +81,7 @@ for ax in axes.flat:
         ax.scatter(x=0,y=gamma_vec_point[count],color='r',s=10,alpha=1)
         ax.scatter(x=1,y=a_vec_point[count],color='r',s=10,alpha=1)
         axnv.violinplot(dataset=nv5th, positions=posnv, points=20, widths=0.3,
-                    showmeans=True, showextrema=True, showmedians=False)
+                    showmeans=False, showextrema=True, showmedians=True)
         axnv.scatter(x=2,y=truenv,color='r',s=10,alpha=1)
 
     if (count+1)%len(label_tree)==0:
