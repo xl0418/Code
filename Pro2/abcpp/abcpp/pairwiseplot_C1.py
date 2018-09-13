@@ -27,7 +27,7 @@ for indicator in range(10):
         if platform.system() == 'Windows':
             file = 'C:/Liang/Googlebox/Research/Project2/smcvdata/tree%d+nv/smc%dg%da.npy' % (tree,g,a)
         elif platform.system() == 'Darwin':
-            file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/abcpp/smcndata/tree%d+nv/smc%dg%da.npy' % (tree,g,a)
+            file = '/Users/dudupig/GoogleDrive/Research/Project2/smcvdata/tree%d+nv/smc%dg%da.npy' % (tree,g,a)
         if os.path.isfile(file):
             para_data = np.load(file).item()
             generation = len(para_data['gamma'])
