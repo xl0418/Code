@@ -27,7 +27,7 @@ for gamma_index in range(len(gamma_vec)):
             population = len(para_data['gamma'][0])
             gamma_list.append(para_data['gamma'][generation - 1])
             a_list.append(para_data['a'][generation - 1])
-            fit_list.append(para_data['a'][generation - 1])
+            fit_list.append(para_data['fitness'][generation - 1])
 
         else:
             gamma_list.append([0])

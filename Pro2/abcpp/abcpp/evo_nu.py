@@ -29,7 +29,7 @@ def normalized_norm(x, y):
 # dir_path = os.path.dirname(os.path.realpath(__file__))
 # files = dir_path + '/../tree_data/example1/'
 dir_path = 'c:/Liang/Code/Pro2/abcpp'
-files = dir_path + '/tree_data/example12/'
+files = dir_path + '/tree_data/example13/'
 
 td = DVTreeData(path=files, scalar=10000)
 
@@ -46,7 +46,7 @@ nu=1/(100*K)
 obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
                     split_stddev=0.2)
 print('try to find a completed true simulation with gamma =', obs_param[0], 'and a =', obs_param[1], 'and nu =', obs_param[3],'...')
-for r in range(10000):
+for r in range(1000):
     obs = dvcpp.DVSim(td, obs_param)
     if obs['sim_time'] == td.evo_time:
         break
