@@ -97,21 +97,21 @@ norest_data = est_data
 
 for i in range(len(paracombpos)*len(testgrouppos)):
     gammaest = norest_data[norest_data.figno == i]['gammamean']
-    norest_data['figno'][i]=(gammaest-true_gamma[i])/abs(np.max(gammaest-true_gamma[i]))
+    norest_data.gammamean.loc[norest_data.figno == i]=(gammaest-true_gamma[i])/abs(np.max(gammaest-true_gamma[i]))
 
 # Initialize a grid of plots with an Axes for each walk
-grid = sns.FacetGrid(est_data, col="figno", hue="paracombo", palette="tab20c",
+grid = sns.FacetGrid(norest_data, col="figno", hue="paracombo", palette="tab20c",
                      col_wrap=6, height=1.5)
 
 # Draw a horizontal line to show the starting point
 grid.map(plt.axhline, y=0, ls=":", c=".5")
 
 # Draw a line plot to show the trajectory of each random walk
-grid.map(plt.plot, "size", "gammavar", marker="o")
+grid.map(plt.plot, "size", "gammamean", marker="o")
 
 # Adjust the tick positions and labels
 grid.set(xticks=np.arange(5), yticks=[-3, 3],
-         xlim=(-.5, 2.5), ylim=(-.5, 1.2))
+         xlim=(-.5, 2.5), ylim=(-1.5, 1.5))
 
 # Adjust the arrangement of the plots
 grid.fig.tight_layout(w_pad=1)
