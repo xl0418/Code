@@ -84,8 +84,8 @@ for no_tree in range(16,18):
 
 
     count = 0
-    label_a = (['a=0','a=.001','a=.01','a=.01','a=.1','a=.5'])
-    label_gamma = (['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5'])
+    label_a = (['a=0','a=.001','a=.01','a=.1','a=.5','a=1'])
+    label_gamma = (['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5','$\gamma$=1'])
 
     # Set up the matplotlib figure
     f1, axes1 = plt.subplots(6, 6, figsize=(9, 9), sharex=True, sharey=True) #, sharex=True, sharey=True
