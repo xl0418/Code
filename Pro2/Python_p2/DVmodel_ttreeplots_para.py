@@ -18,7 +18,7 @@ nu=1/(100*K)
 # trait evolution plot
 # file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
 no_tree= 8
-for no_tree in [5,6,7,9,10,11,12,13,14]:
+for no_tree in [1,2,3,4,5,6,7,8,9,10,11,12,13,14]:
     gamma_vec = np.array([0, 0.001, 0.01, 0.1, 0.5, 1])
     a_vec = gamma_vec
     row_gamma = len(gamma_vec)
@@ -42,7 +42,7 @@ for no_tree in [5,6,7,9,10,11,12,13,14]:
         for index_a in range(len(a_vec)):
             a=a_vec[index_a]
             print(count)
-            for r in range(100):
+            for r in range(10000):
                 simresult = DVtraitsim_tree(file=file, gamma1=gamma1, a=a, K=K,nu=nu, scalar=scalar)
                 if simresult[2]:
                     pic = 0
@@ -103,7 +103,7 @@ for no_tree in [5,6,7,9,10,11,12,13,14]:
                 axes3[index_g, index_a].set_ylabel(label_gamma[int(count / row_gamma)])
                 axes3[index_g, index_a].yaxis.set_label_position("right")
             count += 1
-    dir_fig = 'C:/Liang/Googlebox/Research/Project2/PicResults/'+tree
+    dir_fig = 'C:/Liang/Googlebox/Research/Project2/Newtraitplot/'+tree
 
     f1.savefig(dir_fig+'TPs1.png')
     plt.close(f1)

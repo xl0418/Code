@@ -37,6 +37,8 @@ def DVSim(td, param):
     Vmax = param[6]
     inittrait = param[7]
     initpop = param[8]
+    split_stddev = param[9]
+    keep_alive = param[10]
     valid = True
 
     # Initialize trait evolution and population evolution matrices
@@ -64,22 +66,22 @@ def DVSim(td, param):
         beta, sigma, sigmasqr = competition_functions(a, zi, Ni)
 
         # update
-        var_trait = Vi / (2 * Ni)
-        trait_RI_dr[i + 1, idx] = zi + Vi * (2 * gamma * dtz + 1 / Ki * sigma) + np.random.normal(0, var_trait, len(idx))
+        var_trait = Vi / (2.0 * Ni)
+        trait_RI_dr[i + 1, idx] = zi + Vi * (2.0 * gamma * dtz + 1 / Ki * sigma) + np.random.normal(0.0, var_trait, len(idx))
         possion_lambda = Ni * r * np.exp(-gamma * dtz**2 + (1 - beta / Ki))
-        population_RI_dr[i + 1, idx] = np.random.poisson(lam=possion_lambda)
-        V[i + 1, idx] = Vi / 2 + 2 * Ni * nu * Vmax / (1 + 4 * Ni * nu) \
-                        + Vi ** 2 * (
-                            -2 * gamma + 4 * gamma**2 * dtz ** 2 +
-                                1 / Ki * (2*a*beta - sigmasqr) + 4 * gamma / Ki *
-                                dtz * sigma + sigma ** 2 / Ki**2
+        population_RI_dr[i + 1, idx] = np.maximum(np.random.poisson(lam=possion_lambda), keep_alive)
+        V[i + 1, idx] = Vi / 2.0 + 2.0 * Ni * nu * Vmax / (1.0 + 4.0 * Ni * nu) \
+                        + Vi**2 * (
+                            -2.0 * gamma + 4.0 * gamma**2 * dtz**2 +
+                                1.0 / Ki * (2.0 * a * beta - sigmasqr) + 4.0 * gamma / Ki *
+                                dtz * sigma + sigma**2 / Ki**2
                             )
         # sanity check
-        if np.any(V[i + 1, idx] < 0):
+        if np.any(V[i + 1, idx] < 0.0) or np.any(V[i + 1, idx] > 100000.0):
             valid = False
-            print('Inconsistent negative var', i)
+            print('Inconsistent variance', i)
             break
-        if np.any(population_RI_dr[i + 1, idx] < 1):
+        if np.any(population_RI_dr[i + 1, idx] <= 0.0):
             valid = False
             print('Inconsistent zero population', i)
             break
@@ -95,7 +97,7 @@ def DVSim(td, param):
             else:
                 # speciation
                 trait_RI_dr[i + 1, daughter] = trait_RI_dr[i + 1, parent]
-                splitratio = PopsplitNormal(mean=0.5, sigma=0.2)
+                splitratio = PopsplitNormal(mean=0.5, sigma=split_stddev)
                 tmp = population_RI_dr[i + 1, parent]
                 population_RI_dr[i + 1, parent] = splitratio * tmp
                 population_RI_dr[i + 1, daughter] = (1 - splitratio) * tmp

@@ -7,23 +7,20 @@ import dvtraitsim_py as dvpy
 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-files = dir_path + '/../tree_data/example11/'
+files = dir_path + '/../tree_data/example1/'
 td = DVTreeData(path=files, scalar=10000)
 
-param = DVParam(gamma=0.001, a=1, K=10000, nu=0.0001, r=1, theta=0, Vmax=1, inittrait=0, initpop=500, split_stddev=0.2)
-params = np.tile(param, (100, 1))       # duplicate
+param = DVParam(gamma=0.001, a=1, K=10000, nu=0.000001, r=1, theta=0, Vmax=1, inittrait=0, initpop=500, split_stddev=0.2, keep_alive=0.5)
+params = np.tile(param, (1000, 1))       # duplicate
 
-print('running ', params.shape[0], ' simulations (cpp):')
+print('running', params.shape[0], 'simulations (parallel):')
 start = perf_counter()
 dispatch = dvcpp.DVSim(td, params)
 time = perf_counter() - start
-for x in dispatch['sim_time']:
-    if x < td.evo_time: print('inconsistency at time ', x)
+print("valid simulations:", np.where(dispatch['sim_time'] == td.evo_time)[0].size)
 print("in", time, "s")
 
-print('running ', params.shape[0], ' simulations (python):')
+print('running', 1, 'simulation (python):')
 start = perf_counter()
-R = list()
-for p in params:
-    R.append(dvpy.DVSim(td, p))
+R = dvpy.DVSim(td, param)
 print("in", perf_counter() - start, "s")

@@ -56,6 +56,6 @@ class DVTreeData:
 
 
 # converts named parameters in numpy.array
-def DVParam(gamma, a, K, nu, r, theta, Vmax, inittrait, initpop, split_stddev):
-    return np.array([gamma, a, K, nu, r, theta, Vmax, inittrait, initpop, split_stddev]).astype(float)
+def DVParam(gamma, a, K, nu, r, theta, Vmax, inittrait, initpop, split_stddev, keep_alive = 0.0):
+    return np.array([gamma, a, K, nu, r, theta, Vmax, inittrait, initpop, split_stddev, keep_alive]).astype(float)
 

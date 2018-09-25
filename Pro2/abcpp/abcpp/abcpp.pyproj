@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>73e7fca4-da67-42d0-8321-62b372714250</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>evo.py</StartupFile>
+    <StartupFile>perf.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -27,6 +27,7 @@
     <Compile Include="dvtraitsim_shared.py" />
     <Compile Include="dvtraitsim_py.py" />
     <Compile Include="evo.py" />
+    <Compile Include="hist.py" />
     <Compile Include="perf.py" />
     <Compile Include="test.py" />
   </ItemGroup>
