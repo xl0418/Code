@@ -11,14 +11,15 @@ import matplotlib.ticker as mtick
 theta = 0  # optimum of natural selection
 r = 1  # growth rate
 Vmax = 1
-scalar = 10000
+scalar = 20000
 K=10e8
 nu=1/(100*K)
+timegap = 20
 
 # trait evolution plot
 # file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
 no_tree= 8
-for no_tree in [1,2,3,4,5,6,7,8,9,10,11,12,13,14]:
+for no_tree in [16,17]:
     gamma_vec = np.array([0, 0.001, 0.01, 0.1, 0.5, 1])
     a_vec = gamma_vec
     row_gamma = len(gamma_vec)
@@ -65,13 +66,13 @@ for no_tree in [1,2,3,4,5,6,7,8,9,10,11,12,13,14]:
             num_lines = total_species
 
             # x = np.arange(evo_time + 1)
-            x = np.arange(evo_time/10+1)
+            x = np.arange(evo_time/timegap+1)
 
             labels = []
             for i in range(1, num_lines + 1):
-                axes1[index_g,index_a].plot(x, trait_RI_dr[::10, i - 1])
-                axes2[index_g,index_a].plot(x, population_RI_dr[::10, i - 1])
-                axes3[index_g,index_a].plot(x, V_dr[::10, i - 1])
+                axes1[index_g,index_a].plot(x, trait_RI_dr[::timegap, i - 1])
+                axes2[index_g,index_a].plot(x, population_RI_dr[::timegap, i - 1])
+                axes3[index_g,index_a].plot(x, V_dr[::timegap, i - 1])
 
             # else:
             #     print('No complete simulation with count =', count)
