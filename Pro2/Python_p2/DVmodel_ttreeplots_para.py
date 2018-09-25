@@ -12,7 +12,7 @@ theta = 0  # optimum of natural selection
 r = 1  # growth rate
 Vmax = 1
 scalar = 10000
-K=1000000000
+K=10e8
 nu=1/(100*K)
 
 # trait evolution plot
@@ -42,7 +42,7 @@ for no_tree in [1,2,3,4,5,6,7,8,9,10,11,12,13,14]:
         for index_a in range(len(a_vec)):
             a=a_vec[index_a]
             print(count)
-            for r in range(10000):
+            for r in range(100):
                 simresult = DVtraitsim_tree(file=file, gamma1=gamma1, a=a, K=K,nu=nu, scalar=scalar)
                 if simresult[2]:
                     pic = 0
@@ -105,10 +105,10 @@ for no_tree in [1,2,3,4,5,6,7,8,9,10,11,12,13,14]:
             count += 1
     dir_fig = 'C:/Liang/Googlebox/Research/Project2/Newtraitplot/'+tree
 
-    f1.savefig(dir_fig+'TPs1.png')
+    f1.savefig(dir_fig+'TPka1.png')
     plt.close(f1)
-    f2.savefig(dir_fig+'NPs1.png')
+    f2.savefig(dir_fig+'NPka1.png')
     plt.close(f2)
-    f3.savefig(dir_fig+'VPs1.png')
+    f3.savefig(dir_fig+'VPka1.png')
     plt.close(f3)
     plt.close('all')
