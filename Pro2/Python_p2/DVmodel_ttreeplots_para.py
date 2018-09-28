@@ -4,14 +4,15 @@ if platform.system()=='Windows':
     sys.path.append('C:/Liang/Code/Pro2/Python_p2')
 elif platform.system()=='Darwin':
     sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
-from DV_model_sim_along_phy import DVtraitsim_tree
+# from DV_model_sim_along_phy import DVtraitsim_tree
+from DVmodelsim import DVtraitsim_tree
 from matplotlib.pylab import *
 import matplotlib.ticker as mtick
 
 theta = 0  # optimum of natural selection
 r = 1  # growth rate
 Vmax = 1
-scalar = 20000
+scalar = 1000
 K=10e8
 nu=1/(100*K)
 timegap = 20
@@ -19,7 +20,7 @@ timegap = 20
 # trait evolution plot
 # file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
 no_tree= 8
-for no_tree in [16,17]:
+for no_tree in range(5,18):
     gamma_vec = np.array([0, 0.001, 0.01, 0.1, 0.5, 1])
     a_vec = gamma_vec
     row_gamma = len(gamma_vec)
@@ -104,12 +105,12 @@ for no_tree in [16,17]:
                 axes3[index_g, index_a].set_ylabel(label_gamma[int(count / row_gamma)])
                 axes3[index_g, index_a].yaxis.set_label_position("right")
             count += 1
-    dir_fig = 'C:/Liang/Googlebox/Research/Project2/Newtraitplot/'+tree
+    dir_fig = 'C:/Liang/Googlebox/Research/Project2/Newtraitplotsmallscalar/'+tree
 
-    f1.savefig(dir_fig+'TPka1.png')
+    f1.savefig(dir_fig+'TPkaq.png')
     plt.close(f1)
-    f2.savefig(dir_fig+'NPka1.png')
+    f2.savefig(dir_fig+'NPkaq.png')
     plt.close(f2)
-    f3.savefig(dir_fig+'VPka1.png')
+    f3.savefig(dir_fig+'VPkaq.png')
     plt.close(f3)
     plt.close('all')

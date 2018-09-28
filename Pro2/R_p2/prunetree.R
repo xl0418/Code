@@ -1,4 +1,4 @@
-prunetree=function (L)
+prunetree=function (L,dropextinct=F)
 {
   brts = NULL
   L = L[order(abs(L[, 3])), 1:4]

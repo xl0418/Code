@@ -13,9 +13,12 @@ library("reshape2")
 library('Matrix')
 library(plyr) 
 # library(twitteR)
+
+pars=c(0.8,0.6,100)
+seed_fun=29
 prune=1
-result = sddsim(n=2,parsN=c(2,0),age=15,pars=c(0.8,0.6,100) , seed_fun = 29, lambda_allo0 = 0.2, M0=0,K_fix = 1)
-dir = 'C:/Liang/Googlebox/Python/Project2/R-tree_sim/example17/'
+result = sddsim(n=2,parsN=c(2,0),age=15,pars=pars , seed_fun = seed_fun, lambda_allo0 = 0.2, M0=0,K_fix = 1)
+dir = 'C:/Liang/Googlebox/Research/Project2/treesim_newexp/example23/'
 filename = paste0(dir, 'Treedata.Rdata')
 save(result,file = filename)
 print(dim(result$L))
@@ -58,7 +61,8 @@ write.csv(timeend, file = paste0(dir,"timeend.csv"))
 write.csv(existing_species_table, file = paste0(dir,"traittable.csv"))
 write.csv(L, file = paste0(dir,"Ltable.csv"))
 
+para_list = list(pars=pars,prune=prune,seed=seed_fun)
 # 
 # output = list(L=L, timelist= timelist, timebranch = timebranch, timeend = timeend,traittable = existing_species_table)
-# write.csv(output, file = paste0(dir,"treedata.csv"))
+write.csv(para_list, file = paste0(dir,"para_setting.csv"))
 
