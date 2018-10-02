@@ -78,6 +78,12 @@ def PopsplitNormal(mean, sigma):
 def PositivePoisson(lam):
     x = np.random.poisson(lam,1)
     return(x if x>0 else PositivePoisson(lam))
+# Sample function within a specific range (0,1)
+def ZTPbinomial(p,size):
+    x = np.random.binomial(1,p,size)
+    pop = sum(x)
+    return (pop if pop>0 and pop < size  else ZTPbinomial(p,size))
+
 
 PositivePoisson_vec = np.vectorize(PositivePoisson)
 
@@ -119,9 +125,10 @@ def DVtraitsim_tree(file, gamma1, a, K, scalar, nu=0.00000001,keep_alive=1, r=1,
         var_trait = Vi / (2 * Ni)
         trait_RI_dr[i + 1, idx] = zi + Vi * (2 * gamma1 * dtz + 1 / Ki * sigma) + np.random.normal(0, var_trait, len(idx))
         possion_lambda = Ni * r * np.exp(-gamma1 * dtz**2 + (1 - beta / Ki))
-        if np.min(possion_lambda)<1:
-            print('natural term = %f' % np.min(np.exp(-gamma1 * dtz**2)))
-            print('competition term = %f' % np.min(np.exp( (1 - beta / Ki))))
+        # check the values of the natural selection term and competition term when minima of the population size is met.
+        # if np.min(possion_lambda)<1:
+        #     print('natural term = %f' % np.min(np.exp(-gamma1 * dtz**2)))
+        #     print('competition term = %f' % np.min(np.exp( (1 - beta / Ki))))
         population_RI_dr[i + 1, idx] = PositivePoisson_vec(lam=possion_lambda) #, size=(1, len(idx))
         # if np.min(population_RI_dr[i + 1, idx])<100:
         #     print(np.min(population_RI_dr[i + 1, idx]))
@@ -163,8 +170,8 @@ def DVtraitsim_tree(file, gamma1, a, K, scalar, nu=0.00000001,keep_alive=1, r=1,
                     valid = False
                     print('A singleton is hit by a speciation')
                     break
-                bisample = np.random.binomial(1, 0.5,tmp_pop)
-                population_RI_dr[i + 1, parent] = sum(bisample == 1)
+                # An inefficient (stupid) way to sample the number of population split up from a binomial distribution.
+                population_RI_dr[i + 1, parent] = ZTPbinomial(p=0.5,size=int(tmp_pop))
                 population_RI_dr[i + 1, daughter] = tmp_pop - population_RI_dr[i + 1, parent]
                 V[i + 1, parent] = 1 / 2 * V[i + 1, parent]
                 V[i + 1, daughter] = V[i + 1, parent]
