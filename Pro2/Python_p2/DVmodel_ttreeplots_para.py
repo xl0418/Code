@@ -5,7 +5,9 @@ if platform.system()=='Windows':
 elif platform.system()=='Darwin':
     sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
 # from DV_model_sim_along_phy import DVtraitsim_tree
-from DVmodelsim import DVtraitsim_tree
+# from DVmodelsim import DVtraitsim_tree
+from DVmodelsim_binomialsplitup import DVtraitsim_tree
+
 from matplotlib.pylab import *
 import matplotlib.ticker as mtick
 
@@ -13,14 +15,14 @@ theta = 0  # optimum of natural selection
 r = 1  # growth rate
 Vmax = 1
 scalar = 1000
-K=10e8
+K=10e4
 nu=1/(100*K)
 timegap = 20
 
 # trait evolution plot
 # file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
-no_tree= 8
-for no_tree in range(5,18):
+no_tree= 9
+for no_tree in range(9,10):
     gamma_vec = np.array([0, 0.001, 0.01, 0.1, 0.5, 1])
     a_vec = gamma_vec
     row_gamma = len(gamma_vec)
@@ -28,7 +30,7 @@ for no_tree in range(5,18):
     tree = 'tree'+'%d' % no_tree
     example = 'example'+'%d' % no_tree
     if platform.system()=='Windows':
-        file = 'C:/Liang/Code/Pro2/abcpp/tree_data/'+example+'/'
+        file = 'C:/Liang/Googlebox/Research/Project2/treesim_newexp/'+example+'/'
     elif platform.system()=='Darwin':
         file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/'+example+'/'
 
@@ -107,10 +109,10 @@ for no_tree in range(5,18):
             count += 1
     dir_fig = 'C:/Liang/Googlebox/Research/Project2/Newtraitplotsmallscalar/'+tree
 
-    f1.savefig(dir_fig+'TPkaq.png')
-    plt.close(f1)
-    f2.savefig(dir_fig+'NPkaq.png')
-    plt.close(f2)
-    f3.savefig(dir_fig+'VPkaq.png')
-    plt.close(f3)
-    plt.close('all')
+    # f1.savefig(dir_fig+'TPkaq.png')
+    # plt.close(f1)
+    # f2.savefig(dir_fig+'NPkaq.png')
+    # plt.close(f2)
+    # f3.savefig(dir_fig+'VPkaq.png')
+    # plt.close(f3)
+    # plt.close('all')
