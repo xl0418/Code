@@ -1,15 +1,16 @@
 #!/bin/bash
-for i in {0..1};
+for j in {0..4};
+do
+for i in {0..4};
 do 
-sed -n '/events = \[\r/,/\];/p' test0"$i".m > events"$i".Rdata
-echo '1 done'
-sed -n '/turnover/p' test0"$i".m > turnover"$i".Rdata
-echo '2 done'
-A=$(cat events"$i".Rdata |wc -l)
+sed -n '/events = \[\r/,/\];/p' test"$j$i".m > events"$j$i".Rdata
+sed -n '/turnover/p' test"$j$i".m > turnover"$j$i".Rdata
+A=$(cat events"$j$i".Rdata |wc -l)
 A=$[$A-2]
 echo $A
 B=$[$A+1]
-sed -i -e 's/\[/structure(c(/' -e 's/\];/),.Dim=c(6,'$(echo $A)'))/' -e 's/;//g' -e '2,${s/ /,/g}' -e '2,${s/,,/ /g}' -e '3,'$(echo $B)'{s/^/,/g}' events"$i".Rdata
-echo '3 done'
-sed -i 's/%/#/' turnover"$i".Rdata
+sed -i -e 's/\[/structure(c(/' -e 's/\];/),.Dim=c(6,'$(echo $A)'))/' -e 's/;//g' -e '2,${s/ /,/g}' -e '2,${s/,,/ /g}' -e '3,'$(echo $B)'{s/^/,/g}' events"$j$i".Rdata
+sed -i 's/%/#/' turnover"$j$i".Rdata
+echo $j$i' done'
+done
 done
