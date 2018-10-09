@@ -7,7 +7,7 @@ library(ggplot2)
 source('C:/Liang/Googlebox/Research/Project3/Project3_R/event2L.R', echo=TRUE)
 
 library(car)
-
+dir = 'C:/Liang/Code/Pro3/10_9simdata/'
 
 phi = 0
 psi = phi
@@ -19,6 +19,9 @@ L_size = 101
 v = 0.001
 
 result = pojce(phi=phi, psi=psi, sA=sA, sD=sD, ticks=ticks, randomSeed=5, L=L_size, v=v)
+#read the stored data
+result = source(paste0(dir,'events00.Rdata'))
+events_trans = t(events)
 L = event2L(result = result)
 phy = DDD::L2phylo(L,dropextinct =F)
 

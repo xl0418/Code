@@ -4,32 +4,32 @@ if platform.system()=='Windows':
     sys.path.append('C:/Liang/Code/Pro2/Python_p2')
 elif platform.system()=='Darwin':
     sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
-from DV_model_sim_along_phy import DVtraitsim_tree
+from DVmodelsim_binomialsplitup import DVtraitsim_tree
 import seaborn as sns
-from matplotlib.pylab import *
+import matplotlib.pyplot as plt
 from matplotlib import animation
-
+import numpy as np
 theta = 0  # optimum of natural selection
-gamma1 = 0.00  # intensity of natural selection
+gamma1 = 0.001  # intensity of natural selection
 r = 1  # growth rate
-a = 0.00  # intensity of competition
-K = 1000000000  # carrying capacity
-kscale=1000
+a = 0.1  # intensity of competition
+K = 10e8  # carrying capacity
+kscale=100000
 delta_pop = .001  # Variance of random walk of population
 nu=1/(100*K)
 Vmax = 1
-scalar = 1000
+scalar = 5000
 
 
 
 # trait evolution plot
 if platform.system()=='Windows':
-    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example3\\'
+    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example1\\'
 elif platform.system()=='Darwin':
     file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/example3/'
 
 for rep in range(100):
-    simresult = DVtraitsim_tree(file = file, gamma1 = gamma1, a = a,K=K, scalar=scalar,replicate=1)
+    simresult = DVtraitsim_tree(file = file, gamma1 = gamma1,nu=nu, a = a,K=K, scalar=scalar,replicate=1)
     if simresult[2]:
         break
     else:
@@ -115,7 +115,8 @@ if simresult[2]:
     trait_RI_dr = simresult[0]
     population_RI_dr = simresult[1]
     ext_times_RI = []
-
+    pop_nan20 = np.nan_to_num(population_RI_dr)
+    pop_sum = np.sum(pop_nan20,axis=1)
     # evo_time, total_species = simresult[0].shape
     # evo_time = evo_time-1
     ext_spec_index_RI = np.where(population_RI_dr[evo_time,] == 0)[0]
@@ -137,14 +138,14 @@ if simresult[2]:
         RI_traits.append(RI_trait)
         RI_sizes.append(RI_size)
 
-    f0 = figure(num = 0, figsize = (12, 8))#, dpi = 100)
+    f0 = plt.figure(num = 0, figsize = (12, 8))#, dpi = 100)
     f0.suptitle("Trait Evolution", fontsize=12)
-    ax01 = subplot2grid((1, 1), (0, 0))
+    ax01 = plt.subplot2grid((1, 1), (0, 0))
 
 
     i = theta
     ax01.axhline(y = i, color='k', linestyle='--',alpha=0.7)
-    ax01.set_title('RI-sd')
+    ax01.set_title('Animation of the trait-population coevolution model')
 
     trait_max = np.nanmax(trait_RI_dr)
     trait_min = np.nanmin(trait_RI_dr)
@@ -159,88 +160,62 @@ if simresult[2]:
     ax01.set_ylabel("Trait Value")
     ax01.set_xlabel("Generation")
     ax01.set_ylabel("Trait Value")
-
+    ax02 = plt.twinx()
+    ax02.set_ylabel("Total abundance")
     popu_RI_spec_texts= []
 
 
     text_y1 = np.linspace(0.9, 0.9 - (total_species - 1) * 0.05, total_species)
 
     for i in np.arange(total_species):
-        # popu_rs_spec_text1 = ax02.text(1,text_y2[i], '', transform = ax02.transAxes)
         popu_RI_spec_text1 = ax01.text(1,text_y1[i],'', transform = ax01.transAxes)
-        # popu_rs_spec_texts.append(popu_rs_spec_text1)
         popu_RI_spec_texts.append(popu_RI_spec_text1)
 
     RI_lines = []
     RI_scatters = []
-
+    pop_line = []
     for i in  np.arange(total_species):
         RI_line, = ax01.plot([],[], 'b-')
-        # rs_line, = ax02.plot([],[], 'b-')
-
         RI_scatter = ax01.scatter([], [], s=0, c='r', alpha=0.3)
-        # rs_scatter = ax02.scatter([], [], s=0, c='r', alpha=0.3)
-
         RI_lines.append(RI_line)
         RI_scatters.append(RI_scatter)
-        # rs_lines.append(rs_line)
-        # rs_scatters.append(rs_scatter)
+    # pop_line, = ax02.plot([],[],'k--')
+
 
     def animate(i):
         i = (i+1)%(len(x)+1)
         time_text.set_text(time_template % (i))
         RI_datas = []
+        # pop_line.set_data(x[0:i], pop_sum[0:i])
+        ax02.plot(x[0:i:10], pop_sum[0:i:10],'k-')
         for j in np.arange(total_species):
-            # rs_data = np.hstack((x[i], RI_traits_rs[j][i]))
             RI_data = np.hstack((x[i], RI_traits[j][i]))
-            # rs_datas.append(rs_data)
             RI_datas.append(RI_data)
-
-        # for j in np.arange(total_species):
-        #     rs_lines[j].set_data(x[0:i], RI_traits_rs[j][0:i])
             RI_lines[j].set_data(x[0:i], RI_traits[j][0:i])
-            # rs_scatters[j].set_offsets(rs_datas[j])
             RI_scatters[j].set_offsets(RI_datas[j])
-            # rs_scatters[j].set_sizes([RI_sizes_rs[j][i]])
             RI_scatters[j].set_sizes([RI_sizes[j][i]/kscale])
-            # BH_lines[j].set_label("spec %d" % j)
-            # Extinct species being labeled by dashed lines
-            # if (population_BH[i, j] == 0):
-            #     BH_lines[j].set_dashes([2, 2, 2, 2])
-            #     BH_lines[j].set_color("red")
-            # if (population_RI[i, j] == 0):
-            #     RI_lines[j].set_dashes([2, 2, 2, 2])
-            #     RI_lines[j].set_color("red")
+
 
             # Animating labels
-            popu_RI_spec_texts[j].set_text('POS %d = %.1f' % (j+1, population_RI_dr[i,j]))
-            # popu_rs_spec_texts[j].set_text('POS %d = %.1f' % (j+1, population_RI_rs[i,j]))
+            # popu_RI_spec_texts[j].set_text('POS %d = %.1f' % (j+1, population_RI_dr[i,j]))
             if (i < speciate_time[j]):
-                # rs_lines[2].set_data([], [])
                 RI_lines[j].set_data([], [])
-                # rs_lines[1].set_data(x[0:i], RI_traits_rs[1][0:i])
-                # RI_lines[1].set_data(x[0:i], RI_traits[1][0:i])
+
             elif (i >= speciate_time[j] and i < extinct_time[j]):
-                # rs_lines[2].set_data(x[1000:i], RI_traits_rs[2][1000:i])
                 RI_lines[j].set_data(x[speciate_time[j]:i], RI_traits[j][speciate_time[j]:i])
-                # rs_lines[1].set_data(x[0:i], RI_traits_rs[1][0:i])
-                # RI_lines[1].set_data(x[0:i], RI_traits[1][0:i])
+
             else:
-                # rs_lines[2].set_data(x[1000:i], RI_traits_rs[2][1000:i])
                 RI_lines[j].set_data(x[speciate_time[j]:extinct_time[j]],
                                         RI_traits[j][speciate_time[j]:extinct_time[j]])
-                # rs_lines[1].set_data(x[0:2000], RI_traits_rs[1][0:2000])
-                # RI_lines[1].set_data(x[0:2000], RI_traits[1][0:2000])
+
 
             if (j in ext_spec_index_RI):
                 end_time_RI = ext_times_RI[np.where(j == ext_spec_index_RI)[0][0]]
                 if (i >= end_time_RI):
                     RI_lines[j].set_data(x[0:end_time_RI], RI_traits[j][0:end_time_RI])
 
-        # RI_lines[1].set_color("green")
-        # RI_lines[2].set_color("green")
 
-        return  RI_lines, RI_scatters
+        return  RI_lines, RI_scatters,pop_line
 
 
     ##
@@ -252,6 +227,6 @@ if simresult[2]:
     #
     Writer = animation.writers['ffmpeg']
     writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
-    ani.save('C:\\Liang\\DVmodeltree4_n.mp4', writer=writer)
+    ani.save('C:\\Liang\\DVmodeltree1_popsum5q.mp4', writer=writer)
 else:
     print('Junk simulation! Please try again or elevate K.')
