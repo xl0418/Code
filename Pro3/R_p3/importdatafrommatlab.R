@@ -1,15 +1,23 @@
 library(DDD)
-dir = 'C:/Liang/Code/Pro3/10_9simdata/'
-
-source(paste0(dir,'events00.Rdata'))
-source(paste0(dir,'turnover00.Rdata'))
 source('C:/Liang/Code/Pro3/R_p3/event2L.R', echo=TRUE)
+
+dir = 'C:/Liang/Code/Pro3/10_9simdata/'
+comb='20'
+eventname = paste0(dir,'events',comb,'.Rdata')
+turnovername = paste0(dir,'turnover',comb,'.Rdata')
+source(eventname)
+source(turnovername)
 
 events = as.data.frame(t(events))
 colnames(events) = c('T','ns','x','y','sp','ancestor')
 turnover
 result = list(turnover = turnover, events = events)
 L = event2L(result, mode = 'Matlab')
-phy = DDD::L2phylo(L,dropextinct = F)
-plot(phy)
+if(is.vector(L[which(L[,4]==-1),])){
+  print('Only one species exist!')  
+}else{
+  phy = DDD::L2phylo(L,dropextinct = T)
+  plot(phy)
+}
+
 
