@@ -5,12 +5,17 @@ fulltree = 'C:/Liang/Googlebox/Research/Project2/planktonic_foraminifera_macrope
 
 emdata = read.tree(fulltree)
 plot(emdata,show.tip.label = FALSE)
-
+brt=branching.times(emdata)
+if(min(brt)<0){
+  brt = brt+abs(min(brt))
+}
+range(brt)
 phylo2L = function(emdata,dropextinct = TRUE){
 brt=branching.times(emdata)
 if(min(brt)<0){
   brt = brt+abs(min(brt))
 }
+num.species=emdata$Nnode+1
 brt_preL = c(brt[emdata$edge[,1]-length(emdata$tip.label)])
 pre.Ltable = cbind(brt_preL,emdata$edge,emdata$edge.length,brt_preL-emdata$edge.length)
 extantspecies.index = pre.Ltable[which(pre.Ltable[,5]<=0),3]
@@ -24,7 +29,6 @@ eeindicator[ext.pos]= pre.Ltable[ext.pos,5]
 pre.Ltable=cbind(pre.Ltable,eeindicator)
 
 sort.L = pre.Ltable[order(pre.Ltable[,1],decreasing = TRUE),]
-num.species=emdata$Nnode+1
 nodesindex = unique(emdata$edge[,1])
 L = sort.L
 realL=NULL
