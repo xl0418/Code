@@ -18,7 +18,7 @@ if(min(brt)<0){
 num.species=emdata$Nnode+1
 brt_preL = c(brt[emdata$edge[,1]-length(emdata$tip.label)])
 pre.Ltable = cbind(brt_preL,emdata$edge,emdata$edge.length,brt_preL-emdata$edge.length)
-extantspecies.index = pre.Ltable[which(pre.Ltable[,5]<=0),3]
+extantspecies.index = pre.Ltable[which(pre.Ltable[,5]<0),3]
 tipsindex = c(1:num.species)
 extinct.index3 = subset(tipsindex,!(tipsindex %in% extantspecies.index))
 
@@ -87,7 +87,9 @@ for(i in c(2:nrow(L))){
 }
 return(L)
 }
-L_ext = phylo2L(emdata,dropextinct = F)
 
-phylo_test = DDD::L2phylo(L_ext,dropextinct = F)
+dropextinct = T
+L_ext = phylo2L(emdata,dropextinct = dropextinct)
+phylo_test = DDD::L2phylo(L_ext,dropextinct = dropextinct)
 plot(phylo_test,show.tip.label = FALSE)
+range(branching.times(phylo_test))
