@@ -14,7 +14,7 @@ library('Matrix')
 library(plyr) 
 # library(twitteR)
 
-pars=c(0.8,0.2,10)
+pars=c(0.8,0.4,20)
 seed_fun=29
 prune=1
 result = sddsim(n=2,parsN=c(2,0),age=15,pars=pars , seed_fun = seed_fun, lambda_allo0 = 0.2, M0=0,K_fix = 1)
@@ -30,8 +30,8 @@ L = result$L
 if (prune==1){
   L=prunetree(L)
 }
-phylo_p=L2phylo(L,dropextinct =T)
-plot(phylo_p)
+phylo_p=L2phylo(L,dropextinct =F)
+plot(phylo_p,show.tip.label = F)
 
 time.list = c(sort(c(L[,1],L[which(L[,4]!= -1),4]),decreasing = TRUE),0)
 #total number of species

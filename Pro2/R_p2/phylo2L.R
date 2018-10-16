@@ -1,24 +1,18 @@
 library(ape)
-emdatadir = 'C:/Liang/Googlebox/Research/Project2/planktonic_foraminifera_macroperforate/aze_extant_renamed.tre'
 
-fulltree = 'C:/Liang/Googlebox/Research/Project2/planktonic_foraminifera_macroperforate/aze_full_renamed.tre'
-
-emdata = read.tree(fulltree)
-plot(emdata,show.tip.label = FALSE)
-brt=branching.times(emdata)
-if(min(brt)<0){
-  brt = brt+abs(min(brt))
-}
-range(brt)
-phylo2L = function(emdata,dropextinct = TRUE){
+phylo2L = function(emdata){
 brt=branching.times(emdata)
 if(min(brt)<0){
   brt = brt+abs(min(brt))
 }
 num.species=emdata$Nnode+1
 brt_preL = c(brt[emdata$edge[,1]-length(emdata$tip.label)])
+if(min(brt_preL) == 0){
+correction = max(emdata$edge.length[which(brt_preL==0)])
+brt_preL = brt_preL+correction
+}
 pre.Ltable = cbind(brt_preL,emdata$edge,emdata$edge.length,brt_preL-emdata$edge.length)
-extantspecies.index = pre.Ltable[which(pre.Ltable[,5]<0),3]
+extantspecies.index = pre.Ltable[which(pre.Ltable[,5]<=1e-10),3]
 tipsindex = c(1:num.species)
 extinct.index3 = subset(tipsindex,!(tipsindex %in% extantspecies.index))
 
@@ -36,9 +30,6 @@ do=0
 while(do == 0){
 j = which.min(L[,3])
 daughter = L[j,3]
-# if(daughter %in% nodesindex){
-#   do = 1
-# }else{
 parent = L[j,2]
 if(parent %in% nodesindex){
 L[which(L[,2]==parent),2] = daughter
@@ -61,11 +52,12 @@ if(nrow(L)==0){
 # }
 }
 realL = realL[order(realL[,1],decreasing = T),]
-if(dropextinct == FALSE){
-#get the exact branching times.
-lastlength.index = which(realL[,6]==-1)[length(which(realL[,6]==-1))]
-realL[,1]=realL[,1]+realL[lastlength.index,4]
-}
+# if(dropextinct == FALSE){
+# #get the exact branching times.
+# lastlength.index = which(realL[,6]==-1)[length(which(realL[,6]==-1))]
+# realL[,1]=realL[,1]+realL[lastlength.index,4]
+# realL[,6]=realL[,6]+realL[lastlength.index,4]
+# }
 L = realL[,c(1,2,3,6)]
 
 daughter.index = L[,3]
@@ -85,11 +77,7 @@ for(i in c(2:nrow(L))){
     L[mrows,3] = -1* L[mrows,3]
   }
 }
+dimnames(L) = NULL
 return(L)
 }
 
-dropextinct = T
-L_ext = phylo2L(emdata,dropextinct = dropextinct)
-phylo_test = DDD::L2phylo(L_ext,dropextinct = dropextinct)
-plot(phylo_test,show.tip.label = FALSE)
-range(branching.times(phylo_test))
