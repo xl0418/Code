@@ -8,16 +8,15 @@ library(DDD)
 library(MASS)
 library(rgl)
 library(stringr)
-# library(matrixcalc)
 library("reshape2")
 library('Matrix')
 library(plyr) 
-# library(twitteR)
 
-pars=c(0.4,0.3,200)
+pars=c(0.8,0.3,200)
 seed_fun=29
 prune=1
-result = sddsim(n=2,parsN=c(2,0),age=15,pars=pars , seed_fun = seed_fun, lambda_allo0 = 0.2, M0=0,K_fix = 1)
+# result = sddsim(n=2,parsN=c(2,0),age=15,pars=pars , seed_fun = seed_fun, lambda_allo0 = 0.2, M0=0,K_fix = 1)
+result = DDD::dd_sim(pars = pars,age = 15,ddmodel = 3)
 L = result$L
 L = L[,1:4]
 dropextinct = F

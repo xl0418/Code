@@ -1,4 +1,4 @@
-prunetree=function (L,dropextinct=F)
+prunetree=function (L,dropextinct=T)
 {
   brts = NULL
   L = L[order(abs(L[, 3])), 1:4]
@@ -48,6 +48,8 @@ prunetree=function (L,dropextinct=F)
     pos=which(L_temp[,3] %in% L_temp[i,2])
     L_p[i,2]=L_p[pos,3]
   }
+  L_p = as.matrix(L_p)
+  dimnames(L_p) = NULL
   return(L_p)
 }
 
