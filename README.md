@@ -8,10 +8,13 @@ We have developed a spatial diversity-dependent diversification model to explore
 
 #### Generating trees
 The idea is simple. For simplicity, we build a two-location model and let species evolve (speciate: give birth to a new species/ extinction: one species goes extinct) in the regime. A pack of generated trees under different speciation rates and extinction rates and dispersal rates is like this (Scenario 2, see details in our paper):
-![](https://github.com/xl0418/Code/blob/master/Pro1/figures/Trees_S2.jpg)
+<div align=center><img width="750" height="750" src="https://github.com/xl0418/Code/blob/master/Pro1/figures/Trees_S2.jpg"/></div>
 
 ### Applying the bootstrapping analysis
-We exploit the bootstrapping analysis to examine the power of the global approah to detect the signal of diversity-dependence on the spatial structered trees. 
+We exploit the bootstrapping analysis to examine the power of the global approah to detect the signal of diversity-dependence on the spatial structered trees. The following tables show the power of the global tool for signal detection under different parameter combinations and scenarios.
+![](https://github.com/xl0418/Code/blob/master/Pro1/figures/Powertable.jpg)
+<div align=center><img src="https://github.com/xl0418/Code/blob/master/Pro1/figures/Powertable.jpg"/></div>
+
 
 
 ### Reference
