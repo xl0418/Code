@@ -18,6 +18,8 @@ We exploit the bootstrapping analysis to examine the power of the global approah
 As due to the complexity of the model, an analytical likelihood function is not possible to achieve. Therefore, we test if the global likelihood approach can recover the parameters on the spatial model or show some patterns.
 <div align=center><img src="https://github.com/xl0418/Code/blob/master/Pro1/figures/Est.S2VS.jpg"/></div>
 
+### Conclusion
+From the results above, the conclusion is clear. Please see our paper:-)
 
 ### Reference
 Xu, L., & Etienne, R. S. (2018). Detecting local diversity-dependence in diversification. Evolution, 72(6), 1294-1305. DOI: 10.1111/evo.13482 
