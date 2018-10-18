@@ -12,9 +12,11 @@ The idea is simple. For simplicity, we build a two-location model and let specie
 
 ### Applying the bootstrapping analysis
 We exploit the bootstrapping analysis to examine the power of the global approah to detect the signal of diversity-dependence on the spatial structered trees. The following tables show the power of the global tool for signal detection under different parameter combinations and scenarios.
-![](https://github.com/xl0418/Code/blob/master/Pro1/figures/Powertable.jpg)
 <div align=center><img src="https://github.com/xl0418/Code/blob/master/Pro1/figures/Powertable.jpg"/></div>
 
+### Parameter inference
+As due to the complexity of the model, an analytical likelihood function is not possible to achieve. Therefore, we test if the global likelihood approach can recover the parameters on the spatial model or show some patterns.
+<div align=center><img src="https://github.com/xl0418/Code/blob/master/Pro1/figures/Est.S2VS.jpg"/></div>
 
 
 ### Reference
