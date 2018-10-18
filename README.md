@@ -7,8 +7,11 @@ Whether there are ecological limits to species diversification is a hotly debate
 We have developed a spatial diversity-dependent diversification model to explore if the global version of the diversity-dependence approach could detect the diversity-dependent signal on the spatial scenario. 
 
 #### Generating trees
-The idea is simple. For simplicity, we build a two-location model and let species evolve (speciate: give birth to a new species/ extinction: one species goes extinct) in the regime. A generated tree is like this:
-![](https://github.com/xl0418/Code/blob/master/Pro1/figures/Trees_S2.pdf)
+The idea is simple. For simplicity, we build a two-location model and let species evolve (speciate: give birth to a new species/ extinction: one species goes extinct) in the regime. A pack of generated trees under different speciation rates and extinction rates and dispersal rates is like this (Scenario 2, see details in our paper):
+![](https://github.com/xl0418/Code/blob/master/Pro1/figures/Trees_S2.jpg)
+
+### Applying the bootstrapping analysis
+We exploit the bootstrapping analysis to examine the power of the global approah to detect the signal of diversity-dependence on the spatial structered trees. 
 
 
 ### Reference
