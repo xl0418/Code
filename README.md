@@ -8,6 +8,8 @@ We have developed a spatial diversity-dependent diversification model to explore
 
 #### Generating trees
 The idea is simple. For simplicity, we build a two-location model and let species evolve (speciate: give birth to a new species/ extinction: one species goes extinct) in the regime. A generated tree is like this:
+![](https://github.com/xl0418/Code/blob/master/Pro1/figures/Trees_S2.pdf)
+
 
 ### Reference
 Xu, L., & Etienne, R. S. (2018). Detecting local diversity-dependence in diversification. Evolution, 72(6), 1294-1305. DOI: 10.1111/evo.13482 
