@@ -28,7 +28,7 @@ plottree(file = filename,dropextinct =T)
 
 The red and blue denote the emdemic species while the green denotes the widespread species. At tips, two cycles are implying two locations. Filled cycle means the species occupies that location. 
 
-The ledgend's position can be adjusted but not from the arguments of the function. If you want to contribute, pls search `plottree` in this repositoray.
+The ledgend's position can be adjusted but not from the arguments of the function. If you want to contribute, pls click [`plottree`](https://github.com/xl0418/Code/blob/0ebc0a244d3547d757503395f1cbedc9638b9261/Pro1/code_pro1/Plottree.R)
 
 ### phylo2L function 
 
