@@ -4,7 +4,7 @@ For the details of my PhD projects, please follow the links below:
 
 [Project 1: Detecting local diversity-dependence in diversification](https://github.com/xl0418/PhdIntroProject1)
 
-[Project 2: Trait-population coevolution model(https://github.com/xl0418/PhdIntroProject2)
+[Project 2: Trait-population coevolution model](https://github.com/xl0418/PhdIntroProject2)
 
 Project 3: under construction
 
