@@ -1,6 +1,6 @@
 # Code
 Under construction...  
-This repository contains all the codes of my PhD projects.
+This repository contains all the codes of my PhD projects.  
 For the details of my PhD projects, please follow the links below: 
 
 [Project 1: Detecting local diversity-dependence in diversification](https://github.com/xl0418/PhdIntroProject1)
@@ -9,7 +9,7 @@ For the details of my PhD projects, please follow the links below:
 
 Project 3: under construction
 
-So in this page, I am ganna post something interesting about coding that I developed in the projects. 
+So in this page, I am ganna post something interesting about coding that I developed in the projects. I am open for contributions but my code is a bit of mess that you may feel hard to read. There are also some hard codeings that the scripts are nested to each other. I will improve them slowly :-)  
 
 ## Plot cycles at the tips of a phylogenetic tree
 In the first project, I was working on a two-location model. A phylogenetic tree that can imply where the species live is useful to model users. Thus I explored how to color the tree and how to plot cycles at the tips. Now this can be done by the function `plottree`
@@ -27,3 +27,5 @@ plottree(file = filename,dropextinct =T)
 <div align=center><img width="550" height="550" src="https://github.com/xl0418/PhdIntroProject2/blob/master/Example/exampletree.png"/></div>  
 
 The red and blue denote the emdemic species while the green denotes the widespread species. At tips, two cycles are implying two locations. Filled cycle means the species occupies that location. 
+
+The ledgend's position can be adjusted but not from the arguments of the function. If you want to contribute, pls search `plottree` in this repositoray.
