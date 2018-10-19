@@ -2,7 +2,7 @@ source('C:/Liang/Googlebox/Research/Project1/R_pro1/Final/Nindex.R', echo=TRUE)
 source('C:/Liang/Googlebox/Research/Project1/R_pro1/Final/sddsim.R', echo=TRUE)
 source('C:/Liang/Googlebox/Research/Project1/R_pro1/Final/event_matrix.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/Plottree_single_Pro1.R', echo=TRUE)
-source('C:/Liang/Code/Pro2/R_p2/prunetree.R', echo=TRUE)
+source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
 
 library(DDD)
 library(MASS)
@@ -14,11 +14,12 @@ library('Matrix')
 library(plyr) 
 # library(twitteR)
 
-pars=c(0.8,0.4,20)
+pars=c(0.8,0.2,20)
 seed_fun=29
 prune=1
-result = sddsim(n=2,parsN=c(2,0),age=15,pars=pars , seed_fun = seed_fun, lambda_allo0 = 0.2, M0=0,K_fix = 1)
-dir = 'C:/Liang/Googlebox/Research/Project2/treesim_newexp/example1/'
+result = sddsim(n=2,parsN=c(1,1),age=15,pars=pars , seed_fun = seed_fun, lambda_allo0 = 0.2, M0=1,K_fix = 1)
+dir = 'C:/Liang/PhdIntroProject2/Example/'
+# dir = 'C:/Liang/Googlebox/Research/Project2/treesim_newexp/example1/'
 filename = paste0(dir, 'Treedata.Rdata')
 save(result,file = filename)
 print(dim(result$L))
@@ -28,7 +29,7 @@ load(file = filename)
 
 L = result$L
 if (prune==1){
-  L=prunetree(L)
+  L=pruneL(L)
 }
 phylo_p=L2phylo(L,dropextinct =F)
 plot(phylo_p,show.tip.label = F)
