@@ -8,4 +8,4 @@ For the details of my PhD projects, please follow the links below:
 
 Project 3: under construction
 
-So in this page, I am going to post something interesting about the codes I developed in the projects. 
+So in this page, I am going to post something interesting about coding that I developed in the projects. 
