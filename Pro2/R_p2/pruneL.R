@@ -7,13 +7,10 @@ pruneL=function (L,dropextinct=T)
   L[1, 1] = -1
   notmin1 = which(L[, 4] != -1)
   L[notmin1, 4] = age - L[notmin1, 4]
-  if (dropextinct == T) {
-    sall = which(L[, 4] == -1)
-    tend = age
-  }else {
-    sall = which(L[, 4] >= -1)
-    tend = (L[, 4] == -1) * age + (L[, 4] > -1) * L[, 4]
-  }
+
+  sall = which(L[, 4] == -1)
+  tend = age
+
   L = L[, -4]
   linlist = cbind(data.frame(L[sall, ]))
   linlist_prun=linlist
