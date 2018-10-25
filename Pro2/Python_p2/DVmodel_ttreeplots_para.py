@@ -1,28 +1,28 @@
 import sys, os
 import platform
 if platform.system()=='Windows':
-    sys.path.append('C:/Liang/Code/Pro2/Python_p2')
+    sys.path.append('C:/Liang/abcpp_master/abcpp')
 elif platform.system()=='Darwin':
     sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
-# from DV_model_sim_along_phy import DVtraitsim_tree
-# from DVmodelsim import DVtraitsim_tree
-from DVmodelsim_binomialsplitup import DVtraitsim_tree
-
-from matplotlib.pylab import *
-import matplotlib.ticker as mtick
+from dvtraitsim_py import DVSim
+from dvtraitsim_shared import DVTreeData, DVParam
+import numpy as np
+import matplotlib.pyplot as plt
 
 theta = 0  # optimum of natural selection
 r = 1  # growth rate
 Vmax = 1
 scalar = 1000
-K=10e4
+K=10e8
 nu=1/(100*K)
-timegap = 20
+timegap = 1
+
+# let's try to find a true simulation:
+
+
 
 # trait evolution plot
-# file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
-no_tree= 9
-for no_tree in range(9,10):
+for no_tree in range(1,10):
     gamma_vec = np.array([0, 0.001, 0.01, 0.1, 0.5, 1])
     a_vec = gamma_vec
     row_gamma = len(gamma_vec)
@@ -30,7 +30,9 @@ for no_tree in range(9,10):
     tree = 'tree'+'%d' % no_tree
     example = 'example'+'%d' % no_tree
     if platform.system()=='Windows':
-        file = 'C:/Liang/Googlebox/Research/Project2/treesim_newexp/'+example+'/'
+        dir_path = 'c:/Liang/Googlebox/Research/Project2'
+        files = dir_path + '/treesim_newexp/'+example+'/'
+        td = DVTreeData(path=files, scalar=1000)
     elif platform.system()=='Darwin':
         file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/'+example+'/'
 
@@ -45,30 +47,23 @@ for no_tree in range(9,10):
         gamma1=gamma_vec[index_g]
         for index_a in range(len(a_vec)):
             a=a_vec[index_a]
-            print(count)
-            for r in range(100):
-                simresult = DVtraitsim_tree(file=file, gamma1=gamma1, a=a, K=K,nu=nu, scalar=scalar)
-                if simresult[2]:
+            print('tree'+no_tree+', replicate =' + count)
+            for replicate in range(100):
+                obs_param = DVParam(gamma=gamma1, a=a, K=K, nu=nu, r=r, theta=theta, Vmax=1, inittrait=0, initpop=500,
+                                    initpop_sigma=10.0, break_on_mu=False)
+                simresult = DVSim(td,obs_param)
+                if simresult['sim_time'] == td.sim_evo_time:
                     pic = 0
                     break
                 else:
                     pic=1
             # if pic==0:
-            evo_time, total_species = simresult[0].shape
+            evo_time, total_species = simresult['N'].shape
             evo_time = evo_time - 1
-            trait_RI_dr = simresult[0]
-            population_RI_dr = simresult[1]
-            V_dr = simresult[3]
-            # trait_dr_tips = trait_RI_dr[evo_time, :][~np.isnan(trait_RI_dr[evo_time, :])]
-            # population_tips = population_RI_dr[evo_time, :][~np.isnan(population_RI_dr[evo_time, :])]
-            # V_tips = V_dr[evo_time, :][~np.isnan(V_dr[evo_time, :])]
-
-            # trait_RI_dr[np.where(trait_RI_dr == 0)[0], np.where(trait_RI_dr == 0)[1]] = None
-
-            # population_RI_dr[np.where(population_RI_dr == 0)[0], np.where(population_RI_dr == 0)[1]] = None
+            trait_RI_dr = simresult['Z']
+            population_RI_dr = simresult['N']
+            V_dr = simresult['V']
             num_lines = total_species
-
-            # x = np.arange(evo_time + 1)
             x = np.arange(evo_time/timegap+1)
 
             labels = []
@@ -107,12 +102,12 @@ for no_tree in range(9,10):
                 axes3[index_g, index_a].set_ylabel(label_gamma[int(count / row_gamma)])
                 axes3[index_g, index_a].yaxis.set_label_position("right")
             count += 1
-    dir_fig = 'C:/Liang/Googlebox/Research/Project2/Newtraitplotsmallscalar/'+tree
+    dir_fig = 'C:/Liang/Googlebox/Research/Project2/smc_newplots/'+tree
 
-    # f1.savefig(dir_fig+'TPkaq.png')
-    # plt.close(f1)
-    # f2.savefig(dir_fig+'NPkaq.png')
-    # plt.close(f2)
-    # f3.savefig(dir_fig+'VPkaq.png')
-    # plt.close(f3)
-    # plt.close('all')
+    f1.savefig(dir_fig+'TP.png')
+    plt.close(f1)
+    f2.savefig(dir_fig+'NP.png')
+    plt.close(f2)
+    f3.savefig(dir_fig+'VP.png')
+    plt.close(f3)
+    plt.close('all')

@@ -1,10 +1,11 @@
 import sys, os
 import platform
 if platform.system()=='Windows':
-    sys.path.append('C:/Liang/Code/Pro2/Python_p2')
+    sys.path.append('C:/Liang/abcpp_master/abcpp')
 elif platform.system()=='Darwin':
     sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
-from DVmodelsim_binomialsplitup import DVtraitsim_tree
+from dvtraitsim_py import DVSim
+from dvtraitsim_shared import DVTreeData, DVParam
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib import animation
@@ -18,37 +19,45 @@ kscale=100000
 delta_pop = .001  # Variance of random walk of population
 nu=1/(100*K)
 Vmax = 1
-scalar = 5000
-
+scalar = 1000
+no_tree = 1
 
 
 # trait evolution plot
+tree = 'tree'+'%d' % no_tree
+example = 'example'+'%d' % no_tree
 if platform.system()=='Windows':
-    file = 'C:\\Liang\\Code\\Pro2\\abcpp\\tree_data\\example1\\'
+    dir_path = 'c:/Liang/Googlebox/Research/Project2'
+    files = dir_path + '/treesim_newexp/'+example+'/'
+    td = DVTreeData(path=files, scalar=scalar)
 elif platform.system()=='Darwin':
-    file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/example3/'
+    file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/'+example+'/'
+
+# parameter settings
+obs_param = DVParam(gamma=gamma1, a=a, K=K, nu=nu, r=r, theta=theta, Vmax=1, inittrait=0, initpop=500,
+                    initpop_sigma=10.0, break_on_mu=False)
 
 for rep in range(100):
-    simresult = DVtraitsim_tree(file = file, gamma1 = gamma1,nu=nu, a = a,K=K, scalar=scalar,replicate=1)
-    if simresult[2]:
+    simresult = DVSim(td,obs_param)
+    if simresult['sim_time'] == td.sim_evo_time:
         break
     else:
         print('%d simulations are all junks! Try more!' % rep)
 
 
-if simresult[2]:
-    evo_time, total_species = simresult[0].shape
+if simresult['sim_time'] == td.sim_evo_time:
+    evo_time, total_species = simresult['N'].shape
     evo_time = evo_time-1
-    trait_RI_dr = simresult[0]
-    population_RI_dr = simresult[1]
+    trait_RI_dr = simresult['Z']
+    population_RI_dr = simresult['N']
 
 
     trait_dr_tips = trait_RI_dr[evo_time,:][~np.isnan(trait_RI_dr[evo_time,:])]
     population_tips = population_RI_dr[evo_time,:][~np.isnan(population_RI_dr[evo_time,:])]
 
-    trait_RI_dr[np.where(trait_RI_dr == 0)[0],np.where(trait_RI_dr == 0)[1]] = None
+    # trait_RI_dr[np.where(trait_RI_dr == 0)[0],np.where(trait_RI_dr == 0)[1]] = np.nan
 
-    population_RI_dr[np.where(population_RI_dr == 0)[0],np.where(population_RI_dr == 0)[1]] = None
+    # population_RI_dr[np.where(population_RI_dr == 0)[0],np.where(population_RI_dr == 0)[1]] = np.nan
     num_plots = total_species
 
 
@@ -71,11 +80,11 @@ if simresult[2]:
     print(trait_RI_dr[evo_time,:])
 
     # Animating trait evolution along a tree
-    timelist = np.genfromtxt(file + 'timelist.csv', delimiter=',')
-    timebranch = np.genfromtxt(file + 'timebranch.csv', delimiter=',')
-    timeend = np.genfromtxt(file + 'timeend.csv', delimiter=',')
-    traittable = np.genfromtxt(file + 'traittable.csv', delimiter=',')
-    ltable = np.genfromtxt(file + 'Ltable.csv', delimiter=',')
+    timelist = np.genfromtxt(files + 'timelist.csv', delimiter=',')
+    timebranch = np.genfromtxt(files + 'timebranch.csv', delimiter=',')
+    timeend = np.genfromtxt(files + 'timeend.csv', delimiter=',')
+    traittable = np.genfromtxt(files + 'traittable.csv', delimiter=',')
+    ltable = np.genfromtxt(files + 'Ltable.csv', delimiter=',')
     # processing data
     ltable = np.delete(ltable, (0), axis=0)
     ltable = np.delete(ltable, (0), axis=1)
@@ -112,8 +121,8 @@ if simresult[2]:
 
 
 
-    trait_RI_dr = simresult[0]
-    population_RI_dr = simresult[1]
+    trait_RI_dr = simresult['Z']
+    population_RI_dr = simresult['N']
     ext_times_RI = []
     pop_nan20 = np.nan_to_num(population_RI_dr)
     pop_sum = np.sum(pop_nan20,axis=1)
@@ -187,7 +196,7 @@ if simresult[2]:
         time_text.set_text(time_template % (i))
         RI_datas = []
         # pop_line.set_data(x[0:i], pop_sum[0:i])
-        ax02.plot(x[0:i:10], pop_sum[0:i:10],'k-')
+        ax02.plot(x[0:i:20], pop_sum[0:i:20],'k-')
         for j in np.arange(total_species):
             RI_data = np.hstack((x[i], RI_traits[j][i]))
             RI_datas.append(RI_data)
@@ -226,7 +235,7 @@ if simresult[2]:
     plt.show()
     #
     Writer = animation.writers['ffmpeg']
-    writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
-    ani.save('C:\\Liang\\DVmodeltree1_popsum5q.mp4', writer=writer)
+    writer = Writer(fps=2, metadata=dict(artist='Me'), bitrate=1800)
+    ani.save('C:\\Liang\\DVmodeltree1_popsum1q.mp4', writer=writer)
 else:
     print('Junk simulation! Please try again or elevate K.')
