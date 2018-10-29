@@ -21,3 +21,5 @@ if(is.vector(L[which(L[,4]==-1),])){
 }
 
 
+
+

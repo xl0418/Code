@@ -22,7 +22,7 @@ timegap = 1
 
 
 # trait evolution plot
-for no_tree in range(1,10):
+for no_tree in range(2,23):
     gamma_vec = np.array([0, 0.001, 0.01, 0.1, 0.5, 1])
     a_vec = gamma_vec
     row_gamma = len(gamma_vec)
@@ -47,7 +47,7 @@ for no_tree in range(1,10):
         gamma1=gamma_vec[index_g]
         for index_a in range(len(a_vec)):
             a=a_vec[index_a]
-            print('tree'+no_tree+', replicate =' + count)
+            print( count)
             for replicate in range(100):
                 obs_param = DVParam(gamma=gamma1, a=a, K=K, nu=nu, r=r, theta=theta, Vmax=1, inittrait=0, initpop=500,
                                     initpop_sigma=10.0, break_on_mu=False)
@@ -62,6 +62,8 @@ for no_tree in range(1,10):
             evo_time = evo_time - 1
             trait_RI_dr = simresult['Z']
             population_RI_dr = simresult['N']
+            population_RI_dr = population_RI_dr.astype(float)
+            population_RI_dr[population_RI_dr==0] = np.nan
             V_dr = simresult['V']
             num_lines = total_species
             x = np.arange(evo_time/timegap+1)

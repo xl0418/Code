@@ -124,7 +124,7 @@ if simresult['sim_time'] == td.sim_evo_time:
     trait_RI_dr = simresult['Z']
     population_RI_dr = simresult['N']
     ext_times_RI = []
-    pop_nan20 = np.nan_to_num(population_RI_dr)
+    pop_nan20 = population_RI_dr.astype(float)
     pop_sum = np.sum(pop_nan20,axis=1)
     # evo_time, total_species = simresult[0].shape
     # evo_time = evo_time-1
