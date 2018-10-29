@@ -12,6 +12,7 @@ C=$[$C-2]
 D=$[$C+1]
 
 sed -i -e 's/D = \[/D = structure(c(/' -e 's/\];/),.Dim=c('$(echo $C)','$(echo $C)'))/' -e 's/;/ /g' -e '2,${s/ /,/g}' -e '2,${s/,,/ /g}' -e '3,'$(echo $D)'{s/^/,/g}' D"$j$i".Rdata
+sed -i 's/,)/)/g' D"$j$i".Rdata
 echo $j$i' done'
 done
 done
