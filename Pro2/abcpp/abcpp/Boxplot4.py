@@ -15,7 +15,7 @@ a_list = []
 fit_list = []
 # Create the data
 if platform.system()=='Windows':
-    filedir = 'C:/Liang/Googlebox/Research/Project2/smcvdata/tree2/'
+    filedir = 'C:/Liang/Googlebox/Research/Project2/smc_newdata/test3/'
 elif platform.system()=='Darwin':
     filedir = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/abcpp/smcndata/tree9+1q/'
 for gamma_index in range(len(gamma_vec)):
@@ -95,5 +95,5 @@ for ax in axes.flat:
 f.text(0.5, 0, '', ha='center')
 f.text(0.01, 0.5, '', va='center', rotation='vertical')
 f.tight_layout()
-
+f.show()
 # f.savefig('C:/Liang/Code/Pro2/abcpp/abcpp/smcdata/Tree2plot.png')
