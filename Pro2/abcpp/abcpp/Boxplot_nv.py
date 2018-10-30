@@ -8,17 +8,20 @@ import matplotlib.ticker as mtick
 
 sns.set(style="dark")
 p=2
+fiveth = 0
+
 gamma_vec = [0,0.001,0.01,0.1,0.5,1]
 a_vec =  [0,0.001,0.01,0.1,0.5,1]
 gamma_list = []
 a_list = []
 nv_list = []
+fit_list = []
 truenv=1e-11
 lowylim=truenv*(-0.4)
 upperylim=2*truenv*6/5
 # Create the data
 if platform.system()=='Windows':
-    filedir = 'C:/Liang/Googlebox/Research/Project2/smc_newdata/test16/'
+    filedir = 'C:/Liang/Googlebox/Research/Project2/smc_newdata/test3/'
 elif platform.system()=='Darwin':
     filedir = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/abcpp/smcndata/tree9+1q/'
 for gamma_index in range(len(gamma_vec)):
@@ -31,11 +34,14 @@ for gamma_index in range(len(gamma_vec)):
             gamma_list.append(para_data['gamma'][generation - 1])
             a_list.append(para_data['a'][generation - 1])
             nv_list.append(para_data['nu'][generation - 1])
+            fit_list.append(para_data['fitness'][generation - 1])
 
         else:
             gamma_list.append([0])
             a_list.append([0])
             nv_list.append([0])
+            fit_list.append([0])
+
 
 label_a = (['a=0','a=.001','a=.01','a=.1','a=.5','a=1'])
 label_gamma = (['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5','$\gamma$=1'])
@@ -51,13 +57,14 @@ a_vec_point = np.tile(a_vec,len(gamma_vec))
 cmap = sns.cubehelix_palette(p, rot=-.5, dark=.3)
 
 count = 0
+
 # Rotate the starting point around the cubehelix hue circle
 for ax in axes.flat:
     gamma = gamma_list[count]
     a = a_list[count]
     nv = nv_list[count]
-    # d=np.column_stack((gamma,a))
-    d=[gamma,a]
+    d = [gamma, a]
+
     axnv = ax.twinx()  # instantiate a second axes that shares the same x-axis
     if len(gamma)==1:
         axnv.plot()
@@ -65,9 +72,19 @@ for ax in axes.flat:
             axnv.set_ylabel(label_gamma[int(count/row_a)])
     # Create a cubehelix colormap to use with kdeplot
     else:
+        fitness = fit_list[count]
+        q5 = np.argsort(fitness)[-population // 20]  # best 5%
+        fit_index = np.where(fitness > fitness[q5])[0]
+        gamma5th = gamma_list[count][fit_index]
+        a5th = a_list[count][fit_index]
+        dg = [gamma5th, a5th]
         # Generate and plot a random bivariate dataset
-        ax.violinplot(dataset=d, positions=pos, points=20, widths=0.3,
+        if fiveth == 0:
+            ax.violinplot(dataset=d, positions=pos, points=20, widths=0.3,
                     showmeans=True, showextrema=True, showmedians=False)
+        else:
+            ax.violinplot(dataset=dg, positions=pos, points=20, widths=0.3,
+                          showmeans=True, showextrema=True, showmedians=False)
         ax.scatter(x=0,y=gamma_vec_point[count],color='r',s=10,alpha=1)
         ax.scatter(x=1,y=a_vec_point[count],color='r',s=10,alpha=1)
         axnv.violinplot(dataset=nv, positions=posnv, points=20, widths=0.3,
