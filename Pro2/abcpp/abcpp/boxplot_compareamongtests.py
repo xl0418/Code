@@ -26,10 +26,10 @@ for tree in treeno_vec:
     g=gno_vec[indicator]
     a=ano_vec[indicator]
     if platform.system() == 'Windows':
-        dire = 'C:/Liang/'
+        dire = 'C:/Liang/Googlebox'
     elif platform.system() == 'Darwin':
-        dire = '/Users/dudupig/'
-    file = dire + 'Googlebox/Research/Project2/smc_newdata/test%d/smc%dg%da.npy' % (tree,g,a)
+        dire = '/Users/dudupig/GoogleDrive'
+    file = dire + '/Research/Project2/smc_newdata/test%d/smc%dg%da.npy' % (tree,g,a)
     if os.path.isfile(file):
         para_data = np.load(file).item()
         generation = len(para_data['gamma'])
