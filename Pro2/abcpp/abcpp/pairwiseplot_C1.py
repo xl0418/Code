@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
 sns.set(style="white")
-treeno_vec = [9,11]
+treeno_vec = [1,2,3]
 gno_vec = [0,0,0,0,1,1,1,2,2,3]
 ano_vec = [2,3,4,5,3,4,5,4,5,5]
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
@@ -20,12 +20,12 @@ fit_list = []
 truenv=1e-11
 lowylim=truenv*(-0.4)
 upperylim=2*truenv*6/5
-for indicator in range(10):
+for indicator in range(2,3):
     for tree in treeno_vec:
         g=gno_vec[indicator]
         a=ano_vec[indicator]
         if platform.system() == 'Windows':
-            file = 'C:/Liang/Googlebox/Research/Project2/smcvdata/tree%d+nv/smc%dg%da.npy' % (tree,g,a)
+            file = 'C:/Liang/Googlebox/Research/Project2/smc_newdata/test%d/smc%dg%da.npy' % (tree,g,a)
         elif platform.system() == 'Darwin':
             file = '/Users/dudupig/GoogleDrive/Research/Project2/smcvdata/tree%d+nv/smc%dg%da.npy' % (tree,g,a)
         if os.path.isfile(file):
@@ -48,6 +48,8 @@ row_gamma = len(label_gamma)
 pos = [0,1]
 posnv = [2]
 pos_label=['$\gamma$','a','$\\nu$']
+
+
 # Set up the matplotlib figure
 f, axes = plt.subplots(row_gamma,row_a, figsize=(9, 9)) #, sharex=True, sharey=True
 gamma_vec_point = np.repeat(gamma_vec[gno_vec],len(label_tree))
@@ -112,4 +114,29 @@ f.text(0.01, 0.5, '', va='center', rotation='vertical')
 plt.show(f)
 
 
+gamma_t123 = np.concatenate(gamma_list,axis=0)
+a_t123 = np.concatenate(a_list,axis=0)
+nv_t123 = np.concatenate(nv_list,axis=0)
+test_label =(['Test %d' % i for i in treeno_vec])
+test_df_label = np.repeat(test_label,population)
+test_dfex_label = np.tile(test_df_label,len(treeno_vec))
+gamma_label = np.repeat('gamma',len(treeno_vec)*population)
+a_label = np.repeat('a',len(treeno_vec)*population)
+nv_label = np.repeat('nv',len(treeno_vec)*population)
+variable_label = np.concatenate([gamma_label,a_label,nv_label])
+value = np.concatenate([gamma_t123,a_t123,nv_t123])
+datalist = {'value': value, 'variable': variable_label,'test': test_dfex_label}
+datadf = pd.DataFrame(datalist)
+
 # f.savefig('C:/Liang/Code/Pro2/abcpp/abcpp/smcdata/Tree2plot.png')
+import seaborn as sns
+sns.set(style="ticks", palette="pastel")
+
+# Load the example tips dataset
+tips = sns.load_dataset("tips")
+
+# Draw a nested boxplot to show bills by day and time
+sns.boxplot(x="test", y="value",
+            hue="variable", palette=["m", "g","b"],
+            data=datadf)
+sns.despine(offset=10, trim=True)

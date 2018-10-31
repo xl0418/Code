@@ -22,7 +22,7 @@ timegap = 1
 
 
 # trait evolution plot
-for no_tree in range(1,23):
+for no_tree in range(15,23):
     gamma_vec = np.array([0, 0.001, 0.01, 0.1, 0.5, 1])
     a_vec = gamma_vec
     row_gamma = len(gamma_vec)
@@ -32,7 +32,7 @@ for no_tree in range(1,23):
     if platform.system()=='Windows':
         dir_path = 'c:/Liang/Googlebox/Research/Project2'
         files = dir_path + '/treesim_newexp/'+example+'/'
-        td = DVTreeData(path=files, scalar=10000)
+        td = DVTreeData(path=files, scalar=1000)
     elif platform.system()=='Darwin':
         file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/'+example+'/'
 
