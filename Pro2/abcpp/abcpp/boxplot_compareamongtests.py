@@ -7,7 +7,9 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
 sns.set(style="white")
-treeno_vec = [4,5,6]
+treeno_vec = [i for i in range(4,7)]
+# treeno_vec = [3,6]
+
 gno_vec = [0,0,0,0,1,1,1,2,2,3]
 ano_vec = [2,3,4,5,3,4,5,4,5,5]
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
@@ -46,12 +48,13 @@ for tree in treeno_vec:
 gamma_t123 = np.concatenate(gamma_list, axis=0)
 a_t123 = np.concatenate(a_list, axis=0)
 nv_t123 = np.concatenate(nv_list, axis=0)
+nv_t123 = nv_t123*1e11
 test_label = (['Test %d' % i for i in treeno_vec])
 test_df_label = np.repeat(test_label, population)
-test_dfex_label = np.tile(test_df_label, len(treeno_vec))
+test_dfex_label = np.tile(test_df_label, 3)
 gamma_label = np.repeat('$\gamma$', len(treeno_vec) * population)
 a_label = np.repeat('$\\alpha$', len(treeno_vec) * population)
-nv_label = np.repeat('$\\nu$', len(treeno_vec) * population)
+nv_label = np.repeat('$\\nu$,1e-11', len(treeno_vec) * population)
 variable_label = np.concatenate([gamma_label, a_label, nv_label])
 value = np.concatenate([gamma_t123, a_t123, nv_t123])
 datalist = {'value': value, 'variable': variable_label, 'test': test_dfex_label}
@@ -62,5 +65,7 @@ sns.boxplot(x="test", y="value",
             data=datadf, linewidth=3)
 plt.axhline(y=gamma_vec[g],color='m',linestyle = '--')
 plt.axhline(y=a_vec[a],color = 'g',linestyle = '--')
+plt.axhline(y=1,color = 'b',linestyle = '--')
+
 sns.despine(offset=10, trim=True)
 plt.legend(bbox_to_anchor=(0.9, 1), loc=2, borderaxespad=0.)
