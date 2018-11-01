@@ -8,7 +8,7 @@ import matplotlib.ticker as mtick
 
 sns.set(style="white")
 # treeno_vec = [i for i in range(4,7)]
-treeno_vec = [1,2,3]
+treeno_vec = [15,16,17]
 
 # gno_vec = [0,0,0,0,1,1,1,2,2,3]
 # ano_vec = [2,3,4,5,3,4,5,4,5,5]
@@ -18,6 +18,8 @@ gamma_list = []
 a_list = []
 nv_list = []
 fit_list = []
+label_a = (['a=0', 'a=.001', 'a=.01', 'a=.1', 'a=.5', 'a=1'])
+label_gamma = (['$\gamma$=0', '$\gamma$=.001', '$\gamma$=.01', '$\gamma$=.1', '$\gamma$=.5', '$\gamma$=1'])
 
 truenv=1e-11
 count = 0
@@ -85,10 +87,18 @@ for gindicator in range(0,6):
         ax.set_xlabel('')
         ax.set(ylim=(-.2, 2.2))
         sns.despine()
+        if count in range(0, nrow_fig):
+            axes[figrow,figcol].title.set_text(label_a[count])
+
+
+        if count in ([5, 11, 17, 23, 29, 35]):
+            axes[figrow,figcol].set_ylabel(label_gamma[int(count / nrow_fig)])
+            axes[figrow,figcol].yaxis.set_label_position("right")
+
         # axes[count].legend([])
         count += 1
         figcol += 1
     figrow += 1
 
 
-l = plt.legend(handles[0:3], labels[0:3], bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+l = plt.legend(handles[0:3], labels[0:3], bbox_to_anchor=(1, 7.55), loc=2, borderaxespad=0.)
