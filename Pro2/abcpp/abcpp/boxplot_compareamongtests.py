@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
 sns.set(style="white")
-treeno_vec = [i for i in range(4,7)]
-# treeno_vec = [3,6]
+# treeno_vec = [i for i in range(4,7)]
+treeno_vec = [11,18]
 
 gno_vec = [0,0,0,0,1,1,1,2,2,3]
 ano_vec = [2,3,4,5,3,4,5,4,5,5]
