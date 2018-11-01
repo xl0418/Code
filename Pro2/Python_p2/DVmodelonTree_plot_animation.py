@@ -11,9 +11,9 @@ import matplotlib.pyplot as plt
 from matplotlib import animation
 import numpy as np
 theta = 0  # optimum of natural selection
-gamma1 = 0.001  # intensity of natural selection
+gamma1 = 0.01  # intensity of natural selection
 r = 1  # growth rate
-a = 0.1  # intensity of competition
+a = 0.5  # intensity of competition
 K = 10e8  # carrying capacity
 kscale=100000
 delta_pop = .001  # Variance of random walk of population
@@ -34,7 +34,7 @@ elif platform.system()=='Darwin':
     file = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/tree_data/'+example+'/'
 
 # parameter settings
-obs_param = DVParam(gamma=gamma1, a=a, K=K, nu=nu, r=r, theta=theta, Vmax=1, inittrait=0, initpop=500,
+obs_param = DVParam(gamma=gamma1, a=a, K=K, nu=nu, r=r, theta=theta, Vmax=1, inittrait=10, initpop=500,
                     initpop_sigma=10.0, break_on_mu=False)
 
 for rep in range(100):
@@ -233,9 +233,9 @@ if simresult['sim_time'] == td.sim_evo_time:
     #
     ani = animation.FuncAnimation(f0, animate, interval= 1, frames= evo_time, repeat=False, blit=False) #, init_func=init)
     plt.show()
-    #
-    Writer = animation.writers['ffmpeg']
-    writer = Writer(fps=2, metadata=dict(artist='Me'), bitrate=1800)
-    ani.save('C:\\Liang\\DVmodeltree1_popsum1q.mp4', writer=writer)
+    # #
+    # Writer = animation.writers['ffmpeg']
+    # writer = Writer(fps=2, metadata=dict(artist='Me'), bitrate=1800)
+    # ani.save('C:\\Liang\\DVmodeltree1_popsum1q.mp4', writer=writer)
 else:
     print('Junk simulation! Please try again or elevate K.')

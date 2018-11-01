@@ -21,7 +21,7 @@ lowylim=truenv*(-0.4)
 upperylim=2*truenv*6/5
 # Create the data
 if platform.system()=='Windows':
-    filedir = 'C:/Liang/Googlebox/Research/Project2/smc_newdata/test18/'
+    filedir = 'C:/Liang/Googlebox/Research/Project2/smc_newdata/test19/'
 elif platform.system()=='Darwin':
     filedir = '/Users/dudupig/Documents/GitHub/Code/Pro2/abcpp/abcpp/smcndata/tree9+1q/'
 for gamma_index in range(len(gamma_vec)):

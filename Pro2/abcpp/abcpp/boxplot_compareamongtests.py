@@ -20,7 +20,7 @@ nv_list = []
 fit_list = []
 
 truenv=1e-11
-indicator = 6
+indicator = 5
 
 for tree in treeno_vec:
     g=gno_vec[indicator]
