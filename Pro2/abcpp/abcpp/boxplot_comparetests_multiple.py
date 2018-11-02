@@ -8,8 +8,8 @@ import matplotlib.ticker as mtick
 
 sns.set(style="white")
 # treeno_vec = [i for i in range(4,7)]
-treeno_vec = [15,16,17]
-
+treeno_vec = [6,17]
+standardize = 0
 # gno_vec = [0,0,0,0,1,1,1,2,2,3]
 # ano_vec = [2,3,4,5,3,4,5,4,5,5]
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
@@ -63,7 +63,12 @@ for gindicator in range(0,6):
         a_t123 = np.concatenate(a_list, axis=0)
         nv_t123 = np.concatenate(nv_list, axis=0)
         nv_t123 = nv_t123*1e11
-        test_label = (['T %d' % i for i in treeno_vec])
+
+        if standardize == 1 and gindicator >0 and aindicator>0:
+            gamma_t123 = gamma_t123/gamma_vec[gindicator]
+            a_t123 = a_t123/a_vec[aindicator]
+
+        test_label = (['T%d' % i for i in treeno_vec])
         test_df_label = np.repeat(test_label, population)
         test_dfex_label = np.tile(test_df_label, 3)
         gamma_label = np.repeat('$\gamma$', len(treeno_vec) * population)
@@ -77,8 +82,13 @@ for gindicator in range(0,6):
         ax = sns.boxplot(x="test", y="value",
                     hue="variable", palette=["m", "g", "b"],
                     data=datadf, linewidth=1, ax=axes[figrow,figcol],showfliers=False)
-        axes[figrow,figcol].axhline(y=gamma_vec[gindicator],color='m',linestyle = '--')
-        axes[figrow,figcol].axhline(y=a_vec[aindicator],color = 'g',linestyle = '--')
+
+        if standardize == 1 and gindicator >0 and aindicator>0:
+            axes[figrow, figcol].axhline(y=1, color='m', linestyle='--')
+            axes[figrow, figcol].axhline(y=1, color='g', linestyle='--')
+        else:
+            axes[figrow,figcol].axhline(y=gamma_vec[gindicator],color='m',linestyle = '--')
+            axes[figrow,figcol].axhline(y=a_vec[aindicator],color = 'g',linestyle = '--')
         axes[figrow,figcol].axhline(y=1,color = 'b',linestyle = '--')
         handles, labels = ax.get_legend_handles_labels()
         ax.legend_.remove()
@@ -102,3 +112,6 @@ for gindicator in range(0,6):
 
 
 l = plt.legend(handles[0:3], labels[0:3], bbox_to_anchor=(1, 7.55), loc=2, borderaxespad=0.)
+# dir_fig = 'C:/Liang/Googlebox/Research/Project2/smc_newresults/CompareT%d_%d.png' % (treeno_vec[0],treeno_vec[1])
+
+# f.savefig(dir_fig)
