@@ -63,7 +63,7 @@ for gindicator in range(0,6):
         a_t123 = np.concatenate(a_list, axis=0)
         nv_t123 = np.concatenate(nv_list, axis=0)
         nv_t123 = nv_t123*1e11
-        test_label = (['Test %d' % i for i in treeno_vec])
+        test_label = (['T %d' % i for i in treeno_vec])
         test_df_label = np.repeat(test_label, population)
         test_dfex_label = np.tile(test_df_label, 3)
         gamma_label = np.repeat('$\gamma$', len(treeno_vec) * population)
