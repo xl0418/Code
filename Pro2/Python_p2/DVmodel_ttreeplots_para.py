@@ -22,7 +22,7 @@ timegap = 100
 
 
 # trait evolution plot
-for no_tree in range(1,2):
+for no_tree in range(3,23):
     gamma_vec = np.array([0, 0.001, 0.01, 0.1, 0.5, 1])
     a_vec = gamma_vec
     row_gamma = len(gamma_vec)
