@@ -4,13 +4,13 @@ emdatadir = 'C:/Liang/Googlebox/Research/Project2/planktonic_foraminifera_macrop
 dir = 'C:/Liang/Googlebox/Research/Project2/planktonic_foraminifera_macroperforate/'
 
 emdata = read.tree(emdatadir)
-plot(emdata,show.tip.label = FALSE)
+plot(emdata,show.tip.label = TRUE)
 
 
 dropextinct = T
 L_ext = phylo2L(emdata)
 phylo_test = DDD::L2phylo(L_ext,dropextinct = dropextinct)
-plot(phylo_test,show.tip.label = FALSE)
+plot(phylo_test,show.tip.label = TRUE)
 
 L = L_ext
 
