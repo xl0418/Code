@@ -2,7 +2,7 @@ import os
 import sys
 import platform
 if platform.system()=='Windows':
-    sys.path.append('C:/Liang/Code/Pro2/abcpp/abcpp')
+    sys.path.append('C:/Liang/abcpp_master/abcpp')
 elif platform.system()=='Darwin':
     sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
 import numpy as np
@@ -18,14 +18,13 @@ sns.set(style="white")
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
 a_vec = gamma_vec
 
-for no_tree in range(16,18):
+for no_tree in range(4,10):
     print(no_tree)
 # no_tree= 5
+    dir_path = 'c:/Liang/Googlebox/Research/Project2'
+    files = dir_path + '/treesim_newexp/example%d/' % no_tree
 
-    dir_path = 'c:/Liang/Code/Pro2/abcpp'
-    files = dir_path + '/tree_data/example%d/' % no_tree
-
-    td = DVTreeData(path=files, scalar=20000)
+    td = DVTreeData(path=files, scalar=10000)
     K = 10e8
     nu=1/(100*K)
     num = 100
@@ -37,7 +36,7 @@ for no_tree in range(16,18):
         for a in a_vec:
             # let's try to find a true simulation:
             obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
-                                split_stddev=0.2)
+                                initpop_sigma=10.0, break_on_mu=False)
             trait_data = ()
             population_data = ()
             traitvar_data = ()
@@ -46,20 +45,21 @@ for no_tree in range(16,18):
                 print(str)
                 par_obs = np.array([gamma, a])
                 simresult = dvcpp.DVSim(td, obs_param)
-                if simresult['sim_time'] == td.evo_time:
+                if simresult['sim_time'] == td.sim_evo_time:
                     trait_tips = simresult['Z']
                     population_tips = simresult['N']
                     traitvar_tips = simresult['V']
                     # empirical data for trait and population
-                    trait_tips = trait_tips[~np.isnan(trait_tips)]
-                    population_tips = population_tips[~np.isnan(population_tips)]
-                    traitvar_tips = traitvar_tips[~np.isnan(traitvar_tips)]
+                    index_extant = np.where(~np.isnan(trait_tips))[0]
+                    trait_tips = trait_tips[index_extant]
+                    population_tips = population_tips[index_extant]
+                    traitvar_tips = traitvar_tips[index_extant]
                     assert len(trait_tips) == len(population_tips)
                     assert len(trait_tips) == len(traitvar_tips)
                     trait_data = np.append(trait_data, trait_tips)
                     population_data = np.append(population_data, population_tips)
                     traitvar_data = np.append(traitvar_data, traitvar_tips)
-                if simresult['sim_time'] < td.evo_time:
+                if simresult['sim_time'] < td.sim_evo_time:
                     print('Jump to the next loop')
 
             trait_w.append(trait_data)
@@ -146,7 +146,7 @@ for no_tree in range(16,18):
 
 
     tree = 'tree'+'%d' % no_tree
-    dir_fig = 'C:/Liang/Googlebox/Research/Project2/PicResults/'+tree
+    dir_fig = 'C:/Liang/Googlebox/Research/Project2/smc_new100replicatesdistribution/'+tree
 
     f1.savefig(dir_fig+'+meanpopscatter.png')
     plt.close(f1)
@@ -154,4 +154,4 @@ for no_tree in range(16,18):
     plt.close(f2)
     f3.savefig(dir_fig+'+varpopscatter.png')
     plt.close(f3)
-    # f.savefig('C:/Liang/Googlebox/Research/Project2/DVmodel/1stClusterStudy/traitvsvar.png')
+    # f.savefig('C:/Liang/Googlebox/Research/Project2/smc_new100replicatesdistributiontraitvsvar.png')

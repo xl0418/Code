@@ -7,7 +7,7 @@ emdata = read.tree(emdatadir)
 plot(emdata,show.tip.label = FALSE)
 
 
-dropextinct = F
+dropextinct = T
 L_ext = phylo2L(emdata)
 phylo_test = DDD::L2phylo(L_ext,dropextinct = dropextinct)
 plot(phylo_test,show.tip.label = FALSE)
