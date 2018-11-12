@@ -8,7 +8,7 @@ import matplotlib.ticker as mtick
 
 sns.set(style="white")
 # treeno_vec = [i for i in range(4,7)]
-treeno_vec = [21]
+treeno_vec = [20,21,22]
 standardize = 0
 # gno_vec = [0,0,0,0,1,1,1,2,2,3]
 # ano_vec = [2,3,4,5,3,4,5,4,5,5]
@@ -111,7 +111,8 @@ for gindicator in range(0,6):
     figrow += 1
 
 
-l = plt.legend(handles[0:3], labels[0:3], bbox_to_anchor=(1, 7.55), loc=2, borderaxespad=0.)
+l = plt.legend(handles[0:3], labels[0:3], bbox_to_anchor=(0.75, 7.85), loc=2, borderaxespad=0.)
+l.get_frame().set_linewidth(0.0)
 # dir_fig = 'C:/Liang/Googlebox/Research/Project2/smc_newresults/CompareT%d_%d.png' % (treeno_vec[0],treeno_vec[1])
 
 # f.savefig(dir_fig)

@@ -1,19 +1,16 @@
-import os
 import sys
-import platform
-if platform.system()=='Windows':
-    sys.path.append('C:/Liang/abcpp_emp/abcpp')
-elif platform.system()=='Darwin':
-    sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
 import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParam
 import dvtraitsim_cpp as dvcpp
 from scipy.stats import norm
-import csv
+# sys.path.append('C:/Liang/Code/Pro2/Python_p2/abcpp/abcpp')
 
-# gamma = 0.001
-# a = 0.1
-#
+gamma_vec = [0,0.001,0.01,0.1,0.5,1]
+a_vec = [0,0.001,0.01,0.1,0.5,1]
+gamma_index = int(sys.argv[1])
+a_index = int(sys.argv[2])
+gamma=gamma_vec[gamma_index]
+a=a_vec[a_index]
 # argsort of 2-dimensional arrays is awkward
 # returns i,j so that X[i,j] == np.sort(X)
 def argsort2D(X):
@@ -25,18 +22,19 @@ def normalized_norm(x, y):
     max_err = np.nanmax(diff_norm)
     return diff_norm / max_err
 
-full =1
 
-#full tree
-dir_path = 'c:/Liang/Googlebox/Research/Project2/planktonic_foraminifera_macroperforate/'
-if full==1:
-    files = dir_path + 'full_data/'
-else:
-    files = dir_path + 'pruend_data/'
+# prep data
+# dir_path = os.path.dirname(os.path.realpath(__file__))
+# files = dir_path + '/../tree_data/example1/'
+dir_path = '/home/p274981/abcpp/'
+files = dir_path + 'tree_data/example9/'
+file2 = dir_path + 'test23/smc%dg%da.npy' % (gamma_index,a_index)
 
-td = DVTreeData(path=files, scalar=1000)
-
-prior = [0.5, 0.5, 0.5, 0.5,1e-11,1e-11]
+scalar_ori = 10000
+scalar_test = 20000
+td_ori = DVTreeData(path=files, scalar=scalar_ori)
+td_test = DVTreeData(path=files, scalar=scalar_test)
+prior = [0.5, 0.5, 0.5, 0.5,1e-12,2e-11]
 gamma_prior_mean = prior[0]
 gamma_prior_var = prior[1]
 a_prior_mean = prior[2]
@@ -45,38 +43,28 @@ nu_prior_mean = prior[4]
 nu_prior_var = prior[5]
 K=10e8
 nu=1/(100*K)
-
-
-with open(dir_path+'diameter.csv') as csv_file:
-    csv_reader = csv.reader(csv_file, delimiter=',')
-    diameterdata = list(csv_reader)
-
-ddarray = np.array(diameterdata)
-tipslabel = ddarray[1:,0]
-obsZ = ddarray[1:,1]
-obsV = ddarray[1:,2]
-obsN = ddarray[1:,3]
-print('trying to estimate the parameters','...')
-if full==1:
-    missingdata = np.array([ 57, 160, 165, 163, 182])-1  # missing index in full data
-else:
-    missingdata = np.array([ 1, 15, 19, 18, 29])-1  # missing index in reconstructive data
-
-naindex = np.where(obsZ == 'NA')[0]
-obsZ = np.delete(obsZ,naindex)
-s = np.argsort(obsZ)
-obsZ = obsZ[s]
-obsZ = obsZ.astype(np.float)
-
-meantrait = np.mean(obsZ)
 # let's try to find a true simulation:
-obs_param = DVParam(gamma=0.01, a=0.5, K=K, nu=nu, r=1, theta=meantrait, Vmax=1, inittrait=meantrait, initpop=500000,
+obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
              initpop_sigma = 10.0, break_on_mu=False)
+print('try to find a completed true simulation with gamma =', obs_param[0], 'and a =', obs_param[1], 'and nu =', obs_param[3],'...')
+for r in range(10000):
+    obs = dvcpp.DVSim(td_ori, obs_param)
+    if obs['sim_time'] == td_ori.sim_evo_time:
+        break
+if obs['sim_time'] < td_ori.sim_evo_time:
+    print('hopeless, does not compute.')
+    sys.exit(-1)
+s = np.argsort(obs['Z'])
+obsN = obs['N'][s]
+obsZ = obs['Z'][s]
+obsV = obs['V'][s]
+obsN = np.nan_to_num(obsN)
+obsZ = np.nan_to_num(obsZ)
+obsV = np.nan_to_num(obsV)
 
-# pop = dvcpp.DVSim(td, obs_param)
 
-population = 2000
-generations = 20
+population = 10000
+generations = 30
 params = np.tile(obs_param, (population, 1))  # duplicate
 params[:, 0] = np.random.uniform(0.0, 1.0, params.shape[0])  # randomize 'gamma'
 params[:, 1] = np.random.uniform(0.0, 1.0, params.shape[0])  # randomize 'a'
@@ -97,24 +85,23 @@ for g in range(generations):
     gamma_data[g, :] = params[:, 0]
     a_data[g, :] = params[:, 1]
     nu_data[g,:] = params[:,3]
-    pop = dvcpp.DVSim(td, params)
+    pop = dvcpp.DVSim(td_test, params)
 
     # access fitness
     # fitness = np.zeros(population)
-    valid = np.where(pop['sim_time'] == td.sim_evo_time)[0]
+    valid = np.where(pop['sim_time'] == td_test.sim_evo_time)[0]
     if len(valid)<20:
         print("WARNING:Valid simulations are too scarce!")
     if valid.size > 0:
         Z = pop['Z'][valid]
-        Z = np.delete(Z,np.s_[missingdata],axis=1)
         i, j = argsort2D(Z)
         Z = Z[i, j]
-        # V = pop['V'][valid][i, j]
+        V = pop['V'][valid][i, j]
         Z = np.nan_to_num(Z)
-        # V = np.nan_to_num(V)
+        V = np.nan_to_num(V)
         #GOF: Goodness of fit
         fitness[g,valid] += 1.0 - normalized_norm(Z, obsZ)
-        # fitness[g,valid] += 1.0 - normalized_norm(np.sqrt(V), np.sqrt(obsV))
+        fitness[g,valid] += 1.0 - normalized_norm(np.sqrt(V), np.sqrt(obsV))
 
     # print something...
     q5 = np.argsort(fitness[g,:])[-population// 20]  # best 5%
@@ -186,9 +173,6 @@ for g in range(generations):
 
 #
 para_data = {'gamma': gamma_data, 'a': a_data, 'nu': nu_data,'fitness': fitness}
-# file='C:/Liang/Code/Pro2/abcpp/abcpp/smcndata/'
-# # file = '/home/p274981/abcpp/abcpp/'
-# file2 = file + 'paraT11.npy'
-# np.save(file2,para_data)
-#
-# smc = np.load(file2).item()
+# file='C:/Liang/Code/Pro2/Python_p2/abcpp/abcpp/smcdata/'
+
+np.save(file2,para_data)

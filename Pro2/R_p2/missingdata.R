@@ -5,13 +5,13 @@ emdatadir = 'C:/Liang/Googlebox/Research/Project2/planktonic_foraminifera_macrop
 dir = 'C:/Liang/Googlebox/Research/Project2/planktonic_foraminifera_macroperforate/'
 
 emdata = read.tree(emdatadir)
-plot(emdata,show.tip.label = TRUE)
+plot(emdata,show.tip.label = FALSE)
 
 
 dropextinct = T
 L_ext = phylo2L(emdata)
 phylo_test = DDD::L2phylo(L_ext,dropextinct = dropextinct)
-plot(phylo_test,show.tip.label = TRUE)
+plot(phylo_test,show.tip.label = FALSE)
 
 phy_de <- fancyTree(emdata, type = "droptip", tip = getExtinct(emdata), cex = 0.7)
 phy_de$tip.label
@@ -21,4 +21,8 @@ missingdata = c("Globigerinella_adamsi","Globorotalia_theyeri","Globorotalia_ung
 missingindex = match(missingdata,phy_de$tip.label)
 missingnames = phylo_test$tip.label[missingindex]
 missingspecies_fulltree = as.numeric(gsub("t", "", missingnames))
-missingspecies_recontree = missingindex
+
+allspecies= sort(as.numeric(gsub("t", "", phylo_test$tip.label)))
+missingspecies_recontree = match(missingspecies_fulltree,allspecies)
+
+

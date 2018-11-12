@@ -14,12 +14,12 @@ library('Matrix')
 library(plyr) 
 # library(twitteR)
 
-pars=c(0.8,0.6,100)
+pars=c(0.8,0.2,300)
 seed_fun=29
 prune=1
-result = sddsim(n=2,parsN=c(2,0),age=15,pars=pars , seed_fun = seed_fun, lambda_allo0 = 0.2, M0=0,K_fix = 1)
+result = sddsim(n=2,parsN=c(2,0),age=70,pars=pars , seed_fun = seed_fun, lambda_allo0 = 0.2, M0=0,K_fix = 1)
 # dir = 'C:/Liang/PhdIntroProject2/Example/'
-dir = 'C:/Liang/Googlebox/Research/Project2/treesim_newexp/example22/'
+dir = 'C:/Liang/Googlebox/Research/Project2/treesim_newexp/largetree/'
 filename = paste0(dir, 'Treedata.Rdata')
 save(result,file = filename)
 print(dim(result$L))
