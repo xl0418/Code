@@ -1,3 +1,4 @@
+library(phytools)
 os = Sys.info()['sysname']
 if(os == 'Darwin'){
   source('~/Documents/GitHub/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
@@ -14,11 +15,14 @@ dir = 'C:/Liang/Googlebox/Research/Project2/planktonic_foraminifera_macroperfora
 emdata = read.tree(emdatadir)
 plot(emdata,show.tip.label = FALSE)
 
-
+# Pruned tree plot
 dropextinct = T
 L_ext = phylo2L(emdata)
 phylo_test = DDD::L2phylo(L_ext,dropextinct = dropextinct)
 plot(phylo_test,show.tip.label = TRUE)
+
+# prune tree by phytools
+phy_prune = fancyTree(emdata, type="droptip",tip = getExtinct(emdata),cex = 0.7)
 
 L = L_ext
 
