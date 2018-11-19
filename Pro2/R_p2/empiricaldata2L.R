@@ -1,10 +1,18 @@
+os = Sys.info()['sysname']
+if(os == 'Darwin'){
+  source('~/Documents/GitHub/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
+  source('~/Documents/GitHub/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
+  emdatadir = '~/GoogleDrive/Research/Project2/planktonic_foraminifera_macroperforate/aLb_renamed.tre'
+  dir = '~/GoogleDrive/Research/Project2/planktonic_foraminifera_macroperforate/'
+  
+}else{
 source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
 emdatadir = 'C:/Liang/Googlebox/Research/Project2/planktonic_foraminifera_macroperforate/aLb_renamed.tre'
 dir = 'C:/Liang/Googlebox/Research/Project2/planktonic_foraminifera_macroperforate/'
-
+}
 emdata = read.tree(emdatadir)
-plot(emdata,show.tip.label = TRUE)
+plot(emdata,show.tip.label = FALSE)
 
 
 dropextinct = T
