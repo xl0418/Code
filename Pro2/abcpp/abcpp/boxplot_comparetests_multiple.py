@@ -8,7 +8,7 @@ import matplotlib.ticker as mtick
 
 sns.set(style="white")
 # treeno_vec = [i for i in range(4,7)]
-treeno_vec = [20,21,22]
+treeno_vec = [13,21]
 standardize = 0
 # gno_vec = [0,0,0,0,1,1,1,2,2,3]
 # ano_vec = [2,3,4,5,3,4,5,4,5,5]
@@ -18,7 +18,7 @@ gamma_list = []
 a_list = []
 nv_list = []
 fit_list = []
-label_a = (['a=0', 'a=.001', 'a=.01', 'a=.1', 'a=.5', 'a=1'])
+label_a = (['$\\alpha$=0', '$\\alpha$=.001', '$\\alpha$=.01', '$\\alpha$=.1', '$\\alpha$=.5', '$\\alpha$=1'])
 label_gamma = (['$\gamma$=0', '$\gamma$=.001', '$\gamma$=.01', '$\gamma$=.1', '$\gamma$=.5', '$\gamma$=1'])
 
 truenv=1e-11
@@ -73,7 +73,7 @@ for gindicator in range(0,6):
         test_dfex_label = np.tile(test_df_label, 3)
         gamma_label = np.repeat('$\gamma$', len(treeno_vec) * population)
         a_label = np.repeat('$\\alpha$', len(treeno_vec) * population)
-        nv_label = np.repeat('$\\nu$,1e-11', len(treeno_vec) * population)
+        nv_label = np.repeat('$\\nu$,$10^{-12}$', len(treeno_vec) * population)
         variable_label = np.concatenate([gamma_label, a_label, nv_label])
         value = np.concatenate([gamma_t123, a_t123, nv_t123])
         datalist = {'value': value, 'variable': variable_label, 'test': test_dfex_label}
