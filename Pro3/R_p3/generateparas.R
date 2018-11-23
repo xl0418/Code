@@ -5,7 +5,7 @@ v=0.0001
 sA=50
 sB=50
 ticks=1e8
-log=1000000
+log=1e8
 count = 0
 append = TRUE
 for(i in c(1:6)){
