@@ -32,12 +32,12 @@ The ledgend's position can be adjusted but not from the arguments of the functio
 
 ### phylo2L function 
 
-I guess this function is specially useful to [our group](https://www.rug.nl/staff/r.s.etienne/) in which we play with L table. L table is an alternative way to a phylo class for phylogenetic information storage. A function called L2phylo has been implemented in the [DDD package](https://cran.r-project.org/web/packages/DDD/index.html) that converts an L table to a phylo class. This function [`phylo2L`](https://github.com/xl0418/Code/blob/99133e6e5744be7382c038edc5701cd494d8e76c/Pro2/R_p2/phylo2L.R) does the conversion the other way around. Thus, if you want to apply your model to an empirical data. This may be useful to you. 
+I guess this function is specially useful to [our group](https://www.rug.nl/staff/r.s.etienne/) in which we play with L table. L table is an alternative way to a phylo class for phylogenetic information storage. A function called L2phylo has been implemented in the [DDD package](https://cran.r-project.org/web/packages/DDD/index.html) that converts an L table to a phylo class. This function [`phylo2L`](https://github.com/xl0418/DODODO) does the conversion the other way around. Thus, if you want to apply your model to an empirical data. This may be useful to you. 
 
 
 ### pruneL function
 
-Actually, this toy function can be replaced by the previous funtion [`phylo2L`](https://github.com/xl0418/Code/blob/99133e6e5744be7382c038edc5701cd494d8e76c/Pro2/R_p2/phylo2L.R) combining with L2phylo when specifying drop extinction true. But this function [`pruneL`](https://github.com/xl0418/Code/blob/f4dfd4acc15af6855572fb4659f396cea14bb83b/Pro2/R_p2/pruneL.R) can prune an L table directly. Don't you think that will save you one second?  
+Actually, this toy function can be replaced by the previous funtion [`phylo2L`](https://github.com/xl0418/DODODO) combining with L2phylo when specifying drop extinction true. But this function [`pruneL`](https://github.com/xl0418/Code/blob/f4dfd4acc15af6855572fb4659f396cea14bb83b/Pro2/R_p2/pruneL.R) can prune an L table directly. Don't you think that will save you one second?  
 
 ### Animation of the trait-population coevolution model
 
