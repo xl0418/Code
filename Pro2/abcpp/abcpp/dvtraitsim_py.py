@@ -1,5 +1,6 @@
 import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParam
+import dvtraitsim_cpp as dvcpp
 
 
 def competition_functions(a, zi, nj):
@@ -18,14 +19,6 @@ def competition_functions(a, zi, nj):
     return beta, sigma, sigmasqr
 
 
-# Sample function within a specific range (0,1)
-def PopsplitNormal(mean, sigma):
-    while True:
-        x = np.random.normal(mean,sigma,1)
-        if (x>0 and x<1):
-           return x
-
-
 def DVSim(td, param):
     # parameters from DVParam
     gamma = param[0]
@@ -37,26 +30,28 @@ def DVSim(td, param):
     Vmax = param[6]
     inittrait = param[7]
     initpop = param[8]
-    split_stddev = param[9]
-    keep_alive = param[10]
-    valid = True
+    initpop_sigma = param[9]
+    break_on_mu = bool(param[10])
+
+    sim_evo_time = td.sim_evo_time
+    events = td.sim_events
 
     # Initialize trait evolution and population evolution matrices
-    trait_RI_dr = np.zeros((td.evo_time + 1, td.total_species))  # trait
-    population_RI_dr = np.zeros((td.evo_time + 1, td.total_species))  # population
-    V = np.zeros((td.evo_time + 1, td.total_species))  # trait vairance
+    trait_RI_dr = np.zeros((sim_evo_time + 1, td.total_species))  # trait
+    population_RI_dr = np.zeros((sim_evo_time + 1, td.total_species)).astype(np.int32)  # population
+    V = np.zeros((sim_evo_time + 1, td.total_species))  # trait variance
 
     #  initialize condition for species trait and population
     trait_RI_dr[0, (0, 1)] = inittrait  # trait for species
-    mu_pop, sigma_pop = initpop, 10  # mean and standard deviation
-    population_RI_dr[0, (0, 1)] = np.random.normal(mu_pop, sigma_pop, 2)
-    V[0] = (1 / td.total_species)
+    population_RI_dr[0, (0, 1)] = np.random.normal(initpop, initpop_sigma, 2).astype(np.int32)
+    V[0] = (1 / td.total_species)   # <----- why?
     existing_species = td.traittable
     node = 0;
-    next_event = td.events[node];
+    next_event = events[node];
     idx = np.where(existing_species[node] == 1)[0]    # existing species
+
     # trait-population coevolution model
-    for i in range(td.evo_time):
+    for i in range(sim_evo_time):
         # pull current state
         Ni = population_RI_dr[i, idx]
         Vi = V[i, idx]
@@ -67,52 +62,57 @@ def DVSim(td, param):
 
         # update
         var_trait = Vi / (2.0 * Ni)
-        trait_RI_dr[i + 1, idx] = zi + Vi * (2.0 * gamma * dtz + 1 / Ki * sigma) + np.random.normal(0.0, var_trait, len(idx))
-        possion_lambda = Ni * r * np.exp(-gamma * dtz**2 + (1 - beta / Ki))
-        population_RI_dr[i + 1, idx] = np.maximum(np.random.poisson(lam=possion_lambda), keep_alive)
+        trait_RI_dr[i + 1, idx] = zi + Vi * (2.0 * gamma * dtz + 1 / Ki * sigma) + np.random.normal(0.0, var_trait)
+        mu = Ni * r * np.exp(-gamma * dtz**2 + (1 - beta / Ki)) # un-truncated mean
+        if np.any(mu <= 1.0):       # mu < 1.0 + 1.11e-16
+            if (break_on_mu):
+                print(i, "invalid mean population size")
+                break
+        ztp_lambda = dvcpp.ztp_lambda_from_untruncated_mean(mu)
+        population_RI_dr[i + 1, idx] = dvcpp.ztpoisson(ztp_lambda)
         V[i + 1, idx] = Vi / 2.0 + 2.0 * Ni * nu * Vmax / (1.0 + 4.0 * Ni * nu) \
                         + Vi**2 * (
                             -2.0 * gamma + 4.0 * gamma**2 * dtz**2 +
                                 1.0 / Ki * (2.0 * a * beta - sigmasqr) + 4.0 * gamma / Ki *
                                 dtz * sigma + sigma**2 / Ki**2
                             )
-        # sanity check
-        if np.any(V[i + 1, idx] < 0.0) or np.any(V[i + 1, idx] > 100000.0):
-            valid = False
-            print('Inconsistent variance', i)
-            break
-        if np.any(population_RI_dr[i + 1, idx] <= 0.0):
-            valid = False
-            print('Inconsistent zero population', i)
-            break
         # events
-        if (i + 1) == next_event[0]:
-            parent = next_event[1]
+        while (i + 1) == next_event[0]:
             daughter = next_event[2]
             if (daughter == -1):
                 # extinction
                 extinct_species = next_event[1]
+                V[i + 1, extinct_species] = None
                 trait_RI_dr[i + 1, extinct_species] = None
                 population_RI_dr[i + 1, extinct_species] = 0
             else:
                 # speciation
-                trait_RI_dr[i + 1, daughter] = trait_RI_dr[i + 1, parent]
-                splitratio = PopsplitNormal(mean=0.5, sigma=split_stddev)
-                tmp = population_RI_dr[i + 1, parent]
-                population_RI_dr[i + 1, parent] = splitratio * tmp
-                population_RI_dr[i + 1, daughter] = (1 - splitratio) * tmp
-                V[i + 1, parent] = 1 / 2 * V[i + 1, parent]
+                parent = next_event[1]
+                parentN = population_RI_dr[i + 1, parent]
+                if parentN <= 1:
+                    print(i, "attempt to split singleton")
+                    # results in split <- 0, will be trapped by sanity check below  
+                split = dvcpp.split_binomial50(parentN)
+                population_RI_dr[i + 1, daughter] = parentN - split
+                population_RI_dr[i + 1, parent] = split
+                V[i + 1, parent] *= 0.5
                 V[i + 1, daughter] = V[i + 1, parent]
+                trait_RI_dr[i + 1, daughter] = trait_RI_dr[i + 1, parent]
             # advance to next event/node
             node = node + 1
-            next_event = td.events[node];
+            next_event = events[node];
             idx = np.where(existing_species[node] == 1)[0]
+
+        # sanity check
+        if np.any(population_RI_dr[i + 1, idx] < 1):
+            print(i, 'Inconsistent extinction')
+            break
+        if np.any(V[i + 1, idx] < 0.0) or np.any(V[i + 1, idx] > 100000.0):
+            print(i, 'runaway variance')
+            break
 
     row_ext = np.where(population_RI_dr == 0)[0]
     col_ext = np.where(population_RI_dr == 0)[1]
-    trait_RI_dr[row_ext, col_ext] = None
-    population_RI_dr[row_ext, col_ext] = None
     V[row_ext, col_ext] = None
-    return trait_RI_dr, population_RI_dr, valid, V
-
-
+    trait_RI_dr[row_ext, col_ext] = None
+    return { 'sim_time': i + 1, 'N': population_RI_dr, 'Z': trait_RI_dr, 'V': V }
