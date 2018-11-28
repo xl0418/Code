@@ -1,6 +1,8 @@
 library(phytools)
 library(ggtree)
 library(treeio)
+library(ggplot2)
+library(ggstance)
 os = Sys.info()['sysname']
 if(os == 'Darwin'){
   source('~/Documents/GitHub/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
@@ -15,16 +17,40 @@ emdatadir = 'C:/Liang/Googlebox/Research/Project2/planktonic_foraminifera_macrop
 dir = 'C:/Liang/Googlebox/Research/Project2/planktonic_foraminifera_macroperforate/'
 }
 emdata = read.tree(emdatadir)
-
 # prune tree by phytools
 phy_prune = fancyTree(emdata, type="droptip",tip = getExtinct(emdata),cex = 0.7)
 
-p = ggtree(phy_prune)
+# trait data 
+setwd('C:/Liang/Code/Pro2/data')
+fileunsort_name = 'unsort.csv'
+obsZ_unsort = read.csv(fileunsort_name)
+obsZ_matrix = as.matrix(obsZ_unsort)
+obsZ_mean = colMeans(obsZ_matrix)
+species_label = phy_prune$tip.label
+samplesize = nrow(obsZ_matrix)
+dimnames(obsZ_matrix)[[2]] = species_label
 
 
-trait_value = sample(1:100, 32, replace = FALSE, prob = NULL)
-d = data.frame(label=phy_prune$tip.label, trait=trait_value)
-p = p %<+% d
-x <- as.treedata(p)
+d_all = as.data.frame(as.table(obsZ_matrix))[,2:3]
+colnames(d_all) = c('species','traitall')
 
-ggtree(x) + geom_tiplab(align=T, offset=.005) + geom_tippoint(aes(size=trait)) + xlim(0, 100) 
+nor_trait = (obsZ_mean- range(obsZ_mean)[1])/(range(obsZ_mean)[2]-range(obsZ_mean)[1])
+
+d_mean1 = data.frame(species=phy_prune$tip.label, trait=obsZ_mean)
+d_mean2 = data.frame(species=phy_prune$tip.label, traitdot=obsZ_mean)
+
+plot_tree <- ggtree(phy_prune)
+
+plot_dottips = plot_tree %<+% d_mean1+ geom_tippoint(aes(size=trait))
+
+plot_sepdots = facet_plot(plot_dottips, panel="dot", data=d_mean2, geom=geom_point, aes(x=traitdot), color='firebrick')+ theme_tree2()
+
+plot_sepboxplt <- facet_plot(plot_sepdots, panel="2", data=d_all, geom_boxploth, 
+                 mapping = aes(x=traitall, group=label,color = traitall))  + theme_tree2()
+
+plot_sepboxplt
+
+
+
+
+

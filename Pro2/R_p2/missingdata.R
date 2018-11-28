@@ -11,7 +11,7 @@ plot(emdata,show.tip.label = FALSE)
 dropextinct = T
 L_ext = phylo2L(emdata)
 phylo_test = DDD::L2phylo(L_ext,dropextinct = dropextinct)
-plot(phylo_test,show.tip.label = FALSE)
+plot(phylo_test,show.tip.label = TRUE)
 
 phy_de <- fancyTree(emdata, type = "droptip", tip = getExtinct(emdata), cex = 0.7)
 phy_de$tip.label

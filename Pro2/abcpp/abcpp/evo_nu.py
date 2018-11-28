@@ -44,7 +44,7 @@ K=10e8
 nu=1/(100*K)
 # let's try to find a true simulation:
 obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
-                    split_stddev=0.2, keep_alive = 1.0)
+                    initpop_sigma=10.0, break_on_mu=False)
 print('try to find a completed true simulation with gamma =', obs_param[0], 'and a =', obs_param[1], 'and nu =', obs_param[3],'...')
 for r in range(1000):
     print(r)
