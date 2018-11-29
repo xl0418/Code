@@ -5,6 +5,10 @@ library(apTreeshape)
 library(ggplot2)
 library(grid)
 library(gridExtra)
+
+method = 'gamma'
+
+# Compute the colless values and gamma values for a given phylo tree.
 foo <- function(x, metric = "colless") {
   if (metric == "colless") {
     xx <- as.treeshape(x)  # convert to apTreeshape format
@@ -14,15 +18,6 @@ foo <- function(x, metric = "colless") {
   } else stop("metric should be one of colless or gamma")
 }
 
-theme_myblank <- function() {
-  stopifnot(require(ggplot2))
-  theme_blank <- ggplot2::theme_blank
-  ggplot2::theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
-                 panel.background = element_blank(), plot.background = element_blank(), 
-                 axis.title.x = element_text(colour = NA), axis.title.y = element_blank(), 
-                 axis.text.x = element_blank(), axis.text.y = element_blank(), axis.line = element_blank(), 
-                 axis.ticks = element_blank())
-}
 
 colless_alldf = data.frame()
 count = 0
@@ -38,7 +33,7 @@ for(i in c(1:5)){
     # treelist = list(tree1,tree2)
     # class(treelist) = 'multiphylo'
     
-    colless_df <- ldply(trees, foo, metric = "colless")  # calculate metric for each tree
+    colless_df <- ldply(trees, foo, metric = method)  # calculate metric for each tree
     colless_df = cbind(colless_df,count,i,j)
     colless_alldf = rbind(colless_alldf,colless_df)
    
@@ -61,10 +56,10 @@ plothis+facet_grid(vars(psi),vars(phi))
 
 wholeplot = plothis+facet_grid(vars(psi),vars(phi))
 y.grob <- textGrob("Frequency", 
-                   gp=gpar(fontface="bold", col="blue", fontsize=15), rot=90)
+                   gp=gpar(fontface="bold", col="black", fontsize=13), rot=90)
 
-x.grob <- textGrob("Colles index", 
-                   gp=gpar(fontface="bold", col="blue", fontsize=15))
+x.grob <- textGrob(paste(method,"index"), 
+                   gp=gpar(fontface="bold", col="black", fontsize=13))
 
 #add to plot
 

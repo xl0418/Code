@@ -57,7 +57,7 @@ d_mean2 = data.frame(species=species_label, traitdot=obsZ_mean)
 
 if(groupout == 1){
   plot_tree = ggtree(missingtree, aes(color=group))+
-          scale_colour_manual(values=c('#88dba3','#1ec0ff'))
+          scale_colour_manual(values=c('#285943','#A593E0'))
 }else{
   plot_tree <- ggtree(phy_prune)
 }
@@ -68,7 +68,8 @@ plot_sepdots = facet_plot(plot_dottips, panel="dot", data=d_mean2, geom=geom_poi
 
 plot_sepboxplt <- facet_plot(plot_dottips, panel="Trait", data=d_all, geom_boxploth, 
                  mapping = aes(x=traitall, group=label ))  + theme_tree2()+
-  geom_phylopic(image="6fe75b0b-1488-4193-8523-f240c2d59575", color="#cff0da", alpha = .1, size=Inf)
+                 theme(strip.background = element_rect(fill="#D1B6E1"))
+  # geom_phylopic(image="6fe75b0b-1488-4193-8523-f240c2d59575", color="#cff0da", alpha = .1, size=Inf)
 
 
 plot_sepboxplt
