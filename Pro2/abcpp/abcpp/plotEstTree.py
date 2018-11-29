@@ -9,6 +9,8 @@ from dvtraitsim_shared import DVTreeData, DVParam
 import dvtraitsim_cpp as dvcpp
 import numpy as np
 import pandas as pd
+import csv
+
 def argsort2D(X):
     return np.arange(len(X))[:, np.newaxis], np.argsort(X, axis=1)
 
@@ -31,6 +33,38 @@ if full==1:
     files = dir_path + 'full_data/'
 else:
     files = dir_path + 'pruend_data/'
+
+
+with open(dir_path+'diameter.csv') as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter=',')
+    diameterdata = list(csv_reader)
+
+ddarray = np.array(diameterdata)
+tipslabel = ddarray[1:,0]
+obsZ = ddarray[1:,1]
+obsV = ddarray[1:,2]
+obsN = ddarray[1:,3]
+if full==1:
+    missingdata = np.array([ 57, 160, 165, 163, 182])-1  # missing index in full data
+else:
+    missingdata = np.array([ 1, 15, 19, 18, 29])-1  # missing index in reconstructive data
+
+naindex = np.where(obsZ == 'NA')[0]
+obsZ = np.delete(obsZ,naindex)
+remove_nalabel = np.delete(tipslabel,naindex)
+s = np.argsort(obsZ)
+obsZ = obsZ[s]
+obsZ = obsZ.astype(np.float)
+sorted_label = remove_nalabel[s]
+
+sorted_label = np.concatenate([sorted_label,tipslabel[naindex]])
+obsZ = np.concatenate([obsZ,np.array([-1,-1,-1,-1,-1])])
+emplist = {'specieslabel':sorted_label, 'trait':obsZ}
+empiricaldata_sorted = pd.DataFrame(emplist)
+
+fileemp_name = os.getcwd()+ '\\Pro2\\data\\emp.csv'
+
+empiricaldata_sorted.to_csv(fileemp_name, encoding='utf-8', index=False)
 
 
 # trait evolution plot
