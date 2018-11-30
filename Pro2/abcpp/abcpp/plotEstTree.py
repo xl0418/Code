@@ -50,15 +50,15 @@ else:
     missingdata = np.array([ 1, 15, 19, 18, 29])-1  # missing index in reconstructive data
 
 naindex = np.where(obsZ == 'NA')[0]
-obsZ = np.delete(obsZ,naindex)
+obsZ_delna = np.delete(obsZ,naindex)
 remove_nalabel = np.delete(tipslabel,naindex)
-s = np.argsort(obsZ)
-obsZ = obsZ[s]
-obsZ = obsZ.astype(np.float)
+s = np.argsort(obsZ_delna)
+obsZ_delna = obsZ_delna[s]
+obsZ_delna = obsZ_delna.astype(np.float)
 sorted_label = remove_nalabel[s]
 
 sorted_label = np.concatenate([sorted_label,tipslabel[naindex]])
-obsZ = np.concatenate([obsZ,np.array([-1,-1,-1,-1,-1])])
+obsZ = np.concatenate([obsZ_delna,np.array([-1,-1,-1,-1,-1])])
 emplist = {'specieslabel':sorted_label, 'trait':obsZ}
 empiricaldata_sorted = pd.DataFrame(emplist)
 
@@ -67,7 +67,7 @@ fileemp_name = os.getcwd()+ '\\Pro2\\data\\emp.csv'
 empiricaldata_sorted.to_csv(fileemp_name, encoding='utf-8', index=False)
 
 
-# trait evolution plot
+# simulate trait data
 td = DVTreeData(path=files, scalar=scalar)
 gamma1 = 0.0001
 a = 0.5
@@ -88,10 +88,18 @@ Z_unsort_df = pd.DataFrame(obsZ_unsort)
 Z_sort_df = pd.DataFrame(obsZ_sort)
 
 
+
 fileunsort_name = os.getcwd()+ '\\Pro2\\data\\unsort.csv'
 filesort_name = os.getcwd()+ '\\Pro2\\data\\sort.csv'
 
 Z_unsort_df.to_csv(fileunsort_name, encoding='utf-8', index=False)
 Z_sort_df.to_csv(filesort_name, encoding='utf-8', index=False)
 
+
+# Data matching
+nor_obsZ_delna = (obsZ_delna-np.min(obsZ_delna))/(np.max(obsZ_delna)-np.min(obsZ_delna))
+
+
+mean_simZ = np.mean(obsZ_sort, axis=0)
+nor_mean_simZ = (mean_simZ-np.min(mean_simZ))/(np.max(mean_simZ)-np.min(mean_simZ))
 

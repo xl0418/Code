@@ -5,7 +5,7 @@ library(apTreeshape)
 library(ggplot2)
 library(grid)
 library(gridExtra)
-
+library(ggthemes)
 method = 'gamma'
 
 # Compute the colless values and gamma values for a given phylo tree.
@@ -43,14 +43,14 @@ colnames(colless_alldf) = c('colvalue','group','psi','phi')
 
 
 plothis <- ggplot(colless_alldf, aes(colvalue)) +  # plot histogram of distribution of values
-  geom_histogram(binwidth = 0.2) + 
-  theme_bw(base_size=18) + 
+  geom_histogram(binwidth = 0.2)+ theme_wsj() +
+ # theme_bw(base_size=18) + 
   scale_x_continuous(limits=c(-3,3), breaks=c(-3,-2,-1,0,1,2,3)) + 
   geom_vline(xintercept = -0.7, colour="red", linetype = "longdash") +
   geom_vline(xintercept = 0.7, colour="red", linetype = "longdash") +
-  labs(x=expression(" "),y=expression(" ")) +
-  background_grid(major = 'y', minor = "none") + # add thin horizontal lines 
-  panel_border()
+  labs(x=expression(" "),y=expression(" ")) 
+  # background_grid(major = 'y', minor = "none") + # add thin horizontal lines 
+  # panel_border()
 
 plothis+facet_grid(vars(psi),vars(phi))
 
