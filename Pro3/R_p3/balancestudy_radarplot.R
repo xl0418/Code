@@ -56,7 +56,11 @@ tdf %>%
   mutate_all(funs(rescale))%>%
   tail(5) -> tdf1
 
+windowsFonts(Times=windowsFont("TT Times New Roman"))
+
 tdf1 = cbind(c('1','2','3','4','5'),tdf1)
 colnames(tdf1) = c('group',colnames(tdf1)[-1])
-ggradar(tdf1,legend.text.size = 8,font.radar = "Times") 
+ggradar(tdf1,legend.text.size = 8,font.radar="Times",
+        grid.label.size = 4,
+        axis.label.size = 4)+theme(legend.position = 'none') 
 
