@@ -54,13 +54,17 @@ colnames(colless_alldf) = c('Colless','Gamma','Richness','psi','phi')
 tdf = colless_alldf
 tdf %>%
   mutate_all(funs(rescale))%>%
-  tail(5) -> tdf1
+  tail(6) -> tdf1
+
+tdf <- cbind(c(1:nrow(tdf)),tdf)
+
+ggradar2(tdf)
 
 windowsFonts(Times=windowsFont("TT Times New Roman"))
 
-tdf1 = cbind(c('1','2','3','4','5'),tdf1)
+tdf1 = cbind(c(1:6),tdf1)
 colnames(tdf1) = c('group',colnames(tdf1)[-1])
-ggradar(tdf1,legend.text.size = 8,font.radar="Times",
+ggradar2(tdf1,legend.text.size = 8,style = 'straight',
         grid.label.size = 4,
-        axis.label.size = 4)+theme(legend.position = 'none') 
+        axis.label.size = 4,polygonfill = FALSE)
 

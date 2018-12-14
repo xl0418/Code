@@ -1,46 +1,59 @@
 import sys
-sys.path.append('C:/Liang/Code/Pro2/Python_p2')
-from ABC_SMC_DVmodel import SMC_ABC, single_trait_sim
+import platform
+if platform.system()=='Windows':
+    sys.path.append('C:/Liang/abcpp_master/abcpp')
+elif platform.system()=='Darwin':
+    sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
+from dvtraitsim_shared import DVTreeData, DVParam
+import dvtraitsim_cpp as dvcpp
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scipy.stats import kendalltau
 sns.set(style="ticks")
 #
-gamma_vec = np.array([0.001,0.01,0.1,0.5,1])
+gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
 a_vec = gamma_vec
+tree = 3
 # Observation parameters [gamma,a]
 # trait_data = ()
 # population_data = ()
 # traitvar_data = ()
 # Observation generated
 #  load the data for a given tree
-# file = 'C:\\Liang\\Googlebox\\Python\\Project2\\R-tree_sim\\'
-file = 'D:\\Googlebox\\Python\\Project2\\R-tree_sim\\'
+file = 'C:\\Liang\\Googlebox\\Research\\Project2\\treesim_newexp\\example%d\\' % tree
+# file = 'D:\\Googlebox\\Python\\Project2\\R-tree_sim\\'
+scalar = 10000
+td = DVTreeData(path=file, scalar=scalar)
 
-num = 6
+num = 2
 trait_w = []
 trait_v = []
 pop_w = []
-
+K=10e8
+nu=1/(100*K)
+incomplete_sim = []
+count = 0
 for gamma in gamma_vec:
     for a in a_vec:
         trait_data = ()
         population_data = ()
         traitvar_data = ()
+        obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
+                            initpop_sigma=10.0, break_on_mu=False)
         for loop in range(1,num):
             str = 'gamma = %.3f; a = %.3f; loop = %d' % (gamma,a,loop)
             print(str)
-            par_obs = np.array([gamma, a])
-            simresult = single_trait_sim(file = file,replicate = 0, par = par_obs)
-            trait_tips = simresult[0]
-            population_tips = simresult[1]
-            traitvar_tips = simresult[3]
-            # empirical data for trait and population
-            trait_tips = trait_tips[trait_tips != 0]
-            population_tips =  population_tips[population_tips != 0]
-            traitvar_tips = traitvar_tips[traitvar_tips != 0]
+            for r in range(1000):
+                simresult = dvcpp.DVSim(td, obs_param)
+                if simresult['sim_time'] == td.sim_evo_time:
+                    break
+                else:
+                    incomplete_sim = incomplete_sim.append(count)
+
+            trait_tips = simresult['Z']
+            population_tips = simresult['N']
+            traitvar_tips = simresult['V']
 
             trait_data = np.append(trait_data,trait_tips)
             population_data = np.append(population_data,population_tips)
@@ -48,6 +61,7 @@ for gamma in gamma_vec:
         trait_w.append(trait_data)
         trait_v.append(traitvar_data)
         pop_w.append(population_data)
+        count += 1
 
 num_tips = len(trait_tips)
 
@@ -55,19 +69,18 @@ normed_trait = []
 normed_traitvar = []
 normed_pop = []
 
-for i in range(0,25):
+for i in np.delete(range(0,36),incomplete_sim):
+    print(i)
     normed_trait.append((trait_w[i]- np.min(trait_w[i])) / (np.max(trait_w[i]) - np.min(trait_w[i])))
     normed_traitvar.append((trait_v[i]- np.min(trait_v[i])) / (np.max(trait_v[i]) - np.min(trait_v[i])))
     normed_pop.append((pop_w[i] - np.min(pop_w[i])) / (np.max(pop_w[i]) - np.min(pop_w[i])))
 
-np.max(normed_pop)
-np.min(normed_pop)
 count = 0
-label_a = (['a=.001','a=.01','a=.01','a=.1','a=.5'])
-label_gamma = (['$\gamma$=.001','$\gamma$=.01','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5'])
+label_a = (['$\\alpha$=0' '$\\alpha$=.001','$\\alpha$=.01','$\\alpha$=.1','$\\alpha$=.5','$\\alpha$=1'])
+label_gamma = (['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5'])
 
 # Set up the matplotlib figure
-f, axes = plt.subplots(5, 5, figsize=(9, 9)) #, sharex=True, sharey=True
+f, axes = plt.subplots(6, 6, figsize=(9, 9)) #, sharex=True, sharey=True
 
 # Rotate the starting point around the cubehelix hue circle
 for ax, s in zip(axes.flat, np.linspace(0, 3, 25)):
@@ -81,7 +94,10 @@ for ax, s in zip(axes.flat, np.linspace(0, 3, 25)):
     pop = normed_pop[count]
     ax.set_xlim([0,1])
     # Generate and plot a random bivariate dataset
-    sns.kdeplot(trait, pop, cmap=cmap, shade=True, cut=5, ax=ax)
+    if count in incomplete_sim:
+        ax.plot([])
+    else:
+        sns.kdeplot(trait, pop, cmap=cmap, shade=True, cut=5, ax=ax)
     if count in range(0,5):
         ax.title.set_text(label_a[count])
 

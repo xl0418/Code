@@ -15,10 +15,11 @@ import seaborn as sns
 from scipy.stats import kendalltau
 sns.set(style="white")
 #
+singlesim = True
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
 a_vec = gamma_vec
 
-for no_tree in range(10,23):
+for no_tree in range(1,23):
     print(no_tree)
 # no_tree= 5
     dir_path = 'c:/Liang/Googlebox/Research/Project2'
@@ -27,7 +28,7 @@ for no_tree in range(10,23):
     td = DVTreeData(path=files, scalar=10000)
     K = 10e8
     nu=1/(100*K)
-    num = 100
+    num = 101
     trait_w = []
     trait_v = []
     pop_w = []
@@ -59,6 +60,7 @@ for no_tree in range(10,23):
                     trait_data = np.append(trait_data, trait_tips)
                     population_data = np.append(population_data, population_tips)
                     traitvar_data = np.append(traitvar_data, traitvar_tips)
+                    if singlesim: break
                 if simresult['sim_time'] < td.sim_evo_time:
                     print('Jump to the next loop')
 
@@ -148,10 +150,10 @@ for no_tree in range(10,23):
     tree = 'tree'+'%d' % no_tree
     dir_fig = 'C:/Liang/Googlebox/Research/Project2/smc_new100replicatesdistribution/'+tree
 
-    f1.savefig(dir_fig+'+meanpopscatter.png')
+    f1.savefig(dir_fig+'+meanpopscattersingle.png')
     plt.close(f1)
-    f2.savefig(dir_fig+'+meanvarscatter.png')
+    f2.savefig(dir_fig+'+meanvarscattersingle.png')
     plt.close(f2)
-    f3.savefig(dir_fig+'+varpopscatter.png')
+    f3.savefig(dir_fig+'+varpopscattersingle.png')
     plt.close(f3)
     # f.savefig('C:/Liang/Googlebox/Research/Project2/smc_new100replicatesdistributiontraitvsvar.png')
