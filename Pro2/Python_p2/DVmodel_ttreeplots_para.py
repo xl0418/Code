@@ -12,10 +12,10 @@ import matplotlib.pyplot as plt
 theta = 0  # optimum of natural selection
 r = 1  # growth rate
 Vmax = 1
-scalar = 20000
+scalar = 10000
 K=10e8
 nu=1/(100*K)
-timegap = 200
+timegap = 100
 
 # let's try to find a true simulation:
 
@@ -43,6 +43,8 @@ for no_tree in range(1,23):
     label_a = (['a=0','a=.001','a=.01','a=.1','a=.5','a=1'])
     label_gamma = (['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5','$\gamma$=1'])
 
+    xticks = (0,td.evo_time*scalar/timegap)
+    xlabels = ['0','150K']
     for index_g in range(len(gamma_vec)):
         gamma1=gamma_vec[index_g]
         for index_a in range(len(a_vec)):
@@ -80,16 +82,26 @@ for no_tree in range(1,23):
             #     axes2[index_g,index_a].text(0.45, 0.45, "X")
             #     axes3[index_g,index_a].text(0.45, 0.45, "X")
 
+            axes1[index_g, index_a].set_xticks(xticks)
+            axes1[index_g, index_a].set_xticklabels(xlabels, minor=False)
+            axes2[index_g, index_a].set_xticks(xticks)
+            axes2[index_g, index_a].set_xticklabels(xlabels, minor=False)
+            axes3[index_g, index_a].set_xticks(xticks)
+            axes3[index_g, index_a].set_xticklabels(xlabels, minor=False)
             # axes[index_g, index_a].yaxis.set_major_locator(plt.NullLocator())
-            axes1[index_g, index_a].xaxis.set_major_locator(plt.NullLocator())
-            axes2[index_g, index_a].xaxis.set_major_locator(plt.NullLocator())
-            axes3[index_g, index_a].xaxis.set_major_locator(plt.NullLocator())
+            # axes1[index_g, index_a].xaxis.set_major_locator(plt.NullLocator())
+            # axes2[index_g, index_a].xaxis.set_major_locator(plt.NullLocator())
+            # axes3[index_g, index_a].xaxis.set_major_locator(plt.NullLocator())
+            #
+            # axes1[index_g, index_a].yaxis.set_major_locator(plt.NullLocator())
+            # axes2[index_g, index_a].yaxis.set_major_locator(plt.NullLocator())
+            # axes3[index_g, index_a].yaxis.set_major_locator(plt.NullLocator())
 
             # axes[index_g, index_a].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1f'))
             # axes[index_g, index_a].set_yscale('log')
-            axes1[index_g, index_a].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
-            axes2[index_g, index_a].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
-            axes3[index_g, index_a].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+            # axes1[index_g, index_a].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+            # axes2[index_g, index_a].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+            # axes3[index_g, index_a].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 
             if count in range(0, row_gamma):
                 axes1[index_g, index_a].title.set_text(label_a[count])
@@ -104,7 +116,13 @@ for no_tree in range(1,23):
                 axes3[index_g, index_a].set_ylabel(label_gamma[int(count / row_gamma)])
                 axes3[index_g, index_a].yaxis.set_label_position("right")
             count += 1
-    dir_fig = 'C:/Liang/Googlebox/Research/Project2/smc_newplots_10w/'+tree
+    dir_fig = 'C:/Liang/Googlebox/Research/Project2/smc_newplots_1w/'+tree
+    f1.text(0.5, 0.04, 'Generation', ha='center', fontsize=15)
+    f1.text(0.04, 0.5, 'Trait mean', va='center', rotation='vertical', fontsize=15)
+    f2.text(0.5, 0.04, 'Generation', ha='center', fontsize=15)
+    f2.text(0.04, 0.5, 'Population size', va='center', rotation='vertical', fontsize=15)
+    f3.text(0.5, 0.04, 'Generation', ha='center', fontsize=15)
+    f3.text(0.04, 0.5, 'Trait variance', va='center', rotation='vertical', fontsize=15)
 
     f1.savefig(dir_fig+'TP.png')
     plt.close(f1)

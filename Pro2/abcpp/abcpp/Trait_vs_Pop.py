@@ -15,7 +15,7 @@ import seaborn as sns
 from scipy.stats import kendalltau
 sns.set(style="white")
 #
-singlesim = True
+singlesim = False
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
 a_vec = gamma_vec
 
@@ -136,24 +136,24 @@ for no_tree in range(1,23):
                 axes3[index_g, index_a].set_ylabel(label_gamma[int(count/6)])
                 axes3[index_g, index_a].yaxis.set_label_position("right")
             count += 1
-    f1.text(0.5, 0, 'Trait mean', ha='center')
-    f1.text(0.01, 0.5, 'Population', va='center', rotation='vertical')
+    f1.text(0.5, 0.04, 'Trait mean', ha='center')
+    f1.text(0.04, 0.5, 'Population size', va='center', rotation='vertical')
     f1.tight_layout()
     f2.text(0.5, 0, 'Trait mean', ha='center')
-    f2.text(0.01, 0.5, 'Trait variance', va='center', rotation='vertical')
+    f2.text(0.04, 0.5, 'Trait variance', va='center', rotation='vertical')
     f2.tight_layout()
     f3.text(0.5, 0, 'Trait variance', ha='center')
-    f3.text(0.01, 0.5, 'Population', va='center', rotation='vertical')
+    f3.text(0.04, 0.5, 'Population size', va='center', rotation='vertical')
     f3.tight_layout()
 
 
     tree = 'tree'+'%d' % no_tree
     dir_fig = 'C:/Liang/Googlebox/Research/Project2/smc_new100replicatesdistribution/'+tree
 
-    f1.savefig(dir_fig+'+meanpopscattersingle.png')
+    f1.savefig(dir_fig+'+meanpopscatter100rep.png')
     plt.close(f1)
-    f2.savefig(dir_fig+'+meanvarscattersingle.png')
+    f2.savefig(dir_fig+'+meanvarscatter100rep.png')
     plt.close(f2)
-    f3.savefig(dir_fig+'+varpopscattersingle.png')
+    f3.savefig(dir_fig+'+varpopscatter100rep.png')
     plt.close(f3)
     # f.savefig('C:/Liang/Googlebox/Research/Project2/smc_new100replicatesdistributiontraitvsvar.png')

@@ -1,4 +1,3 @@
-#%%
 import os
 import numpy as np
 import platform
@@ -9,7 +8,7 @@ import matplotlib.ticker as mtick
 
 sns.set(style="white")
 # treeno_vec = [i for i in range(4,7)]
-treeno_vec = [9,12,13,14]
+treeno_vec = [14,30]
 standardize = 0
 # gno_vec = [0,0,0,0,1,1,1,2,2,3]
 # ano_vec = [2,3,4,5,3,4,5,4,5,5]
@@ -69,7 +68,7 @@ for gindicator in range(0,6):
             gamma_t123 = gamma_t123/gamma_vec[gindicator]
             a_t123 = a_t123/a_vec[aindicator]
 
-        test_label = (['T%d' % i for i in treeno_vec])
+        test_label = (['S%d' % i for i in treeno_vec])
         test_df_label = np.repeat(test_label, population)
         test_dfex_label = np.tile(test_df_label, 3)
         gamma_label = np.repeat('$\gamma$', len(treeno_vec) * population)
@@ -111,12 +110,21 @@ for gindicator in range(0,6):
         figcol += 1
     figrow += 1
 
-
+f.text(0.5, 0.04, 'Scenarios', ha='center',fontsize=15)
+f.text(0.04, 0.5, 'Estimates', va='center', rotation='vertical',fontsize=15)
 l = plt.legend(handles[0:3], labels[0:3], bbox_to_anchor=(0.75, 7.85), loc=2, borderaxespad=0.)
 l.get_frame().set_linewidth(0.0)
-# dir_fig = 'C:/Liang/Googlebox/Research/Project2/smc_newresults/CompareT%d_%d.png' % (treeno_vec[0],treeno_vec[1])
-# dir_fig = 'C:/test.png'
+if(len(treeno_vec) == 2):
+    dir_fig = 'C:/Liang/Googlebox/Research/Project2/smc_newresults/CompareS%d_%d.png' % (treeno_vec[0],treeno_vec[1])
+elif len(treeno_vec) == 1:
+    dir_fig = 'C:/Liang/Googlebox/Research/Project2/smc_newresults/EstS%d.png' % (treeno_vec[0])
+else:
+    # dir_fig = 'C:/test.png'
+    str=''
+    for i in range(0, len(treeno_vec)):
+        str = str + '%d' % treeno_vec[i]
+    dir_fig = 'C:/Liang/Googlebox/Research/Project2/smc_newresults/CompareS%s.png' % str
 
-# f.savefig(dir_fig)
-
+f.savefig(dir_fig)
+plt.close(f)
 #%%
