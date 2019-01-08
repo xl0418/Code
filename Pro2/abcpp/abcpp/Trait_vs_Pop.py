@@ -136,14 +136,14 @@ for no_tree in range(1,23):
                 axes3[index_g, index_a].set_ylabel(label_gamma[int(count/6)])
                 axes3[index_g, index_a].yaxis.set_label_position("right")
             count += 1
-    f1.text(0.5, 0.04, 'Trait mean', ha='center')
-    f1.text(0.04, 0.5, 'Population size', va='center', rotation='vertical')
+    f1.text(0.5, 0.04, 'Trait mean', ha='center', fontsize=15)
+    f1.text(0.04, 0.5, 'Population size', va='center', rotation='vertical', fontsize=15)
     f1.tight_layout()
-    f2.text(0.5, 0, 'Trait mean', ha='center')
-    f2.text(0.04, 0.5, 'Trait variance', va='center', rotation='vertical')
+    f2.text(0.5, 0, 'Trait mean', ha='center', fontsize=15)
+    f2.text(0.04, 0.5, 'Trait variance', va='center', rotation='vertical', fontsize=15)
     f2.tight_layout()
-    f3.text(0.5, 0, 'Trait variance', ha='center')
-    f3.text(0.04, 0.5, 'Population size', va='center', rotation='vertical')
+    f3.text(0.5, 0, 'Trait variance', ha='center', fontsize=15)
+    f3.text(0.04, 0.5, 'Population size', va='center', rotation='vertical', fontsize=15)
     f3.tight_layout()
 
 
