@@ -12,14 +12,20 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+global str
 from scipy.stats import kendalltau
 sns.set(style="white")
 #
-singlesim = False
+def argsort2Dde(X):
+    X = np.asarray(X)*-1
+    return np.arange(len(X))[:, np.newaxis], np.argsort(X, axis=1)
+
+
+singlesim = True
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
 a_vec = gamma_vec
 
-for no_tree in range(1,23):
+for no_tree in range(3,4):
     print(no_tree)
 # no_tree= 5
     dir_path = 'c:/Liang/Googlebox/Research/Project2'
@@ -42,8 +48,8 @@ for no_tree in range(1,23):
             population_data = ()
             traitvar_data = ()
             for loop in range(1,num):
-                str = 'gamma = %.3f; a = %.3f; loop = %d' % (gamma,a,loop)
-                print(str)
+                str1 = 'gamma = %.3f; a = %.3f; loop = %d' % (gamma,a,loop)
+                print(str1)
                 par_obs = np.array([gamma, a])
                 simresult = dvcpp.DVSim(td, obs_param)
                 if simresult['sim_time'] == td.sim_evo_time:
@@ -67,22 +73,22 @@ for no_tree in range(1,23):
             trait_w.append(trait_data)
             trait_v.append(traitvar_data)
             pop_w.append(population_data)
-
     num_tips = len(trait_tips)
 
-    normed_trait = []
-    normed_traitvar = []
+    for i in range(len(pop_w)):
+        if len(pop_w[i])==0:
+            pop_w[i] = np.zeros(num_tips)
+    poparray = np.asarray(pop_w)
+    deindex = argsort2Dde(poparray)
+    poparray_sort = poparray[deindex]
+
     normed_pop = []
 
-    for i in range(0,36):
-        if len(trait_w[i])==0:
-            normed_trait.append([0])
-            normed_traitvar.append([0])
+    for i in range(0,len(pop_w)):
+        if np.sum(poparray_sort[i])==0:
             normed_pop.append([0])
         else:
-            normed_trait.append((trait_w[i]- np.min(trait_w[i])) / (np.max(trait_w[i]) - np.min(trait_w[i])))
-            normed_traitvar.append((trait_v[i]- np.min(trait_v[i])) / (np.max(trait_v[i]) - np.min(trait_v[i])))
-            normed_pop.append((pop_w[i] - np.min(pop_w[i])) / (np.max(pop_w[i]) - np.min(pop_w[i])))
+            normed_pop.append(poparray_sort[i] / np.sum(poparray_sort[i]))
 
 
     count = 0
@@ -91,8 +97,8 @@ for no_tree in range(1,23):
 
     # Set up the matplotlib figure
     f1, axes1 = plt.subplots(6, 6, figsize=(9, 9), sharex=True, sharey=True) #, sharex=True, sharey=True
-    f2, axes2 = plt.subplots(6, 6, figsize=(9, 9), sharex=True, sharey=True)
-    f3, axes3 = plt.subplots(6, 6, figsize=(9, 9), sharex=True, sharey=True)
+    xticks = np.array([0,(num_tips-1)//2,num_tips-1])
+    xlabels = xticks+1
     # Rotate the starting point around the cubehelix hue circle
     # for ax,ax2,ax3, s in zip(axes.flat,axes2.flat,axes3.flat, np.linspace(0, 3,36)):
         # Create a cubehelix colormap to use with kdeplot
@@ -101,59 +107,39 @@ for no_tree in range(1,23):
         for index_a in range(len(a_vec)):
             a=a_vec[index_a]
             print(count)
-            if len(normed_trait[count]) == 1:
+            if len(normed_pop[count]) == 1:
                 axes1[index_g,index_a].plot()
-                axes2[index_g,index_a].plot()
-                axes3[index_g,index_a].plot()
 
             else:
-                # trait = trait_w[count]
-                # traitvar = trait_v[count]
-                # pop = pop_w[count]
-                trait = normed_trait[count]
-                traitvar = normed_traitvar[count]
                 pop = normed_pop[count]
-                axes1[index_g, index_a].set_xlim([-0.2,1.2])
-                axes2[index_g, index_a].set_xlim([-0.2,1.2])
-                axes3[index_g, index_a].set_xlim([-0.2,1.2])
-
-                # Generate and plot a random bivariate dataset
-                # sns.kdeplot(trait, pop, cmap=cmap, shade=True, cut=5, ax=ax)
-                sns.scatterplot(trait, pop,ax=axes1[index_g, index_a])
-                sns.scatterplot(trait, traitvar,ax=axes2[index_g, index_a])
-                sns.scatterplot(pop, traitvar,ax=axes3[index_g, index_a])
+                species = [i for i in range(len(pop))]
+                data = {'pop':pop,'species':species}
+                datapd = pd.DataFrame(data)
+                # sns.barplot(species, pop,data=datapd,ax = axes1[index_g, index_a],color="#285943",
+                #             dodge=False)
+                axes1[index_g, index_a]=datapd.plot.bar(species, pop, width=0.8)
 
             if count in range(0,6):
                 axes1[index_g, index_a].title.set_text(label_a[count])
-                axes2[index_g, index_a].title.set_text(label_a[count])
-                axes3[index_g, index_a].title.set_text(label_a[count])
 
             if count in ([5, 11, 17, 23, 29, 35]):
                 axes1[index_g, index_a].set_ylabel(label_gamma[int(count/6)])
                 axes1[index_g, index_a].yaxis.set_label_position("right")
-                axes2[index_g, index_a].set_ylabel(label_gamma[int(count/6)])
-                axes2[index_g, index_a].yaxis.set_label_position("right")
-                axes3[index_g, index_a].set_ylabel(label_gamma[int(count/6)])
-                axes3[index_g, index_a].yaxis.set_label_position("right")
+
+            axes1[index_g, index_a].set_xticks(xticks)
+            axes1[index_g, index_a].set_xticklabels(xlabels, minor=False)
+
             count += 1
-    f1.text(0.5, 0.001, 'Trait mean', ha='center', fontsize=15)
-    f1.text(0.001, 0.5, 'Population size', va='center', rotation='vertical', fontsize=15)
+    f1.text(0.5, 0.01, 'Species abundance rank', ha='center', fontsize=10)
+    f1.text(0.005, 0.5, '% Species abundance', va='center', rotation='vertical', fontsize=10)
     f1.tight_layout()
-    f2.text(0.5, 0.001, 'Trait mean', ha='center', fontsize=15)
-    f2.text(0.001, 0.5, 'Trait variance', va='center', rotation='vertical', fontsize=15)
-    f2.tight_layout()
-    f3.text(0.5, 0.001, 'Trait variance', ha='center', fontsize=15)
-    f3.text(0.001, 0.5, 'Population size', va='center', rotation='vertical', fontsize=15)
-    f3.tight_layout()
+    plt.xlim(-1, num_tips+1)
 
 
     tree = 'tree'+'%d' % no_tree
-    dir_fig = 'C:/Liang/Googlebox/Research/Project2/smc_new100replicatesdistribution/'+tree
+    dir_fig = 'C:/Liang/Googlebox/Research/Project2/smc_speciesabundance/'+tree
 
-    f1.savefig(dir_fig+'+meanpopscatter100rep.png')
+    f1.savefig(dir_fig+'+speciesabundance.png')
     plt.close(f1)
-    f2.savefig(dir_fig+'+meanvarscatter100rep.png')
-    plt.close(f2)
-    f3.savefig(dir_fig+'+varpopscatter100rep.png')
-    plt.close(f3)
+
     # f.savefig('C:/Liang/Googlebox/Research/Project2/smc_new100replicatesdistributiontraitvsvar.png')
