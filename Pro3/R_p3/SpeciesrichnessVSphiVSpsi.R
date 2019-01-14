@@ -7,7 +7,7 @@ richness = matrix(0,6,6)
 for(i in c(1:6)){
   for(j in c(1:6)){
     comb=paste0(i,j)
-    Rname =  paste0(dir,'LR',comb,'.Rdata')
+    Rname =  paste0(dir,'HR',comb,'.Rdata')
     source(Rname)
     no_species = ncol(R)
     richness[i,j]=no_species
@@ -21,7 +21,7 @@ rownames(richness)=paste0(expression(psi), "=", c(1:6) )
 ## Try it out
 par(mar=c(3,4,2,2))
 levelplot(t(richness[c(nrow(richness):1) , ]),
-          xlab="Phylogenetic strength", ylab="JC strength", main="Species richness")
+          xlab="Phylogenetic strength", ylab="JC strength", main="Species richness for mediate spatial parameter")
 
 # #heatmap
 # ggplot(richness_data, aes(phi_axis, psi_axis )) +
