@@ -1,7 +1,7 @@
 #!/bin/bash
-for j in {1..5};
+for j in {1..6};
 do
-for i in {1..5};
+for i in {1..6};
 do 
 sed -n '/events = \[\r/,/\];/p' Lphi"$j"psi"$i".m > Levent"$j$i".Rdata
 sed -n '/turnover/p' Lphi"$j"psi"$i".m > Lturnover"$j$i".Rdata

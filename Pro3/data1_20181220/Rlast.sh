@@ -1,7 +1,7 @@
 #!/bin/bash
-for j in {1..5};
+for j in {1..6};
 do
-for i in {1..5};
+for i in {1..6};
 do 
 A=$(grep -c 'R'{'length(R)+1'}' = \[' LRs"$j$i".Rdata)
 B=$[$A-1]

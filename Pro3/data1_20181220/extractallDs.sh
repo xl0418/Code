@@ -1,7 +1,7 @@
 #!/bin/bash
-for j in {1..5};
+for j in {1..6};
 do
-for i in {1..5};
+for i in {1..6};
 do 
 sed -n '/D'{'length(D)+1'}'/,/\];/p' Lphi"$j"psi"$i".m > LDs"$j$i".Rdata
 echo 'Lphi'$j'psi'$i' done'

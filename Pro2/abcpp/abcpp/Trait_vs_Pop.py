@@ -19,7 +19,7 @@ singlesim = False
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
 a_vec = gamma_vec
 
-for no_tree in range(1,23):
+for no_tree in range(10,23):
     print(no_tree)
 # no_tree= 5
     dir_path = 'c:/Liang/Googlebox/Research/Project2'
