@@ -8,11 +8,12 @@ library(gridExtra)
 library(ggthemes)
 
 library(ggradar)
-suppressPackageStartupMessages(library(dplyr))
+library(dplyr)
 library(scales)
 library(tibble)
 
 method = 'gamma'
+dir = 'C:/Liang/Code/Pro3/data1_20181220/Mevent'
 
 # Compute the colless values and gamma values for a given phylo tree.
 foo <- function(x, metric = "colless") {
@@ -27,11 +28,17 @@ foo <- function(x, metric = "colless") {
 
 colless_alldf = data.frame()
 count = 0
-for(i in c(1:5)){
-  for(j in c(1:5)){
+for(i in c(1:6)){
+  for(j in c(1:6)){
     count = count+1
-    numtrees <- 1  # lets simulate 1000 trees
-    trees <- pbtree(n = 50, nsim = numtrees, ape = F)  # simulate 500
+    # numtrees <- 1  # lets simulate 1000 trees
+    # trees <- pbtree(n = 50, nsim = numtrees, ape = F)  # simulate 500
+    comb=paste0(i,j)
+    file =  paste0(dir,comb,'.Rdata')
+    # file = paste("/home/p274981/cluster/",n,"Modeltestgroup",age,"age",num,"/out",i,"sim.Rdata",sep = "")
+    source(file = file)
+    L = event2L(result = events)
+    phy = DDD::L2phylo(L,dropextinct = F)
     
     # Generate a 'multiphylo' class to contain all trees generated under the same paras
     # tree1 = pbtree(n = 50,nsim = 1)
