@@ -25,6 +25,8 @@ foo <- function(x, metric = "colless") {
   } else stop("metric should be one of colless or gamma")
 }
 
+neufile =  paste0(dir,'neuevent.Rdata')
+source(file = neufile)
 
 colless_alldf = data.frame()
 count = 0
