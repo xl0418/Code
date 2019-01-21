@@ -19,3 +19,6 @@
 *.Rdata
 *.m
 Pro2/abcpp/abcpp/smcndata/paraT11.npy
+
+venv/
+*.npy
