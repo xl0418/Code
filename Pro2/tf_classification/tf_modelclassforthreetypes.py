@@ -40,24 +40,30 @@ td = DVTreeData(path=files, scalar=10000)
 # nu_prior_mean = prior[4]
 # nu_prior_var = prior[5]
 
-gamma = 0.001
-a_vec = [0.0,0.001,0.01,0.1,0.5,1]
-# a_test_vec = [0.75]
-# a_labels = [i for i in range(len(a_vec))]
 Z_train = []
 label_train = []
 K=10e8
 nu=1/(100*K)
 # let's try to find a true simulation:
-datasize_batch = 1000
-
-for count in range(len(a_vec)):
-    a = a_vec[count]
+datasize_batch = 10
+mode = ['BM','OU','TP','antiOU']
+for count in range(len(mode)):
+    model = mode[count]
+    gamma = 0
+    a = 0
 
     obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
                         initpop_sigma=10.0, break_on_mu=False)
 
     params = np.tile(obs_param, (datasize_batch, 1))  # duplicate
+
+    if model == 'OU':
+        params[:, 0] = np.random.uniform(1e-10, 1e-2, params.shape[0])  # randomize 'gamma'
+    elif model == 'TP':
+        params[:, 0] = np.random.uniform(1e-10, 1e-2, params.shape[0])  # randomize 'gamma'
+        params[:, 1] = np.random.uniform(1e-10, 1.0, params.shape[0])  # randomize 'a'
+    elif model == 'antiOU':
+        params[:, 1] = np.random.uniform(1e-10, 1.0, params.shape[0])  # randomize 'a'
 
     print('Batch ', count,': try to generate ', datasize_batch,' simulations with gamma =', obs_param[0], 'and a =', obs_param[1], 'and nu =', obs_param[3],'...')
 
@@ -84,7 +90,7 @@ for count in range(len(a_vec)):
 para_data = {'Z_train': Z_train, 'Z_labels': label_train}
 file='C:/Liang/Code/Pro2/tf_classification/'
 # # file = '/home/p274981/abcpp/abcpp/'
-filename = file + 'tf_traittree2train.npy'
+filename = file + 'tf_tree2modelseletest.npy'
 np.save(filename,para_data)
 #
 # smc = np.load(filename).item()
