@@ -32,20 +32,12 @@ files = dir_path + '/tree_data/example2/'
 
 td = DVTreeData(path=files, scalar=10000)
 
-# prior = [0.5, 0.5, 0.5, 0.5,1e-13,1e-12]
-# gamma_prior_mean = prior[0]
-# gamma_prior_var = prior[1]
-# a_prior_mean = prior[2]
-# a_prior_var = prior[3]
-# nu_prior_mean = prior[4]
-# nu_prior_var = prior[5]
-
 Z_train = []
 label_train = []
 K=10e8
 nu=1/(100*K)
 # let's try to find a true simulation:
-datasize_batch = 10
+datasize_batch = 20
 mode = ['BM','OU','TP','antiOU']
 for count in range(len(mode)):
     model = mode[count]
@@ -85,12 +77,12 @@ for count in range(len(mode)):
         else:
             Z_train = np.concatenate((Z_train,Z))
 
-
+        para_data = {'Z_train': Z_train, 'Z_labels': label_train}
+        file = 'C:/Liang/Code/Pro2/tf_classification/%s' % model
+        # # file = '/home/p274981/abcpp/abcpp/'
+        filename = file + 'tf_tree2modelseletest.npy'
+        np.save(filename, para_data)
 #
-para_data = {'Z_train': Z_train, 'Z_labels': label_train}
-file='C:/Liang/Code/Pro2/tf_classification/'
-# # file = '/home/p274981/abcpp/abcpp/'
-filename = file + 'tf_tree2modelseletest.npy'
-np.save(filename,para_data)
+
 #
 # smc = np.load(filename).item()
