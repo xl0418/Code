@@ -12,7 +12,7 @@ r_df = NULL
 for(i in c(1:6)){
   for(j in c(1:6)){
     comb=paste0(i,j)
-    rname = paste0(dir,'HR',comb,'.Rdata')
+    rname = paste0(dir,'MR',comb,'.Rdata')
     source(rname)
     r_df_g = cbind(t(log(R)),i,j)
     r_df = rbind(r_df,r_df_g)

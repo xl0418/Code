@@ -7,6 +7,7 @@ for(i in c(15:22)){
   load(filename)
   phy = DDD::L2phylo(result$L,dropextinct = T)
   png(filename=pngname)
-  plot(phy)
+  plot(phy,show.tip.label=FALSE)
+  title(paste("Phylogenetic tree",i),line=-25)
   dev.off()
 }

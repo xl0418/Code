@@ -25,7 +25,7 @@ def plotest(treenovector):
     count = 0
     ncol_fig = 6
     nrow_fig = 6
-    f, axes = plt.subplots(nrow_fig, ncol_fig,figsize = (9,9)) #, sharex=True, sharey=True
+    f, axes = plt.subplots(nrow_fig, ncol_fig,figsize = (9,9) , sharex=True, sharey=True)
 
     # indicator = 5
     for gindicator in range(0,6):
@@ -99,10 +99,10 @@ def plotest(treenovector):
 
                 ax.set_ylabel('')
                 ax.set_xlabel('')
-                ax.set_xticks([])
-                ax.set_xticklabels([])
-                ax.set_yticks([])
-                ax.set_yticklabels([])
+                # ax.set_xticks([])
+                # ax.set_xticklabels([])
+                # ax.set_yticks([])
+                # ax.set_yticklabels([])
                 ax.set(ylim=(-.2, 2.2))
                 sns.despine()
             if count in range(0, nrow_fig):
@@ -113,11 +113,11 @@ def plotest(treenovector):
                 axes[figrow,figcol].set_ylabel(label_gamma[int(count / nrow_fig)])
                 axes[figrow,figcol].yaxis.set_label_position("right")
 
-            if figrow == figcol:
-                axes[figrow,figcol].set_xticks( [ i for i in range(len(treeno_vec)) ] )
-                axes[figrow, figcol].set_xticklabels(treeno_vec)
-                axes[figrow, figcol].set_yticks([0, 1,2])
-                axes[figrow, figcol].set_yticklabels(['0','1','2'])
+            # if figrow == figcol:
+            #     axes[figrow,figcol].set_xticks( [ i for i in range(len(treeno_vec)) ] )
+            #     axes[figrow, figcol].set_xticklabels(treeno_vec)
+            #     axes[figrow, figcol].set_yticks([0, 1,2])
+            #     axes[figrow, figcol].set_yticklabels(['0','1','2'])
 
                 # axes[count].legend([])
             count += 1
@@ -143,8 +143,8 @@ def plotest(treenovector):
     plt.close(f)
 
 
-plotlist = [[1,4],[1,7],[2,5],[2,8],[3,6],[3,9],[4,10],[7,10],[5,11],[8,11],[6,12],[9,12,13,14],[1,2,3],
+plotlist1 = [[1,4],[1,7],[2,5],[2,8],[3,6],[3,9],[4,10],[7,10],[5,11],[8,11],[6,12],[9,12,13,14],[1,2,3],
             [4,5,6],[7,8,9],[10,11,12]]
-
-for treevector in plotlist:
+plotlist2 = [[4,15],[5,16],[9,23],[10,24]]
+for treevector in plotlist2:
     plotest(treevector)

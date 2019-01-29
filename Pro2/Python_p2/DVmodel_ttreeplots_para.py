@@ -22,7 +22,7 @@ timegap = 100
 
 
 # trait evolution plot
-for no_tree in range(12,23):
+for no_tree in range(0,1):
     gamma_vec = np.array([0, 0.001, 0.01, 0.1, 0.5, 1])
     a_vec = gamma_vec
     row_gamma = len(gamma_vec)
@@ -115,6 +115,7 @@ for no_tree in range(12,23):
                 axes2[index_g, index_a].yaxis.set_label_position("right")
                 axes3[index_g, index_a].set_ylabel(label_gamma[int(count / row_gamma)])
                 axes3[index_g, index_a].yaxis.set_label_position("right")
+
             count += 1
     dir_fig = 'C:/Liang/Googlebox/Research/Project2/smc_newplots_1w/'+tree
     f1.text(0.5, 0.04, 'Generation', ha='center', fontsize=15)
