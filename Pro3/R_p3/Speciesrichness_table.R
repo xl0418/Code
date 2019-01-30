@@ -14,7 +14,7 @@ scenario = c('LR','MR','HR')
 jclabel = c(0,.001,.01,.1,.5,1)
 plabel = c(0,.001,.01,.1,.5,1)
 diversity.upperlimit = 1500
-diversity.lowerlimit = 300
+diversity.lowerlimit = 100
 
 tas1 = list()
 
@@ -65,7 +65,7 @@ for(i_n in c(1:3)){
 }
 
 legend_plot = ggplot( df , aes(factor(psi), factor(phi)  ) ) + 
-  geom_tile(aes(fill = Richness), color = "lightblue" ) +  scale_fill_gradient(low = "white",     high = "red",limits=c(0,diversity.limit))+
+  geom_tile(aes(fill = Richness), color = "lightblue" ) +  scale_fill_gradient(low = "blue",     high = "red",limits=c(diversity.lowerlimit,diversity.upperlimit))+
   theme(axis.ticks = element_blank(),axis.text.x=element_text(size = 12,angle=90,hjust=1,vjust=0.5),panel.border = element_blank(), panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
         axis.text.y=element_text(size = 12,angle=90,hjust=0.5,vjust=0.5),panel.background = element_blank(),plot.margin = unit(c(1,0.5,0.5,1), "cm"),
         axis.title.x=element_text(size = 14,hjust=0.5,vjust=1.5),axis.title.y=element_text(size = 14,angle=90,margin = margin(t = 0, r = 10, b = 0, l = 0)))+
