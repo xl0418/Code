@@ -1,9 +1,9 @@
-phi_vec = c(0,0.001,0.01,0.1,0.5,1)
-psi_vec = c(0,0.001,0.01,0.1,0.5,1)
+phi_vec = c(0,0.1,0.3,1,3,10)
+psi_vec = c(0,0.2,0.4,0.6,0.8,1)
 L = 333
 v=0.0001
 
-ticks=100000000
+ticks=10000000
 log=1e8
 for(scenario in c(0:2)){
   # scenario = 0
@@ -36,9 +36,9 @@ for(scenario in c(0:2)){
       # str = paste0('L=',L,' v=',v,' phi=',phi_vec[i], ' psi=',psi_vec[j],
       #              ' sA=',sA, ' sB=',sB, ' ticks=',ticks, ' log=',log,' continue=neutral.m', ' file=Lphi',i,'psi',j
       #              ,'.m')
-      str = sprintf('L=%i v=%.4f phi=%.4f psi=%.4f sA=%.1f sB=%.1f ticks=%i log=%i continue=neutral.m file=10e7/%sphi%ipsi%i.m',
-                    L,v,phi_vec[i],psi_vec[j],sA,sB,ticks, log,sce,i,j)
-      filename<-paste0("C:/Liang/Googlebox/Research/Project3/simdata_190122/spatialpara",scefile,"10e7.txt")
+      str = sprintf('L=%i v=%.4f phi=%.4f psi=%.4f sA=%.1f sB=%.1f ticks=%i log=%i continue=neutral.m file=%s/%sphi%ipsi%i.m',
+                    L,v,phi_vec[i],psi_vec[j],sA,sB,ticks, log,formatC(ticks),sce,i,j)
+      filename<-paste0("C:/Liang/Googlebox/Research/Project3/simdata_",formatC(ticks),"newpara/spatialpara",scefile,formatC(ticks),".txt")
       if(count == 1){
         # write(str, file=filename,append=FALSE)
         cat(str,'\n', file=filename, append=FALSE, sep='')
@@ -48,5 +48,22 @@ for(scenario in c(0:2)){
       }
     }
   }
+  
+  # generate bash files
+  bashfilename = paste0("C:/Liang/Googlebox/Research/Project3/simdata_",formatC(ticks),"newpara/spatialsim",scefile,formatC(ticks),".sh")
+  bashsetting = sprintf('#!/bin/bash
+#SBATCH --time=9-23:59:00
+#SBATCH --partition=gelifes
+#SBATCH --ntasks=1
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=36
+#SBATCH --mem=12GB 
+#SBATCH --job-name=%s%ssim
+#SBATCH --mail-type=FAIL,TIME_LIMIT 
+#SBATCH --mail-user=xl0418@gmail.com 
+./jc batch=spatialparamed%s.txt
+  ',formatC(ticks),scefile,formatC(ticks)
+  )
+  cat(bashsetting,file=bashfilename)
 }
 
