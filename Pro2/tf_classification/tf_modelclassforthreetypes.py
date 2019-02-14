@@ -37,7 +37,7 @@ label_train = []
 K=10e8
 nu=1/(100*K)
 # let's try to find a true simulation:
-datasize_batch = 20
+datasize_batch = 200000
 mode = ['BM','OU','TP','antiOU']
 for count in range(len(mode)):
     model = mode[count]
@@ -80,7 +80,7 @@ for count in range(len(mode)):
         para_data = {'Z_train': Z_train, 'Z_labels': label_train}
         file = 'C:/Liang/Code/Pro2/tf_classification/%s' % model
         # # file = '/home/p274981/abcpp/abcpp/'
-        filename = file + 'tf_tree2modelseletest.npy'
+        filename = file + 'tf_tree2modelseletrain2b.npy'
         np.save(filename, para_data)
 #
 

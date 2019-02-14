@@ -9,13 +9,14 @@ library(gridExtra)
 source(paste0(getwd(),'/g_legend.R'))
 source('C:/Liang/Code/Pro3/R_p3/event2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro3/R_p3/multipleplot.R', echo=TRUE)
-dir = 'C:/Liang/Googlebox/Research/Project3/simdata_190122/10e6/'
+dir = 'C:/Liang/Googlebox/Research/Project3/simdata_1e+07newpara/1e+07/'
 scenario = c('LR','MR','HR')
-jclabel = c(0,.001,.01,.1,.5,1)
-plabel = c(0,.001,.01,.1,.5,1)
+jclabel = c(0,.2,.4,.6,.8,1)
+plabel = c(0,.1,.3,1,3,10)
 diversity.upperlimit = 1500
-diversity.lowerlimit = 100
-
+diversity.lowerlimit = 80
+lowcol = "#F2F0F7"
+highcol = '#54278F'
 tas1 = list()
 
 for(i_n in c(1:3)){
@@ -36,10 +37,11 @@ for(i_n in c(1:3)){
   colnames(df) = c('Richness','phi','psi')
   df$psi = as.character(df$psi)
   df$phi = as.character(df$phi)
+  df$phi = factor(df$phi,levels = plabel )
   
   if(i_n == 1){
     tas1[[i_n]] <-    ggplot( df , aes(factor(psi), factor(phi)  ) ) + 
-      geom_tile(aes(fill = Richness), color = "lightblue" ) +  scale_fill_gradient(low = "blue",     high = "red",limits=c(diversity.lowerlimit,diversity.upperlimit))+
+      geom_tile(aes(fill = Richness), color = "lightblue" ) +  scale_fill_gradient(low = lowcol,     high = highcol,limits=c(diversity.lowerlimit,diversity.upperlimit))+
       theme(legend.position="none",axis.ticks = element_blank(),axis.text.x=element_text(angle = 90,size = 12,hjust=1,vjust=0.5),panel.border = element_blank(), panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
             axis.text.y=element_text(size = 12,hjust=0.5,vjust=0.5),panel.background = element_blank(),plot.margin = unit(c(1,0.5,0.5,1), "cm"),
             axis.title.x=element_text(size = 14,hjust=0.5,vjust=1.5),axis.title.y=element_text(size = 14,angle=90,margin = margin(t = 0, r = 10, b = 0, l = 0)))+
@@ -47,7 +49,7 @@ for(i_n in c(1:3)){
   }
   if(i_n == 2){
     tas1[[i_n]] <-    ggplot( df , aes(factor(psi), factor(phi)  ) ) + 
-      geom_tile(aes(fill = Richness), color = "lightblue" ) +  scale_fill_gradient(low = "blue",     high = "red",limits=c(diversity.lowerlimit,diversity.upperlimit))+
+      geom_tile(aes(fill = Richness), color = "lightblue" ) +  scale_fill_gradient(low = lowcol,     high = highcol,limits=c(diversity.lowerlimit,diversity.upperlimit))+
       theme(legend.position="none",axis.ticks = element_blank(),axis.text.x=element_text(angle = 90,size = 12,hjust=1,vjust=0.5),panel.border = element_blank(), panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
             axis.text.y=element_text(size = 12,hjust=0.5,vjust=0.5),panel.background = element_blank(),plot.margin = unit(c(1,0.5,0.5,1), "cm"),
             axis.title.x=element_text(size = 14,hjust=0.5,vjust=1.5),axis.title.y=element_text(size = 14,angle=90,margin = margin(t = 0, r = 10, b = 0, l = 0)))+
@@ -55,7 +57,7 @@ for(i_n in c(1:3)){
   }
   if(i_n == 3){
     tas1[[i_n]] <-    ggplot( df , aes(factor(psi), factor(phi)  ) ) + 
-      geom_tile(aes(fill = Richness), color = "lightblue" ) +  scale_fill_gradient(low = "blue",     high = "red",limits=c(diversity.lowerlimit,diversity.upperlimit))+
+      geom_tile(aes(fill = Richness), color = "lightblue" ) +  scale_fill_gradient(low = lowcol,     high = highcol,limits=c(diversity.lowerlimit,diversity.upperlimit))+
       theme(legend.position="none",axis.ticks = element_blank(),axis.text.x=element_text(angle = 90,size = 12,hjust=1,vjust=0.5),panel.border = element_blank(), panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
             axis.text.y=element_text(size = 12,hjust=0.5,vjust=0.5),panel.background = element_blank(),plot.margin = unit(c(1,0.5,0.5,1), "cm"),
             axis.title.x=element_text(size = 14,hjust=0.5,vjust=1.5),axis.title.y=element_text(size = 14,angle=90,margin = margin(t = 0, r = 10, b = 0, l = 0)))+
@@ -65,7 +67,7 @@ for(i_n in c(1:3)){
 }
 
 legend_plot = ggplot( df , aes(factor(psi), factor(phi)  ) ) + 
-  geom_tile(aes(fill = Richness), color = "lightblue" ) +  scale_fill_gradient(low = "blue",     high = "red",limits=c(diversity.lowerlimit,diversity.upperlimit))+
+  geom_tile(aes(fill = Richness), color = "lightblue" ) +  scale_fill_gradient(low = lowcol,     high = highcol,limits=c(diversity.lowerlimit,diversity.upperlimit))+
   theme(axis.ticks = element_blank(),axis.text.x=element_text(size = 12,angle=90,hjust=1,vjust=0.5),panel.border = element_blank(), panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
         axis.text.y=element_text(size = 12,angle=90,hjust=0.5,vjust=0.5),panel.background = element_blank(),plot.margin = unit(c(1,0.5,0.5,1), "cm"),
         axis.title.x=element_text(size = 14,hjust=0.5,vjust=1.5),axis.title.y=element_text(size = 14,angle=90,margin = margin(t = 0, r = 10, b = 0, l = 0)))+
