@@ -12,15 +12,15 @@ r_df = NULL
 for(i in c(1:6)){
   for(j in c(1:6)){
     comb=paste0(i,j)
-    rname = paste0(dir,'HR',comb,'.Rdata')
+    rname = paste0(dir,'MR',comb,'.Rdata')
     source(rname)
     r_df_g = cbind(t(log(R)),i,j)
     r_df = rbind(r_df,r_df_g)
     
   }
 }
-psi_vec = c(0,.1,.3,1,3,10)
-phi_vec = c(0,.2,.4,.6,.8,1)
+psi_vec = c(0,.2,.4,.6,.8,1)
+phi_vec = c(0,.1,.3,1,3,10)
 popdf = as.data.frame(r_df)
 colnames(popdf) = c('Abundance','phi','psi')
 popdf$psi = as.character(popdf$psi)
@@ -60,7 +60,7 @@ grob1 = textGrob("Number of species", gp=gpar(fontsize=16),rot = 90)
 grob2 = arrangeGrob(grobs = dislist, layout_matrix = m)
 grob4 = textGrob("(log) Abundance", gp=gpar(fontsize=16),rot = 0)
 grob3 = textGrob("")
-grob5 = textGrob("High spatial strength", gp=gpar(fontsize=16))
+grob5 = textGrob("Intermediate spatial strength", gp=gpar(fontsize=16))
 
 grid.arrange(grob3,grob5,grob3,grob1,grob2,mylegend,grob3,grob4,grob3,ncol = 3, widths = c(1,24,2),heights = c(1,20,1))
 

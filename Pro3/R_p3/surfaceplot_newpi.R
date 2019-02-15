@@ -5,8 +5,8 @@ con_probability_per_capita <- function(N,D,phi,psi){
     N.matrix = matrix(0,dim.N,dim.N)
     pi = c()
     for(i in c(1:dim.N)){
-      N.matrix[i,]=N/N[i]
-      pi[i]=sum(N.matrix[i,]^psi *D[i,]^phi)
+      N.matrix[i,]=1-N[i]/sum(N)
+      pi[i]=sum(N.matrix[i,]^psi *(D[i,]/sum(D[i,]))^phi)
     }
     pi = pi/sum(pi)
     return(pi)
@@ -17,7 +17,7 @@ con_probability_per_capita <- function(N,D,phi,psi){
 
 # phi vs. D
 p.p.d <- function(phi,Dvec){
-  psi <-0.5
+  psi <- 0.4
   N <- c(50,2,8,40)
   D <- matrix(c(0,5,10,20,5,0,5,10,10,5,0,5,20,10,5,0),4,4)
   D[1,4] = Dvec
