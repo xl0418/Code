@@ -53,7 +53,7 @@ for(i_n in c(1:3)){
       theme(legend.position="none",axis.ticks = element_blank(),axis.text.x=element_text(angle = 90,size = 12,hjust=1,vjust=0.5),panel.border = element_blank(), panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
             axis.text.y=element_text(size = 12,hjust=0.5,vjust=0.5),panel.background = element_blank(),plot.margin = unit(c(1,0.5,0.5,1), "cm"),
             axis.title.x=element_text(size = 14,hjust=0.5,vjust=1.5),axis.title.y=element_text(size = 14,angle=90,margin = margin(t = 0, r = 10, b = 0, l = 0)))+
-      xlab("")+ylab("")+ggtitle("Mediate spatial strength")
+      xlab("")+ylab("")+ggtitle("Intermediate spatial strength")
   }
   if(i_n == 3){
     tas1[[i_n]] <-    ggplot( df , aes(factor(psi), factor(phi)  ) ) + 
