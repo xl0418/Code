@@ -82,7 +82,7 @@ m = matrix(1:3,1,3)
 grob1 = textGrob("Phylogenetic strength", gp=gpar(fontsize=16),rot = 90)
 
 grob2 = arrangeGrob(grobs = tas1, layout_matrix = m,respect=TRUE)
-grob4 = textGrob("Jazen-Connell strength", gp=gpar(fontsize=16),rot = 0)
+grob4 = textGrob("Janzen-Connell strength", gp=gpar(fontsize=16),rot = 0)
 grob3 = textGrob("")
 
 
