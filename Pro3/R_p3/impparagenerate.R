@@ -3,7 +3,7 @@ psi_vec = c(0,0.2,0.4,0.6,0.8,1)
 L = 333
 v=0.0001
 
-ticks=10000000
+ticks=100000000
 log=1e8
 scefile = 'imp'
 sce = 'HR'
@@ -28,7 +28,7 @@ for(i in c(1:6)){
   }
 }
 
-# generate bash files
+# generate bash files for gelifes partition
 bashfilename = paste0("C:/Liang/Googlebox/Research/Project3/simdata_",formatC(ticks),"implicit/spatialsim",scefile,formatC(ticks),".sh")
 bashsetting = sprintf('#!/bin/bash
 #SBATCH --time=9-23:59:00
@@ -40,7 +40,25 @@ bashsetting = sprintf('#!/bin/bash
 #SBATCH --job-name=%s%ssim
 #SBATCH --mail-type=FAIL,TIME_LIMIT 
 #SBATCH --mail-user=xl0418@gmail.com 
-./jc batch=spatialparamed%s.txt
+./jc batch=spatialparaimp%s.txt
+',formatC(ticks),scefile,formatC(ticks)
+)
+cat(bashsetting,file=bashfilename)
+
+
+# generate bash files for regular partition
+bashfilename = paste0("C:/Liang/Googlebox/Research/Project3/simdata_",formatC(ticks),"implicit/reguspatialsim",scefile,formatC(ticks),".sh")
+bashsetting = sprintf('#!/bin/bash
+#SBATCH --time=9-23:59:00
+#SBATCH --partition=regular
+#SBATCH --ntasks=1
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=18
+#SBATCH --mem=12GB 
+#SBATCH --job-name=%s%ssim
+#SBATCH --mail-type=FAIL,TIME_LIMIT 
+#SBATCH --mail-user=xl0418@gmail.com 
+./jc batch=spatialparaimp%s.txt
 ',formatC(ticks),scefile,formatC(ticks)
 )
 cat(bashsetting,file=bashfilename)
