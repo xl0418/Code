@@ -10,8 +10,8 @@ con_probability_per_capita <- function(N,D,phi,psi){
     }
     pi = pi/sum(pi)
     return(pi)
-  }else{
-    print('The length of N should equal the size of D')
+  }else{ 
+    print('The length of N should be equal to the size of D.')
   }
 }
 
@@ -19,7 +19,7 @@ con_probability_per_capita <- function(N,D,phi,psi){
 p.p.d <- function(phi,Dvec){
   psi <-0.5
   N <- c(50,2,8,40)
-  D <- matrix(c(0,5,10,20,5,0,5,10,10,5,0,5,20,10,5,0),4,4)
+  D <- matrix(c(0,5,10,10,5,0,10,10,10,10,0,8,10,10,8,0),4,4)
   D[1,4] = Dvec
   D[lower.tri(D)] <- t(D)[lower.tri(D)]
   pi <- con_probability_per_capita(N=N,D=D,phi=phi,psi=psi)

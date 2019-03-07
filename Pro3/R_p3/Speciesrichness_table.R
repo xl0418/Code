@@ -9,12 +9,12 @@ library(gridExtra)
 source(paste0(getwd(),'/g_legend.R'))
 source('C:/Liang/Code/Pro3/R_p3/event2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro3/R_p3/multipleplot.R', echo=TRUE)
-dir = 'C:/Liang/Googlebox/Research/Project3/simdata_1e+07newpara/1e+07/'
+dir = 'C:/Liang/Googlebox/Research/Project3/simtestnew10e5/10e5/'
 scenario = c('LR','MR','HR')
-jclabel = c(0,.2,.4,.6,.8,1)
-plabel = c(0,.1,.3,1,3,10)
-diversity.upperlimit = 1500
-diversity.lowerlimit = 80
+jclabel = c(0,.001,.01,.1,.5,1)
+plabel = jclabel
+diversity.upperlimit = 300
+diversity.lowerlimit = 0
 lowcol = "#F2F0F7"
 highcol = '#54278F'
 tas1 = list()

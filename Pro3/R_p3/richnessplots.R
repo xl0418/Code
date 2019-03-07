@@ -1,11 +1,15 @@
 library(ggplot2)
 dir = 'C:/Liang/Googlebox/Research/Project3/simdata_1e+07newpara/1e+07'
+# dir = 'C:/Liang/Googlebox/Research/Project3/simdata_10e5/10e5'
+
 jclabel = c(0,.2,.4,.6,.8,1)
 plabel = c(0,.1,.3,1,3,10)
+# jclabel = c(0,.001,.01,.1,.5,1)
+# plabel = jclabel
 richnesstable=c()
 for(phi_index in c(1:6)){
   for(psi_index in c(1:6)){
-    filename = paste0('/Hevent',phi_index,psi_index,'.Rdata')
+    filename = paste0('/Levent',phi_index,psi_index,'.Rdata')
     fullfile = paste0(dir,filename)
     source(file = fullfile)
     speciesrichness = t(events)[,2]
