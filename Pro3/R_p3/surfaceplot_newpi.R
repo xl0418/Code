@@ -17,7 +17,7 @@ con_probability_per_capita <- function(N,D,phi,psi){
 
 # phi vs. D
 p.p.d <- function(phi,Dvec){
-  psi <- 0.4
+  psi <- 0.5
   N <- c(50,2,8,40)
   D <- matrix(c(0,5,10,20,5,0,5,10,10,5,0,5,20,10,5,0),4,4)
   D[1,4] = Dvec
@@ -147,7 +147,7 @@ p.D.N <- function(Dvec,Nvec){
   return(pi[4])
 }
 
-Nvec = seq(0,1000,length.out = 100)
+Nvec = seq(1,1000,length.out = 100)
 Dvec = seq(0,1000,length.out = 100)
 p.D.N.vec <- Vectorize(p.D.N)
 

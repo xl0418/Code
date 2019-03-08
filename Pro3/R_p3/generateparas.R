@@ -3,7 +3,7 @@ psi_vec = c(0,0.2,0.4,0.6,0.8,1)
 L = 333
 v=0.0001
 
-ticks=10000000
+ticks=100000
 log=1e8
 for(scenario in c(0:2)){
   # scenario = 0

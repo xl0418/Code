@@ -1,13 +1,10 @@
 library(rgl)
 con_probability_per_capita <- function(N,D,phi,psi){
   if(length(N) == dim(D)[1]){
-    dim.N = length(N)
-    N.matrix = matrix(0,dim.N,dim.N)
-    pi = c()
-    for(i in c(1:dim.N)){
-      N.matrix[i,]=N/N[i]
-      pi[i]=sum(N.matrix[i,]^psi *D[i,]^phi)
-    }
+    meanD = rowMeans(D)
+    f = meanD/sum(meanD)
+    J = sum(N)
+    pi = exp(-psi *N/J/(1+phi*f))
     pi = pi/sum(pi)
     return(pi)
   }else{ 
@@ -20,10 +17,13 @@ p.p.d <- function(phi,Dvec){
   psi <-0.5
   N <- c(50,2,8,40)
   D <- matrix(c(0,5,10,10,5,0,10,10,10,10,0,8,10,10,8,0),4,4)
-  D[1,4] = Dvec
-  D[lower.tri(D)] <- t(D)[lower.tri(D)]
+  D[1,3:4] = c(Dvec,Dvec)
+  D[2,3:4] = c(Dvec,Dvec)
+  D[3,1:2] = c(Dvec,Dvec)
+  D[4,1:2] = c(Dvec,Dvec)
+  
   pi <- con_probability_per_capita(N=N,D=D,phi=phi,psi=psi)
-  return(pi[4])
+  return(pi[2])
 }
 
 phi = seq(0,3,length.out = 100)
