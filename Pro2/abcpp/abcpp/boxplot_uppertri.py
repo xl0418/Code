@@ -73,7 +73,7 @@ def plotest(treenovector):
             test_dfex_label = np.tile(test_df_label, 3)
             gamma_label = np.repeat('$\gamma$', len(treeno_vec) * population)
             a_label = np.repeat('$\\alpha$', len(treeno_vec) * population)
-            nv_label = np.repeat('$\\nu$,$10^{-12}$', len(treeno_vec) * population)
+            nv_label = np.repeat('$\\nu$,$10^{-11}$', len(treeno_vec) * population)
             variable_label = np.concatenate([gamma_label, a_label, nv_label])
             value = np.concatenate([gamma_t123, a_t123, nv_t123])
             datalist = {'value': value, 'variable': variable_label, 'test': test_dfex_label}
@@ -146,5 +146,5 @@ def plotest(treenovector):
 plotlist1 = [[1,4],[1,7],[2,5],[2,8],[3,6],[3,9],[4,10],[7,10],[5,11],[8,11],[6,12],[9,12,13,14],[1,2,3],
             [4,5,6],[7,8,9],[10,11,12]]
 plotlist2 = [[4,15],[5,16],[9,23],[10,24]]
-for treevector in plotlist2:
+for treevector in plotlist1:
     plotest(treevector)
