@@ -1,10 +1,12 @@
 library(rgl)
 con_probability_per_capita <- function(N,D,phi,psi){
   if(length(N) == dim(D)[1]){
-    meanD = rowMeans(D)
-    f = meanD/sum(meanD)
-    J = sum(N)
-    pi = exp(-psi *N/J/(1+phi*f))
+    D = D**phi
+    diag(D) = 0
+    f = D %*% (N)
+    # f = f/sum(f)
+    # J = sum(N)
+    pi = psi *(1+f)
     pi = pi/sum(pi)
     return(pi)
   }else{ 
