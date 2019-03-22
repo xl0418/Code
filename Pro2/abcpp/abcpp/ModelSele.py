@@ -1,4 +1,3 @@
-import os
 import sys
 import platform
 if platform.system()=='Windows':
@@ -9,7 +8,12 @@ import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParam
 import dvtraitsim_cpp as dvcpp
 from PhyloDiff_model_sim import Candimodels
-from scipy.stats import norm
+from tp_update import tp_update
+from bm_update import bm_update
+from ou_update import ou_update
+from dr_update import dr_update
+
+
 import csv
 
 # gamma = 0.001
@@ -143,10 +147,9 @@ weight_a_dr.fill(1 / population)
 weight_del_dr = np.zeros(population)
 weight_del_dr.fill(1 / population)
 
-
+model_data[0, :] = model_params
 
 for g in range(generations):
-    model_data[g,:]= model_params
     # model 0
     simmodelTP = dvcpp.DVSim(td, params_TP)
     # access fitness
@@ -211,76 +214,41 @@ for g in range(generations):
     print('Iteration = %d 5th Model TP: %.1f%% ; Model TP: %.1f%% ; Model TP: %.1f%% ; Model TP: %.1f%%...'
           % (g,modelTPperc*100 , modelBMperc*100,modelOUperc*100 ,modeldrperc*100))
 
+    # reevaluate the weight of the best fitted  models
     weight_model = weight_model[fit_index]/sum(weight_model[fit_index])
-    sample_model_index = np.random.choice(fit_index, total_population, p=weight_model)
-    propose_model = sorted(model_params[sample_model_index])
+    # sample new models from the fitness of previous best fitted models
+    sample_model_index = sorted(np.random.choice(fit_index, total_population, p=weight_model))
+    propose_model = model_params[sample_model_index]
 
+    previous_bestfitted_model = model_params[fit_index]
+    model_data[g,:] = propose_model
 
-
-    weight_gamma = weight_gamma[fit_index]/sum(weight_gamma[fit_index])
-    weight_a = weight_a[fit_index]/sum(weight_a[fit_index])
-    weight_nu = weight_nu[fit_index]/sum(weight_nu[fit_index])
-
-    gamma_pre_mean = np.sum(params[fit_index, 0] * weight_gamma)
-    gamma_pre_var = np.sum((params[fit_index, 0] - gamma_pre_mean) ** 2 * weight_gamma)
-    a_pre_mean = np.sum(params[fit_index, 1] * weight_a)
-    a_pre_var = np.sum((params[fit_index, 1] - a_pre_mean) ** 2 * weight_a)
-    nu_pre_mean = np.sum(params[fit_index, 3] * weight_nu)
-    nu_pre_var = np.sum((params[fit_index, 3] - nu_pre_mean) ** 2 * weight_nu)
-    # sample parameters by the weights computed in last loop.
-    sample_gamma_index = np.random.choice(fit_index, population, p=weight_gamma)
-    sample_a_index = np.random.choice(fit_index, population, p=weight_a)
-    sample_nu_index = np.random.choice(fit_index, population, p=weight_nu)
-
-    # mean of the sample for gamma
-    propose_gamma0 = params[sample_gamma_index, 0]
-    # draw new gamma with mean and variance
-    propose_gamma = abs(np.random.normal(propose_gamma0, np.sqrt(2 * gamma_pre_var)))
-    # mean of the sample for a
-    propose_a0 = params[sample_a_index, 1]
-    # draw new a with mean and variance
-    propose_a = abs(np.random.normal(propose_a0, np.sqrt(2 * a_pre_var)))
-    # mean of the sample for nu
-    propose_nu0 = params[sample_nu_index, 3]
-    # draw new nu with mean and variance
-    propose_nu = abs(np.random.normal(propose_nu0, np.sqrt(2 * nu_pre_var)))
-
-    extend_weight_gamma = weight_gamma[fit_index.searchsorted(sample_gamma_index)]
-    extend_weight_a = weight_a[fit_index.searchsorted(sample_a_index)]
-    extend_weight_nu = weight_nu[fit_index.searchsorted(sample_nu_index)]
-
-    # compute new weights for gamma and a
-    weight_gamma_denominator = np.sum(extend_weight_gamma * norm.pdf(propose_gamma, params[:, 0],
-                                                                     np.sqrt(2 * gamma_pre_var)))
-    weight_gamma_numerator = norm.pdf(propose_gamma, gamma_prior_mean, gamma_prior_var)
-    weight_gamma = weight_gamma_numerator / weight_gamma_denominator
-
-    weight_a_denominator = np.sum(extend_weight_a * norm.pdf(propose_a, params[:, 1],
-                                                             np.sqrt(2 * a_pre_var)))
-    weight_a_numerator = norm.pdf(propose_a, a_prior_mean, a_prior_var)
-    weight_a = weight_a_numerator / weight_a_denominator
-
-    weight_nu_denominator = np.sum(extend_weight_nu * norm.pdf(propose_nu, params[:, 3],
-                                                             np.sqrt(2 * nu_pre_var)))
-    weight_nu_numerator = norm.pdf(propose_nu, nu_prior_mean, nu_prior_var)
-    weight_nu = weight_nu_numerator / weight_nu_denominator
-    # normalize the weights
-    # total_simulation[t] = sim_count
-    weight_gamma = weight_gamma / sum(weight_gamma)
-    weight_a = weight_a / sum(weight_a)
-    weight_nu = weight_nu / sum(weight_nu)
-
-    params[:, 0] = propose_gamma
-    params[:, 1] = propose_a
-    params[:, 3] = propose_nu
-
-    modelTP = np.where(model_data[g,:]==0)
+    # update TP paras and weights
+    weight_gamma_TP,weight_a_TP,weight_nu_TP,propose_gamma_TP,propose_a_TP,propose_nu_TP=\
+        tp_update(previous_bestfitted_model, propose_model, params_TP, weight_gamma_TP, weight_a_TP, weight_nu_TP)
+    modelTP = np.where(propose_model==0)
     params_TP = np.tile(obs_param, (len(modelTP[0]), 1))
     params_TP[:, 0] = propose_gamma_TP
     params_TP[:, 1] = propose_a_TP
     params_TP[:, 3] = propose_nu_TP
 
+    # update BM paras and weights
+    weight_del_BM, propose_del_BM = \
+        bm_update(previous_bestfitted_model, propose_model, params_BM, weight_del_BM)
+    modelBM = np.where(propose_model == 1)
+    params_BM = np.tile(candiparam, (len(modelBM[0]), 1))
+    params_BM[:, 5] = propose_del_BM
+
+    # update OU paras and weights
+    weight_gamma_OU, weight_del_OU, propose_gamma_OU,propose_del_OU = \
+        ou_update(previous_bestfitted_model, propose_model, params_OU, weight_gamma_OU,weight_del_OU)
+    modelOU = np.where(propose_model == 2)
+    params_OU = np.tile(candiparam, (len(modelOU[0]), 1))
+    params_OU[:, 0] = propose_gamma_OU
+    params_OU[:, 5] = propose_del_OU
 #
+
+
 para_data = {'gamma': gamma_data, 'a': a_data, 'nu': nu_data,'fitness': fitness}
 # file='C:/Liang/Code/Pro2/abcpp/abcpp/smcndata/'
 # # file = '/home/p274981/abcpp/abcpp/'
