@@ -12,7 +12,7 @@ def tp_update(previous_bestfitted_model,propose_model,params_TP,weight_gamma_TP,
     weight_nu_TP = weight_nu_TP[previous_bestfitted_index_TP] / sum(weight_nu_TP[previous_bestfitted_index_TP])
 
     gamma_pre_mean_TP = np.sum(previous_gamma_TP * weight_gamma_TP)
-    gamma_pre_var_TP = np.sum((weight_gamma_TP - gamma_pre_mean_TP) ** 2 * weight_gamma_TP)
+    gamma_pre_var_TP = np.sum((previous_gamma_TP - gamma_pre_mean_TP) ** 2 * weight_gamma_TP)
     a_pre_mean_TP = np.sum(previous_a_TP * weight_a_TP)
     a_pre_var_TP = np.sum((previous_a_TP - a_pre_mean_TP) ** 2 * weight_a_TP)
     nu_pre_mean_TP = np.sum(previous_a_TP * weight_nu_TP)
@@ -60,5 +60,5 @@ def tp_update(previous_bestfitted_model,propose_model,params_TP,weight_gamma_TP,
     weight_gamma_TP = weight_gamma_TP / sum(weight_gamma_TP)
     weight_a_TP = weight_a_TP / sum(weight_a_TP)
     weight_nu_TP = weight_nu_TP / sum(weight_nu_TP)
-    
+
     return weight_gamma_TP,weight_a_TP,weight_nu_TP,propose_gamma_TP,propose_a_TP,propose_nu_TP

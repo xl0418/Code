@@ -100,10 +100,11 @@ params_OU[:,3]= 0
 params_OU[:, 5] = np.random.uniform(0.0, 10.0, params_OU.shape[0])  # randomize delta
 
 
-params_drury =  np.tile(candiparam,(population,1))
-params_drury[:,0]= np.random.uniform(0.0, 1.0, params_drury.shape[0])
-params_drury[:,1]= np.random.uniform(0.0, 1.0, params_drury.shape[0])
-params_drury[:, 5] = np.random.uniform(0.0, 10.0, params_drury.shape[0])  # randomize delta
+params_DR =  np.tile(candiparam,(population,1))
+params_DR[:,0]= np.random.uniform(0.0, 1.0, params_DR.shape[0])
+params_DR[:,1]= np.random.uniform(0.0, 1.0, params_DR.shape[0])
+params_DR[:,3]= np.random.uniform(0.0, 5.0, params_DR.shape[0])
+params_DR[:, 5] = np.random.uniform(0.0, 10.0, params_DR.shape[0])  # randomize delta
 
 # model choice
 model_index = np.array(range(num_models))
@@ -144,6 +145,8 @@ weight_gamma_dr = np.zeros(population)
 weight_gamma_dr.fill(1 / population)
 weight_a_dr = np.zeros(population)
 weight_a_dr.fill(1 / population)
+weight_m_dr = np.zeros(population)
+weight_m_dr.fill(1 / population)
 weight_del_dr = np.zeros(population)
 weight_del_dr.fill(1 / population)
 
@@ -189,7 +192,7 @@ for g in range(generations):
         Z = np.vstack([Z,Z_modelOU])
 
     # model 3
-    for param_drury in params_drury:
+    for param_drury in params_DR:
         simmodeldr= Candimodels(td, param_drury)
     # access fitness
     # fitness = np.zeros(population)
@@ -246,6 +249,16 @@ for g in range(generations):
     params_OU = np.tile(candiparam, (len(modelOU[0]), 1))
     params_OU[:, 0] = propose_gamma_OU
     params_OU[:, 5] = propose_del_OU
+#
+    # update DR paras and weights
+    weight_gamma_dr, weight_a_dr, weight_m_dr,weight_del_dr, propose_gamma_dr, propose_a_dr, propose_m_dr,propose_del_dr = \
+        dr_update(previous_bestfitted_model, propose_model, params_DR, weight_gamma_dr, weight_a_dr,weight_m_dr, weight_del_dr)
+    modelDR = np.where(propose_model == 3)
+    params_DR = np.tile(candiparam, (len(modelDR[0]), 1))
+    params_DR[:, 0] = propose_gamma_dr
+    params_DR[:, 1] = propose_a_dr
+    params_DR[:, 3] = propose_m_dr
+    params_DR[:, 5] = propose_del_dr
 #
 
 
