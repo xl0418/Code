@@ -8,6 +8,7 @@ elif platform.system()=='Darwin':
 import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParam
 import dvtraitsim_cpp as dvcpp
+from PhyloDiff_model_sim import Candimodels
 from scipy.stats import norm
 import csv
 
@@ -45,7 +46,7 @@ nu_prior_mean = prior[4]
 nu_prior_var = prior[5]
 K=10e8
 nu=1/(100*K)
-
+num_models = 4
 
 with open(dir_path+'diameter.csv') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
@@ -72,60 +73,149 @@ meantrait = np.mean(obsZ)
 # let's try to find a true simulation:
 obs_param = DVParam(gamma=0.01, a=0.5, K=K, nu=nu, r=1, theta=meantrait, Vmax=1, inittrait=meantrait, initpop=500000,
              initpop_sigma = 10.0, break_on_mu=False)
-
+candiparam = np.array([0, 0, meantrait, 1, meantrait, 1])
 # pop = dvcpp.DVSim(td, obs_param)
 
-population = 2000
+modelnum = 4
+population = 5
+total_population = population * modelnum
 generations = 20
-params = np.tile(obs_param, (population, 1))  # duplicate
-params[:, 0] = np.random.uniform(0.0, 1.0, params.shape[0])  # randomize 'gamma'
-params[:, 1] = np.random.uniform(0.0, 1.0, params.shape[0])  # randomize 'a'
-params[:, 3] = np.random.uniform(0.0, 1e-10, params.shape[0])  # randomize 'nu'
+params_TP = np.tile(obs_param, (population, 1))  # duplicate
+params_TP[:, 0] = np.random.uniform(0.0, 1.0, params_TP.shape[0])  # randomize 'gamma'
+params_TP[:, 1] = np.random.uniform(0.0, 1.0, params_TP.shape[0])  # randomize 'a'
+params_TP[:, 3] = np.random.uniform(0.0, 1e-10, params_TP.shape[0])  # randomize 'nu'
+
+params_BM = np.tile(candiparam,(population,1))
+params_BM[:,3] = 0
+params_BM[:, 5] = np.random.uniform(0.0, 10.0, params_BM.shape[0])  # randomize delta
+
+
+params_OU = np.tile(candiparam,(population,1))
+params_OU[:,0]= np.random.uniform(0.0, 1.0, params_OU.shape[0])
+params_OU[:,3]= 0
+params_OU[:, 5] = np.random.uniform(0.0, 10.0, params_OU.shape[0])  # randomize delta
+
+
+params_drury =  np.tile(candiparam,(population,1))
+params_drury[:,0]= np.random.uniform(0.0, 1.0, params_drury.shape[0])
+params_drury[:,1]= np.random.uniform(0.0, 1.0, params_drury.shape[0])
+params_drury[:, 5] = np.random.uniform(0.0, 10.0, params_drury.shape[0])  # randomize delta
+
+# model choice
+model_index = np.array(range(num_models))
+model_params = np.repeat(model_index,repeats = population)
+model_data = np.zeros(shape=(generations, total_population))
 
 gamma_data = np.zeros(shape=(generations, population))
 a_data = np.zeros(shape=(generations, population))
 nu_data = np.zeros(shape=(generations, population))
-fitness= np.zeros(shape=(generations, population))
-# Initialize the weights.
-weight_gamma = np.zeros(population)
-weight_gamma.fill(1 / population)
-weight_a = np.zeros(population)
-weight_a.fill(1 / population)
-weight_nu = np.zeros(population)
-weight_nu.fill(1 / population)
-for g in range(generations):
-    gamma_data[g, :] = params[:, 0]
-    a_data[g, :] = params[:, 1]
-    nu_data[g,:] = params[:,3]
-    pop = dvcpp.DVSim(td, params)
 
+fitness= np.zeros(shape=(generations, total_population))
+# Initialize the weights.
+weight_model = np.zeros(total_population)
+weight_model.fill(1 / total_population)
+
+# weights for paras of TP
+weight_gamma_TP = np.zeros(population)
+weight_gamma_TP.fill(1 / population)
+weight_a_TP = np.zeros(population)
+weight_a_TP.fill(1 / population)
+weight_nu_TP = np.zeros(population)
+weight_nu_TP.fill(1 / population)
+
+# weights for paras of BM
+weight_del_BM = np.zeros(population)
+weight_del_BM.fill(1 / population)
+
+
+# weights for paras of OU
+weight_gamma_OU = np.zeros(population)
+weight_gamma_OU.fill(1 / population)
+weight_del_OU = np.zeros(population)
+weight_del_OU.fill(1 / population)
+
+
+# weights for paras of dr
+weight_gamma_dr = np.zeros(population)
+weight_gamma_dr.fill(1 / population)
+weight_a_dr = np.zeros(population)
+weight_a_dr.fill(1 / population)
+weight_del_dr = np.zeros(population)
+weight_del_dr.fill(1 / population)
+
+
+
+for g in range(generations):
+    model_data[g,:]= model_params
+    # model 0
+    simmodelTP = dvcpp.DVSim(td, params_TP)
     # access fitness
     # fitness = np.zeros(population)
-    valid = np.where(pop['sim_time'] == td.sim_evo_time)[0]
+    valid = np.where(simmodelTP['sim_time'] == td.sim_evo_time)[0]
     if len(valid)<20:
         print("WARNING:Valid simulations are too scarce!")
     if valid.size > 0:
-        Z = pop['Z'][valid]
-        Z = np.delete(Z,np.s_[missingdata],axis=1)
-        i, j = argsort2D(Z)
-        Z = Z[i, j]
+        Z_modelTP = simmodelTP['Z'][valid]
+        Z_modelTP = np.delete(Z_modelTP,np.s_[missingdata],axis=1)
+        i, j = argsort2D(Z_modelTP)
+        Z_modelTP = Z_modelTP[i, j]
         # V = pop['V'][valid][i, j]
-        Z = np.nan_to_num(Z)
+        Z_modelTP = np.nan_to_num(Z_modelTP)
         # V = np.nan_to_num(V)
         #GOF: Goodness of fit
-        fitness[g,valid] += 1.0 - normalized_norm(Z, obsZ)
+    Z = Z_modelTP
+    # model 1
+    for param_BM in params_BM:
+        simmodelBM = Candimodels(td, param_BM)
+    # access fitness
+    # fitness = np.zeros(population)
+        Z_modelBM = simmodelBM['Z'][simmodelBM['Z'].shape[0]-1,:]
+        Z_modelBM = np.delete(Z_modelBM,np.s_[missingdata],axis=0)
+
+        Z = np.vstack([Z,Z_modelBM])
+
+
+    # model 2
+    for param_OU in params_OU:
+        simmodelOU = Candimodels(td, param_OU)
+    # access fitness
+    # fitness = np.zeros(population)
+        Z_modelOU = simmodelOU['Z'][simmodelOU['Z'].shape[0]-1,:]
+        Z_modelOU = np.delete(Z_modelOU,np.s_[missingdata],axis=0)
+
+        Z = np.vstack([Z,Z_modelOU])
+
+    # model 3
+    for param_drury in params_drury:
+        simmodeldr= Candimodels(td, param_drury)
+    # access fitness
+    # fitness = np.zeros(population)
+        Z_modeldr = simmodeldr['Z'][simmodeldr['Z'].shape[0]-1,:]
+        Z_modeldr = np.delete(Z_modeldr,np.s_[missingdata],axis=0)
+
+        Z = np.vstack([Z,Z_modeldr])
+
+    valid = np.concatenate([valid, range(len(np.where(model_params==0)[0]), total_population)])
+    fitness[g,valid] += 1.0 - normalized_norm(Z, obsZ)
         # fitness[g,valid] += 1.0 - normalized_norm(np.sqrt(V), np.sqrt(obsV))
 
     # print something...
-    q5 = np.argsort(fitness[g,:])[-population// 20]  # best 5%
+    q5 = np.argsort(fitness[g,:])[-total_population// 2]  # best 50%
     fit_index = np.where(fitness[g,:] > fitness[g,q5])[0]
 
-    print('Iteration = %d 5th gamma = %f  a = %f nu = %.3e fitness = %f' % (g, np.mean(params[fit_index, 0]),
-                                                                 np.mean(params[fit_index, 1]),np.mean(params[fit_index, 3])
-                                                                          , np.mean(fitness[g,fit_index])))
-    # print('Iteration = %d all gamma = %f  a = %f  fitness = %f' % (g, np.mean(params[:, 0]),
-    #                                                              np.mean(params[:, 1]),
-    #                                                              np.mean(fitness[g,:])))
+    modelTPperc = len(np.where(model_params[fit_index]==0)[0])/len(fit_index)
+    modelBMperc = len(np.where(model_params[fit_index]==1)[0])/len(fit_index)
+    modelOUperc = len(np.where(model_params[fit_index]==2)[0])/len(fit_index)
+    modeldrperc = len(np.where(model_params[fit_index]==3)[0])/len(fit_index)
+
+    print('Iteration = %d 5th Model TP: %.1f%% ; Model TP: %.1f%% ; Model TP: %.1f%% ; Model TP: %.1f%%...'
+          % (g,modelTPperc*100 , modelBMperc*100,modelOUperc*100 ,modeldrperc*100))
+
+    weight_model = weight_model[fit_index]/sum(weight_model[fit_index])
+    sample_model_index = np.random.choice(fit_index, total_population, p=weight_model)
+    propose_model = sorted(model_params[sample_model_index])
+
+
 
     weight_gamma = weight_gamma[fit_index]/sum(weight_gamma[fit_index])
     weight_a = weight_a[fit_index]/sum(weight_a[fit_index])
@@ -183,6 +273,12 @@ for g in range(generations):
     params[:, 0] = propose_gamma
     params[:, 1] = propose_a
     params[:, 3] = propose_nu
+
+    modelTP = np.where(model_data[g,:]==0)
+    params_TP = np.tile(obs_param, (len(modelTP[0]), 1))
+    params_TP[:, 0] = propose_gamma_TP
+    params_TP[:, 1] = propose_a_TP
+    params_TP[:, 3] = propose_nu_TP
 
 #
 para_data = {'gamma': gamma_data, 'a': a_data, 'nu': nu_data,'fitness': fitness}
