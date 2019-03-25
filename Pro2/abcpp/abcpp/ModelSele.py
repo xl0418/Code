@@ -12,6 +12,7 @@ from tp_update import tp_update
 from bm_update import bm_update
 from ou_update import ou_update
 from dr_update import dr_update
+from nh_update import nh_update
 
 
 import csv
@@ -95,16 +96,22 @@ params_BM[:, 5] = np.random.uniform(0.0, 10.0, params_BM.shape[0])  # randomize 
 
 
 params_OU = np.tile(candiparam,(population,1))
-params_OU[:,0]= np.random.uniform(0.0, 1.0, params_OU.shape[0])
+params_OU[:,0]= np.random.uniform(0.0, 1.0, params_OU.shape[0])    # randomize 'gamma'
 params_OU[:,3]= 0
 params_OU[:, 5] = np.random.uniform(0.0, 10.0, params_OU.shape[0])  # randomize delta
 
 
 params_DR =  np.tile(candiparam,(population,1))
-params_DR[:,0]= np.random.uniform(0.0, 1.0, params_DR.shape[0])
-params_DR[:,1]= np.random.uniform(0.0, 1.0, params_DR.shape[0])
-params_DR[:,3]= np.random.uniform(0.0, 5.0, params_DR.shape[0])
+params_DR[:,0]= np.random.uniform(0.0, 1.0, params_DR.shape[0])         # randomize 'gamma'
+params_DR[:,1]= np.random.uniform(0.0, 1.0, params_DR.shape[0])         # randomize 'a'
+params_DR[:,3]= np.random.uniform(0.0, 5.0, params_DR.shape[0])         # randomize 'm'
 params_DR[:, 5] = np.random.uniform(0.0, 10.0, params_DR.shape[0])  # randomize delta
+
+params_nh =  np.tile(candiparam,(population,1))
+params_nh[:,0]= np.random.uniform(0.0, 1.0, params_nh.shape[0])     # randomize 'gamma'
+params_nh[:,1]= 0
+params_nh[:,3]= np.random.uniform(0.0, 5.0, params_nh.shape[0])     # randomize 'm'
+params_nh[:, 5] = np.random.uniform(0.0, 10.0, params_nh.shape[0])  # randomize delta
 
 # model choice
 model_index = np.array(range(num_models))
@@ -149,6 +156,14 @@ weight_m_dr = np.zeros(population)
 weight_m_dr.fill(1 / population)
 weight_del_dr = np.zeros(population)
 weight_del_dr.fill(1 / population)
+
+# weights for paras of nh
+weight_gamma_nh = np.zeros(population)
+weight_gamma_nh.fill(1 / population)
+weight_m_nh = np.zeros(population)
+weight_m_nh.fill(1 / population)
+weight_del_nh = np.zeros(population)
+weight_del_nh.fill(1 / population)
 
 model_data[0, :] = model_params
 
@@ -201,6 +216,16 @@ for g in range(generations):
 
         Z = np.vstack([Z,Z_modeldr])
 
+    # model 4
+    for param_nh in params_nh:
+        simmodelnh= Candimodels(td, param_nh)
+    # access fitness
+    # fitness = np.zeros(population)
+        Z_modelnh = simmodelnh['Z'][simmodelnh['Z'].shape[0]-1,:]
+        Z_modelnh = np.delete(Z_modelnh,np.s_[missingdata],axis=0)
+
+        Z = np.vstack([Z,Z_modelnh])
+
     valid = np.concatenate([valid, range(len(np.where(model_params==0)[0]), total_population)])
     fitness[g,valid] += 1.0 - normalized_norm(Z, obsZ)
         # fitness[g,valid] += 1.0 - normalized_norm(np.sqrt(V), np.sqrt(obsV))
@@ -213,9 +238,10 @@ for g in range(generations):
     modelBMperc = len(np.where(model_params[fit_index]==1)[0])/len(fit_index)
     modelOUperc = len(np.where(model_params[fit_index]==2)[0])/len(fit_index)
     modeldrperc = len(np.where(model_params[fit_index]==3)[0])/len(fit_index)
+    modelnhperc = len(np.where(model_params[fit_index]==4)[0])/len(fit_index)
 
-    print('Iteration = %d 5th Model TP: %.1f%% ; Model TP: %.1f%% ; Model TP: %.1f%% ; Model TP: %.1f%%...'
-          % (g,modelTPperc*100 , modelBMperc*100,modelOUperc*100 ,modeldrperc*100))
+    print('Iteration = %d 5th Model TP: %.1f%% ; Model BM: %.1f%% ; Model OU: %.1f%% ; Model DR: %.1f%% ; Model NH: %.1f%%...'
+          % (g,modelTPperc*100 , modelBMperc*100,modelOUperc*100 ,modeldrperc*100,modelnhperc*100))
 
     # reevaluate the weight of the best fitted  models
     weight_model = weight_model[fit_index]/sum(weight_model[fit_index])
@@ -260,7 +286,15 @@ for g in range(generations):
     params_DR[:, 3] = propose_m_dr
     params_DR[:, 5] = propose_del_dr
 #
-
+    # update nh paras and weights
+    weight_gamma_nh,  weight_m_nh,weight_del_nh, propose_gamma_nh, propose_m_nh,propose_del_nh = \
+        nh_update(previous_bestfitted_model, propose_model, params_nh, weight_gamma_nh,weight_m_nh, weight_del_nh)
+    modelnh = np.where(propose_model == 4)
+    params_nh = np.tile(candiparam, (len(modelnh[0]), 1))
+    params_nh[:, 0] = propose_gamma_nh
+    params_nh[:, 3] = propose_m_nh
+    params_nh[:, 5] = propose_del_nh
+#
 
 para_data = {'gamma': gamma_data, 'a': a_data, 'nu': nu_data,'fitness': fitness}
 # file='C:/Liang/Code/Pro2/abcpp/abcpp/smcndata/'
