@@ -4,7 +4,9 @@ from scipy.stats import norm
 
 def ou_update(previous_bestfitted_model, propose_model, params_OU, weight_gamma_OU,weight_del_OU):
     # Room in TP model to sample new paras
-    previous_bestfitted_index_OU = np.where(previous_bestfitted_model == 2)[0]
+    previous_bestfitted_index_OU = np.where(previous_bestfitted_model == 2)[0]- \
+                                   len(np.where(previous_bestfitted_model == 0)[0])-\
+                                    len(np.where(previous_bestfitted_model == 1)[0])
     previous_gamma_OU = params_OU[previous_bestfitted_index_OU, 0]
     previous_del_OU = params_OU[previous_bestfitted_index_OU, 5]
 
@@ -37,12 +39,12 @@ def ou_update(previous_bestfitted_model, propose_model, params_OU, weight_gamma_
     # compute new weights for gamma and a
     weight_gamma_denominator_OU = np.sum(extend_weight_gamma_OU * norm.pdf(propose_gamma_OU, propose_gamma0_OU,
                                                                            np.sqrt(2 * gamma_pre_var_OU)))
-    weight_gamma_numerator_OU = norm.pdf(propose_gamma_OU, gamma_pre_mean_OU, gamma_pre_var_OU)
+    weight_gamma_numerator_OU = norm.pdf(propose_gamma_OU, gamma_pre_mean_OU, np.sqrt(2 * gamma_pre_var_OU))
     weight_gamma_OU = weight_gamma_numerator_OU / weight_gamma_denominator_OU
 
     weight_del_denominator_OU = np.sum(extend_weight_del_OU * norm.pdf(propose_del_OU, propose_del0_OU,
                                                                        np.sqrt(2 * del_pre_var_OU)))
-    weight_del_numerator_OU = norm.pdf(propose_del_OU, del_pre_mean_OU, del_pre_var_OU)
+    weight_del_numerator_OU = norm.pdf(propose_del_OU, del_pre_mean_OU, np.sqrt(2 * del_pre_var_OU))
     weight_del_OU = weight_del_numerator_OU / weight_del_denominator_OU
     # normalize the weights
     # total_simulation[t] = sim_count

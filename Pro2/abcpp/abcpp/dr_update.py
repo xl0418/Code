@@ -4,7 +4,10 @@ from scipy.stats import norm
 
 def dr_update(previous_bestfitted_model, propose_model, params_DR, weight_gamma_dr, weight_a_dr,weight_m_dr, weight_del_dr):
     # Room in TP model to sample new paras
-    previous_bestfitted_index_dr = np.where(previous_bestfitted_model == 3)[0]
+    previous_bestfitted_index_dr = np.where(previous_bestfitted_model == 3)[0]-\
+                            len(np.where(previous_bestfitted_model == 0)[0]) - \
+                            len(np.where(previous_bestfitted_model == 1)[0]) - \
+                                   len(np.where(previous_bestfitted_model == 2)[0])
     previous_gamma_dr = params_DR[previous_bestfitted_index_dr, 0]
     previous_a_dr = params_DR[previous_bestfitted_index_dr, 1]
     previous_m_dr = params_DR[previous_bestfitted_index_dr, 3]
@@ -58,21 +61,21 @@ def dr_update(previous_bestfitted_model, propose_model, params_DR, weight_gamma_
     # compute new weights for gamma and a
     weight_gamma_denominator_dr = np.sum(extend_weight_gamma_dr * norm.pdf(propose_gamma_dr, propose_gamma0_dr,
                                                                            np.sqrt(2 * gamma_pre_var_dr)))
-    weight_gamma_numerator_dr = norm.pdf(propose_gamma_dr, gamma_pre_mean_dr, gamma_pre_var_dr)
+    weight_gamma_numerator_dr = norm.pdf(propose_gamma_dr, gamma_pre_mean_dr, np.sqrt(2 * gamma_pre_var_dr))
     weight_gamma_dr = weight_gamma_numerator_dr / weight_gamma_denominator_dr
 
     weight_a_denominator_dr = np.sum(extend_weight_a_dr * norm.pdf(propose_a_dr, propose_a0_dr,
                                                                    np.sqrt(2 * a_pre_var_dr)))
-    weight_a_numerator_dr = norm.pdf(propose_a_dr, a_pre_mean_dr, a_pre_var_dr)
+    weight_a_numerator_dr = norm.pdf(propose_a_dr, a_pre_mean_dr, np.sqrt(2 * a_pre_var_dr))
     weight_a_dr = weight_a_numerator_dr / weight_a_denominator_dr
 
     weight_m_denominator_dr = np.sum(extend_weight_m_dr * norm.pdf(propose_m_dr, propose_m0_dr,
                                                                      np.sqrt(2 * m_pre_var_dr)))
-    weight_m_numerator_dr = norm.pdf(propose_m_dr, m_pre_mean_dr, m_pre_var_dr)
+    weight_m_numerator_dr = norm.pdf(propose_m_dr, m_pre_mean_dr, np.sqrt(2 * m_pre_var_dr))
     weight_m_dr = weight_m_numerator_dr / weight_m_denominator_dr
     weight_del_denominator_dr = np.sum(extend_weight_del_dr * norm.pdf(propose_del_dr, propose_del0_dr,
                                                                      np.sqrt(2 * del_pre_var_dr)))
-    weight_del_numerator_dr = norm.pdf(propose_del_dr, del_pre_mean_dr, del_pre_var_dr)
+    weight_del_numerator_dr = norm.pdf(propose_del_dr, del_pre_mean_dr, np.sqrt(2 * del_pre_var_dr))
     weight_del_dr = weight_del_numerator_dr / weight_del_denominator_dr
 
     # normalize the weights
