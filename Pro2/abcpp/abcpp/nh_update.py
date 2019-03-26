@@ -18,11 +18,14 @@ def nh_update(previous_bestfitted_model, propose_model, params_nh, weight_gamma_
     weight_del_nh = weight_del_nh[previous_bestfitted_index_nh] / sum(weight_del_nh[previous_bestfitted_index_nh])
 
     gamma_pre_mean_nh = np.sum(previous_gamma_nh * weight_gamma_nh)
-    gamma_pre_var_nh = np.sum((previous_gamma_nh - gamma_pre_mean_nh) ** 2 * weight_gamma_nh)
+    gamma_pre_var_nh = np.max((np.sum((previous_gamma_nh - gamma_pre_mean_nh) ** 2 * weight_gamma_nh),
+                               0.01*np.max(previous_gamma_nh)))
     m_pre_mean_nh = np.sum(previous_m_nh * weight_m_nh)
-    m_pre_var_nh = np.sum((previous_m_nh - m_pre_mean_nh) ** 2 * weight_m_nh)
+    m_pre_var_nh = np.max((np.sum((previous_m_nh - m_pre_mean_nh) ** 2 * weight_m_nh),
+                           0.01*np.max(previous_m_nh)))
     del_pre_mean_nh = np.sum(previous_del_nh * weight_del_nh)
-    del_pre_var_nh = np.sum((previous_del_nh - del_pre_mean_nh) ** 2 * weight_del_nh)
+    del_pre_var_nh = np.max((np.sum((previous_del_nh - del_pre_mean_nh) ** 2 * weight_del_nh),
+                             0.01*np.max(previous_del_nh)))
 
     # sample parameters by the weights computed in last loop.
     population_nh = len(np.where(propose_model == 4)[0])

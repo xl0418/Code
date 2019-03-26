@@ -14,9 +14,11 @@ def ou_update(previous_bestfitted_model, propose_model, params_OU, weight_gamma_
     weight_del_OU = weight_del_OU[previous_bestfitted_index_OU] / sum(weight_del_OU[previous_bestfitted_index_OU])
 
     gamma_pre_mean_OU = np.sum(previous_gamma_OU * weight_gamma_OU)
-    gamma_pre_var_OU = np.sum((previous_gamma_OU - gamma_pre_mean_OU) ** 2 * weight_gamma_OU)
+    gamma_pre_var_OU = np.max((np.sum((previous_gamma_OU - gamma_pre_mean_OU) ** 2 * weight_gamma_OU),
+                               0.01*np.max(previous_gamma_OU)))
     del_pre_mean_OU = np.sum(previous_del_OU * weight_del_OU)
-    del_pre_var_OU = np.sum((previous_del_OU - del_pre_mean_OU) ** 2 * weight_del_OU)
+    del_pre_var_OU = np.max((np.sum((previous_del_OU - del_pre_mean_OU) ** 2 * weight_del_OU),
+                             0.01*np.max(previous_del_OU)))
 
     # sample parameters by the weights computed in last loop.
     population_OU = len(np.where(propose_model == 2)[0])
