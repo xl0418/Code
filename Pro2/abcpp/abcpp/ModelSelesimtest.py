@@ -16,7 +16,7 @@ from ou_update import ou_update
 from dr_update import dr_update
 from nh_update import nh_update
 
-
+generating = 'TP'
 gamma = 0.001
 a = 0.1
 #
@@ -39,38 +39,85 @@ files = dir_path + 'treesim_newexp/example1/'
 savedir = dir_path+'modelsele/'
 file2 = savedir + 'example1/modelsele.npy'
 
-td = DVTreeData(path=files, scalar=1000)
+td = DVTreeData(path=files, scalar=200)
 
-prior = [0.5, 0.5, 0.5, 0.5,1e-12,2e-11]
-gamma_prior_mean = prior[0]
-gamma_prior_var = prior[1]
-a_prior_mean = prior[2]
-a_prior_var = prior[3]
-nu_prior_mean = prior[4]
-nu_prior_var = prior[5]
 K=10e8
 nu=1/(100*K)
-# let's try to find a true simulation:
-obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
-             initpop_sigma = 10.0, break_on_mu=False)
-print('try to find the generating model TP','...')
-for r in range(10000):
-    obs = dvcpp.DVSim(td, obs_param)
-    if obs['sim_time'] == td.sim_evo_time:
-        break
-if obs['sim_time'] < td.sim_evo_time:
-    print('hopeless, does not compute.')
-    sys.exit(-1)
-s = np.argsort(obs['Z'])
-obsN = obs['N'][s]
-obsZ = obs['Z'][s]
-obsV = obs['V'][s]
-obsN = np.nan_to_num(obsN)
-obsZ = np.nan_to_num(obsZ)
-obsV = np.nan_to_num(obsV)
+
+sigma2 = 0.5  # Brownian Motion variance
+meantrait = 0.0
+del_mute = 'on'
+
+# the generating params for models
+# OU
+gene_gamma_ou = 0.5
+# DR
+gene_gamma_dr = 0.5
+gene_a_dr=1
+gene_m_dr=2
+# NH
+gene_gamma_nh = 0.5
+gene_m_nh = 2
 
 # let's try to find a true simulation:
-meantrait = 0.0
+# The generating paras
+gene_obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
+                    initpop_sigma=10.0, break_on_mu=False)
+gene_candiparam = np.array([0.0, 0.0, meantrait, 1.0, meantrait, 1.0])
+
+# When the generating model is TP...
+if generating == 'TP':
+    for r in range(10000):
+        obs = dvcpp.DVSim(td, gene_obs_param)
+        if obs['sim_time'] == td.sim_evo_time:
+            break
+    if obs['sim_time'] < td.sim_evo_time:
+        print('hopeless, does not compute.')
+        sys.exit(-1)
+    s = np.argsort(obs['Z'])
+    obsN = obs['N'][s]
+    obsZ = obs['Z'][s]
+    obsV = obs['V'][s]
+    obsN = np.nan_to_num(obsN)
+    obsZ = np.nan_to_num(obsZ)
+    obsV = np.nan_to_num(obsV)
+
+# When the generating model is the candidates...
+elif generating == 'BM':
+    gene_candiparam[ 3] = 0.0
+
+    gene_candiparam[ 5] = sigma2  # randomize delta
+    gene_modelBM = Candimodels(td, gene_candiparam)
+    obsZ = gene_modelBM['Z'][gene_modelBM['Z'].shape[0] - 1, :]
+
+elif generating == 'OU':
+    gene_candiparam[ 0] = gene_gamma_ou  # randomize 'gamma'
+    gene_candiparam[ 3] = 0.0
+    gene_candiparam[ 5] = sigma2  # randomize delta
+    gene_modelOU = Candimodels(td, gene_candiparam)
+    obsZ = gene_modelOU['Z'][gene_modelOU['Z'].shape[0] - 1, :]
+
+elif generating == 'DR':
+    gene_candiparam[ 0] = gene_gamma_dr  # randomize 'gamma'
+    gene_candiparam[ 1] = gene_a_dr  # randomize 'a'
+    gene_candiparam[ 3] = gene_m_dr  # randomize 'm'
+    gene_candiparam[ 5] = sigma2  # randomize delta
+    gene_modelDR = Candimodels(td, gene_candiparam)
+    obsZ = gene_modelDR['Z'][gene_modelDR['Z'].shape[0] - 1, :]
+
+elif generating == 'NH':
+    gene_candiparam[ 0] = gene_gamma_nh  # randomize 'gamma'
+    gene_candiparam[ 1] = 0
+    gene_candiparam[ 3] = gene_m_nh # randomize 'm'
+    gene_candiparam[ 5] = sigma2  # randomize delta
+    gene_modelNH = Candimodels(td, gene_candiparam)
+    obsZ = gene_modelNH['Z'][gene_modelNH['Z'].shape[0] - 1, :]
+
+else:
+    print('Please specify the generating model...')
+
+print('Try to find the generating model: %s ...' % generating)
+# let's try to find a true simulation:
 obs_param = DVParam(gamma=0.01, a=0.5, K=K, nu=nu, r=1, theta=meantrait, Vmax=1, inittrait=meantrait, initpop=500000,
              initpop_sigma = 10.0, break_on_mu=False)
 candiparam = np.array([0.0, 0.0, meantrait, 1.0, meantrait, 1.0])
@@ -87,26 +134,26 @@ params_TP[:, 3] = np.random.uniform(0.0, 1e-10, params_TP.shape[0])  # randomize
 
 params_BM = np.tile(candiparam,(population,1))
 params_BM[:,3] = 0.0
-params_BM[:, 5] = np.random.uniform(0.0, 10.0, params_BM.shape[0])  # randomize delta
+params_BM[:, 5] = np.random.uniform(0.0, sigma2, params_BM.shape[0])  # randomize delta
 
 
 params_OU = np.tile(candiparam,(population,1))
 params_OU[:,0] = np.random.uniform(0.0, 1.0, params_OU.shape[0])   # randomize 'gamma'
 params_OU[:,3]= 0.0
-params_OU[:, 5] = np.random.uniform(0.0, 10.0, params_OU.shape[0])  # randomize delta
+params_OU[:, 5] = np.random.uniform(0.0, sigma2, params_OU.shape[0])  # randomize delta
 
 
 params_DR =  np.tile(candiparam,(population,1))
 params_DR[:,0]= np.random.uniform(0.0, 1.0, params_DR.shape[0])         # randomize 'gamma'
 params_DR[:,1]= np.random.uniform(0.0, 1.0, params_DR.shape[0])         # randomize 'a'
 params_DR[:,3]= np.random.uniform(0.0, 5.0, params_DR.shape[0])         # randomize 'm'
-params_DR[:, 5] = np.random.uniform(0.0, 10.0, params_DR.shape[0])  # randomize delta
+params_DR[:, 5] = np.random.uniform(0.0, sigma2, params_DR.shape[0])  # randomize delta
 
 params_nh =  np.tile(candiparam,(population,1))
 params_nh[:,0]= np.random.uniform(0.0, 1.0, params_nh.shape[0])     # randomize 'gamma'
 params_nh[:,1]= 0
 params_nh[:,3]= np.random.uniform(0.0, 5.0, params_nh.shape[0])     # randomize 'm'
-params_nh[:, 5] = np.random.uniform(0.0, 10.0, params_nh.shape[0])  # randomize delta
+params_nh[:, 5] = np.random.uniform(0.0, sigma2, params_nh.shape[0])  # randomize delta
 
 # model choice
 model_index = np.array(range(modelnum))
@@ -173,7 +220,7 @@ for g in range(generations):
         # fitness = np.zeros(population)
         valid = np.where(simmodelTP['sim_time'] == td.sim_evo_time)[0]
         if len(valid)<20:
-            print("WARNING:Valid simulations are too scarce!")
+            print("WARNING:Valid simulations are too scarce! Valid sims: %i ." % len(valid))
         if valid.size > 0:
             Z_modelTP = simmodelTP['Z'][valid]
             i, j = argsort2D(Z_modelTP)
@@ -201,9 +248,10 @@ for g in range(generations):
         # model 2
         for param_OU in params_OU:
             simmodelOU = Candimodels(td, param_OU)
-        # access fitness
-        # fitness = np.zeros(population)
+
             Z_modelOU = simmodelOU['Z'][simmodelOU['Z'].shape[0]-1,:]
+            if np.sum(abs(Z_modelOU))>1e4:
+                Z_modelOU.fill(100)
             Z = np.vstack([Z,Z_modelOU])
 
     if len(np.where(model_data[g,:]==3)[0])>0:
@@ -216,6 +264,8 @@ for g in range(generations):
         # access fitness
         # fitness = np.zeros(population)
             Z_modeldr = simmodeldr['Z'][simmodeldr['Z'].shape[0]-1,:]
+            if np.sum(abs(Z_modeldr))>1e4:
+                Z_modeldr.fill(100)
             Z = np.vstack([Z,Z_modeldr])
 
     if len(np.where(model_data[g,:]==4)[0])>0:
@@ -228,15 +278,28 @@ for g in range(generations):
         # access fitness
         # fitness = np.zeros(population)
             Z_modelnh = simmodelnh['Z'][simmodelnh['Z'].shape[0]-1,:]
+            if np.sum(abs(Z_modelnh)) > 1e4:
+                Z_modelnh.fill(100)
             Z = np.vstack([Z,Z_modelnh])
 
     Z = Z[1:,:]
-    valid = np.concatenate([valid, range(len(np.where(propose_model==0)[0]), total_population)])
-    fitness[g,valid] += 1.0 - normalized_norm(Z, obsZ)
-        # fitness[g,valid] += 1.0 - normalized_norm(np.sqrt(V), np.sqrt(obsV))
+    if len(np.where(model_data[g,:]==0)[0])==0 or len(valid)==0 :
+        valid = range(total_population)
+    else:
+        valid = np.concatenate([valid, range(len(np.where(propose_model==0)[0]), total_population)])
+
+    eudis = normalized_norm(Z, obsZ)
+    nan_index = np.argwhere(np.isnan(eudis))
+    if len(nan_index)>0:
+        eudis[nan_index]=1
+
+    fitness[g,valid.astype(int)] += 1.0 - eudis
+
+
+    # fitness[g,valid] += 1.0 - normalized_norm(np.sqrt(V), np.sqrt(obsV))
 
     # print something...
-    q5 = np.argsort(fitness[g,:])[-total_population// 2]  # best 50%
+    q5 = np.argsort(fitness[g,:])[-total_population// 1.25]  # best 50%
     fit_index = np.where(fitness[g,:] > fitness[g,q5])[0]
 
     modelTPperc = len(np.where(propose_model[fit_index]==0)[0])/len(fit_index)
@@ -276,7 +339,11 @@ for g in range(generations):
             bm_update(previous_bestfitted_model, propose_model, params_BM, weight_del_BM)
         modelBM = np.where(propose_model == 1)
         params_BM = np.tile(candiparam, (len(modelBM[0]), 1))
-        params_BM[:, 5] = propose_del_BM
+        if del_mute=='on':
+            params_BM[:, 5]=sigma2
+            weight_del_BM.fill(1/len(weight_del_BM))
+        else:
+            params_BM[:, 5] = propose_del_BM
 
     if len(np.where(propose_model==2)[0])>0:
 
@@ -286,7 +353,12 @@ for g in range(generations):
         modelOU = np.where(propose_model == 2)
         params_OU = np.tile(candiparam, (len(modelOU[0]), 1))
         params_OU[:, 0] = propose_gamma_OU
-        params_OU[:, 5] = propose_del_OU
+        if del_mute=='on':
+            params_OU[:, 5]=sigma2
+            weight_del_OU.fill(1/len(weight_del_OU))
+
+        else:
+            params_OU[:, 5] = propose_del_OU
     #
     if len(np.where(propose_model==3)[0])>0:
 
@@ -298,7 +370,12 @@ for g in range(generations):
         params_DR[:, 0] = propose_gamma_dr
         params_DR[:, 1] = propose_a_dr
         params_DR[:, 3] = propose_m_dr
-        params_DR[:, 5] = propose_del_dr
+        if del_mute=='on':
+            params_DR[:, 5]=sigma2
+            weight_m_dr.fill(1/len(weight_m_dr))
+
+        else:
+            params_DR[:, 5] = propose_del_dr
 #
     if len(np.where(propose_model==4)[0])>0:
 
@@ -309,7 +386,12 @@ for g in range(generations):
         params_nh = np.tile(candiparam, (len(modelnh[0]), 1))
         params_nh[:, 0] = propose_gamma_nh
         params_nh[:, 3] = propose_m_nh
-        params_nh[:, 5] = propose_del_nh
+        if del_mute=='on':
+            params_nh[:, 5]=sigma2
+            weight_del_nh.fill(1/len(weight_del_nh))
+
+        else:
+            params_nh[:, 5] = propose_del_nh
 #
 
 para_data = {'model_data': model_data,'fitness': fitness}

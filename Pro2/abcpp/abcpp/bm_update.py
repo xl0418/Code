@@ -11,8 +11,8 @@ def bm_update(previous_bestfitted_model, propose_model, params_BM, weight_del_BM
     weight_del_BM = weight_del_BM[previous_bestfitted_index_BM] / sum(weight_del_BM[previous_bestfitted_index_BM])
 
     del_pre_mean_BM = np.sum(previous_del_BM * weight_del_BM)
-    del_pre_var_BM = np.max((np.sum((previous_del_BM - del_pre_mean_BM) ** 2 * weight_del_BM),
-                             0.01*np.max(previous_del_BM)))
+    del_pre_var_BM = abs(np.max((np.sum((previous_del_BM - del_pre_mean_BM) ** 2 * weight_del_BM),
+                             0.0001*np.max(previous_del_BM))))
 
     # sample parameters by the weights computed in last loop.
     population_BM = len(np.where(propose_model == 1)[0])

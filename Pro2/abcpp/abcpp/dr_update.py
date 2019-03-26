@@ -19,17 +19,17 @@ def dr_update(previous_bestfitted_model, propose_model, params_DR, weight_gamma_
     weight_del_dr = weight_del_dr[previous_bestfitted_index_dr] / sum(weight_del_dr[previous_bestfitted_index_dr])
 
     gamma_pre_mean_dr = np.sum(previous_gamma_dr * weight_gamma_dr)
-    gamma_pre_var_dr = np.max((np.sum((previous_gamma_dr - gamma_pre_mean_dr) ** 2 * weight_gamma_dr),
-                               0.01*np.max(previous_gamma_dr)))
+    gamma_pre_var_dr = abs(np.max((np.sum((previous_gamma_dr - gamma_pre_mean_dr) ** 2 * weight_gamma_dr),
+                               0.01*np.max(previous_gamma_dr))))
     a_pre_mean_dr = np.sum(previous_a_dr * weight_a_dr)
-    a_pre_var_dr = np.max((np.sum((previous_a_dr - a_pre_mean_dr) ** 2 * weight_a_dr),
-                           0.01*np.max(previous_a_dr)))
+    a_pre_var_dr = abs(np.max((np.sum((previous_a_dr - a_pre_mean_dr) ** 2 * weight_a_dr),
+                           0.01*np.max(previous_a_dr))))
     m_pre_mean_dr = np.sum(previous_m_dr * weight_m_dr)
-    m_pre_var_dr = np.max((np.sum((previous_m_dr - m_pre_mean_dr) ** 2 * weight_m_dr),
-                           0.01*np.max(previous_m_dr)))
+    m_pre_var_dr = abs(np.max((np.sum((previous_m_dr - m_pre_mean_dr) ** 2 * weight_m_dr),
+                           0.01*np.max(previous_m_dr))))
     del_pre_mean_dr = np.sum(previous_del_dr * weight_del_dr)
-    del_pre_var_dr = np.max((np.sum((previous_del_dr - del_pre_mean_dr) ** 2 * weight_del_dr),
-                             0.01*np.max(previous_del_dr)))
+    del_pre_var_dr = abs(np.max((np.sum((previous_del_dr - del_pre_mean_dr) ** 2 * weight_del_dr),
+                             0.0001*np.max(previous_del_dr))))
 
     # sample parameters by the weights computed in last loop.
     population_dr = len(np.where(propose_model == 3)[0])
