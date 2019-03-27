@@ -323,7 +323,7 @@ for g in range(generations):
           % (g,modelTPperc*100 , modelBMperc*100,modelOUperc*100 ,modeldrperc*100,modelnhperc*100))
 
     # reevaluate the weight of the best fitted  models
-    weight_model_bestfitted = weight_model[fit_index]/sum(weight_model[fit_index])
+    weight_model_bestfitted = weight_model[fit_index]*fitness[g,fit_index]/sum(weight_model[fit_index]*fitness[g,fit_index])
     # sample new models from the fitness of previous best fitted models
     sample_model_index = sorted(np.random.choice(fit_index, total_population, p=weight_model_bestfitted))
     previous_bestfitted_model = propose_model[fit_index]
