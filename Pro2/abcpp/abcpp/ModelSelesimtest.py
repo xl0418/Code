@@ -218,6 +218,11 @@ for g in range(generations):
     OU_sample_length = len(np.where(model_data[g,:]==2)[0])
     DR_sample_length = len(np.where(model_data[g,:]==3)[0])
     NH_sample_length = len(np.where(model_data[g,:]==4)[0])
+    valid_TP=[]
+    valid_BM=[]
+    valid_OU=[]
+    valid_DR=[]
+    valid_NH=[]
 
     if TP_sample_length>0:
         simmodelTP = dvcpp.DVSim(td, params_TP)
