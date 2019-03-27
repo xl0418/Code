@@ -46,7 +46,10 @@ def Candimodels(td, param):
 
         # update
         trait_RI_dr[i + 1, idx] = zi +  gamma * dtz + m * sigma + np.random.normal(0.0, var_trait,size = len(zi))
-
+        if len(np.where(trait_RI_dr[i+1, idx]>1e6)[0])>0:
+            break
+            print('Overflow simulation...')
+            return {'sim_time': i + 1, 'Z': trait_RI_dr}
         # events
         while (i + 1) == next_event[0]:
             daughter = next_event[2]

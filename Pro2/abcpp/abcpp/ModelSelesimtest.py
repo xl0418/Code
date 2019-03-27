@@ -16,7 +16,7 @@ from ou_update import ou_update
 from dr_update import dr_update
 from nh_update import nh_update
 
-generating = 'TP'
+generating = 'DR'
 gamma = 0.001
 a = 0.1
 #
@@ -39,8 +39,8 @@ files = dir_path + 'treesim_newexp/example1/'
 savedir = dir_path+'modelsele/'
 file2 = savedir + 'example1/modelsele.npy'
 
-td = DVTreeData(path=files, scalar=200)
-
+td = DVTreeData(path=files, scalar=1000)
+print(td.total_species)
 K=10e8
 nu=1/(100*K)
 
@@ -50,14 +50,14 @@ del_mute = 'on'
 
 # the generating params for models
 # OU
-gene_gamma_ou = 0.5
+gene_gamma_ou = 0.001
 # DR
-gene_gamma_dr = 0.5
-gene_a_dr=1
-gene_m_dr=2
+gene_gamma_dr = 0.001
+gene_a_dr=0.1
+gene_m_dr=1
 # NH
-gene_gamma_nh = 0.5
-gene_m_nh = 2
+gene_gamma_nh = 0.001
+gene_m_nh =1
 
 # let's try to find a true simulation:
 # The generating paras
@@ -213,93 +213,103 @@ weight_del_nh.fill(1 / population)
 
 for g in range(generations):
     # model 0
-    Z = np.zeros((1,td.total_species))
-    if len(np.where(model_data[g,:]==0)[0])>0:
+    TP_sample_length = len(np.where(model_data[g,:]==0)[0])
+    BM_sample_length = len(np.where(model_data[g,:]==1)[0])
+    OU_sample_length = len(np.where(model_data[g,:]==2)[0])
+    DR_sample_length = len(np.where(model_data[g,:]==3)[0])
+    NH_sample_length = len(np.where(model_data[g,:]==4)[0])
+
+    if TP_sample_length>0:
         simmodelTP = dvcpp.DVSim(td, params_TP)
-        # access fitness
-        # fitness = np.zeros(population)
-        valid = np.where(simmodelTP['sim_time'] == td.sim_evo_time)[0]
-        if len(valid)<20:
-            print("WARNING:Valid simulations are too scarce! Valid sims: %i ." % len(valid))
-        if valid.size > 0:
-            Z_modelTP = simmodelTP['Z'][valid]
-            i, j = argsort2D(Z_modelTP)
-            Z_modelTP = Z_modelTP[i, j]
-            # V = pop['V'][valid][i, j]
-            Z_modelTP = np.nan_to_num(Z_modelTP)
+        valid_TP = np.where(simmodelTP['sim_time'] == td.sim_evo_time)[0]
+        Z_modelTP = simmodelTP['Z'][valid_TP]
+        i, j = argsort2D(Z_modelTP)
+        Z_modelTP = Z_modelTP[i, j]
+        # V = pop['V'][valid][i, j]
+        Z_modelTP = np.nan_to_num(Z_modelTP)
             # V = np.nan_to_num(V)
             #GOF: Goodness of fit
-        Z = np.vstack([Z,Z_modelTP])
 
-    if len(np.where(model_data[g,:]==1)[0])>0:
+    if BM_sample_length>0:
+        Z_BM = np.zeros((1, td.total_species))
+        valid_BM = []
         print('BM start')
+        iter_num_BM = 0
         # model 1
         for param_BM in params_BM:
             simmodelBM = Candimodels(td, param_BM)
-        # access fitness
-        # fitness = np.zeros(population)
+            if simmodelBM['sim_time']==td.sim_evo_time:
+                valid_BM.append(iter_num_BM)
             Z_modelBM = simmodelBM['Z'][simmodelBM['Z'].shape[0]-1,:]
-            Z = np.vstack([Z,Z_modelBM])
+            Z_BM = np.vstack([Z_BM,Z_modelBM])
+            iter_num_BM += 1
+        Z_BM = Z_BM[1:,]
 
-    if len(np.where(model_data[g,:]==2)[0])>0:
-
+    # model 2
+    if OU_sample_length>0:
+        Z_OU = np.zeros((1, td.total_species))
+        valid_OU = []
+        iter_num_OU = 0
         print('OU start')
-
-        # model 2
         for param_OU in params_OU:
             simmodelOU = Candimodels(td, param_OU)
-
+            if simmodelOU['sim_time']==td.sim_evo_time:
+                valid_OU.append(iter_num_OU)
             Z_modelOU = simmodelOU['Z'][simmodelOU['Z'].shape[0]-1,:]
-            if np.sum(abs(Z_modelOU))>1e4:
-                Z_modelOU.fill(100)
-            Z = np.vstack([Z,Z_modelOU])
+            Z_OU = np.vstack([Z_OU,Z_modelOU])
+            iter_num_OU += 1
+        Z_OU = Z_OU[1:,]
 
-    if len(np.where(model_data[g,:]==3)[0])>0:
-
+    if DR_sample_length>0:
+        Z_DR = np.zeros((1, td.total_species))
+        valid_DR = []
+        iter_num_DR = 0
         print('DR start')
 
         # model 3
         for param_drury in params_DR:
             simmodeldr= Candimodels(td, param_drury)
-        # access fitness
-        # fitness = np.zeros(population)
+            if simmodeldr['sim_time']==td.sim_evo_time:
+                valid_DR.append(iter_num_DR)
             Z_modeldr = simmodeldr['Z'][simmodeldr['Z'].shape[0]-1,:]
-            if np.sum(abs(Z_modeldr))>1e4:
-                Z_modeldr.fill(100)
-            Z = np.vstack([Z,Z_modeldr])
+            Z_DR = np.vstack([Z_DR,Z_modeldr])
+            iter_num_DR += 1
+        Z_DR = Z_DR[1:, ]
 
-    if len(np.where(model_data[g,:]==4)[0])>0:
-
+    if NH_sample_length>0:
+        Z_NH = np.zeros((1, td.total_species))
+        valid_NH = []
+        iter_num_NH = 0
         print('NH start')
-
-        # model 4
         for param_nh in params_nh:
             simmodelnh= Candimodels(td, param_nh)
-        # access fitness
-        # fitness = np.zeros(population)
+            if simmodelnh['sim_time']==td.sim_evo_time:
+                valid_NH.append(iter_num_NH)
             Z_modelnh = simmodelnh['Z'][simmodelnh['Z'].shape[0]-1,:]
-            if np.sum(abs(Z_modelnh)) > 1e4:
-                Z_modelnh.fill(100)
-            Z = np.vstack([Z,Z_modelnh])
+            Z_NH = np.vstack([Z_NH,Z_modelnh])
+            iter_num_NH += 1
+        Z_NH = Z_NH[1:, ]
 
-    Z = Z[1:,:]
-    if len(np.where(model_data[g,:]==0)[0])==0 or len(valid)==0 :
-        valid = range(total_population)
-    else:
-        valid = np.concatenate([valid, range(len(np.where(propose_model==0)[0]), total_population)])
+    Z = np.vstack([Z_modelTP,Z_BM[valid_BM],Z_OU[valid_OU],Z_DR[valid_DR],Z_NH[valid_NH]])
+
+    valid = np.concatenate([valid_TP,np.array(valid_BM)+TP_sample_length,
+                            np.array(valid_OU)+TP_sample_length+BM_sample_length,
+                            np.array(valid_DR)+TP_sample_length+BM_sample_length+OU_sample_length,
+                            np.array(valid_NH)+TP_sample_length+BM_sample_length+OU_sample_length+DR_sample_length
+                            ]).astype(int)
 
     eudis = normalized_norm(Z, obsZ)
     nan_index = np.argwhere(np.isnan(eudis))
     if len(nan_index)>0:
         eudis[nan_index]=1
 
-    fitness[g,valid.astype(int)] += 1.0 - eudis
+    fitness[g,valid] += 1.0 - eudis
 
 
     # fitness[g,valid] += 1.0 - normalized_norm(np.sqrt(V), np.sqrt(obsV))
 
     # print something...
-    q5 = np.argsort(fitness[g,:])[-total_population// 1.25]  # best 50%
+    q5 = np.argsort(fitness[g,:])[-int(total_population// 4)]  # best 80%
     fit_index = np.where(fitness[g,:] > fitness[g,q5])[0]
 
     modelTPperc = len(np.where(propose_model[fit_index]==0)[0])/len(fit_index)
