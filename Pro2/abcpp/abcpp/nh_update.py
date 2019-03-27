@@ -42,7 +42,7 @@ def nh_update(previous_bestfitted_model, propose_model, params_nh, weight_gamma_
     # draw new nu with mean and variance
     propose_m_nh = abs(np.random.normal(propose_m0_nh, np.sqrt(2 * m_pre_var_nh)))
     # mean of the sample for del
-    propose_del0_nh = params_nh[sample_del_index_nh, 3]
+    propose_del0_nh = params_nh[sample_del_index_nh, 5]
     # draw new nu with mean and variance
     propose_del_nh = abs(np.random.normal(propose_del0_nh, np.sqrt(2 * del_pre_var_nh)))
 

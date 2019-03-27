@@ -2,7 +2,8 @@ import numpy as np
 from scipy.stats import norm
 
 
-def dr_update(previous_bestfitted_model, propose_model, params_DR, weight_gamma_dr, weight_a_dr,weight_m_dr, weight_del_dr):
+def dr_update(previous_bestfitted_model, propose_model, params_DR, weight_gamma_dr, weight_a_dr,weight_m_dr,
+              weight_del_dr,del_mute):
     # Room in TP model to sample new paras
     previous_bestfitted_index_dr = np.where(previous_bestfitted_model == 3)[0]-\
                             len(np.where(previous_bestfitted_model == 0)[0]) - \
@@ -50,8 +51,9 @@ def dr_update(previous_bestfitted_model, propose_model, params_DR, weight_gamma_
     propose_m0_dr = params_DR[sample_m_index_dr, 3]
     # draw new nu with mean and variance
     propose_m_dr = abs(np.random.normal(propose_m0_dr, np.sqrt(2 * m_pre_var_dr)))
+
     # mean of the sample for del
-    propose_del0_dr = params_DR[sample_del_index_dr, 3]
+    propose_del0_dr = params_DR[sample_del_index_dr, 5]
     # draw new nu with mean and variance
     propose_del_dr = abs(np.random.normal(propose_del0_dr, np.sqrt(2 * del_pre_var_dr)))
 

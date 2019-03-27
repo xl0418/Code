@@ -218,11 +218,7 @@ for g in range(generations):
     OU_sample_length = len(np.where(model_data[g,:]==2)[0])
     DR_sample_length = len(np.where(model_data[g,:]==3)[0])
     NH_sample_length = len(np.where(model_data[g,:]==4)[0])
-    valid_TP=[]
-    valid_BM=[]
-    valid_OU=[]
-    valid_DR=[]
-    valid_NH=[]
+    Z = np.zeros((1, td.total_species))
 
     if TP_sample_length>0:
         simmodelTP = dvcpp.DVSim(td, params_TP)
@@ -232,11 +228,13 @@ for g in range(generations):
         Z_modelTP = Z_modelTP[i, j]
         # V = pop['V'][valid][i, j]
         Z_modelTP = np.nan_to_num(Z_modelTP)
+        Z = np.vstack([Z,Z_modelTP])
             # V = np.nan_to_num(V)
             #GOF: Goodness of fit
+    else:
+        valid_TP = []
 
     if BM_sample_length>0:
-        Z_BM = np.zeros((1, td.total_species))
         valid_BM = []
         print('BM start')
         iter_num_BM = 0
@@ -245,14 +243,14 @@ for g in range(generations):
             simmodelBM = Candimodels(td, param_BM)
             if simmodelBM['sim_time']==td.sim_evo_time:
                 valid_BM.append(iter_num_BM)
-            Z_modelBM = simmodelBM['Z'][simmodelBM['Z'].shape[0]-1,:]
-            Z_BM = np.vstack([Z_BM,Z_modelBM])
+                Z_modelBM = simmodelBM['Z'][simmodelBM['Z'].shape[0]-1,:]
+                Z = np.vstack([Z, Z_modelBM])
             iter_num_BM += 1
-        Z_BM = Z_BM[1:,]
+    else:
+        valid_BM = []
 
     # model 2
     if OU_sample_length>0:
-        Z_OU = np.zeros((1, td.total_species))
         valid_OU = []
         iter_num_OU = 0
         print('OU start')
@@ -260,13 +258,13 @@ for g in range(generations):
             simmodelOU = Candimodels(td, param_OU)
             if simmodelOU['sim_time']==td.sim_evo_time:
                 valid_OU.append(iter_num_OU)
-            Z_modelOU = simmodelOU['Z'][simmodelOU['Z'].shape[0]-1,:]
-            Z_OU = np.vstack([Z_OU,Z_modelOU])
+                Z_modelOU = simmodelOU['Z'][simmodelOU['Z'].shape[0]-1,:]
+                Z = np.vstack([Z, Z_modelOU])
             iter_num_OU += 1
-        Z_OU = Z_OU[1:,]
+    else:
+        valid_OU = []
 
     if DR_sample_length>0:
-        Z_DR = np.zeros((1, td.total_species))
         valid_DR = []
         iter_num_DR = 0
         print('DR start')
@@ -276,10 +274,11 @@ for g in range(generations):
             simmodeldr= Candimodels(td, param_drury)
             if simmodeldr['sim_time']==td.sim_evo_time:
                 valid_DR.append(iter_num_DR)
-            Z_modeldr = simmodeldr['Z'][simmodeldr['Z'].shape[0]-1,:]
-            Z_DR = np.vstack([Z_DR,Z_modeldr])
+                Z_modeldr = simmodeldr['Z'][simmodeldr['Z'].shape[0]-1,:]
+                Z = np.vstack([Z, Z_modeldr])
             iter_num_DR += 1
-        Z_DR = Z_DR[1:, ]
+    else:
+        valid_DR = []
 
     if NH_sample_length>0:
         Z_NH = np.zeros((1, td.total_species))
@@ -290,12 +289,13 @@ for g in range(generations):
             simmodelnh= Candimodels(td, param_nh)
             if simmodelnh['sim_time']==td.sim_evo_time:
                 valid_NH.append(iter_num_NH)
-            Z_modelnh = simmodelnh['Z'][simmodelnh['Z'].shape[0]-1,:]
-            Z_NH = np.vstack([Z_NH,Z_modelnh])
+                Z_modelnh = simmodelnh['Z'][simmodelnh['Z'].shape[0]-1,:]
+                Z = np.vstack([Z, Z_modelnh])
             iter_num_NH += 1
-        Z_NH = Z_NH[1:, ]
+    else:
+        valid_NH = []
 
-    Z = np.vstack([Z_modelTP,Z_BM[valid_BM],Z_OU[valid_OU],Z_DR[valid_DR],Z_NH[valid_NH]])
+    Z = Z[1:,]
 
     valid = np.concatenate([valid_TP,np.array(valid_BM)+TP_sample_length,
                             np.array(valid_OU)+TP_sample_length+BM_sample_length,
@@ -304,17 +304,13 @@ for g in range(generations):
                             ]).astype(int)
 
     eudis = normalized_norm(Z, obsZ)
-    nan_index = np.argwhere(np.isnan(eudis))
-    if len(nan_index)>0:
-        eudis[nan_index]=1
-
     fitness[g,valid] += 1.0 - eudis
 
 
     # fitness[g,valid] += 1.0 - normalized_norm(np.sqrt(V), np.sqrt(obsV))
 
     # print something...
-    q5 = np.argsort(fitness[g,:])[-int(total_population// 4)]  # best 80%
+    q5 = np.argsort(fitness[g,:])[-int(total_population// 4)]  # best 25%
     fit_index = np.where(fitness[g,:] > fitness[g,q5])[0]
 
     modelTPperc = len(np.where(propose_model[fit_index]==0)[0])/len(fit_index)
@@ -323,7 +319,7 @@ for g in range(generations):
     modeldrperc = len(np.where(propose_model[fit_index]==3)[0])/len(fit_index)
     modelnhperc = len(np.where(propose_model[fit_index]==4)[0])/len(fit_index)
 
-    print('Iteration = %d 5th Model TP: %.1f%% ; Model BM: %.1f%% ; Model OU: %.1f%% ; Model DR: %.1f%% ; Model NH: %.1f%%...'
+    print('Iteration = %d 25th Model TP: %.1f%% ; Model BM: %.1f%% ; Model OU: %.1f%% ; Model DR: %.1f%% ; Model NH: %.1f%%...'
           % (g,modelTPperc*100 , modelBMperc*100,modelOUperc*100 ,modeldrperc*100,modelnhperc*100))
 
     # reevaluate the weight of the best fitted  models
