@@ -3,7 +3,7 @@ from scipy.stats import norm
 
 
 def dr_update(previous_bestfitted_model, propose_model, params_DR, weight_gamma_dr, weight_a_dr,weight_m_dr,
-              weight_del_dr,del_mute):
+              weight_del_dr):
     # Room in TP model to sample new paras
     previous_bestfitted_index_dr = np.where(previous_bestfitted_model == 3)[0]-\
                             len(np.where(previous_bestfitted_model == 0)[0]) - \
