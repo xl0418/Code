@@ -22,7 +22,7 @@ phylo2L = function(emdata,error=1e-10){
   tipsindex = c(1:num.species)
   extinct.index3 = subset(tipsindex,!(tipsindex %in% extantspecies.index))
   # Labels for extant species
-  extant.species.label = rev(emdata$tip.label[extantspecies.index])
+  extant.species.label = emdata$tip.label[extantspecies.index]
   # assigen the extinct species with extinct times; the extant species with -1 and
   # the internal nodes with 0.
   eeindicator = matrix(0,length(emdata$edge.length),1)

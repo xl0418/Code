@@ -7,6 +7,7 @@ elif platform.system()=='Darwin':
 import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParam
 import dvtraitsim_cpp as dvcpp
+import csv
 
 sys.path.append('C:/Liang/Code/Pro2/abcpp/abcpp/')
 from PhyloDiff_model_sim import Candimodels
@@ -28,103 +29,58 @@ def normalized_norm(x, y):
     max_err = np.nanmax(diff_norm)
     return diff_norm / max_err
 
-# prep data
-# dir_path = os.path.dirname(os.path.realpath(__file__))
-# files = dir_path + '/../tree_data/example1/'
-dir_path = 'C:\\Liang\\Googlebox\\Research\\Project2\\'
-files = dir_path + 'treesim_newexp/example1/'
-savedir = dir_path+'modelsele/'
-file2 = savedir + 'example1/modelsele.npy'
+
+#full tree
+dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
+
+files = dir_path + 'treedata/'
+
 
 td = DVTreeData(path=files, scalar=1000)
-print(td.total_species)
+
 K=10e8
 nu=1/(100*K)
 
-sigma2 = 0.02  # Brownian Motion variance
-meantrait = 0.0
-del_mute = 'on'
+prior = [0.5, 0.5, 0.5, 0.5,nu,nu]
+gamma_prior_mean = prior[0]
+gamma_prior_var = prior[1]
+a_prior_mean = prior[2]
+a_prior_var = prior[3]
+nu_prior_mean = prior[4]
+nu_prior_var = prior[5]
 
-# the generating params for models
+with open(files+'extantspecieslabels.csv') as csv_file:
+    csv1_reader = csv.reader(csv_file, delimiter=',')
+    extantlabels = list(csv1_reader)
 
-generating = 'TP'
-# TP
-gamma = 0.01
-a = .1
-# OU
-gene_gamma_ou = 0.01
-# DR
-gene_gamma_dr = 0.01
-gene_a_dr=.1
-gene_m_dr=1
-# NH
-gene_gamma_nh = 0.01
-gene_m_nh =1
+with open(dir_path+'slater_length_data.csv') as csv_file:
+    csv2_reader = csv.reader(csv_file, delimiter=',')
+    lengthdata = list(csv2_reader)
 
-# let's try to find a true simulation:
-# The generating paras
-gene_obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
-                    initpop_sigma=10.0, break_on_mu=False)
-gene_candiparam = np.array([0.0, 0.0, meantrait, 1.0, meantrait, 1.0])
+extantlabels_array = np.array(extantlabels)[1:,1]
+lengthdata_array = np.array(lengthdata)
+length_index = []
+for label in extantlabels_array:
+    length_index.append(np.where(lengthdata_array[:,0]==label)[0][0])
 
-# When the generating model is TP...
-if generating == 'TP':
-    for r in range(10000):
-        obs = dvcpp.DVSim(td, gene_obs_param)
-        if obs['sim_time'] == td.sim_evo_time:
-            break
-    if obs['sim_time'] < td.sim_evo_time:
-        print('hopeless, does not compute.')
-        sys.exit(-1)
-    s = np.argsort(obs['Z'])
-    obsN = obs['N'][s]
-    obsZ = obs['Z'][s]
-    obsV = obs['V'][s]
-    obsN = np.nan_to_num(obsN)
-    obsZ = np.nan_to_num(obsZ)
-    obsV = np.nan_to_num(obsV)
+logTL = lengthdata_array[length_index,1].astype(np.float)
+length = logTL
+obsZ = length
+print('trying to estimate the parameters','...')
 
-# When the generating model is the candidates...
-elif generating == 'BM':
-    gene_candiparam[ 3] = 0.0
+s = np.argsort(obsZ)
+obsZ = obsZ[s]
+obsZ = obsZ.astype(np.float)
 
-    gene_candiparam[ 5] = sigma2  # randomize delta
-    gene_modelBM = Candimodels(td, gene_candiparam)
-    obsZ = gene_modelBM['Z'][gene_modelBM['Z'].shape[0] - 1, :]
-
-elif generating == 'OU':
-    gene_candiparam[ 0] = gene_gamma_ou  # randomize 'gamma'
-    gene_candiparam[ 3] = 0.0
-    gene_candiparam[ 5] = sigma2  # randomize delta
-    gene_modelOU = Candimodels(td, gene_candiparam)
-    obsZ = gene_modelOU['Z'][gene_modelOU['Z'].shape[0] - 1, :]
-
-elif generating == 'DR':
-    gene_candiparam[ 0] = gene_gamma_dr  # randomize 'gamma'
-    gene_candiparam[ 1] = gene_a_dr  # randomize 'a'
-    gene_candiparam[ 3] = gene_m_dr  # randomize 'm'
-    gene_candiparam[ 5] = sigma2  # randomize delta
-    gene_modelDR = Candimodels(td, gene_candiparam)
-    obsZ = gene_modelDR['Z'][gene_modelDR['Z'].shape[0] - 1, :]
-
-elif generating == 'NH':
-    gene_candiparam[ 0] = gene_gamma_nh  # randomize 'gamma'
-    gene_candiparam[ 1] = 0
-    gene_candiparam[ 3] = gene_m_nh # randomize 'm'
-    gene_candiparam[ 5] = sigma2  # randomize delta
-    gene_modelNH = Candimodels(td, gene_candiparam)
-    obsZ = gene_modelNH['Z'][gene_modelNH['Z'].shape[0] - 1, :]
-
-else:
-    print('Please specify the generating model...')
-
-print('Try to find the generating model: %s ...' % generating)
+meantrait = np.mean(obsZ)
+print('Try to find the best fitted model...' )
 # let's try to find a true simulation:
 obs_param = DVParam(gamma=0.01, a=0.5, K=K, nu=nu, r=1, theta=meantrait, Vmax=1, inittrait=meantrait, initpop=500000,
              initpop_sigma = 10.0, break_on_mu=False)
 candiparam = np.array([0.0, 0.0, meantrait, 1.0, meantrait, 1.0])
 # pop = dvcpp.DVSim(td, obs_param)
 
+sigma2 = 0.01
 modelnum = 5
 population = 100
 total_population = population * modelnum
