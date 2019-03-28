@@ -63,9 +63,9 @@ gene_m_nh =1
 
 
 modelnum = 5
-population = 50
+population = 1000
 total_population = population * modelnum
-generations = 10
+generations = 20
 # let's try to find a true simulation:
 # The generating paras
 gene_obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
@@ -352,20 +352,20 @@ for g in range(generations):
                                                     fit_index_OU,fit_index_DR,
                                                     fit_index_NH])]
         paraTP_index = q5_TP
-        paraOU_index = q5_OU-2*population
         paraBM_index = q5_BM-population
+        paraOU_index = q5_OU-2*population
         paraDR_index = q5_DR-3*population
         paraNH_index = q5_NH-4*population
-        chosengamma_TP,chosena_TP,chosennu_TP = np.mean(params_TP[q5_TP,0]),np.mean(params_TP[q5_TP,1]),\
-                                                    np.mean(params_TP[q5_TP, 3])
+        chosengamma_TP,chosena_TP,chosennu_TP = np.mean(params_TP[paraTP_index,0]),np.mean(params_TP[paraTP_index,1]),\
+                                                    np.mean(params_TP[paraTP_index, 3])
 
-        chosengamma_OU = np.mean(params_OU[q5_OU,0])
+        chosengamma_OU = np.mean(params_OU[paraOU_index,0])
 
-        chosengamma_DR,chosena_DR,chosenm_DR = np.mean(params_DR[q5_DR,0]),np.mean(params_DR[q5_DR,1]),\
-                                                    np.mean(params_DR[q5_DR, 3])
+        chosengamma_DR,chosena_DR,chosenm_DR = np.mean(params_DR[paraDR_index,0]),np.mean(params_DR[paraDR_index,1]),\
+                                                    np.mean(params_DR[paraDR_index, 3])
 
-        chosengamma_NH,chosenm_NH = np.mean(params_nh[q5_NH,0]),\
-                                                    np.mean(params_nh[q5_NH, 3])
+        chosengamma_NH,chosenm_NH = np.mean(params_nh[paraNH_index,0]),\
+                                                    np.mean(params_nh[paraNH_index, 3])
 
         print('Mean estimates: TP gamma: %f ; a: %f ; nu: %f' % ( chosengamma_TP,chosena_TP,chosennu_TP))
         print('Mean estimates: BM gamma: %f ; a: %f ; del: %f' % ( 0.0,0.0,sigma2))
