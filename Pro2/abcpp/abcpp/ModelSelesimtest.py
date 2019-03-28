@@ -44,7 +44,7 @@ nu=1/(100*K)
 sigma2 = 0.02  # Brownian Motion variance
 meantrait = 0.0
 del_mute = 'on'
-
+allowmodeldie = 'off'
 # the generating params for models
 
 generating = 'TP'
@@ -61,6 +61,11 @@ gene_m_dr=1
 gene_gamma_nh = 0.01
 gene_m_nh =1
 
+
+modelnum = 5
+population = 50
+total_population = population * modelnum
+generations = 10
 # let's try to find a true simulation:
 # The generating paras
 gene_obs_param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=0, Vmax=1, inittrait=0, initpop=500,
@@ -125,10 +130,7 @@ obs_param = DVParam(gamma=0.01, a=0.5, K=K, nu=nu, r=1, theta=meantrait, Vmax=1,
 candiparam = np.array([0.0, 0.0, meantrait, 1.0, meantrait, 1.0])
 # pop = dvcpp.DVSim(td, obs_param)
 
-modelnum = 5
-population = 100
-total_population = population * modelnum
-generations = 10
+
 params_TP = np.tile(obs_param, (population, 1))  # duplicate
 params_TP[:, 0] = np.random.uniform(0.0, 1.0, params_TP.shape[0])  # randomize 'gamma'
 params_TP[:, 1] = np.random.uniform(0.0, 1.0, params_TP.shape[0])  # randomize 'a'
@@ -323,14 +325,55 @@ for g in range(generations):
 
     print('Iteration = %d 25th Model TP: %.1f%% ; Model BM: %.1f%% ; Model OU: %.1f%% ; Model DR: %.1f%% ; Model NH: %.1f%%...'
           % (g,modelTPperc*100 , modelBMperc*100,modelOUperc*100 ,modeldrperc*100,modelnhperc*100))
-
+    print('Average fitness: %f' % np.mean(fitness[g,fit_index]))
     # reevaluate the weight of the best fitted  models
     weight_model_bestfitted = weight_model[fit_index]*fitness[g,fit_index]/sum(weight_model[fit_index]*fitness[g,fit_index])
     # sample new models from the fitness of previous best fitted models
     sample_model_index = sorted(np.random.choice(fit_index, total_population, p=weight_model_bestfitted))
-    previous_bestfitted_model = propose_model[fit_index]
 
-    propose_model = propose_model[sample_model_index]
+    if allowmodeldie == 'on':
+        propose_model = propose_model[sample_model_index]
+        previous_bestfitted_model = propose_model[fit_index]
+
+    else:
+        propose_model = model_params
+        q5_TP = np.argsort(fitness[g, :population-1])[-int(population // 4)]  # best 25%
+        q5_BM = np.argsort(fitness[g, population:2*population-1])[-int(population // 4)]+population  # best 25%
+        q5_OU = np.argsort(fitness[g, 2*population:3*population-1])[-int(population // 4)]+2*population  # best 25%
+        q5_DR = np.argsort(fitness[g,3*population:4*population-1])[-int(population // 4)]+3*population   # best 25%
+        q5_NH = np.argsort(fitness[g, 4*population:])[-int(population // 4)]+4*population  # best 25%
+
+        fit_index_TP = np.where(fitness[g, :population-1] > fitness[g, q5_TP])[0]
+        fit_index_BM = np.where(fitness[g, population:2*population-1] > fitness[g, q5_BM])[0]+population
+        fit_index_OU = np.where(fitness[g, 2*population:3*population-1] > fitness[g, q5_OU])[0]+2*population
+        fit_index_DR = np.where(fitness[g, 3*population:4*population-1] > fitness[g, q5_DR])[0]+3*population
+        fit_index_NH = np.where(fitness[g, 4*population:] > fitness[g, q5_NH])[0]+4*population
+        previous_bestfitted_model = propose_model[np.concatenate([fit_index_TP,fit_index_BM,
+                                                    fit_index_OU,fit_index_DR,
+                                                    fit_index_NH])]
+        paraTP_index = q5_TP
+        paraOU_index = q5_OU-2*population
+        paraBM_index = q5_BM-population
+        paraDR_index = q5_DR-3*population
+        paraNH_index = q5_NH-4*population
+        chosengamma_TP,chosena_TP,chosennu_TP = np.mean(params_TP[q5_TP,0]),np.mean(params_TP[q5_TP,1]),\
+                                                    np.mean(params_TP[q5_TP, 3])
+
+        chosengamma_OU = np.mean(params_OU[q5_OU,0])
+
+        chosengamma_DR,chosena_DR,chosenm_DR = np.mean(params_DR[q5_DR,0]),np.mean(params_DR[q5_DR,1]),\
+                                                    np.mean(params_DR[q5_DR, 3])
+
+        chosengamma_NH,chosenm_NH = np.mean(params_nh[q5_NH,0]),\
+                                                    np.mean(params_nh[q5_NH, 3])
+
+        print('Mean estimates: TP gamma: %f ; a: %f ; nu: %f' % ( chosengamma_TP,chosena_TP,chosennu_TP))
+        print('Mean estimates: BM gamma: %f ; a: %f ; del: %f' % ( 0.0,0.0,sigma2))
+        print('Mean estimates: OU gamma: %f ; a: %f ; del: %f' % ( chosengamma_OU,0.0,sigma2))
+        print('Mean estimates: DR gamma: %f ; a: %f ; m: %f' % ( chosengamma_DR,chosena_DR,chosenm_DR))
+        print('Mean estimates: TP gamma: %f ; a: %f ; m: %f' % ( chosengamma_NH, 0.0,chosenm_NH))
+
+
 
     model_data[g+1,:] = propose_model
 

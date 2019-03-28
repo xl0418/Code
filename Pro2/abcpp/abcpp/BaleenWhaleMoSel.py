@@ -40,7 +40,7 @@ td = DVTreeData(path=files, scalar=1000)
 
 K=10e8
 nu=1/(100*K)
-
+del_mute ='on'
 prior = [0.5, 0.5, 0.5, 0.5,nu,nu]
 gamma_prior_mean = prior[0]
 gamma_prior_var = prior[1]
