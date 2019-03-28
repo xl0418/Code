@@ -352,6 +352,7 @@ for g in range(generations):
             bm_update(previous_bestfitted_model, propose_model, params_BM, weight_del_BM)
         modelBM = np.where(propose_model == 1)
         params_BM = np.tile(candiparam, (len(modelBM[0]), 1))
+        params_BM[:,3] = 0.0
         if del_mute=='on':
             params_BM[:, 5]=sigma2
             weight_del_BM.fill(1/len(weight_del_BM))
@@ -366,6 +367,8 @@ for g in range(generations):
         modelOU = np.where(propose_model == 2)
         params_OU = np.tile(candiparam, (len(modelOU[0]), 1))
         params_OU[:, 0] = propose_gamma_OU
+        params_OU[:, 3] = 0.0
+
         if del_mute=='on':
             params_OU[:, 5]=sigma2
             weight_del_OU.fill(1/len(weight_del_OU))

@@ -1,6 +1,6 @@
 library(ape)
 
-phylo2L = function(emdata){
+phylo2L = function(emdata,error){
   # compute the relative branching times 
   brt=branching.times(emdata)
   if(min(brt)<0){
@@ -18,7 +18,7 @@ phylo2L = function(emdata){
   # preliminary L table
   pre.Ltable = cbind(brt_preL,emdata$edge,emdata$edge.length,brt_preL-emdata$edge.length)
   # identify the extant species and the extinct species
-  extantspecies.index = pre.Ltable[which(pre.Ltable[,5]<=1e-10),3]
+  extantspecies.index = pre.Ltable[which(pre.Ltable[,5]<=error),3]
   tipsindex = c(1:num.species)
   extinct.index3 = subset(tipsindex,!(tipsindex %in% extantspecies.index))
   # assigen the extinct species with extinct times; the extant species with -1 and
