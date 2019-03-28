@@ -9,16 +9,28 @@ if(os == 'Darwin'){
 }else{
   source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
   source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
-  emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.tre'
+  emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
   dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/treedata/'
 }
-emdata = read.tree(emdatadir)
+emdata = read.nexus(emdatadir)
 plot(emdata,show.tip.label = FALSE)
+emdata_labelchange = emdata
+newlabels = c()
+for(i in c(1:78)){
+  newlabels=c(newlabels,paste0('t',i ))
+}
+emdata_labelchange$tip.label = newlabels
+
+plot(emdata_labelchange,show.tip.label = TRUE)
+
 
 # Pruned tree plot
 dropextinct = T
-L_ext = phylo2L(emdata)
+baleenwhale = phylo2L(emdata,error = 1e-5)
+L_ext = baleenwhale$L
+extantspecieslabel = baleenwhale$ESL
 phylo_test = DDD::L2phylo(L_ext,dropextinct = dropextinct)
+phylo_test$tip.label <- extantspecieslabel
 plot(phylo_test,show.tip.label = TRUE)
 
 # prune tree by phytools

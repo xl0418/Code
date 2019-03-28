@@ -1,6 +1,6 @@
 library(ape)
 
-phylo2L = function(emdata,error){
+phylo2L = function(emdata,error=1e-10){
   # compute the relative branching times 
   brt=branching.times(emdata)
   if(min(brt)<0){
@@ -21,6 +21,8 @@ phylo2L = function(emdata,error){
   extantspecies.index = pre.Ltable[which(pre.Ltable[,5]<=error),3]
   tipsindex = c(1:num.species)
   extinct.index3 = subset(tipsindex,!(tipsindex %in% extantspecies.index))
+  # Labels for extant species
+  extant.species.label = rev(emdata$tip.label[extantspecies.index])
   # assigen the extinct species with extinct times; the extant species with -1 and
   # the internal nodes with 0.
   eeindicator = matrix(0,length(emdata$edge.length),1)
@@ -78,6 +80,6 @@ phylo2L = function(emdata,error){
     }
   }
   dimnames(L) = NULL
-  return(L)
+  return(treedata <- list("L" = L,'ESL' = extant.species.label))
 }
 

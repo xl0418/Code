@@ -47,7 +47,7 @@ del_mute = 'on'
 
 # the generating params for models
 
-generating = 'NH'
+generating = 'OU'
 # TP
 gamma = 0.1
 a = 1
@@ -128,7 +128,7 @@ candiparam = np.array([0.0, 0.0, meantrait, 1.0, meantrait, 1.0])
 modelnum = 5
 population = 100
 total_population = population * modelnum
-generations = 20
+generations = 10
 params_TP = np.tile(obs_param, (population, 1))  # duplicate
 params_TP[:, 0] = np.random.uniform(0.0, 1.0, params_TP.shape[0])  # randomize 'gamma'
 params_TP[:, 1] = np.random.uniform(0.0, 1.0, params_TP.shape[0])  # randomize 'a'
