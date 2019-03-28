@@ -16,9 +16,6 @@ from ou_update import ou_update
 from dr_update import dr_update
 from nh_update import nh_update
 
-generating = 'DR'
-gamma = 0.001
-a = 0.1
 #
 # argsort of 2-dimensional arrays is awkward
 # returns i,j so that X[i,j] == np.sort(X)
@@ -49,14 +46,19 @@ meantrait = 0.0
 del_mute = 'on'
 
 # the generating params for models
+
+generating = 'NH'
+# TP
+gamma = 0.1
+a = 1
 # OU
-gene_gamma_ou = 0.001
+gene_gamma_ou = 0.1
 # DR
-gene_gamma_dr = 0.001
-gene_a_dr=0.1
+gene_gamma_dr = 0.1
+gene_a_dr=1
 gene_m_dr=1
 # NH
-gene_gamma_nh = 0.001
+gene_gamma_nh = 0.1
 gene_m_nh =1
 
 # let's try to find a true simulation:
