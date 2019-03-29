@@ -2,13 +2,10 @@ import numpy as np
 from scipy.stats import norm
 
 
-def nh_update(previous_bestfitted_model, propose_model, params_nh, weight_gamma_nh,weight_m_nh, weight_del_nh):
+def nh_update(previous_bestfitted_index_NH, propose_model, params_nh, weight_gamma_nh,weight_m_nh,
+              weight_del_nh,fit_index):
     # Room in TP model to sample new paras
-    previous_bestfitted_index_nh = np.where(previous_bestfitted_model == 4)[0]- \
-                                   len(np.where(previous_bestfitted_model == 0)[0]) - \
-                                   len(np.where(previous_bestfitted_model == 1)[0]) - \
-                                   len(np.where(previous_bestfitted_model == 2)[0]) - \
-                                   len(np.where(previous_bestfitted_model == 3)[0])
+    previous_bestfitted_index_nh = previous_bestfitted_index_NH
     previous_gamma_nh = params_nh[previous_bestfitted_index_nh, 0]
     previous_m_nh = params_nh[previous_bestfitted_index_nh, 3]
     previous_del_nh = params_nh[previous_bestfitted_index_nh, 5]
@@ -28,7 +25,7 @@ def nh_update(previous_bestfitted_model, propose_model, params_nh, weight_gamma_
                              0.0001*np.max(previous_del_nh))))
 
     # sample parameters by the weights computed in last loop.
-    population_nh = len(np.where(propose_model == 4)[0])
+    population_nh = len(np.where(propose_model == 2)[0])
     sample_gamma_index_nh = np.random.choice(previous_bestfitted_index_nh, population_nh, p=weight_gamma_nh)
     sample_m_index_nh = np.random.choice(previous_bestfitted_index_nh, population_nh, p=weight_m_nh)
     sample_del_index_nh = np.random.choice(previous_bestfitted_index_nh, population_nh, p=weight_del_nh)
@@ -47,9 +44,9 @@ def nh_update(previous_bestfitted_model, propose_model, params_nh, weight_gamma_
     propose_del_nh = abs(np.random.normal(propose_del0_nh, np.sqrt(2 * del_pre_var_nh)))
 
 
-    extend_weight_gamma_nh = weight_gamma_nh[sample_gamma_index_nh]
-    extend_weight_m_nh = weight_m_nh[sample_m_index_nh]
-    extend_weight_del_nh = weight_del_nh[sample_del_index_nh]
+    extend_weight_gamma_nh = weight_gamma_nh[fit_index.searchsorted(sample_gamma_index_nh)]
+    extend_weight_m_nh = weight_m_nh[fit_index.searchsorted(sample_m_index_nh)]
+    extend_weight_del_nh = weight_del_nh[fit_index.searchsorted(sample_del_index_nh)]
 
 
     # compute new weights for gamma and a

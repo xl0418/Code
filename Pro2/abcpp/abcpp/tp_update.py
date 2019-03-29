@@ -1,8 +1,8 @@
 import numpy as np
 from scipy.stats import norm
-def tp_update(previous_bestfitted_model,propose_model,params_TP,weight_gamma_TP,weight_a_TP,weight_nu_TP):
+def tp_update(previous_bestfitted_index_TP,propose_model,params_TP,weight_gamma_TP,weight_a_TP,
+              weight_nu_TP,fit_index):
     # Room in TP model to sample new paras
-    previous_bestfitted_index_TP = np.where(previous_bestfitted_model == 0)[0]
     previous_gamma_TP = params_TP[previous_bestfitted_index_TP, 0]
     previous_a_TP = params_TP[previous_bestfitted_index_TP, 1]
     previous_nu_TP = params_TP[previous_bestfitted_index_TP, 3]
@@ -20,7 +20,7 @@ def tp_update(previous_bestfitted_model,propose_model,params_TP,weight_gamma_TP,
     nu_pre_var_TP = np.sum((previous_nu_TP - nu_pre_mean_TP) ** 2 * weight_nu_TP)
 
     # sample parameters by the weights computed in last loop.
-    population_TP = len(np.where(propose_model == 0)[0])
+    population_TP = len(np.where(propose_model == 1)[0])
     sample_gamma_index_TP = np.random.choice(previous_bestfitted_index_TP, population_TP, p=weight_gamma_TP)
     sample_a_index_TP = np.random.choice(previous_bestfitted_index_TP, population_TP, p=weight_a_TP)
     sample_nu_index_TP = np.random.choice(previous_bestfitted_index_TP, population_TP, p=weight_nu_TP)
@@ -38,9 +38,9 @@ def tp_update(previous_bestfitted_model,propose_model,params_TP,weight_gamma_TP,
     # draw new nu with mean and variance
     propose_nu_TP = abs(np.random.normal(propose_nu0_TP, np.sqrt(2 * nu_pre_var_TP)))
 
-    extend_weight_gamma_TP = weight_gamma_TP[sample_gamma_index_TP]
-    extend_weight_a_TP = weight_a_TP[sample_a_index_TP]
-    extend_weight_nu_TP = weight_nu_TP[sample_nu_index_TP]
+    extend_weight_gamma_TP = weight_gamma_TP[fit_index.searchsorted(sample_gamma_index_TP)]
+    extend_weight_a_TP = weight_a_TP[fit_index.searchsorted(sample_a_index_TP)]
+    extend_weight_nu_TP = weight_nu_TP[fit_index.searchsorted(sample_nu_index_TP)]
 
     # compute new weights for gamma and a
     weight_gamma_denominator_TP = np.sum(extend_weight_gamma_TP * norm.pdf(propose_gamma_TP, propose_gamma0_TP,

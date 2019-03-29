@@ -2,13 +2,10 @@ import numpy as np
 from scipy.stats import norm
 
 
-def dr_update(previous_bestfitted_model, propose_model, params_DR, weight_gamma_dr, weight_a_dr,weight_m_dr,
-              weight_del_dr):
+def dr_update(previous_bestfitted_index_DR, propose_model, params_DR, weight_gamma_dr,
+              weight_a_dr,weight_m_dr, weight_del_dr,fit_index):
     # Room in TP model to sample new paras
-    previous_bestfitted_index_dr = np.where(previous_bestfitted_model == 3)[0]-\
-                            len(np.where(previous_bestfitted_model == 0)[0]) - \
-                            len(np.where(previous_bestfitted_model == 1)[0]) - \
-                                   len(np.where(previous_bestfitted_model == 2)[0])
+    previous_bestfitted_index_dr = previous_bestfitted_index_DR
     previous_gamma_dr = params_DR[previous_bestfitted_index_dr, 0]
     previous_a_dr = params_DR[previous_bestfitted_index_dr, 1]
     previous_m_dr = params_DR[previous_bestfitted_index_dr, 3]
@@ -33,7 +30,7 @@ def dr_update(previous_bestfitted_model, propose_model, params_DR, weight_gamma_
                              0.0001*np.max(previous_del_dr))))
 
     # sample parameters by the weights computed in last loop.
-    population_dr = len(np.where(propose_model == 3)[0])
+    population_dr = len(np.where(propose_model == 1)[0])
     sample_gamma_index_dr = np.random.choice(previous_bestfitted_index_dr, population_dr, p=weight_gamma_dr)
     sample_a_index_dr = np.random.choice(previous_bestfitted_index_dr, population_dr, p=weight_a_dr)
     sample_m_index_dr = np.random.choice(previous_bestfitted_index_dr, population_dr, p=weight_m_dr)
@@ -58,10 +55,10 @@ def dr_update(previous_bestfitted_model, propose_model, params_DR, weight_gamma_
     propose_del_dr = abs(np.random.normal(propose_del0_dr, np.sqrt(2 * del_pre_var_dr)))
 
 
-    extend_weight_gamma_dr = weight_gamma_dr[sample_gamma_index_dr]
-    extend_weight_a_dr = weight_a_dr[sample_a_index_dr]
-    extend_weight_m_dr = weight_m_dr[sample_m_index_dr]
-    extend_weight_del_dr = weight_del_dr[sample_del_index_dr]
+    extend_weight_gamma_dr = weight_gamma_dr[fit_index.searchsorted(sample_gamma_index_dr)]
+    extend_weight_a_dr = weight_a_dr[fit_index.searchsorted(sample_a_index_dr)]
+    extend_weight_m_dr = weight_m_dr[fit_index.searchsorted(sample_m_index_dr)]
+    extend_weight_del_dr = weight_del_dr[fit_index.searchsorted(sample_del_index_dr)]
 
 
     # compute new weights for gamma and a
