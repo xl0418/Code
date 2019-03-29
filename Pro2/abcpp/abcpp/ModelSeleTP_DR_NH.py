@@ -64,7 +64,7 @@ gene_m_nh =1
 
 
 modelnum = 3
-population = 100
+population = 1000
 total_population = population * modelnum
 generations = 20
 # let's try to find a true simulation:
@@ -250,7 +250,7 @@ for g in range(generations):
     # fitness[g,valid] += 1.0 - normalized_norm(np.sqrt(V), np.sqrt(obsV))
 
     # print something...
-    q5 = np.argsort(fitness[g,:])[-int(total_population// 20)]  # best 25%
+    q5 = np.argsort(fitness[g,:])[-int(total_population// 4)]  # best 25%
     fit_index = np.where(fitness[g,:] > fitness[g,q5])[0]
 
     modelTPperc = len(np.where(propose_model[fit_index]==0)[0])/len(fit_index)
@@ -287,23 +287,19 @@ for g in range(generations):
         fit_index_NH = np.where(fitness[g, 2*population:] > fitness[g, q5_NH])[0]+2*population
 
         previous_bestfitted_index_TP = fit_index_TP
-        previous_bestfitted_index_DR = fit_index_DR
-        previous_bestfitted_index_NH = fit_index_NH
+        previous_bestfitted_index_DR = fit_index_DR - population
+        previous_bestfitted_index_NH = fit_index_NH- 2*population
 
-        bestpara_DR = fit_index_DR - population
-        bestpara_NH = fit_index_NH - 2*population
+        chosengamma_TP,chosena_TP,chosennu_TP = np.mean(params_TP[previous_bestfitted_index_TP,0]),\
+                                                np.mean(params_TP[previous_bestfitted_index_TP,1]),\
+                                                    np.mean(params_TP[previous_bestfitted_index_TP, 3])
 
-        previous_bestfitted_model = propose_model[np.concatenate([fit_index_TP, fit_index_DR,\
-                                                    fit_index_NH])]
+        chosengamma_DR,chosena_DR,chosenm_DR = np.mean(params_DR[previous_bestfitted_index_DR,0]),\
+                                               np.mean(params_DR[previous_bestfitted_index_DR,1]),\
+                                                    np.mean(params_DR[previous_bestfitted_index_DR, 3])
 
-        chosengamma_TP,chosena_TP,chosennu_TP = np.mean(params_TP[fit_index_TP,0]),np.mean(params_TP[fit_index_TP,1]),\
-                                                    np.mean(params_TP[fit_index_TP, 3])
-
-        chosengamma_DR,chosena_DR,chosenm_DR = np.mean(params_DR[bestpara_DR,0]),np.mean(params_DR[bestpara_DR,1]),\
-                                                    np.mean(params_DR[bestpara_DR, 3])
-
-        chosengamma_NH,chosenm_NH = np.mean(params_nh[bestpara_NH,0]),\
-                                                    np.mean(params_nh[bestpara_NH, 3])
+        chosengamma_NH,chosenm_NH = np.mean(params_nh[previous_bestfitted_index_NH,0]),\
+                                                    np.mean(params_nh[previous_bestfitted_index_NH, 3])
 
         print('Mean estimates: TP gamma: %f ; a: %f ; nu: %.3e' % ( chosengamma_TP,chosena_TP,chosennu_TP))
         print('Mean estimates: DR gamma: %f ; a: %f ; m: %f' % ( chosengamma_DR,chosena_DR,chosenm_DR))
@@ -318,7 +314,7 @@ for g in range(generations):
         # update TP paras and weights
         weight_gamma_TP,weight_a_TP,weight_nu_TP,propose_gamma_TP,propose_a_TP,propose_nu_TP=\
             tp_update(previous_bestfitted_index_TP, propose_model, params_TP, weight_gamma_TP,
-                      weight_a_TP, weight_nu_TP,fit_index)
+                      weight_a_TP, weight_nu_TP)
         modelTP = np.where(propose_model==0)
         params_TP = np.tile(obs_param, (len(modelTP[0]), 1))
         params_TP[:, 0] = propose_gamma_TP
@@ -331,7 +327,7 @@ for g in range(generations):
         # update DR paras and weights
         weight_gamma_dr, weight_a_dr, weight_m_dr,weight_del_dr, propose_gamma_dr, propose_a_dr, propose_m_dr,propose_del_dr = \
             dr_update(previous_bestfitted_index_DR, propose_model, params_DR, weight_gamma_dr,
-                      weight_a_dr,weight_m_dr, weight_del_dr,fit_index)
+                      weight_a_dr,weight_m_dr, weight_del_dr)
         modelDR = np.where(propose_model == 1)
         params_DR = np.tile(candiparam, (len(modelDR[0]), 1))
         params_DR[:, 0] = propose_gamma_dr
@@ -349,7 +345,7 @@ for g in range(generations):
         # update nh paras and weights
         weight_gamma_nh,  weight_m_nh,weight_del_nh, propose_gamma_nh, propose_m_nh,propose_del_nh = \
             nh_update(previous_bestfitted_index_NH, propose_model, params_nh, weight_gamma_nh,
-                      weight_m_nh, weight_del_nh,fit_index)
+                      weight_m_nh, weight_del_nh)
         modelnh = np.where(propose_model == 2)
         params_nh = np.tile(candiparam, (len(modelnh[0]), 1))
         params_nh[:, 0] = propose_gamma_nh

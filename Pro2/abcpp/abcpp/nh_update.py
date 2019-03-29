@@ -3,7 +3,7 @@ from scipy.stats import norm
 
 
 def nh_update(previous_bestfitted_index_NH, propose_model, params_nh, weight_gamma_nh,weight_m_nh,
-              weight_del_nh,fit_index):
+              weight_del_nh):
     # Room in TP model to sample new paras
     previous_bestfitted_index_nh = previous_bestfitted_index_NH
     previous_gamma_nh = params_nh[previous_bestfitted_index_nh, 0]
@@ -44,9 +44,9 @@ def nh_update(previous_bestfitted_index_NH, propose_model, params_nh, weight_gam
     propose_del_nh = abs(np.random.normal(propose_del0_nh, np.sqrt(2 * del_pre_var_nh)))
 
 
-    extend_weight_gamma_nh = weight_gamma_nh[fit_index.searchsorted(sample_gamma_index_nh)]
-    extend_weight_m_nh = weight_m_nh[fit_index.searchsorted(sample_m_index_nh)]
-    extend_weight_del_nh = weight_del_nh[fit_index.searchsorted(sample_del_index_nh)]
+    extend_weight_gamma_nh = weight_gamma_nh[previous_bestfitted_index_NH.searchsorted(sample_gamma_index_nh)]
+    extend_weight_m_nh = weight_m_nh[previous_bestfitted_index_NH.searchsorted(sample_m_index_nh)]
+    extend_weight_del_nh = weight_del_nh[previous_bestfitted_index_NH.searchsorted(sample_del_index_nh)]
 
 
     # compute new weights for gamma and a
