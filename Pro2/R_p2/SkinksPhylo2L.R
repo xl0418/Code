@@ -9,36 +9,33 @@ if(os == 'Darwin'){
 }else{
   source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
   source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
-  emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
-  dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/treedata/'
+  emdatadir = 'C:/Liang/Googlebox/Research/Project2/AustralianSkinks/phylodata/rawdata/skinktree_216.tre'
+  dir = 'C:/Liang/Googlebox/Research/Project2/AustralianSkinks/ASdata/'
 }
-emdata = read.nexus(emdatadir)
+emdata = read.tree(emdatadir)
 plot(emdata,show.tip.label = FALSE)
-emdata_labelchange = emdata
-newlabels = c()
-for(i in c(1:78)){
-  newlabels=c(newlabels,paste0('t',i ))
-}
-emdata_labelchange$tip.label = newlabels
 
-plot(emdata_labelchange,show.tip.label = TRUE)
+# Extract the ctenotus clade
+ctenotussubtree <- extract.clade(emdata,node = 324)
+plot(ctenotussubtree,show.tip.label = TRUE)
+
 
 
 # Pruned tree plot
 dropextinct = T
-baleenwhale = phylo2L(emdata,error = 1e-5)
-L_ext = baleenwhale$L
-extantspecieslabel = baleenwhale$ESL
+ctenotus = phylo2L(ctenotussubtree,error = 1e-5)
+L_ext = ctenotus$L
+extantspecieslabel = ctenotus$ESL
 phylo_test = DDD::L2phylo(L_ext,dropextinct = dropextinct)
 phylo_test$tip.label <- extantspecieslabel
 plot(phylo_test,show.tip.label = TRUE)
 
-# prune tree by phytools
-phy_prune = fancyTree(emdata, type="droptip",tip = getExtinct(emdata),cex = 0.7)
+# # prune tree by phytools
+# phy_prune = fancyTree(emdata, type="droptip",tip = getExtinct(emdata),cex = 0.7)
 
 L = L_ext
 
-prune = 1
+prune = 0
 if (prune==1){
   L=pruneL(L)
 }

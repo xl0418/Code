@@ -41,7 +41,7 @@ print(td.total_species)
 K=10e8
 nu=1/(100*K)
 
-sigma2 = 0.02  # Brownian Motion variance
+sigma2 = 0.002  # Brownian Motion variance
 meantrait = 0.0
 del_mute = 'on'
 allowmodeldie = 'off'
@@ -49,7 +49,7 @@ allowmodeldie = 'off'
 
 generating = 'TP'
 # TP
-gamma = 0.01
+gamma = 0.001
 a = .1
 # OU
 gene_gamma_ou = 0.01
@@ -63,7 +63,7 @@ gene_m_nh =1
 
 
 modelnum = 5
-population = 1000
+population = 200
 total_population = population * modelnum
 generations = 20
 # let's try to find a true simulation:
@@ -134,7 +134,7 @@ candiparam = np.array([0.0, 0.0, meantrait, 1.0, meantrait, 1.0])
 params_TP = np.tile(obs_param, (population, 1))  # duplicate
 params_TP[:, 0] = np.random.uniform(0.0, 1.0, params_TP.shape[0])  # randomize 'gamma'
 params_TP[:, 1] = np.random.uniform(0.0, 1.0, params_TP.shape[0])  # randomize 'a'
-params_TP[:, 3] = np.random.uniform(0.0, 1e-10, params_TP.shape[0])  # randomize 'nu'
+params_TP[:, 3] = np.random.uniform(0.0, 2*nu, params_TP.shape[0])  # randomize 'nu'
 
 params_BM = np.tile(candiparam,(population,1))
 params_BM[:,3] = 0.0
@@ -367,7 +367,7 @@ for g in range(generations):
         chosengamma_NH,chosenm_NH = np.mean(params_nh[paraNH_index,0]),\
                                                     np.mean(params_nh[paraNH_index, 3])
 
-        print('Mean estimates: TP gamma: %f ; a: %f ; nu: %f' % ( chosengamma_TP,chosena_TP,chosennu_TP))
+        print('Mean estimates: TP gamma: %f ; a: %f ; nu: %.3e' % ( chosengamma_TP,chosena_TP,chosennu_TP))
         print('Mean estimates: BM gamma: %f ; a: %f ; del: %f' % ( 0.0,0.0,sigma2))
         print('Mean estimates: OU gamma: %f ; a: %f ; del: %f' % ( chosengamma_OU,0.0,sigma2))
         print('Mean estimates: DR gamma: %f ; a: %f ; m: %f' % ( chosengamma_DR,chosena_DR,chosenm_DR))

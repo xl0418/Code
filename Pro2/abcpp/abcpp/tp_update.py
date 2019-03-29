@@ -12,14 +12,12 @@ def tp_update(previous_bestfitted_model,propose_model,params_TP,weight_gamma_TP,
     weight_nu_TP = weight_nu_TP[previous_bestfitted_index_TP] / sum(weight_nu_TP[previous_bestfitted_index_TP])
 
     gamma_pre_mean_TP = np.sum(previous_gamma_TP * weight_gamma_TP)
-    gamma_pre_var_TP = np.max((np.sum((previous_gamma_TP - gamma_pre_mean_TP) ** 2 * weight_gamma_TP),
-                               0.01*np.max(previous_gamma_TP)))
+    gamma_pre_var_TP = np.sum((previous_gamma_TP - gamma_pre_mean_TP) ** 2 * weight_gamma_TP)
+
     a_pre_mean_TP = np.sum(previous_a_TP * weight_a_TP)
-    a_pre_var_TP = np.max((np.sum((previous_a_TP - a_pre_mean_TP) ** 2 * weight_a_TP),
-                           0.01*np.max(previous_a_TP)))
+    a_pre_var_TP = np.sum((previous_a_TP - a_pre_mean_TP) ** 2 * weight_a_TP)
     nu_pre_mean_TP = np.sum(previous_nu_TP * weight_nu_TP)
-    nu_pre_var_TP = np.max((np.sum((previous_nu_TP - nu_pre_mean_TP) ** 2 * weight_nu_TP),
-                            0.01*np.max(previous_nu_TP)))
+    nu_pre_var_TP = np.sum((previous_nu_TP - nu_pre_mean_TP) ** 2 * weight_nu_TP)
 
     # sample parameters by the weights computed in last loop.
     population_TP = len(np.where(propose_model == 0)[0])
