@@ -40,7 +40,7 @@ files = dir_path + 'treesim_newexp/example1/'
 savedir = dir_path+'modelsele/'
 file2 = savedir + 'example1/modelsele.npy'
 
-td = DVTreeData(path=files, scalar=10000)
+td = DVTreeData(path=files, scalar=2000)
 print(td.total_species)
 K=10e8
 nu=1/(100*K)
@@ -67,7 +67,7 @@ gene_m_nh =1
 
 
 modelnum = 3
-population = 100
+population = 1000
 total_population = population * modelnum
 generations = 20
 # let's try to find a true simulation:
@@ -349,28 +349,19 @@ for g in range(generations):
     else:
         propose_model = model_params
         q5_TP = np.argsort(fitness[g, :population-1])[-int(population // 4)]  # best 25%
-        q5_BM = np.argsort(fitness[g, population:2*population-1])[-int(population // 4)]+population  # best 25%
-        q5_OU = np.argsort(fitness[g, 2*population:3*population-1])[-int(population // 4)]+2*population  # best 25%
-        q5_DR = np.argsort(fitness[g,3*population:4*population-1])[-int(population // 4)]+3*population   # best 25%
-        q5_NH = np.argsort(fitness[g, 4*population:])[-int(population // 4)]+4*population  # best 25%
+        q5_DR = np.argsort(fitness[g, population:2*population-1])[-int(population // 4)]+population  # best 25%
+        q5_NH = np.argsort(fitness[g, 2*population:3*population-1])[-int(population // 4)]+2*population  # best 25%
 
         fit_index_TP = np.where(fitness[g, :population-1] > fitness[g, q5_TP])[0]
-        fit_index_BM = np.where(fitness[g, population:2*population-1] > fitness[g, q5_BM])[0]+population
-        fit_index_OU = np.where(fitness[g, 2*population:3*population-1] > fitness[g, q5_OU])[0]+2*population
-        fit_index_DR = np.where(fitness[g, 3*population:4*population-1] > fitness[g, q5_DR])[0]+3*population
-        fit_index_NH = np.where(fitness[g, 4*population:] > fitness[g, q5_NH])[0]+4*population
-        previous_bestfitted_model = propose_model[np.concatenate([fit_index_TP,fit_index_BM,
-                                                    fit_index_OU,fit_index_DR,
+        fit_index_DR = np.where(fitness[g, population:2*population-1] > fitness[g, q5_DR])[0]+population
+        fit_index_NH = np.where(fitness[g, 2*population:] > fitness[g, q5_NH])[0]+2*population
+        previous_bestfitted_model = propose_model[np.concatenate([fit_index_TP, fit_index_DR,\
                                                     fit_index_NH])]
         paraTP_index = q5_TP
-        paraBM_index = q5_BM-population
-        paraOU_index = q5_OU-2*population
-        paraDR_index = q5_DR-3*population
-        paraNH_index = q5_NH-4*population
+        paraDR_index = q5_DR-population
+        paraNH_index = q5_NH-2*population
         chosengamma_TP,chosena_TP,chosennu_TP = np.mean(params_TP[paraTP_index,0]),np.mean(params_TP[paraTP_index,1]),\
                                                     np.mean(params_TP[paraTP_index, 3])
-
-        chosengamma_OU = np.mean(params_OU[paraOU_index,0])
 
         chosengamma_DR,chosena_DR,chosenm_DR = np.mean(params_DR[paraDR_index,0]),np.mean(params_DR[paraDR_index,1]),\
                                                     np.mean(params_DR[paraDR_index, 3])
@@ -379,8 +370,6 @@ for g in range(generations):
                                                     np.mean(params_nh[paraNH_index, 3])
 
         print('Mean estimates: TP gamma: %f ; a: %f ; nu: %.3e' % ( chosengamma_TP,chosena_TP,chosennu_TP))
-        print('Mean estimates: BM gamma: %f ; a: %f ; del: %f' % ( 0.0,0.0,sigma2))
-        print('Mean estimates: OU gamma: %f ; a: %f ; del: %f' % ( chosengamma_OU,0.0,sigma2))
         print('Mean estimates: DR gamma: %f ; a: %f ; m: %f' % ( chosengamma_DR,chosena_DR,chosenm_DR))
         print('Mean estimates: NH gamma: %f ; a: %f ; m: %f' % ( chosengamma_NH, 0.0,chosenm_NH))
 
