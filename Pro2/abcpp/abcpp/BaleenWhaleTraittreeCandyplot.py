@@ -13,15 +13,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 scalar = 1000
-sigma2 = 0.002  # Brownian Motion variance
+sigma2 = 0.5  # Brownian Motion variance
 meantrait = 0.0
 # the generating params for models
 
-generating = 'TP'
+generating = 'NH'
 if generating == 'DR':
     a = 0.1
-else:
+elif generating == 'NH':
     a = 0
+else:
+    print('Please specify the candidate models: DR or NH.')
 
 timegap = 1
 
@@ -59,15 +61,15 @@ for index_g in range(len(gamma_vec)):
 
         simresult = Candimodels(td,candiparam)
         # if pic==0:
-        evo_time, total_species = td.evo_sim_time,td.totalspecies
-        evo_time = evo_time - 1
+        evo_time, total_species = td.sim_evo_time,td.total_species
         trait_RI_dr = simresult['Z']
+        trait_RI_dr[trait_RI_dr==0] = np.nan
         num_lines = total_species
         x = np.arange(evo_time/timegap+1)
 
         labels = []
-        for i in range(1, num_lines + 1):
-            axes1[index_g,index_a].plot(x, trait_RI_dr[::timegap, i - 1])
+        for i in range( num_lines ):
+            axes1[index_g,index_a].plot(x, trait_RI_dr[::timegap, i])
 
         # axes[index_g, index_a].yaxis.set_major_locator(plt.NullLocator())
         axes1[index_g, index_a].xaxis.set_major_locator(plt.NullLocator())
@@ -89,9 +91,8 @@ for index_g in range(len(gamma_vec)):
 
 
 dir_fig = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/traittree'
-
-
 f1.savefig(dir_fig+'TP1q.png')
 plt.close(f1)
 
 plt.close('all')
+
