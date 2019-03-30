@@ -3,6 +3,7 @@ import platform
 import numpy as np
 sys.path.append('C:/Liang/Code/Pro2/abcpp/abcpp/')
 from Candipararun import Candi_para
+from PhyloDiff_model_sim import Candimodels
 
 if platform.system()=='Windows':
     sys.path.append('C:/Liang/abcpp_emp/abcpp')
@@ -10,7 +11,8 @@ elif platform.system()=='Darwin':
     sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
 from dvtraitsim_shared import DVTreeData, DVParam
 from multiprocessing import Pool
-
+from functools import partial
+from itertools import repeat
 
 theta = 0  # optimum of natural selection
 r = 1  # growth rate
@@ -49,4 +51,4 @@ params_nh[:,3]= np.random.uniform(0.0, 5.0, params_nh.shape[0])     # randomize 
 params_nh[:, 5] = np.random.uniform(0.0, sigma2, params_nh.shape[0])  # randomize delta
 
 p = Pool(8)
-res_DR = p.map( Candi_para, (params_DR[i,:] for i in range(population)) )
+res_DR = p.starmap(Candimodels, zip(repeat(td),params_DR))
