@@ -51,23 +51,25 @@ for generating in Testingmodels:
     files = dir_path + 'treesim_newexp/example%i/' % example_num
     savedir = dir_path + 'modelsele/example%i/modelsele%s.npy' % (example_num,generating)
 
-    td = DVTreeData(path=files, scalar=10000)
+
+
+    td = DVTreeData(path=files, scalar=1000)
     print(td.total_species)
     # TP
-    gamma = 0.01
+    gamma = 0.001
     a = .1
 
     # DR
-    gene_gamma_dr = 0.01
+    gene_gamma_dr = 0.001
     gene_a_dr=.1
-    gene_m_dr=1
+    gene_m_dr=.1
     # NH
-    gene_gamma_nh = 0.01
-    gene_m_nh =1
+    gene_gamma_nh = 0.001
+    gene_m_nh =.1
 
 
     modelnum = 3
-    population = 1000  # number of the particles for each iteration
+    population = 500  # number of the particles for each iteration
     total_population = population * modelnum
     generations = 20    # number of the iterations
     # let's try to find a true simulation:
