@@ -44,7 +44,7 @@ for generating in Testingmodels:
     files = dir_path + 'tree_data/example%i/' % example_num
     savedir = dir_path + 'modelsele/example%i/modelsele%s.npy' % (example_num,generating)
 
-    td = DVTreeData(path=files, scalar=10000)
+    td = DVTreeData(path=files, scalar=20000)
     print(td.total_species)
     # TP
     gamma = 0.01

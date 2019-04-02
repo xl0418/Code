@@ -19,7 +19,6 @@ bm_df = as.data.frame(as.table(bmdata_matrix))[,2:3]
 colnames(bm_df) = c('Iteration','Samples')
 levels(bm_df$Iteration) = c(1:20)
 
-com_df = rbind(gamma_df,bm_df)
 
 
 

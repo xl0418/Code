@@ -30,10 +30,10 @@ def normalized_norm(x, y):
 
 
 #full tree
-dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
+dir_path = 'c:/Liang/Googlebox/Research/Project2/AustralianSkinks/'
 
-files = dir_path + 'treedata/'
-savedir = dir_path + 'BaleenWhalesMS.npy'
+files = dir_path + 'ASdata/'
+savedir = files + 'ASMS.npy'
 
 td = DVTreeData(path=files, scalar=1000)
 num_cores = Pool(8)  # the number of cores
@@ -53,7 +53,7 @@ with open(files+'extantspecieslabels.csv') as csv_file:
     csv1_reader = csv.reader(csv_file, delimiter=',')
     extantlabels = list(csv1_reader)
 
-with open(dir_path+'slater_length_data.csv') as csv_file:
+with open(files+'morphodata.csv') as csv_file:
     csv2_reader = csv.reader(csv_file, delimiter=',')
     lengthdata = list(csv2_reader)
 
@@ -61,10 +61,15 @@ extantlabels_array = np.array(extantlabels)[1:,1]
 lengthdata_array = np.array(lengthdata)
 length_index = []
 for label in extantlabels_array:
-    length_index.append(np.where(lengthdata_array[:,0]==label)[0][0])
+    matchindex = np.where(lengthdata_array[:,8]==label)[0]
+    if len(matchindex)>0:
+        length_index.append(matchindex[0])
+    else:
+        length_index.append(np.nan)
+
 
 logTL = lengthdata_array[length_index,1].astype(np.float)
-length = 10**logTL/40
+length = 10**logTL/30
 obsZ = length
 print('trying to estimate the parameters','...')
 
