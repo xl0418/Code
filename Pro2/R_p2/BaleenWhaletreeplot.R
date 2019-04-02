@@ -27,44 +27,55 @@ extantspecieslabel = baleenwhale$ESL
 phylo_test = DDD::L2phylo(L_ext,dropextinct = dropextinct)
 phylo_test$tip.label <- extantspecieslabel
 plot(phylo_test,show.tip.label = TRUE)
+
+# empirical data
 fileemp_name = paste0(dir,'trait_labels.csv')
 obsZ_emp = read.csv(fileemp_name)
 species_label = obsZ_emp[,1]
+sorted.species.labels <- obsZ_emp[order(obsZ_emp[,2]),1]
 
-# sort=1
-# if(sort==0){
-#   fileunsort_name = 'unsort.csv'
-#   obsZ_read = read.csv(fileunsort_name)
-#   species_label = phy_prune$tip.label
-# }else{
-#   fileunsort_name = 'sort.csv'
-#   obsZ_read = read.csv(fileunsort_name)
-#   fileemp_name = 'emp.csv'
-#   obsZ_emp = read.csv(fileemp_name)
-#   species_label = obsZ_emp[,1]
-# }
+
+filepredict_name =  paste0(dir,'predictsim.csv')
+predictZ = read.csv(filepredict_name)
+
+
+
+predictZ_matrix = as.matrix(predictZ)
+predictZ_mean = colMeans(predictZ_matrix)
+
+samplesize = nrow(predictZ_matrix)
+dimnames(predictZ_matrix)[[2]] = sorted.species.labels
+
+d_all = as.data.frame(as.table(predictZ_matrix))[,2:3]
+colnames(d_all) = c('species','traitall')
 
 obsZ_mean = obsZ_emp[,2]
 
-d_mean_emp = data.frame(species=species_label, traitdot=obsZ_mean)
+d_meanemp = data.frame(species=species_label, trait=obsZ_mean)
+d_meansim = data.frame(species=species_label, traitdot=predictZ_mean)
 
 
-plot_tree <- ggtree(phylo_test)+geom_tiplab(size=2)
+plot_tree <- ggtree(phylo_test)+geom_tiplab(size=2.5)
 
-plot_dottips = plot_tree %<+% d_mean_emp+ geom_tippoint(aes(size=traitdot))
-
-
+# plot_dottips = plot_tree %<+% d_meanemp+ geom_tippoint(aes(size=trait))
 
 
-plot_sepdots = facet_plot(plot_dottips, panel="dot", data=d_mean2, geom=geom_point, aes(x=traitdot), color='firebrick')+ theme_tree2()
 
-plot_sepboxplt <- facet_plot(plot_dottips, panel="Trait", data=d_all, geom_boxploth, 
+
+plot_sepdots = facet_plot(plot_tree, panel="dot", data=d_meanemp, geom=geom_point, aes(x=trait), color='firebrick')+ theme_tree2()
+
+plot_sepboxplt <- facet_plot(plot_tree, panel="Trait", data=d_all, geom_boxploth, 
                              mapping = aes(x=traitall, group=label ))  + theme_tree2()+
   theme(strip.background = element_rect(fill="#D1B6E1"))
-# geom_phylopic(image="6fe75b0b-1488-4193-8523-f240c2d59575", color="#cff0da", alpha = .1, size=Inf)
+
+p_final <- facet_plot(plot_sepboxplt+xlim_tree(35), panel="Trait", data=d_meanemp, geom_point, 
+           mapping = aes(x=trait, group=label ),color = 'red')
+
+p_final
 
 
-plot_sepboxplt
+
+
 
 
 

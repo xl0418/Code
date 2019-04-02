@@ -7,10 +7,14 @@ source('C:/Liang/Code/Pro2/R_p2/seprate_vec.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/theme_henrik.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/dendf2fredf.R', echo=TRUE)
 
-setwd("C:/Liang/Googlebox/Research/Project2/modelsele/example1/")
+# setwd("C:/Liang/Googlebox/Research/Project2/modelsele/example1/")
+setwd("C:/Liang/Googlebox/Research/Project2/BaleenWhales/")
+# 
+# generating = 'TP'
+# file1_name = paste0('bestmodel',generating,'.csv')
+file1_name = paste0('BaleenWhalesMS.csv')
 
-generating = 'TP'
-file1_name = paste0('bestmodel',generating,'.csv')
+
 bmdata = read.csv(file1_name)
 bmdata_matrix = as.matrix(t(bmdata))
 
