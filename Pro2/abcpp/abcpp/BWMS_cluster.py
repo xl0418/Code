@@ -1,16 +1,9 @@
-import sys
-import platform
-if platform.system()=='Windows':
-    sys.path.append('C:/Liang/abcpp_emp/abcpp')
-elif platform.system()=='Darwin':
-    sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
 import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParam
 import dvtraitsim_cpp as dvcpp
 import csv
 from multiprocessing import Pool
 from itertools import repeat
-sys.path.append('C:/Liang/Code/Pro2/abcpp/abcpp/')
 from PhyloDiff_model_sim import Candimodels
 from tp_update import tp_update
 from dr_update import dr_update
@@ -30,13 +23,13 @@ def normalized_norm(x, y):
 
 
 #full tree
-dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
+dir_path = '/home/p274981/abcpp/'
 
-files = dir_path + 'treedata/'
-savedir = dir_path + 'BaleenWhalesMS2w.npy'
+files = dir_path + 'BaleenWhales/treedata/'
+savedir = dir_path + 'BaleenWhales/BW_smc_ms.npy'
 
 td = DVTreeData(path=files, scalar=20000)
-num_cores = Pool(8)  # the number of cores
+num_cores = Pool(24)  # the number of cores
 allowmodeldie = 'off'
 K=10e8
 nu=1/(100*K)
@@ -73,8 +66,8 @@ obsZ = obsZ[s]
 obsZ = obsZ.astype(np.float)
 meantrait = np.mean(obsZ)
 modelnum = 3
-sigma2 = 0.02
-population = 500  # number of the particles for each iteration
+sigma2 = 0.5
+population = 1000  # number of the particles for each iteration
 total_population = population * modelnum
 generations = 20  # number of the iterations
 # let's try to find a true simulation:

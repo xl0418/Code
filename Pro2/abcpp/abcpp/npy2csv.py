@@ -61,3 +61,17 @@ bestmodel_name = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/BaleenWhales
 modeldata_df.to_csv(filesmcms_name, encoding='utf-8', index=False)
 fitness_df.to_csv(filesmcfit_name, encoding='utf-8', index=False)
 bestmodel_df.to_csv(bestmodel_name, encoding='utf-8', index=False)
+
+
+
+# estimates for DR
+bestDR = fit_index[np.where(np.logical_and(fit_index>=500, fit_index<1000))]-500
+gamma_DR_mean = np.mean(ms_data['gamma_data_DR'][19,bestDR])
+a_DR_mean = np.mean(ms_data['a_data_DR'][19,bestDR])
+m_DR_mean = np.mean(ms_data['m_data_DR'][19,bestDR])
+
+
+# estimate for NH
+bestNH = fit_index[np.where(fit_index>=1000)]-1000
+gamma_NH_mean = np.mean(ms_data['gamma_data_NH'][19,bestNH])
+m_NH_mean = np.mean(ms_data['m_data_NH'][19,bestNH])

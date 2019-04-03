@@ -15,7 +15,7 @@ def competition_functions_candi(a, zi):
     return beta, sigma
 
 
-def Candimodels(td, param):
+def Candimodels(td, param,mode = 'l'):
     # parameters from DVParam
     gamma = param[0]
     a = param[1]
@@ -65,5 +65,7 @@ def Candimodels(td, param):
             node = node + 1
             next_event = events[node]
             idx = np.where(existing_species[node] == 1)[0]
-
-    return { 'sim_time': i + 1,  'Z': trait_RI_dr }
+    if mode == 'f':
+        return { 'sim_time': i + 1,  'Z': trait_RI_dr }
+    else:
+        return { 'sim_time': i + 1,  'Z': trait_RI_dr[i,:] }

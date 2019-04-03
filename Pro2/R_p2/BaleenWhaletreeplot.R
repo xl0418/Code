@@ -35,41 +35,86 @@ species_label = obsZ_emp[,1]
 sorted.species.labels <- obsZ_emp[order(obsZ_emp[,2]),1]
 
 
-filepredict_name =  paste0(dir,'predictsim.csv')
+filepredict_name =  paste0(dir,'predictsimTPUS.csv')
 predictZ = read.csv(filepredict_name)
+filepredict_DR =  paste0(dir,'predictsimDRUS5s.csv')
+predictZDR = read.csv(filepredict_DR)
+filepredict_NH =  paste0(dir,'predictsimNHUS5s.csv')
+predictZNH = read.csv(filepredict_NH)
+
+sort = 1
+
+if(sort == 0){
+  predictZ_matrix = as.matrix(predictZ)
+  
+  predictZ_matrixDR = as.matrix(predictZDR)
+  
+  predictZ_matrixNH = as.matrix(predictZNH)
+}else{
+  predictZ_matrix = as.matrix(predictZ)
+  predictZ_matrix=t(apply(predictZ_matrix,1,sort))
+  predictZ_matrixDR = as.matrix(predictZDR)
+  predictZ_matrixDR=t(apply(predictZ_matrixDR,1,sort))
+  
+  predictZ_matrixNH = as.matrix(predictZNH)
+  predictZ_matrixNH=t(apply(predictZ_matrixNH,1,sort))
+  
+}
 
 
 
-predictZ_matrix = as.matrix(predictZ)
-predictZ_mean = colMeans(predictZ_matrix)
 
 samplesize = nrow(predictZ_matrix)
+
 dimnames(predictZ_matrix)[[2]] = sorted.species.labels
+dimnames(predictZ_matrixDR)[[2]] = sorted.species.labels
+dimnames(predictZ_matrixNH)[[2]] = sorted.species.labels
 
 d_all = as.data.frame(as.table(predictZ_matrix))[,2:3]
 colnames(d_all) = c('species','traitall')
+d_allDR = as.data.frame(as.table(predictZ_matrixDR))[,2:3]
+colnames(d_allDR) = c('species','traitall')
+d_allNH = as.data.frame(as.table(predictZ_matrixNH))[,2:3]
+colnames(d_allNH) = c('species','traitall')
 
 obsZ_mean = obsZ_emp[,2]
 
 d_meanemp = data.frame(species=species_label, trait=obsZ_mean)
-d_meansim = data.frame(species=species_label, traitdot=predictZ_mean)
 
 
-plot_tree <- ggtree(phylo_test)+geom_tiplab(size=2.5)
+plot_tree <- ggtree(phylo_test)+geom_tiplab(size=4)+xlim(0,80)
 
 # plot_dottips = plot_tree %<+% d_meanemp+ geom_tippoint(aes(size=trait))
 
 
 
 
-plot_sepdots = facet_plot(plot_tree, panel="dot", data=d_meanemp, geom=geom_point, aes(x=trait), color='firebrick')+ theme_tree2()
+# plot_sepdots = facet_plot(plot_tree, panel="dot", data=d_meanemp, geom=geom_point, aes(x=trait), color='firebrick')+ theme_tree2()
 
-plot_sepboxplt <- facet_plot(plot_tree, panel="Trait", data=d_all, geom_boxploth, 
+plot_sepboxplt <- facet_plot(plot_tree, panel="TP Trait", data=d_all, geom_boxploth, 
                              mapping = aes(x=traitall, group=label ))  + theme_tree2()+
   theme(strip.background = element_rect(fill="#D1B6E1"))
 
-p_final <- facet_plot(plot_sepboxplt+xlim_tree(35), panel="Trait", data=d_meanemp, geom_point, 
+p_finalTP <- facet_plot(plot_sepboxplt+xlim_tree(45), panel="TP Trait", data=d_meanemp, geom_point, 
            mapping = aes(x=trait, group=label ),color = 'red')
+
+
+
+plot_sepboxpltDR <- facet_plot(p_finalTP, panel="DR Trait", data=d_allDR, geom_boxploth, 
+                             mapping = aes(x=traitall, group=label ))  + theme_tree2()+
+  theme(strip.background = element_rect(fill="#D1B6E1"))
+
+p_finalDR <- facet_plot(plot_sepboxpltDR+xlim_tree(45), panel="DR Trait", data=d_meanemp, geom_point, 
+                      mapping = aes(x=trait, group=label ),color = 'red')
+
+
+
+plot_sepboxpltNH <- facet_plot(p_finalDR, panel="NH Trait", data=d_allNH, geom_boxploth, 
+                             mapping = aes(x=traitall, group=label ))  + theme_tree2()+
+  theme(strip.background = element_rect(fill="#D1B6E1"))
+
+p_final <- facet_plot(plot_sepboxpltNH+xlim_tree(45), panel="NH Trait", data=d_meanemp, geom_point, 
+                      mapping = aes(x=trait, group=label ),color = 'red')
 
 p_final
 

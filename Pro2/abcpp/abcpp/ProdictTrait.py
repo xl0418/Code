@@ -8,6 +8,10 @@ import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParam
 import dvtraitsim_cpp as dvcpp
 import pandas as pd
+sys.path.append('C:/Liang/Code/Pro2/abcpp/abcpp/')
+from PhyloDiff_model_sim import Candimodels
+from multiprocessing import Pool
+from itertools import repeat
 
 def argsort2D(X):
     return np.arange(len(X))[:, np.newaxis], np.argsort(X, axis=1)
@@ -22,11 +26,14 @@ a = .617900
 nu = 2.411e-11
 K = 10e8
 meantrait = 32.50540571860487
-
+particle_size = 1000
 td = DVTreeData(path=files, scalar=1000)
+
+
+
 param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=meantrait, Vmax=1, inittrait=meantrait, initpop=500,
                 initpop_sigma = 10.0, break_on_mu=False)
-params = np.tile(param, (1000, 1))       # duplicate
+params = np.tile(param, (particle_size, 1))       # duplicate
 
 
 predictsim = dvcpp.DVSim(td, params)
@@ -34,14 +41,53 @@ predictsim = dvcpp.DVSim(td, params)
 valid = np.where(predictsim['sim_time'] == td.sim_evo_time)[0]
 
 Z = predictsim['Z'][valid]
-i, j = argsort2D(Z)
-Z = Z[i, j]
+# i, j = argsort2D(Z)
+# Z = Z[i, j]
 # V = pop['V'][valid][i, j]
 Z = np.nan_to_num(Z)
 
 Z_df = pd.DataFrame(Z)
-Z_df.to_csv(files+'predictsim.csv',sep=',',index=False)
+Z_df.to_csv(files+'predictsimTPUS.csv',sep=',',index=False)
 
 
+# DR simulations
+candiparam = np.array([0.0, 0.0, meantrait, 1.0, meantrait, 1.0])
+
+params_DR = np.tile(candiparam, (particle_size, 1))
+params_DR[:, 0] = .638579798972643  # randomize 'gamma'
+params_DR[:, 1] = .7627260725192937 # randomize 'a'
+params_DR[:, 3] =18.421144252900813  # randomize 'm'
+params_DR[:, 5] = .5  # randomize delta
+
+num_cores = Pool(8)  # the number of cores
+simmodeldr_list = num_cores.starmap(Candimodels, zip(repeat(td), params_DR))
+valid_DR = np.where([simmodeldr_list[i]['sim_time'] == td.sim_evo_time for i in range(particle_size)])[0]
+Z = np.zeros((1, td.total_species))
+for valid_DR_Z in valid_DR:
+    Z_modeldr = simmodeldr_list[valid_DR_Z]['Z']
+    Z = np.vstack([Z, Z_modeldr])
+
+Z_DR = Z[1:,:]
+Z_DR = pd.DataFrame(Z_DR)
+Z_DR.to_csv(files+'predictsimDRUS5s.csv',sep=',',index=False)
+
+
+# NH simulations
+params_NH = np.tile(candiparam, (particle_size, 1))
+params_NH[:, 0] =  1.1127631420420114 # randomize 'gamma'
+params_NH[:, 3] = 1.5632171450531234  # randomize 'm'
+params_NH[:, 5] = .5  # randomize delta
+
+num_cores = Pool(8)  # the number of cores
+simmodelnh_list = num_cores.starmap(Candimodels, zip(repeat(td), params_NH))
+valid_NH = np.where([simmodelnh_list[i]['sim_time'] == td.sim_evo_time for i in range(particle_size)])[0]
+Z = np.zeros((1, td.total_species))
+for valid_NH_Z in valid_NH:
+    Z_modelnh = simmodelnh_list[valid_NH_Z]['Z']
+    Z = np.vstack([Z, Z_modelnh])
+
+Z_NH = Z[1:,:]
+Z_NH = pd.DataFrame(Z_NH)
+Z_NH.to_csv(files+'predictsimNHUS5s.csv',sep=',',index=False)
 
 
