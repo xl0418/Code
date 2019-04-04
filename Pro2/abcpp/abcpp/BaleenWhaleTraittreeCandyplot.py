@@ -6,9 +6,7 @@ if platform.system()=='Windows':
     sys.path.append('C:/Liang/abcpp_emp/abcpp')
 elif platform.system()=='Darwin':
     sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
-import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParam
-import dvtraitsim_cpp as dvcpp
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -17,7 +15,7 @@ sigma2 = 0.5  # Brownian Motion variance
 meantrait = 0.0
 # the generating params for models
 
-generating = 'NH'
+generating = 'DR'
 if generating == 'DR':
     a = 0.1
 elif generating == 'NH':
@@ -59,7 +57,7 @@ for index_g in range(len(gamma_vec)):
         print( count)
         candiparam = np.array([gamma1, a, meantrait, m, meantrait, sigma2])
 
-        simresult = Candimodels(td,candiparam)
+        simresult = Candimodels(td,candiparam,mode = 'f')
         # if pic==0:
         evo_time, total_species = td.sim_evo_time,td.total_species
         trait_RI_dr = simresult['Z']

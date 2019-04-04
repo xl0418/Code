@@ -32,7 +32,7 @@ para_data_a_df.to_csv(filesmca_name, encoding='utf-8', index=False)
 # For model selection
 iterations = 20
 generating = 'TP'
-fileMS = 'C:/Liang/Googlebox/Research/Project2/modelsele/example1/modelsele%s.npy' % generating
+# fileMS = 'C:/Liang/Googlebox/Research/Project2/modelsele/example1/modelsele%s.npy' % generating
 fileMS = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/BaleenWhalesMS.npy'
 
 assert os.path.isfile(fileMS),"%s doesn't exist!" % fileMS
@@ -54,12 +54,12 @@ bestmodel_df = pd.DataFrame(bestmodel)
 modeldata_df = pd.DataFrame(ms_data['model_data'])
 fitness_df = pd.DataFrame(ms_data['fitness'])
 
-filesmcms_name = 'C:/Liang/Googlebox/Research/Project2/modelsele/example1/modeldata%s.csv' % generating
-filesmcfit_name = 'C:/Liang/Googlebox/Research/Project2/modelsele/example1/modelfit%s.csv' % generating
+# filesmcms_name = 'C:/Liang/Googlebox/Research/Project2/modelsele/example1/modeldata%s.csv' % generating
+# filesmcfit_name = 'C:/Liang/Googlebox/Research/Project2/modelsele/example1/modelfit%s.csv' % generating
 # bestmodel_name = 'C:/Liang/Googlebox/Research/Project2/modelsele/example1/bestmodel%s.csv' % generating
 bestmodel_name = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/BaleenWhalesMS.csv'
-modeldata_df.to_csv(filesmcms_name, encoding='utf-8', index=False)
-fitness_df.to_csv(filesmcfit_name, encoding='utf-8', index=False)
+# modeldata_df.to_csv(filesmcms_name, encoding='utf-8', index=False)
+# fitness_df.to_csv(filesmcfit_name, encoding='utf-8', index=False)
 bestmodel_df.to_csv(bestmodel_name, encoding='utf-8', index=False)
 
 
@@ -75,3 +75,4 @@ m_DR_mean = np.mean(ms_data['m_data_DR'][19,bestDR])
 bestNH = fit_index[np.where(fit_index>=1000)]-1000
 gamma_NH_mean = np.mean(ms_data['gamma_data_NH'][19,bestNH])
 m_NH_mean = np.mean(ms_data['m_data_NH'][19,bestNH])
+
