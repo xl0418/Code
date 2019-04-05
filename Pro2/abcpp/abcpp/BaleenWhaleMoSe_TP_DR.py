@@ -75,7 +75,7 @@ modelnum = 2
 sigma2 = 0.5
 population = 1000  # number of the particles for each iteration
 total_population = population * modelnum
-generations = 50  # number of the iterations
+generations = 70  # number of the iterations
 # let's try to find a true simulation:
 # The generating paras
 
