@@ -21,8 +21,8 @@ a_DR_mean =  0.7627260725192937
 m_DR_mean = 18.421144252900813
 
 # paras for NH
-gamma_NH_mean = 1.1127631420420114
-m_NH_mean = 1.5632171450531234
+gamma_NH_mean = 0.231243
+m_NH_mean = 0.014966
 
 # paras for TP
 gamma = .000236

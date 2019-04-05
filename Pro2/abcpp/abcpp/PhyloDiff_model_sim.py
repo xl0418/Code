@@ -10,9 +10,8 @@ def competition_functions_candi(a, zi):
     T = zi[:, np.newaxis] - zi  # trait-distance matrix (via 'broadcasting')
     t1 = np.exp(-a * T ** 2)
     t2 = np.sign(T)
-    beta = np.sum(t1, axis=1)
     sigma = np.sum(t2 * t1, axis=1)
-    return beta, sigma
+    return sigma
 
 
 def Candimodels(td, param,mode = 'l'):
@@ -42,10 +41,11 @@ def Candimodels(td, param,mode = 'l'):
         # pull current state
         zi = trait_RI_dr[i, idx]
         dtz = theta - zi
-        beta, sigma = competition_functions_candi(a, zi)
+        sigma = competition_functions_candi(a, zi)
 
         # update
         trait_RI_dr[i + 1, idx] = zi +  gamma * dtz + m * sigma + np.random.normal(0.0, var_trait,size = len(zi))
+        # To prevent overflow for some extreme parameters, like m > 1000
         if len(np.where(trait_RI_dr[i+1, idx]>1e6)[0])>0:
             break
             print('Overflow simulation...')
@@ -65,7 +65,7 @@ def Candimodels(td, param,mode = 'l'):
             node = node + 1
             next_event = events[node]
             idx = np.where(existing_species[node] == 1)[0]
-    if mode == 'f':
+    if mode == 'f': # to store values for all time steps for plotting trait trace
         return { 'sim_time': i + 1,  'Z': trait_RI_dr }
-    else:
+    else:   # only store the last snapshoot to do model selection.
         return { 'sim_time': i + 1,  'Z': trait_RI_dr[i,:] }

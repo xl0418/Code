@@ -8,11 +8,11 @@ source('C:/Liang/Code/Pro2/R_p2/theme_henrik.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/dendf2fredf.R', echo=TRUE)
 
 # setwd("C:/Liang/Googlebox/Research/Project2/modelsele/example1/")
-setwd("C:/Liang/Googlebox/Research/Project2/BaleenWhales/")
+setwd("C:/Liang/Googlebox/Research/Project2/BaleenWhales/50itertest/")
 # 
 # generating = 'TP'
 # file1_name = paste0('bestmodel',generating,'.csv')
-file1_name = paste0('BaleenWhalesMS.csv')
+file1_name = paste0('BWMS_50_TPDR.csv')
 
 
 bmdata = read.csv(file1_name)
@@ -21,7 +21,7 @@ bmdata_matrix = as.matrix(t(bmdata))
 bm_df = as.data.frame(as.table(bmdata_matrix))[,2:3]
 
 colnames(bm_df) = c('Iteration','Samples')
-levels(bm_df$Iteration) = c(1:20)
+levels(bm_df$Iteration) = c(1:50)
 
 
 
@@ -40,11 +40,10 @@ ggplot(bm_df, aes(x = Samples, y = Iteration)) +
 
 # Single heatmap of SMC
 finvec=c()
-for(i in c(1:20)){
+for(i in c(1:50)){
   model.count <- c(length(which(bmdata_matrix[,i]==0)),
-                   length(which(bmdata_matrix[,i]==1)),
-                   length(which(bmdata_matrix[,i]==2)))
-  modelnames <- c(0,1,2)
+                   length(which(bmdata_matrix[,i]==1)))
+  modelnames <- c(0,1)
   finvec = rbind(finvec,cbind(model.count,modelnames,i))
 }
 
@@ -58,7 +57,7 @@ singlep <- ggplot(htdf, aes(x = value, y = ordered(Iteration, levels =rev(sort(u
   labs(title = "Evolution of SMC",
        x = "Models", y = "Iteration", fill = "Number of samples") +
   theme(legend.position = "bottom", legend.box.just = "bottom")+
-  scale_x_discrete(limit = c(0, 1, 2),labels = c("TP","DR","NH"))
+  scale_x_discrete(limit = c(0, 1),labels = c("TP","DR"))
 
 singlep
 
