@@ -12,16 +12,16 @@ setwd("C:/Liang/Googlebox/Research/Project2/BaleenWhales/50itertest/")
 # 
 # generating = 'TP'
 # file1_name = paste0('bestmodel',generating,'.csv')
-file1_name = paste0('BWMS_50_TPDR.csv')
+file1_name = paste0('BWMS_50_TPDR2.csv')
 
 
 bmdata = read.csv(file1_name)
 bmdata_matrix = as.matrix(t(bmdata))
-
+num.iterations <- dim(bmdata_matrix)[2]
 bm_df = as.data.frame(as.table(bmdata_matrix))[,2:3]
 
 colnames(bm_df) = c('Iteration','Samples')
-levels(bm_df$Iteration) = c(1:50)
+levels(bm_df$Iteration) = c(1:num.iterations)
 
 
 
@@ -40,7 +40,7 @@ ggplot(bm_df, aes(x = Samples, y = Iteration)) +
 
 # Single heatmap of SMC
 finvec=c()
-for(i in c(1:50)){
+for(i in c(1:num.iterations)){
   model.count <- c(length(which(bmdata_matrix[,i]==0)),
                    length(which(bmdata_matrix[,i]==1)))
   modelnames <- c(0,1)

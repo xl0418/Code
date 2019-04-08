@@ -30,14 +30,15 @@ para_data_a_df.to_csv(filesmca_name, encoding='utf-8', index=False)
 
 
 # For model selection
-iterations = 50
 generating = 'TP'
 # fileMS = 'C:/Liang/Googlebox/Research/Project2/modelsele/example1/modelsele%s.npy' % generating
-fileMS = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/50itertest/BWMS_50_TPDR.npy'
+fileMS = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/50itertest/BWMS_50_TPDR2.npy'
 
 assert os.path.isfile(fileMS),"%s doesn't exist!" % fileMS
 ms_data = np.load(fileMS).item()
-modeldata = ms_data['model_data']
+modeldata = ms_data['model_data'][1:,:]
+iterations = modeldata.shape[0]
+
 fitness = ms_data['fitness']
 total_population = modeldata.shape[1]
 bestpercent_index = int(total_population // 5)
@@ -61,7 +62,7 @@ fitness_df = pd.DataFrame(ms_data['fitness'])
 # fitness_df.to_csv(filesmcfit_name, encoding='utf-8', index=False)
 
 
-bestmodel_name = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/50itertest/BWMS_50_TPDR.csv'
+bestmodel_name = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/50itertest/BWMS_50_TPDR2.csv'
 bestmodel_df.to_csv(bestmodel_name, encoding='utf-8', index=False)
 
 
