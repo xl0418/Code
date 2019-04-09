@@ -21,8 +21,8 @@ def argsort2D(X):
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 
 files = dir_path + 'treedata/'
-gamma = .000236
-a = .617900
+gamma = 0.0003079
+a = .62
 nu = 2.411e-11
 K = 10e8
 meantrait = 32.50540571860487
@@ -54,9 +54,9 @@ Z_df.to_csv(files+'predictsimTPUS.csv',sep=',',index=False)
 candiparam = np.array([0.0, 0.0, meantrait, 1.0, meantrait, 1.0])
 
 params_DR = np.tile(candiparam, (particle_size, 1))
-params_DR[:, 0] = .638579798972643  # randomize 'gamma'
-params_DR[:, 1] = .7627260725192937 # randomize 'a'
-params_DR[:, 3] =18.421144252900813  # randomize 'm'
+params_DR[:, 0] = 0.05888937191396402  # randomize 'gamma'
+params_DR[:, 1] = 0.04092703831718248 # randomize 'a'
+params_DR[:, 3] =1  # randomize 'm'
 params_DR[:, 5] = .5  # randomize delta
 
 num_cores = Pool(8)  # the number of cores
@@ -69,7 +69,7 @@ for valid_DR_Z in valid_DR:
 
 Z_DR = Z[1:,:]
 Z_DR = pd.DataFrame(Z_DR)
-Z_DR.to_csv(files+'predictsimDRUS5s.csv',sep=',',index=False)
+Z_DR.to_csv(files+'predictsimDR_fixm.csv',sep=',',index=False)
 
 
 # NH simulations

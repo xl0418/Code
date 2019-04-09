@@ -32,9 +32,9 @@ def normalized_norm(x, y):
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 
 files = dir_path + 'treedata/'
-savedir = dir_path + '50itertest/BWMS_50_TPDR2.npy'
+savedir = dir_path + '50itertest/BWMS_50_TPDR_100t.npy'
 
-td = DVTreeData(path=files, scalar=1000)
+td = DVTreeData(path=files, scalar=300)
 num_cores = Pool(8)  # the number of cores
 allowmodeldie = 'off'
 K=10e8
@@ -63,7 +63,7 @@ for label in extantlabels_array:
     length_index.append(np.where(lengthdata_array[:,0]==label)[0][0])
 
 logTL = lengthdata_array[length_index,1].astype(np.float)
-length = 10**logTL/40
+length = 10**logTL/100
 obsZ = length
 print('trying to estimate the parameters','...')
 
@@ -75,7 +75,7 @@ modelnum = 2
 sigma2 = 0.5
 population = 1000  # number of the particles for each iteration
 total_population = population * modelnum
-generations = 70  # number of the iterations
+generations = 50  # number of the iterations
 # let's try to find a true simulation:
 # The generating paras
 
@@ -95,7 +95,7 @@ params_TP[:, 3] = np.random.uniform(0.0, 2 * nu, params_TP.shape[0])  # randomiz
 params_DR = np.tile(candiparam, (population, 1))
 params_DR[:, 0] = np.random.uniform(0.0, 1.0, params_DR.shape[0])  # randomize 'gamma'
 params_DR[:, 1] = np.random.uniform(0.0, 1.0, params_DR.shape[0])  # randomize 'a'
-params_DR[:, 3] = np.random.uniform(0.0, 5.0, params_DR.shape[0])  # randomize 'm'
+params_DR[:, 3] = 1.0 #np.random.uniform(0.0, 5.0, params_DR.shape[0])  # randomize 'm'
 params_DR[:, 5] = np.random.uniform(0.0, sigma2, params_DR.shape[0])  # randomize delta
 
 # model choice
@@ -194,7 +194,7 @@ for g in range(generations):
     # fitness[g,valid] += 1.0 - normalized_norm(np.sqrt(V), np.sqrt(obsV))
 
     # print something...
-    q5 = np.argsort(fitness[g, :])[-int(total_population // 5)]  # best 25%
+    q5 = np.argsort(fitness[g, :])[-int(total_population // 2)]  # best 25%
     fit_index = np.where(fitness[g, :] > fitness[g, q5])[0]
 
     modelTPperc = len(np.where(propose_model[fit_index] == 0)[0]) / len(fit_index)
@@ -220,7 +220,7 @@ for g in range(generations):
     else:
         propose_model = model_params
 
-        q5_TP = np.argsort(fitness[g, :population - 1])[-int(population // 10)]  # best 25%
+        q5_TP = np.argsort(fitness[g, :population - 1])[-int(population // 20)]  # best 25%
         q5_DR = np.argsort(fitness[g, population:2 * population - 1])[-int(population // 20)] + population  # best 25%
 
         fit_index_TP = np.where(fitness[g, :population - 1] > fitness[g, q5_TP])[0]
@@ -271,7 +271,7 @@ for g in range(generations):
         params_DR = np.tile(candiparam, (len(modelDR[0]), 1))
         params_DR[:, 0] = propose_gamma_dr
         params_DR[:, 1] = propose_a_dr
-        params_DR[:, 3] = propose_m_dr
+        params_DR[:, 3] = 1.0 #propose_m_dr
         if del_mute == 'on':
             params_DR[:, 5] = sigma2
             weight_m_dr.fill(1 / len(weight_m_dr))

@@ -12,7 +12,7 @@ setwd("C:/Liang/Googlebox/Research/Project2/BaleenWhales/50itertest/")
 # 
 # generating = 'TP'
 # file1_name = paste0('bestmodel',generating,'.csv')
-file1_name = paste0('BWMS_50_TPDR2.csv')
+file1_name = paste0('BWMS_50_TPDR3.csv')
 
 
 bmdata = read.csv(file1_name)
@@ -24,17 +24,17 @@ colnames(bm_df) = c('Iteration','Samples')
 levels(bm_df$Iteration) = c(1:num.iterations)
 
 
-
-
-# Single mountain plot of the evolution of SMC
-ggplot(bm_df, aes(x = Samples, y = Iteration)) + 
-  geom_density_ridges_gradient(aes(fill = factor(as.integer(bm_df$Iteration) %% 2)),
-                               scale = 3,size =0.25,alpha = .4, color = "lightblue") +
-  theme_ridges()+theme_henrik(grid='', legend.position='none')+
-  scale_fill_manual(name = 'Richness',values = c('0' = '#2A7FFF', '1' = '#5599FF'))+
-  labs(title = 'Evolution of SMC')+
-  theme(legend.position='none')+
-  scale_y_discrete(limits = rev(levels(bm_df$Iteration)))
+# 
+# 
+# # Single mountain plot of the evolution of SMC
+# ggplot(bm_df, aes(x = Samples, y = Iteration)) + 
+#   geom_density_ridges_gradient(aes(fill = factor(as.integer(bm_df$Iteration) %% 2)),
+#                                scale = 3,size =0.25,alpha = .4, color = "lightblue") +
+#   theme_ridges()+theme_henrik(grid='', legend.position='none')+
+#   scale_fill_manual(name = 'Richness',values = c('0' = '#2A7FFF', '1' = '#5599FF'))+
+#   labs(title = 'Evolution of SMC')+
+#   theme(legend.position='none')+
+#   scale_y_discrete(limits = rev(levels(bm_df$Iteration)))
 
 
 
@@ -54,7 +54,7 @@ colnames(htdf) = c('Frequence','value','Iteration')
 singlep <- ggplot(htdf, aes(x = value, y = ordered(Iteration, levels =rev(sort(unique(htdf$Iteration)))),
                             fill = Frequence))+ geom_tile() +
   scale_fill_viridis_c(option = "A") +theme_hc()+
-  labs(title = "Evolution of SMC",
+  labs(title = "Top 20% goodness of fit",
        x = "Models", y = "Iteration", fill = "Number of samples") +
   theme(legend.position = "bottom", legend.box.just = "bottom")+
   scale_x_discrete(limit = c(0, 1),labels = c("TP","DR"))

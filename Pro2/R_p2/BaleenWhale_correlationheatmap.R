@@ -8,6 +8,7 @@ library(ggimage)
 library(DDD)
 library("PerformanceAnalytics")
 library(stringr)
+library(gplots)
 
 
 os = Sys.info()['sysname']
@@ -22,6 +23,7 @@ emdata = read.nexus(emdatadir)
 baleenwhale = phylo2L(emdata,error = 1e-5)
 L_ext = baleenwhale$L
 extantspecieslabel = baleenwhale$ESL
+
 extantspecieslabel <- c("B.mysticetus", "E.australis"       
 , "E.glacialis", "E.japonica"        
 , "B.acutorostrata" ,"B.bonaerensis"  
@@ -45,7 +47,7 @@ sorted.species.names <- extantspecieslabel[sorted.order]
 # 1000 simulation results
 filepredict_name =  paste0(dir,'predictsimTPUS.csv')
 predictZ = read.csv(filepredict_name)
-filepredict_DR =  paste0(dir,'predictsimDRUS5s.csv')
+filepredict_DR =  paste0(dir,'predictsimDR_fixm.csv')
 predictZDR = read.csv(filepredict_DR)
 
 corr <- c()
@@ -61,7 +63,7 @@ dend <- as.dendrogram(hc)
 plot(dend, horiz=TRUE)
 
 
-heatmap(corr.DR, Rowv=dend, Colv=dend)
+heatmap.2(corr.DR, Rowv=dend, Colv=dend,col=bluered)
 
 
-chart.Correlation(corr.DR, histogram=TRUE, pch=19)
+chart.Correlation(corr.DR)
