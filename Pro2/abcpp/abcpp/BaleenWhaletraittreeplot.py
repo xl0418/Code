@@ -12,10 +12,10 @@ import matplotlib.pyplot as plt
 theta = 0  # optimum of natural selection
 r = 1  # growth rate
 Vmax = 1
-scalar = 1000
+scalar = 20000
 K=10e8
 nu=1/(100*K)
-timegap = 1
+timegap = 20
 
 # let's try to find a true simulation:
 
@@ -67,7 +67,7 @@ for index_g in range(len(gamma_vec)):
         population_RI_dr[population_RI_dr==0] = np.nan
         V_dr = simresult['V']
         num_lines = total_species
-        x = np.arange(evo_time/timegap+1)
+        x = np.arange(evo_time/timegap)
 
         labels = []
         for i in range(1, num_lines + 1):
@@ -110,10 +110,10 @@ for index_g in range(len(gamma_vec)):
 dir_fig = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/traittree'
 
 
-f1.savefig(dir_fig+'TP1q.png')
+f1.savefig(dir_fig+'TP2w.png')
 plt.close(f1)
-f2.savefig(dir_fig+'NP1q.png')
+f2.savefig(dir_fig+'NP2w.png')
 plt.close(f2)
-f3.savefig(dir_fig+'VP1q.png')
+f3.savefig(dir_fig+'VP2w.png')
 plt.close(f3)
 plt.close('all')

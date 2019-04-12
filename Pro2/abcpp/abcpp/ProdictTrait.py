@@ -12,6 +12,7 @@ sys.path.append('C:/Liang/Code/Pro2/abcpp/abcpp/')
 from PhyloDiff_model_sim import Candimodels
 from multiprocessing import Pool
 from itertools import repeat
+import time
 
 def argsort2D(X):
     return np.arange(len(X))[:, np.newaxis], np.argsort(X, axis=1)
@@ -27,7 +28,7 @@ nu = 2.411e-11
 K = 10e8
 meantrait = 32.50540571860487
 particle_size = 1000
-td = DVTreeData(path=files, scalar=1000)
+td = DVTreeData(path=files, scalar=20000)
 
 
 
@@ -60,7 +61,15 @@ params_DR[:, 3] =1  # randomize 'm'
 params_DR[:, 5] = .5  # randomize delta
 
 num_cores = Pool(8)  # the number of cores
+
+start = time.time()
+
 simmodeldr_list = num_cores.starmap(Candimodels, zip(repeat(td), params_DR))
+
+end = time.time()
+print(end - start)
+
+
 valid_DR = np.where([simmodeldr_list[i]['sim_time'] == td.sim_evo_time for i in range(particle_size)])[0]
 Z = np.zeros((1, td.total_species))
 for valid_DR_Z in valid_DR:
@@ -89,5 +98,25 @@ for valid_NH_Z in valid_NH:
 Z_NH = Z[1:,:]
 Z_NH = pd.DataFrame(Z_NH)
 Z_NH.to_csv(files+'predictsimNHUS5s.csv',sep=',',index=False)
+
+
+
+# Speed test
+
+candiparam_sp = np.array([0.0, 0.0, 0, 1.0, 0, 1.0])
+td_sp = DVTreeData(path=files, scalar=20000)
+
+candiparam_sp[ 0] = 0.05888937191396402  # randomize 'gamma'
+candiparam_sp[ 1] = 0.04092703831718248 # randomize 'a'
+candiparam_sp[ 3] =1  # randomize 'm'
+candiparam_sp[ 5] = .5  # randomize delta
+start = time.time()
+
+sp_test = Candimodels(td_sp, candiparam_sp)
+end = time.time()
+print(end - start)
+
+
+
 
 

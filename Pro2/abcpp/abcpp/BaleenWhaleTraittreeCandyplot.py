@@ -10,14 +10,15 @@ from dvtraitsim_shared import DVTreeData, DVParam
 import numpy as np
 import matplotlib.pyplot as plt
 
-scalar = 1000
+scalar = 20000
 sigma2 = 0.5  # Brownian Motion variance
 meantrait = 0.0
 # the generating params for models
 
 generating = 'DR'
 if generating == 'DR':
-    a = 0.1
+    # a = 0.5
+    m = 1
 elif generating == 'NH':
     a = 0
 else:
@@ -39,6 +40,7 @@ files = dir_path + 'treedata/'
 
 gamma_vec = np.array([0, 0.001, 0.01, 0.1, 0.5, 1])
 m_vec = gamma_vec
+a_vec = gamma_vec
 row_gamma = len(gamma_vec)
 count = 0
 
@@ -47,13 +49,15 @@ td = DVTreeData(path=files, scalar=scalar)
 
 f1, axes1 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9),sharey=True,sharex=True) #
 
-label_a = (['m=0','m=.001','m=.01','m=.1','m=.5','m=1'])
+# label_a = (['m=0','m=.001','m=.01','m=.1','m=.5','m=1'])
+label_a = (['a=0','a=.001','a=.01','a=.1','a=.5','a=1'])
+
 label_gamma = (['$\gamma$=0','$\gamma$=.001','$\gamma$=.01','$\gamma$=.1','$\gamma$=.5','$\gamma$=1'])
 
 for index_g in range(len(gamma_vec)):
     gamma1=gamma_vec[index_g]
     for index_a in range(len(m_vec)):
-        m=m_vec[index_a]
+        a=a_vec[index_a]
         print( count)
         candiparam = np.array([gamma1, a, meantrait, m, meantrait, sigma2])
 
@@ -88,8 +92,8 @@ for index_g in range(len(gamma_vec)):
         count += 1
 
 
-dir_fig = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/traittree'
-f1.savefig(dir_fig+'TP1q.png')
+dir_fig = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/traittree/'
+f1.savefig(dir_fig+'TP2w.png')
 plt.close(f1)
 
 plt.close('all')

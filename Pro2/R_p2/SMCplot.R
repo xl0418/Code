@@ -7,14 +7,22 @@ source('C:/Liang/Code/Pro2/R_p2/seprate_vec.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/theme_henrik.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/dendf2fredf.R', echo=TRUE)
 
-setwd("C:/Liang/PhdIntroProject2/smcplot")
+setwd("C:/Liang/Googlebox/Research/Project2/BaleenWhales/Est")
 
-test = 4
-file1_name = paste0('smcdataa',test,'.csv')
+# test = 4
+# file1_name = paste0('smcdataa',test,'.csv')
+# adata = read.csv(file1_name)
+# adata_matrix = as.matrix(t(adata))
+# 
+# file2_name = paste0('smcdatag',test,'.csv')
+# gammadata = read.csv(file2_name)
+# gammadata_matrix = as.matrix(t(gammadata))
+
+file1_name = paste0('est_a','.csv')
 adata = read.csv(file1_name)
 adata_matrix = as.matrix(t(adata))
 
-file2_name = paste0('smcdatag',test,'.csv')
+file2_name = paste0('est_g','.csv')
 gammadata = read.csv(file2_name)
 gammadata_matrix = as.matrix(t(gammadata))
 
@@ -64,7 +72,7 @@ for(i in c(1:30)){
   startp = (i-1)*10000+1
   endp = i*10000
   focalvec = a_df$Samples[startp:endp]
-  finvec1 = seprate_vec(vec = focalvec,leftendpoint = 0,rightendpoint = 2,binwidth = 0.001)
+  finvec1 = seprate_vec(vec = focalvec,leftendpoint = -0.2,rightendpoint = 0.2,binwidth = 0.001)
   finvec = rbind(finvec, cbind(finvec1,i))
 }
 
@@ -83,16 +91,16 @@ singlep
 
 
 # Combined heatmap of SMC
-resolution = 0.01
-htdfg = data.frame(dendf2fredf(dendf = gamma_df,iteration = 30,population = 10000,
-                               leftendpoint = 0,rightendpoint = 2,binwidth = resolution))
+resolution = 0.0001
+htdfg = data.frame(dendf2fredf(dendf = gamma_df,iteration = 30,population = 20000,
+                               leftendpoint = -.02,rightendpoint = 0.02,binwidth = resolution))
 htdfg = cbind(htdfg,'g')
 colnames(htdfg) = c('Frequence','value','Iteration','para')
 # htdf$Iteration = as.character(htdf$Iteration)
 
 
-htdfa = data.frame(dendf2fredf(dendf = a_df,iteration = 30,population = 10000,
-                               leftendpoint = 0,rightendpoint = 2,binwidth = resolution))
+htdfa = data.frame(dendf2fredf(dendf = a_df,iteration = 30,population = 20000,
+                               leftendpoint = -.02,rightendpoint = 0.02,binwidth = resolution))
 htdfa = cbind(htdfa,'a')
 colnames(htdfa) = c('Frequence','value','Iteration','para')
 # htdf$Iteration = as.character(htdf$Iteration)

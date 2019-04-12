@@ -62,7 +62,7 @@ for label in extantlabels_array:
     length_index.append(np.where(lengthdata_array[:,0]==label)[0][0])
 
 logTL = lengthdata_array[length_index,1].astype(np.float)
-length = logTL
+length = 10**logTL
 obsZ = length
 print('trying to estimate the parameters','...')
 

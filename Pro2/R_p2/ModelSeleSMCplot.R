@@ -27,7 +27,7 @@ levels(bm_df$Iteration) = c(1:num.iterations)
 # 
 # 
 # # Single mountain plot of the evolution of SMC
-# ggplot(bm_df, aes(x = Samples, y = Iteration)) + 
+# ggplot(bm_df, aes(x = Samples, y = Iteration)) +
 #   geom_density_ridges_gradient(aes(fill = factor(as.integer(bm_df$Iteration) %% 2)),
 #                                scale = 3,size =0.25,alpha = .4, color = "lightblue") +
 #   theme_ridges()+theme_henrik(grid='', legend.position='none')+
@@ -35,7 +35,7 @@ levels(bm_df$Iteration) = c(1:num.iterations)
 #   labs(title = 'Evolution of SMC')+
 #   theme(legend.position='none')+
 #   scale_y_discrete(limits = rev(levels(bm_df$Iteration)))
-
+# 
 
 
 # Single heatmap of SMC

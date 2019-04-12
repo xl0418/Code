@@ -1,9 +1,6 @@
 import sys
 import platform
-if platform.system()=='Windows':
-    sys.path.append('C:/Liang/abcpp_emp/abcpp')
-elif platform.system()=='Darwin':
-    sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
+sys.path.append('C:/Liang/abcpp_emp/abcpp')
 from dvtraitsim_shared import DVTreeData, DVParam
 from dvtraitsim_py import DVSim
 import numpy as np
@@ -11,27 +8,27 @@ import matplotlib.pyplot as plt
 sys.path.append('C:/Liang/Code/Pro2/abcpp/abcpp/')
 from PhyloDiff_model_sim import Candimodels
 
-scalar = 1000
-sigma2 = 0.02  # Brownian Motion variance
+scalar = 40000
+sigma2 = 0.5  # Brownian Motion variance
 meantrait = 32.50540571860487
 
 # paras for DR
-gamma_DR_mean = 0.638579798972643
-a_DR_mean =  0.7627260725192937
-m_DR_mean = 18.421144252900813
+gamma_DR_mean = 0.001
+a_DR_mean =  0.5
+m_DR_mean = 3
 
 # paras for NH
-gamma_NH_mean = 0.231243
-m_NH_mean = 0.014966
+# gamma_NH_mean = 0.231243
+# m_NH_mean = 0.014966
 
 # paras for TP
-gamma = .000236
-a = .617900
+gamma = .000
+a = 0.03
 nu = 2.411e-11
 K = 10e8
 
 
-timegap = 10
+timegap = 200
 
 # let's try to find a true simulation:
 
@@ -43,17 +40,20 @@ files = dir_path + 'treedata/'
 
 td = DVTreeData(path=files, scalar=scalar)
 
+label_model = ['TP','DR']
 
-f1, axes1 = plt.subplots(3, 1, figsize=(9, 9),sharey=True,sharex=True) #
+f1, axes1 = plt.subplots(len(label_model), 1, figsize=(9, 9),sharey=True,sharex=True) #
 
-label_model = ['TP','DR','NH']
 
 count = 0
 for model in label_model:
     if model == 'TP':
-        param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=meantrait, Vmax=1, inittrait=meantrait, initpop=500,
-                        initpop_sigma=10.0, break_on_mu=False)
-        simresult = DVSim(td, param)
+        for i in range(100):
+            param = DVParam(gamma=gamma, a=a, K=K, nu=nu, r=1, theta=meantrait, Vmax=1, inittrait=meantrait, initpop=500,
+                            initpop_sigma=10.0, break_on_mu=False)
+            simresult = DVSim(td, param)
+            if simresult['sim_time']==td.sim_evo_time:
+                break
 
     elif model == 'DR':
         candiparam = np.array([gamma_DR_mean, a_DR_mean, meantrait, m_DR_mean, meantrait, sigma2])
