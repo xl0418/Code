@@ -49,7 +49,7 @@ names = ['TP','DR']
 
 # Make the histogram using a list of lists
 # Normalize the flights and assign colors and names
-plt.hist([x1, x2], bins=20, color=colors, label=names)
+plt.hist([x1, x2], bins=50, color=colors,normed=True, label=names)
 
 # Plot formatting
 plt.legend()
