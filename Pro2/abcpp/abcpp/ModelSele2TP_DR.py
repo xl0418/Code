@@ -1,10 +1,8 @@
 import sys
-import platform
 sys.path.append('C:/Liang/abcpp_ms/abcpp')
 import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParamLiang,DVParamDrury
 import dvtraitsim_cpp as dvcpp
-import csv
 sys.path.append('C:/Liang/Code/Pro2/BaleenWhale_code/')
 from tp_update import tp_update
 from dr_update import dr_update
@@ -21,63 +19,93 @@ def normalized_norm(x, y):
     max_err = np.nanmax(diff_norm)
     return diff_norm / max_err
 
+# prep data
+# dir_path = os.path.dirname(os.path.realpath(__file__))
+# files = dir_path + '/../tree_data/example1/'
+dir_path = 'C:\\Liang\\Googlebox\\Research\\Project2\\'
+files = dir_path + 'treesim_newexp/example1/'
+savedir = dir_path+'modelsele/'
+file2 = savedir + 'example1/MS2w_fm_sigLar.npy'
 
-#full tree
-dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
-
-files = dir_path + 'treedata/'
-savedir = dir_path + '50itertest/BWMS1q_d40_fm1.npy'
-
-
-time_scaling = 1000 # prints python_script.py
-dividing = 4 # prints var1
-fix_m = 1 # prints var2
-
-td = DVTreeData(path=files, scalar=time_scaling)
-allowmodeldie = 'off'
+td = DVTreeData(path=files, scalar=20000)
+print(td.total_species)
 K=10e8
 nu=1/(100*K)
-del_mute ='on'
-prior = [0.5, 0.5, 0.5, 0.5,nu,nu]
-gamma_prior_mean = prior[0]
-gamma_prior_var = prior[1]
-a_prior_mean = prior[2]
-a_prior_var = prior[3]
-nu_prior_mean = prior[4]
-nu_prior_var = prior[5]
+meantrait=0.0
+sigma2 = 0.001  # Brownian Motion variance
+del_mute = 'on'
+allowmodeldie = 'off'
+fix_m = 1
+# the generating params for models
 
-with open(files+'extantspecieslabels.csv') as csv_file:
-    csv1_reader = csv.reader(csv_file, delimiter=',')
-    extantlabels = list(csv1_reader)
+generating = 'DR'
+# TP
+gamma = 0.001
+a = .5
 
-with open(dir_path+'slater_length_data.csv') as csv_file:
-    csv2_reader = csv.reader(csv_file, delimiter=',')
-    lengthdata = list(csv2_reader)
+# DR
+gene_gamma_dr = 0.001
+gene_a_dr=.5
+gene_m_dr=1.0
 
-extantlabels_array = np.array(extantlabels)[1:,1]
-lengthdata_array = np.array(lengthdata)
-length_index = []
-for label in extantlabels_array:
-    length_index.append(np.where(lengthdata_array[:,0]==label)[0][0])
 
-logTL = lengthdata_array[length_index,1].astype(np.float)
-length = 10**logTL/dividing
-obsZ = length
-print('trying to estimate the parameters','...')
 
-s = np.argsort(obsZ)
-obsZ = obsZ[s]
-obsZ = obsZ.astype(np.float)
+modelnum = 2
+population = 10000
+total_population = population * modelnum
+generations = 50
+# let's try to find a true simulation:
+# The generating paras
+gene_obs_param = DVParamLiang(gamma=0.01, a=0.5,K=K, h=1.0,nu=nu, r=1, theta=meantrait, V00 = .5, V01=.5,
+                           Vmax=1, inittrait=meantrait, initpop=500000,
+                    initpop_sigma=10.0, break_on_mu=False)
+gene_candiparam = DVParamDrury(gamma = 0.0, a=0.0, theta=meantrait, m=1.0, inittrait=meantrait, var_trait=sigma2)
+
+# When the generating model is TP...
+if generating == 'TP':
+    for r in range(10000):
+        obs = dvcpp.DVSimLiang(td, gene_obs_param)
+        if obs['sim_time'] == td.sim_evo_time:
+            break
+    if obs['sim_time'] < td.sim_evo_time:
+        print('hopeless, does not compute.')
+        sys.exit(-1)
+    s = np.argsort(obs['Z'])
+    obsN = obs['N'][s]
+    obsZ = obs['Z'][s]
+    obsV = obs['V'][s]
+    obsN = np.nan_to_num(obsN)
+    obsZ = np.nan_to_num(obsZ)
+    obsV = np.nan_to_num(obsV)
+
+elif generating == 'DR':
+    gene_candiparam[ 0] = gene_gamma_dr  # randomize 'gamma'
+    gene_candiparam[ 1] = gene_a_dr  # randomize 'a'
+    gene_candiparam[ 3] = gene_m_dr  # randomize 'm'
+    gene_candiparam[ 5] = sigma2  # randomize delta
+    gene_modelDR = dvcpp.DVSimDrury(td, gene_candiparam)
+    s = np.argsort(gene_modelDR['Z'])
+    obsZ = gene_modelDR['Z'][s]
+
+
+else:
+    print('Please specify the generating model...')
+
 meantrait = np.mean(obsZ)
 modelnum = 2
 sigma2 = 0.5
-population = 1000  # number of the particles for each iteration
+population = 10000  # number of the particles for each iteration
 total_population = population * modelnum
 generations = 50  # number of the iterations
 # let's try to find a true simulation:
 # The generating paras
 
-print('Try to find the generating model...' )
+print('Try to find the generating model: %s ...' % generating )
+if generating == 'TP':
+    print('With the generating params: gamma:%f; a:%f; nu: %.3e...' % (gamma,a,nu) )
+elif generating == 'DR':
+    print('With the generating params: gamma:%f; a:%f; m: %f...' % (gene_gamma_dr,gene_a_dr,gene_m_dr) )
+
 # let's try to find a true simulation:
 param_Liang = DVParamLiang(gamma=0.01, a=0.5,K=K, h=1.0,nu=nu, r=1, theta=meantrait, V00 = .5, V01=.5,
                            Vmax=1, inittrait=meantrait, initpop=500000,
@@ -290,5 +318,3 @@ para_data = {'model_data': model_data, 'fitness': fitness, 'gamma_data_TP': gamm
 
 
 np.save(savedir, para_data)
-
-# smc = np.load(file2).item()

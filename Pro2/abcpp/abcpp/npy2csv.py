@@ -36,7 +36,10 @@ para_data_a_df.to_csv(filesmca_name, encoding='utf-8', index=False)
 # For model selection
 generating = 'TP'
 # fileMS = 'C:/Liang/Googlebox/Research/Project2/modelsele/example1/modelsele%s.npy' % generating
-fileMS = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/50itertest/BWMS_50_TPDR3.npy'
+# fileMS = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/50itertest/BWMS_50_TPDR3.npy'
+fileMS_name = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/BWMSt20000_d4_f0'
+fileMS = fileMS_name + '.npy'
+
 
 assert os.path.isfile(fileMS),"%s doesn't exist!" % fileMS
 ms_data = np.load(fileMS).item()
@@ -66,7 +69,7 @@ bestmodel_df = pd.DataFrame(bestmodel)
 # fitness_df.to_csv(filesmcfit_name, encoding='utf-8', index=False)
 
 
-bestmodel_name = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/50itertest/BWMS_50_TPDR3.csv'
+bestmodel_name = fileMS_name + '.csv'
 bestmodel_df.to_csv(bestmodel_name, encoding='utf-8', index=False)
 
 
@@ -81,13 +84,13 @@ dr_fitness = fitness[iterations-1,int(total_population/2):]
 # modelTPperc = len(np.where(propose_model[fit_index] == 0)[0]) / len(fit_index)
 # modeldrperc = len(np.where(propose_model[fit_index] == 1)[0]) / len(fit_index)
 # estimates for TP
-bestTP = fit_index[np.where(fit_index<1000)[0]]
+bestTP = fit_index[np.where(fit_index<10000)[0]]
 gamma_TP_mean = np.mean(ms_data['gamma_data_TP'][iterations,bestTP])
 a_TP_mean = np.mean(ms_data['a_data_TP'][iterations,bestTP])
 nu_TP_mean = np.mean(ms_data['nu_data_TP'][iterations,bestTP])
 
 # estimates for DR
-bestDR = fit_index[np.where(np.logical_and(fit_index>=1000, fit_index<2000))]-1000
+bestDR = fit_index[np.where(np.logical_and(fit_index>=10000, fit_index<20000))]-10000
 gamma_DR_mean = np.mean(ms_data['gamma_data_DR'][iterations,bestDR])
 a_DR_mean = np.mean(ms_data['a_data_DR'][iterations,bestDR])
 m_DR_mean = np.mean(ms_data['m_data_DR'][iterations,bestDR])
