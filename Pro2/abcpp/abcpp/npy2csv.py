@@ -37,7 +37,7 @@ para_data_a_df.to_csv(filesmca_name, encoding='utf-8', index=False)
 generating = 'TP'
 # fileMS = 'C:/Liang/Googlebox/Research/Project2/modelsele/example1/modelsele%s.npy' % generating
 # fileMS = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/50itertest/BWMS_50_TPDR3.npy'
-fileMS_name = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/BWMSt20000_d4_f0'
+fileMS_name = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/BWMSt40000_d1_f1'
 fileMS = fileMS_name + '.npy'
 
 

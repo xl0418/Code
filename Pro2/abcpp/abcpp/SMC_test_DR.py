@@ -38,9 +38,9 @@ fix_m =1
 
 
 # DR
-gene_gamma_dr = 0.001
-gene_a_dr=0.01
-gene_m_dr=0.0001
+gene_gamma_dr = 0.00001
+gene_a_dr=0.001
+gene_m_dr=gene_a_dr
 
 
 modelnum = 1
@@ -156,7 +156,7 @@ for g in range(generations):
     params_DR[:, 0] = propose_gamma_dr
     params_DR[:, 1] = propose_a_dr
     if fix_m == 1.0:
-        params_DR[:, 3] = gene_m_dr  # propose_m_dr
+        params_DR[:, 3] = propose_a_dr  # propose_m_dr
     else:
         params_DR[:, 3] = propose_m_dr
 
