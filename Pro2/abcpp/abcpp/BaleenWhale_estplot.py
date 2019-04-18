@@ -10,9 +10,6 @@ gamma_list = []
 a_list = []
 nv_list = []
 fit_list = []
-label_a = (['$\\alpha$=0', '$\\alpha$=.001', '$\\alpha$=.01', '$\\alpha$=.1', '$\\alpha$=.5', '$\\alpha$=1'])
-label_gamma = (['$\gamma$=0', '$\gamma$=.001', '$\gamma$=.01', '$\gamma$=.1', '$\gamma$=.5', '$\gamma$=1'])
-
 
 count = 0
 timescale_vec = [20000,40000,80000]
