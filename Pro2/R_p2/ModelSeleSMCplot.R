@@ -8,11 +8,11 @@ source('C:/Liang/Code/Pro2/R_p2/theme_henrik.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/dendf2fredf.R', echo=TRUE)
 
 # setwd("C:/Liang/Googlebox/Research/Project2/modelsele/example1/")
-setwd("C:/Liang/Googlebox/Research/Project2/BaleenWhales/50itertest/")
+setwd("C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/")
 # 
 # generating = 'TP'
 # file1_name = paste0('bestmodel',generating,'.csv')
-file1_name = paste0('BWMS_50_TPDR3.csv')
+file1_name = paste0('BWMSt20000_d1_f0.csv')
 
 
 bmdata = read.csv(file1_name)
@@ -54,7 +54,7 @@ colnames(htdf) = c('Frequence','value','Iteration')
 singlep <- ggplot(htdf, aes(x = value, y = ordered(Iteration, levels =rev(sort(unique(htdf$Iteration)))),
                             fill = Frequence))+ geom_tile() +
   scale_fill_viridis_c(option = "A") +theme_hc()+
-  labs(title = "Top 20% goodness of fit",
+  labs(title = "Top 50% goodness of fit",
        x = "Models", y = "Iteration", fill = "Number of samples") +
   theme(legend.position = "bottom", legend.box.just = "bottom")+
   scale_x_discrete(limit = c(0, 1),labels = c("TP","DR"))

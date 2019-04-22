@@ -48,6 +48,9 @@ for label in extantlabels_array:
     length_index.append(np.where(lengthdata_array[:,0]==label)[0][0])
 
 logTL = lengthdata_array[length_index,1].astype(np.float)
+empirical_data = {'species':extantlabels_array,'TL':logTL}
+ed_df = pd.DataFrame(empirical_data)
+ed_df.to_csv(data_dir+'Est/emp.csv', sep=',', index=False)
 
 timescale_vec = [20000,40000,80000]
 heritability_vec = [1,0.5]

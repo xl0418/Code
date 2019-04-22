@@ -1,0 +1,108 @@
+library(phytools)
+library(ggtree)
+library(treeio)
+library(ggplot2)
+library(ggstance)
+library(ggimage)
+library(DDD)
+os = Sys.info()['sysname']
+if(os == 'Darwin'){
+  source('~/Documents/GitHub/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
+  source('~/Documents/GitHub/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
+  emdatadir = '~/GoogleDrive/Research/Project2/planktonic_foraminifera_macroperforate/aLb_renamed.tre'
+  dir = '~/GoogleDrive/Research/Project2/planktonic_foraminifera_macroperforate/'
+  
+}else{
+  source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
+  source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
+  emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
+  dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/Est/'
+}
+emdata = read.nexus(emdatadir)
+
+dropextinct = T
+baleenwhale = phylo2L(emdata,error = 1e-5)
+L_ext = baleenwhale$L
+extantspecieslabel = baleenwhale$ESL
+
+extantspecieslabel <- c("B.mysticetus", "E.australis"       
+                        , "E.glacialis", "E.japonica"        
+                        , "B.acutorostrata" ,"B.bonaerensis"  
+                        , "B.borealis" ,"B.brydei"       
+                        , "B.edeni" , "B.omurai"       
+                        , "B.musculus" , "B.physalus"     
+                        , "M.novaeangliae" , "E.robustus"     
+                        , "C.marginata" )
+phylo_test = DDD::L2phylo(L_ext,dropextinct = dropextinct)
+phylo_test$tip.label <- extantspecieslabel
+plot(phylo_test,show.tip.label = TRUE)
+
+
+# empirical data
+fileemp_name = paste0(dir,'emp.csv')
+obsZ_emp = read.csv(fileemp_name)
+obsZ_emp[,1] = extantspecieslabel
+species_label = extantspecieslabel
+sorted.species.labels <- obsZ_emp[order(obsZ_emp[,2]),1]
+
+for(count in c(1:12)){
+  simfile = paste0(dir,'predictsim',count,'.csv')
+    
+  # predict simulations
+  predictZ = read.csv(simfile)
+  
+  
+  sort = 1
+  
+  if(sort == 0){
+    predictZ_matrix = as.matrix(predictZ)
+    
+    
+  }else{
+    predictZ_matrix = as.matrix(predictZ)
+    predictZ_matrix=t(apply(predictZ_matrix,1,sort))
+    
+    
+  }
+  
+  samplesize = nrow(predictZ_matrix)
+  dimnames(predictZ_matrix)[[2]] = sorted.species.labels
+
+  
+  d_all = as.data.frame(as.table(predictZ_matrix))[,2:3]
+  colnames(d_all) = c('species','traitall')
+
+  
+  if(count %in% c(1,2,5,6,9,10)){
+    obsZ_mean = 10^(obsZ_emp[,2])
+    
+  }else{
+    obsZ_mean = 10^(obsZ_emp[,2])/4
+    
+  }
+  
+  d_meanemp = data.frame(species=species_label, trait=obsZ_mean)
+  
+  
+  plot_tree <- ggtree(phylo_test)+geom_tiplab(size=4) #+xlim(0,80)
+
+
+  plot_sepboxplt <- facet_plot(plot_tree, panel="TP Trait", data=d_all, geom_boxploth, 
+                               mapping = aes(x=traitall, group=label ))  + theme_tree2()+
+    theme(strip.background = element_rect(fill="#D1B6E1"))
+  
+  p_finalTP <- facet_plot(plot_sepboxplt+xlim_tree(40), panel="TP Trait", data=d_meanemp, geom_point, 
+                          mapping = aes(x=trait, group=label ),color = 'red')
+  
+  p_finalTP
+  savefile = paste0(dir,'predictimage',count,'.png')
+  ggsave(savefile,p_finalTP)
+}
+
+
+
+
+
+
+
+
