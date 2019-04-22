@@ -1,20 +1,18 @@
 import os,sys
+import platform
+if platform.system()=='Windows':
+    sys.path.append('C:/Liang/abcpp_ms/abcpp')
+elif platform.system()=='Darwin':
+    sys.path.append('/Users/dudupig/Documents/GitHub/Code/Pro2/Python_p2')
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import csv
-sys.path.append('C:/Liang/abcpp_ms/abcpp')
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
-import seaborn as sns
+import pandas as pd
+import csv
+
 def argsort2D(X):
     return np.arange(len(X))[:, np.newaxis], np.argsort(X, axis=1)
 
-
-def normalized_norm(x, y):
-    diff_norm = np.linalg.norm(x - y, axis=1)
-    max_err = np.nanmax(diff_norm)
-    return diff_norm / max_err
 
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
@@ -75,9 +73,7 @@ for timescaling_index in range(3):
             nv_list.append(nv_mean)
             print('Count: %i; gamma:%.3e; alpha: %.3e; nv: %.3e ...' % (count,gamma_mean,a_mean,nv_mean))
             # random test
-            # gamma_est = count*0.00001
-            # a_est = count*0.001
-            # nv_est = count*10**(-11)
+
             length = 10 ** logTL / dividing
             obsZ = sorted(length)
             meantrait = np.mean(obsZ)
@@ -92,55 +88,8 @@ for timescaling_index in range(3):
             valid = np.where(predictsim['sim_time'] == td.sim_evo_time)[0]
 
             Z = predictsim['Z'][valid]
-            i, j = argsort2D(Z)
-            Z = Z[i, j]
-            # V = pop['V'][valid][i, j]
             Z = np.nan_to_num(Z)
-            tp_distance = np.linalg.norm(Z - obsZ, axis=1)
-            distance_list.append(tp_distance)
-            timescaling_list.append(np.repeat(timescaling,len(valid)))
-            dividing_list.append(np.repeat(dividing,len(valid)))
-            heritability_list.append(np.repeat(heritability,len(valid)))
+            Z_df = pd.DataFrame(Z)
+            savefilename = data_dir+'Est/predictsim%i.csv' % count
+            Z_df.to_csv(savefilename,sep=',',index=False)
 
-
-distance_list_flat = [item for sublist in distance_list for item in sublist]
-timescaling_list_flat = [item for sublist in timescaling_list for item in sublist]
-dividing_list_flat = [item for sublist in dividing_list for item in sublist]
-heritability_list_flat = [item for sublist in heritability_list for item in sublist]
-
-
-ss_list = {'distance':distance_list_flat,'timescale':timescaling_list_flat,
-            'dividing':dividing_list_flat,'heritability':heritability_list_flat}
-ss_df = pd.DataFrame(ss_list)
-
-
-f, axes = plt.subplots(1, 2,figsize = (9,12),sharex=True,sharey=True)
-ax1 = sns.boxplot(x="timescale", y="distance",
-                 hue="heritability", palette=["m", "g"],
-                 data=ss_df[lambda ss_df: ss_df.dividing == 1],
-                  linewidth=1, ax=axes[0], showfliers=False)
-ax1.title.set_text('Dividing scalar: 1')
-ax2 = sns.boxplot(x="timescale", y="distance",
-                 hue="heritability", palette=["m", "g"],
-                 data=ss_df[lambda ss_df: ss_df.dividing == 4],
-                  linewidth=1, ax=axes[1], showfliers=False)
-
-ax2.title.set_text('Dividing scalar: 4')
-
-handles_gamma, labels_gamma = ax1.get_legend_handles_labels()
-
-for ax in [ax1,ax2]:
-    ax.set_ylabel('')
-    ax.set_xlabel('')
-    ax.legend_.remove()
-
-axes[0].set_ylabel('Distance')
-axes[0].yaxis.set_label_position("left")
-
-
-handles = handles_gamma #[ item for subhandle in [handles_gamma,handles_a,handles_nu] for item in subhandle]
-labels = ['$h^2 = 1$', '$h^2 = 0.5$']
-f.text(0.5, 0.04, 'Time scaling parameters', ha='center',fontsize=15)
-# f.text(0.04, 0.5, 'Estimates', va='center', rotation='vertical',fontsize=15)
-l = plt.legend(handles, labels, bbox_to_anchor=(0.65, 0.95), loc=2, borderaxespad=0.)
-l.get_frame().set_linewidth(0.0)
