@@ -37,6 +37,7 @@ gamma_list = []
 a_list = []
 nv_list = []
 distance_list = []
+ratio_dis = []
 valid_length = []
 timescaling_list = []
 dividing_list = []
@@ -63,54 +64,37 @@ for timescaling_index in range(3):
             heritability = heritability_vec[heritability_index]
             dividing = dividing_vec[dividing_index]
 
-            data_name = data_dir + 'BWest_t%i_d%i_h%i.npy' % (int(timescaling),int(dividing),int(heritability_index))
-            est_data = np.load(data_name).item()
-            generation = len(est_data['gamma'])
-            population = len(est_data['gamma'][0])
-            gamma_mean = np.mean(est_data['gamma'][generation-1])
-            a_mean = np.mean(est_data['a'][generation-1])
-            nv_mean = np.mean(est_data['nu'][generation-1])
-            gamma_list.append(gamma_mean)
-            a_list.append(a_mean)
-            nv_list.append(nv_mean)
-            print('Count: %i; gamma:%.3e; alpha: %.3e; nv: %.3e ...' % (count,gamma_mean,a_mean,nv_mean))
-            # random test
-            # gamma_est = count*0.00001
-            # a_est = count*0.001
-            # nv_est = count*10**(-11)
             length = 10 ** logTL / dividing
             obsZ = sorted(length)
-            meantrait = np.mean(obsZ)
-            td = DVTreeData(path=obs_file, scalar=timescaling)
 
-            param = DVParamLiang(gamma=gamma_mean, a=a_mean, K=K,h=np.sqrt(heritability), nu=nv_mean, r=1, theta=meantrait, V00 = .5, V01=.5, Vmax=1, inittrait=meantrait, initpop=1e5,
-             initpop_sigma = 10.0, break_on_mu=False)
-            params = np.tile(param, (particle_size, 1))  # duplicate
+            with open(dir_path + 'result_cluster/Est/predictsim%i_t5.csv' % count) as csv_file:
+                csv2_reader = csv.reader(csv_file, delimiter=',')
+                simZ = list(csv2_reader)
+                del simZ[0]
 
-            predictsim = dvcpp.DVSimLiang(td, params)
-
-            valid = np.where(predictsim['sim_time'] == td.sim_evo_time)[0]
-
-            Z = predictsim['Z'][valid]
+            Z = np.array([float(i)  for sublist in simZ for i in sublist]).reshape((len(simZ),15))
             i, j = argsort2D(Z)
             Z = Z[i, j]
-            # V = pop['V'][valid][i, j]
-            Z = np.nan_to_num(Z)
             tp_distance = np.linalg.norm(Z - obsZ, axis=1)
+            total_distance = np.linalg.norm(Z,axis=1)
+            print(np.mean(tp_distance))
             distance_list.append(tp_distance)
-            timescaling_list.append(np.repeat(timescaling,len(valid)))
-            dividing_list.append(np.repeat(dividing,len(valid)))
-            heritability_list.append(np.repeat(heritability,len(valid)))
+            ratio_dis.append(tp_distance/total_distance)
+            timescaling_list.append(np.repeat(timescaling,len(simZ)))
+            dividing_list.append(np.repeat(dividing,len(simZ)))
+            heritability_list.append(np.repeat(heritability,len(simZ)))
 
 
 distance_list_flat = [item for sublist in distance_list for item in sublist]
+ratio_dis_flat = [item for sublist in ratio_dis for item in sublist]
+
 timescaling_list_flat = [item for sublist in timescaling_list for item in sublist]
 dividing_list_flat = [item for sublist in dividing_list for item in sublist]
 heritability_list_flat = [item for sublist in heritability_list for item in sublist]
 
 
 ss_list = {'distance':distance_list_flat,'timescale':timescaling_list_flat,
-            'dividing':dividing_list_flat,'heritability':heritability_list_flat}
+            'dividing':dividing_list_flat,'heritability':heritability_list_flat,'ratio':ratio_dis_flat}
 ss_df = pd.DataFrame(ss_list)
 
 
@@ -134,12 +118,12 @@ for ax in [ax1,ax2]:
     ax.set_xlabel('')
     ax.legend_.remove()
 
-axes[0].set_ylabel('Distance')
+axes[0].set_ylabel('Distance',fontsize=15)
 axes[0].yaxis.set_label_position("left")
 
 
 handles = handles_gamma #[ item for subhandle in [handles_gamma,handles_a,handles_nu] for item in subhandle]
-labels = ['$h^2 = 1$', '$h^2 = 0.5$']
+labels = ['$h^2 = 0.5$', '$h^2 = 1$']
 f.text(0.5, 0.04, 'Time scaling parameters', ha='center',fontsize=15)
 # f.text(0.04, 0.5, 'Estimates', va='center', rotation='vertical',fontsize=15)
 l = plt.legend(handles, labels, bbox_to_anchor=(0.65, 0.95), loc=2, borderaxespad=0.)

@@ -40,7 +40,7 @@ timescaling_list = []
 dividing_list = []
 heritability_list =[]
 count = 0
-particle_size = 100
+particle_size = 1000
 K=10e8
 nu=1/(100*K)
 
@@ -68,9 +68,19 @@ for timescaling_index in range(3):
             est_data = np.load(data_name).item()
             generation = len(est_data['gamma'])
             population = len(est_data['gamma'][0])
-            gamma_mean = np.mean(est_data['gamma'][generation-1])
-            a_mean = np.mean(est_data['a'][generation-1])
-            nv_mean = np.mean(est_data['nu'][generation-1])
+
+            last_fitness = est_data['fitness'][generation-1]
+            q5 = np.argsort(last_fitness)[-population // 20]  # best 5%
+            fit_index = np.where(last_fitness > last_fitness[q5])[0]
+
+            # mean of all samples
+            # gamma_mean = np.mean(est_data['gamma'][generation-1])
+            # a_mean = np.mean(est_data['a'][generation-1])
+            # nv_mean = np.mean(est_data['nu'][generation-1])
+            # mean of the top 5% samples
+            gamma_mean = np.mean(est_data['gamma'][generation - 1][fit_index])
+            a_mean = np.mean(est_data['a'][generation - 1][fit_index])
+            nv_mean = np.mean(est_data['nu'][generation - 1][fit_index])
             gamma_list.append(gamma_mean)
             a_list.append(a_mean)
             nv_list.append(nv_mean)
@@ -93,6 +103,10 @@ for timescaling_index in range(3):
             Z = predictsim['Z'][valid]
             Z = np.nan_to_num(Z)
             Z_df = pd.DataFrame(Z)
-            savefilename = data_dir+'Est/predictsim%i.csv' % count
+            savefilename = data_dir+'Est/predictsim%i_t5.csv' % count
             Z_df.to_csv(savefilename,sep=',',index=False)
 
+
+gamma_array = np.array(gamma_list)
+a_array = np.array(a_list)
+ratio = a_array/gamma_array
