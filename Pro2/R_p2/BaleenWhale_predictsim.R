@@ -93,7 +93,7 @@ for(count in c(1:12)){
 
   plot_sepboxplt <- facet_plot(plot_tree, panel="TP Trait", data=d_all, geom_boxploth, 
                                mapping = aes(x=traitall, group=label ))  + theme_tree2()+
-    theme(strip.background = element_rect(fill="#D1B6E1"))
+    theme(strip.background = element_rect(fill="#99CCFF"))
   
   p_finalTP <- facet_plot(plot_sepboxplt+xlim_tree(40), panel="TP Trait", data=d_meanemp, geom_point, 
                           mapping = aes(x=trait, group=label ),color = 'red')
