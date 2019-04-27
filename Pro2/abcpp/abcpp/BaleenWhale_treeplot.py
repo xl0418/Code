@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 theta = 0  # optimum of natural selection
 r = 1  # growth rate
 Vmax = 1
-scalar = 20000
+scalar = 2000
 K=10e5
 nu=1e-4
 timegap = 20
@@ -40,7 +40,7 @@ td = DVTreeData(path=files, scalar=scalar)
 f1, axes1 = plt.subplots(row_gamma, row_gamma, figsize=(9, 9),sharey=True,sharex=True) #
 
 
-label_gamma = (['$\gamm=0$','$\gamm=1e-10$','$\gamm=1e-9$','$\gamm=1e-8$','$\gamm=1e-7$','$\gamm=1e-6$'])
+label_gamma = (['$\gamma=0$','$\gamma=1e-10$','$\gamma=1e-9$','$\gamma=1e-8$','$\gamma=1e-7$','$\gamma=1e-6$'])
 label_a = (['$\\alpha=0$','$\\alpha=1e-4$','$\\alpha=1e-3$','$\\alpha=1e-2$','$\\alpha=1e-1$','$\\alpha=1$'])
 
 for index_g in range(len(gamma_vec)):
