@@ -42,6 +42,28 @@ prune = 1
 if (prune==1){
   L=pruneL(L)
 }
+
+# correct the crown age for baleen whales
+L[1,] = L[2,]
+L[1,2] = 0
+L[1,3] = -1
+L[2,3] = 2
+
+positive.clade = c(-2)
+do = TRUE
+while(do){
+  negative.row = which(match(L[,2],positive.clade)>0)
+  if(length(negative.row) == 0){
+    break
+  }
+  L[negative.row,2] = - L[negative.row,2]
+  positive.clade = L[negative.row,3]
+  L[negative.row,3] = - L[negative.row,3]
+
+}
+  
+
+
 phylo_prune = DDD::L2phylo(L,dropextinct = dropextinct)
 plot(phylo_prune,show.tip.label = FALSE)
 

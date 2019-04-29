@@ -34,9 +34,9 @@ files = dir_path + 'treedata/'
 td = DVTreeData(path=files, scalar=2000)
 
 K=10e5
-nu=100/K
+nu=1e-4
 
-prior = [1e-7, 1e-7, 1e-5, 1e-5,nu,nu,100,50]
+prior = [1e-7, 1e-4, 1e-5, 1e-2,nu,nu,100,50]
 gamma_prior_mean = prior[0]
 gamma_prior_var = prior[1]
 a_prior_mean = prior[2]
@@ -77,7 +77,7 @@ obs_param = DVParamLiang(gamma=1, a=1, K=K,h=1, nu=nu, r=1, theta=meantrait,V00=
 # pop = dvcpp.DVSim(td, obs_param)
 
 population = 2000
-generations = 20
+generations = 30
 params = np.tile(obs_param, (population, 1))  # duplicate
 params[:, 0] = np.random.uniform(0.0, 1e-5, params.shape[0])  # randomize 'gamma'
 params[:, 1] = np.random.uniform(0.0, 1e-3, params.shape[0])  # randomize 'a'
