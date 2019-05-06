@@ -34,14 +34,14 @@ length_index = []
 gamma_list = []
 a_list = []
 nv_list = []
+vm_list = []
 distance_list = []
 valid_length = []
 timescaling_list = []
-dividing_list = []
 heritability_list =[]
 count = 0
 particle_size = 1000
-K=10e8
+K=10e5
 nu=1/(100*K)
 
 for label in extantlabels_array:
@@ -54,57 +54,57 @@ ed_df.to_csv(data_dir+'Est/emp.csv', sep=',', index=False)
 
 timescale_vec = [20000,40000,80000]
 heritability_vec = [1,0.5]
-dividing_vec = [1,4]
 for timescaling_index in range(3):
-    for dividing_index in range(2):
-        for heritability_index in range(2):
-            print(count)
-            count += 1
-            timescaling = timescale_vec[timescaling_index]
-            heritability = heritability_vec[heritability_index]
-            dividing = dividing_vec[dividing_index]
+    for heritability_index in range(2):
+        print(count)
+        count += 1
+        timescaling = timescale_vec[timescaling_index]
+        heritability = heritability_vec[heritability_index]
 
-            data_name = data_dir + 'BWest_t%i_d%i_h%i.npy' % (int(timescaling),int(dividing),int(heritability_index))
-            est_data = np.load(data_name).item()
-            generation = len(est_data['gamma'])
-            population = len(est_data['gamma'][0])
+        data_name = data_dir + 'BWest_t%i_h%i.npy' % (int(timescaling),int(heritability_index+1))
+        est_data = np.load(data_name).item()
+        generation = len(est_data['gamma'])
+        population = len(est_data['gamma'][0])
 
-            last_fitness = est_data['fitness'][generation-1]
-            q5 = np.argsort(last_fitness)[-population // 20]  # best 5%
-            fit_index = np.where(last_fitness > last_fitness[q5])[0]
+        last_fitness = est_data['fitness'][generation-1]
+        q5 = np.argsort(last_fitness)[-population // 20]  # best 5%
+        fit_index = np.where(last_fitness > last_fitness[q5])[0]
 
-            # mean of all samples
-            # gamma_mean = np.mean(est_data['gamma'][generation-1])
-            # a_mean = np.mean(est_data['a'][generation-1])
-            # nv_mean = np.mean(est_data['nu'][generation-1])
-            # mean of the top 5% samples
-            gamma_mean = np.mean(est_data['gamma'][generation - 1][fit_index])
-            a_mean = np.mean(est_data['a'][generation - 1][fit_index])
-            nv_mean = np.mean(est_data['nu'][generation - 1][fit_index])
-            gamma_list.append(gamma_mean)
-            a_list.append(a_mean)
-            nv_list.append(nv_mean)
-            print('Count: %i; gamma:%.3e; alpha: %.3e; nv: %.3e ...' % (count,gamma_mean,a_mean,nv_mean))
-            # random test
+        # mean of all samples
+        # gamma_mean = np.mean(est_data['gamma'][generation-1])
+        # a_mean = np.mean(est_data['a'][generation-1])
+        # nv_mean = np.mean(est_data['nu'][generation-1])
+        # mean of the top 5% samples
+        gamma_mean = np.mean(est_data['gamma'][generation - 1][fit_index])
+        a_mean = np.mean(est_data['a'][generation - 1][fit_index])
+        nv_mean = np.mean(est_data['nu'][generation - 1][fit_index])
+        vm_mean = np.mean(est_data['vm'][generation - 1][fit_index])
+        gamma_list.append(gamma_mean)
+        a_list.append(a_mean)
+        nv_list.append(nv_mean)
+        vm_list.append(vm_mean)
+        print('Count: %i; gamma:%.3e; alpha: %.3e; nv: %.3e; Vm: %f ...' % (count,gamma_mean,a_mean,nv_mean,
+                                                                            vm_mean))
+        # random test
 
-            length = 10 ** logTL / dividing
-            obsZ = sorted(length)
-            meantrait = np.mean(obsZ)
-            td = DVTreeData(path=obs_file, scalar=timescaling)
+        length = 10 ** logTL
+        obsZ = sorted(length)
+        meantrait = np.mean(obsZ)
+        td = DVTreeData(path=obs_file, scalar=timescaling)
 
-            param = DVParamLiang(gamma=gamma_mean, a=a_mean, K=K,h=np.sqrt(heritability), nu=nv_mean, r=1, theta=meantrait, V00 = .5, V01=.5, Vmax=1, inittrait=meantrait, initpop=1e5,
-             initpop_sigma = 10.0, break_on_mu=False)
-            params = np.tile(param, (particle_size, 1))  # duplicate
+        param = DVParamLiang(gamma=gamma_mean, a=a_mean, K=K,h=np.sqrt(heritability), nu=nv_mean, r=1, theta=meantrait, V00 = .5, V01=.5, Vmax=vm_mean, inittrait=meantrait, initpop=1e5,
+         initpop_sigma = 10.0, break_on_mu=False)
+        params = np.tile(param, (particle_size, 1))  # duplicate
 
-            predictsim = dvcpp.DVSimLiang(td, params)
+        predictsim = dvcpp.DVSimLiang(td, params)
 
-            valid = np.where(predictsim['sim_time'] == td.sim_evo_time)[0]
+        valid = np.where(predictsim['sim_time'] == td.sim_evo_time)[0]
 
-            Z = predictsim['Z'][valid]
-            Z = np.nan_to_num(Z)
-            Z_df = pd.DataFrame(Z)
-            savefilename = data_dir+'Est/predictsim%i_t5.csv' % count
-            Z_df.to_csv(savefilename,sep=',',index=False)
+        Z = predictsim['Z'][valid]
+        Z = np.nan_to_num(Z)
+        Z_df = pd.DataFrame(Z)
+        savefilename = data_dir+'Est/predictsim%i_vm.csv' % count
+        Z_df.to_csv(savefilename,sep=',',index=False)
 
 
 gamma_array = np.array(gamma_list)

@@ -45,12 +45,11 @@ obsZ_emp[,1] = extantspecieslabel
 species_label = extantspecieslabel
 sorted.species.labels <- obsZ_emp[order(obsZ_emp[,2]),1]
 
-s.vec <- rep(c('20K','40K','80K'),each = 4)
-d.vec <- rep(c(1,1,4,4), 3)
-h.vec <- rep(c(1,0.5),6)
+s.vec <- rep(c('20K','40K','80K'),each = 2)
+h.vec <- rep(c(1,0.5),3)
 
-for(count in c(1:12)){
-  simfile = paste0(dir,'predictsim',count,'_t5.csv')
+for(count in c(1:6)){
+  simfile = paste0(dir,'predictsim',count,'_vm.csv')
     
   # predict simulations
   predictZ = read.csv(simfile)
@@ -77,13 +76,10 @@ for(count in c(1:12)){
   colnames(d_all) = c('species','traitall')
 
   
-  if(count %in% c(1,2,5,6,9,10)){
-    obsZ_mean = 10^(obsZ_emp[,2])
+
+  obsZ_mean = 10^(obsZ_emp[,2])
     
-  }else{
-    obsZ_mean = 10^(obsZ_emp[,2])/4
-    
-  }
+
   
   d_meanemp = data.frame(species=species_label, trait=obsZ_mean)
   
@@ -100,9 +96,8 @@ for(count in c(1:12)){
   
   # title <- paste0('s=',s.vec[count],' d=',d.vec[count],' ',h^{2},'=',h.vec[count])
   s <- s.vec[count]
-  d <- d.vec[count]
   h <- h.vec[count]
-  p_finalTP <- p_finalTP+ggtitle(bquote(list(s==.(s), d==.(d), h^{2}==.(h))))+
+  p_finalTP <- p_finalTP+ggtitle(bquote(list(s==.(s), h^{2}==.(h))))+
     theme(plot.title = element_text(hjust = 0.5))
   
   savefile = paste0(dir,'predictimage',count,'.png')

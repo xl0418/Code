@@ -38,7 +38,7 @@ distance_list = []
 ratio_dis = []
 valid_length = []
 timescaling_list = []
-dividing_heri_list = []
+heri_list = []
 count = 0
 particle_size = 100
 K=10e8
@@ -51,19 +51,16 @@ logTL = lengthdata_array[length_index,1].astype(np.float)
 
 timescale_vec = [20000,40000,80000]
 heritability_vec = [1,0.5]
-dividing_vec = [1,4]
 
 
 for timescaling_index in range(3):
-    for dividing_index in range(2):
         for heritability_index in range(2):
             print(count)
             count += 1
             timescaling = timescale_vec[timescaling_index]
             heritability = heritability_vec[heritability_index]
-            dividing = dividing_vec[dividing_index]
 
-            data_name = data_dir + 'BWest_t%i_d%i_h%i.npy' % (int(timescaling), int(dividing), int(heritability_index))
+            data_name = data_dir + 'BWest_t%i_h%i.npy' % (int(timescaling), int(heritability_index)+1)
             est_data = np.load(data_name).item()
             generation = len(est_data['gamma'])
             population = len(est_data['gamma'][0])
@@ -83,7 +80,7 @@ for timescaling_index in range(3):
             gamma_list.append(gamma_vec.tolist())
             a_list.append(a_vec.tolist())
             timescaling_list.append(np.repeat(timescaling,population))
-            dividing_heri_list.append(np.repeat(dividing*heritability,population))
+            heri_list.append(np.repeat(heritability,population))
 
 
 
@@ -91,23 +88,21 @@ gamma_list_flat = [item for sublist in gamma_list for item in sublist]
 a_list_flat = [item for sublist in a_list for item in sublist]
 
 timescaling_list_flat = [item for sublist in timescaling_list for item in sublist]
-dividing_heri_list_flat = [item for sublist in dividing_heri_list for item in sublist]
+heri_list_flat = [item for sublist in heri_list for item in sublist]
 
 
 ss_list = {'gamma':gamma_list_flat,'alpha':a_list_flat,'s':timescaling_list_flat,
-            'dividing_heri':dividing_heri_list_flat}
+            'heri':heri_list_flat}
 ss_df = pd.DataFrame(ss_list)
 
 def hexbin(x, y, color, **kwargs):
     cmap = sns.light_palette(color, as_cmap=True)
     plt.hexbin(x, y, gridsize=15, cmap=cmap, **kwargs)
 
-g = sns.FacetGrid(ss_df, col="dividing_heri",  row="s",margin_titles=True)
-g.map(hexbin, "gamma", "alpha", extent=[0, 100, 0, 100])
+g = sns.FacetGrid(ss_df, col="heri",  row="s",margin_titles=True)
+g.map(hexbin, "gamma", "alpha", extent=[9, 11, 2, 3])
 g.set_xlabels('$\gamma $ $(10^{-7})$')
 g.set_ylabels('$\\alpha $ $(10^{-4})$')
 axes = g.axes.flatten()
-axes[0].set_title("$d=1; h^{2}=0.5$")
-axes[1].set_title("$d=1; h^{2}=1$")
-axes[2].set_title("$d=4; h^{2}=0.5$")
-axes[3].set_title("$d=4; h^{2}=1$")
+axes[0].set_title("$h^{2}=0.5$")
+axes[1].set_title("$h^{2}=1$")

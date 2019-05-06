@@ -14,15 +14,15 @@ fit_list = []
 count = 0
 timescale_vec = [20000,40000,80000]
 heritability_vec = [1,2]
-dividing_vec = [1,4]
+# dividing_vec = [1,4]
 data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/'
 for timescaling_index in range(3):
-    for dividing_index in range(2):
+    # for dividing_index in range(2):
         for heritability_index in range(2):
             count += 1
             timescaling = timescale_vec[timescaling_index]
             heritability = heritability_vec[heritability_index]
-            dividing = dividing_vec[dividing_index]
+            # dividing = dividing_vec[dividing_index]
             #
             # data_name = data_dir + 'BWest_t%i_d%i_h%i.npy' % (int(timescaling),int(dividing),int(heritability_index))
             # est_data = np.load(data_name).item()
@@ -43,12 +43,12 @@ a_flat_list = [item for sublist in a_list for item in sublist]
 nv_flat_list = [item for sublist in nv_list for item in sublist]
 
 
-timescaling_list = np.repeat(timescale_vec,4*20000)
-dividing_list = np.tile(np.repeat(dividing_vec,2*20000),3)
-heritability_list = np.tile(np.repeat(heritability_vec,20000),6)
+timescaling_list = np.repeat(timescale_vec,2*20000)
+# dividing_list = np.tile(np.repeat(dividing_vec,2*20000),3)
+heritability_list = np.tile(np.repeat(heritability_vec,20000),3)
 
 est_list = {'gamma':gamma_flat_list,'alpha':a_flat_list,'nu':nv_flat_list,'timescale':timescaling_list,
-            'dividing':dividing_list,'heritability':heritability_list}
+            'heritability':heritability_list}
 est_df = pd.DataFrame(est_list)
 
 

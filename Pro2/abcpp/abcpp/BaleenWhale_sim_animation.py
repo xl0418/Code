@@ -7,16 +7,16 @@ import matplotlib.pyplot as plt
 from matplotlib import animation
 import numpy as np
 theta = 0  # optimum of natural selection
-gamma = 0.00001  # intensity of natural selection
+gamma = 1.006e-06  # intensity of natural selection
 r = 1  # growth rate
-a = 0.2  # intensity of competition
+a = 2.346e-04  # intensity of competition
 K = 10e5  # carrying capacity
 kscale=1000
 delta_pop = .001  # Variance of random walk of population
-nu=1/(100*K)
-Vmax = 5
-scalar = 100
-
+nu=1.319e-04
+Vmax = 265
+scalar = 20000
+ani_gap = 200
 
 # trait evolution plot
 
@@ -56,7 +56,7 @@ if simresult['sim_time'] == td.sim_evo_time:
 
 
 
-    x = np.arange(evo_time+1)
+    x = np.arange(evo_time//ani_gap+1)
     labels = []
     plt.subplot(2, 2, 1)
     for i in range(1, num_plots + 1):
@@ -103,10 +103,10 @@ if simresult['sim_time'] == td.sim_evo_time:
     timeend = [int(x) for x in timeend]
 
     # evolution time: speciation time
-    evo_time = max(evo_timelist)
+    evo_time = max(evo_timelist)//ani_gap
 
-    speciate_time = evo_timelist[timebranch]
-    extinct_time = evo_timelist[timeend]
+    speciate_time = evo_timelist[timebranch]//ani_gap
+    extinct_time = evo_timelist[timeend]//ani_gap
     extinct_time[np.where(extinct_time == evo_time)[0]] = evo_time+10
 
     # extinct_time = np.delete(extinct_time, np.where(extinct_time == evo_time)[0])
@@ -114,8 +114,8 @@ if simresult['sim_time'] == td.sim_evo_time:
 
 
 
-    trait_RI_dr = simresult['Z']
-    population_RI_dr = simresult['N']
+    trait_RI_dr = simresult['Z'][::ani_gap]
+    population_RI_dr = simresult['N'][::ani_gap]
     ext_times_RI = []
     pop_nan20 = population_RI_dr.astype(float)
     pop_sum = np.sum(pop_nan20,axis=1)
@@ -130,7 +130,7 @@ if simresult['sim_time'] == td.sim_evo_time:
         ext_times_RI.append(ext_time[0][0])
 
 
-    x = np.array(range(evo_time))
+    x = np.array(range(evo_time+1))
     RI_traits = []
     RI_sizes = []
 
@@ -189,7 +189,7 @@ if simresult['sim_time'] == td.sim_evo_time:
         time_text.set_text(time_template % (i))
         RI_datas = []
         # pop_line.set_data(x[0:i], pop_sum[0:i])
-        ax02.plot(x[0:i:20], pop_sum[0:i:20],'k-')
+        ax02.plot(x[0:i], pop_sum[0:i],'k-')
         for j in np.arange(total_species):
             RI_data = np.hstack((x[i], RI_traits[j][i]))
             RI_datas.append(RI_data)
@@ -224,11 +224,11 @@ if simresult['sim_time'] == td.sim_evo_time:
     time_template = 'Time = %d G'    # prints running simulation time
     time_text = ax01.text(0.05, 1, '', transform=ax01.transAxes)
     #
-    ani = animation.FuncAnimation(f0, animate, interval= 1, frames= evo_time, repeat=False, blit=False) #, init_func=init)
+    ani = animation.FuncAnimation(f0, animate, interval= 10, frames= evo_time, repeat=False, blit=False) #, init_func=init)
     plt.show()
     # #
-    # Writer = animation.writers['ffmpeg']
-    # writer = Writer(fps=2, metadata=dict(artist='Me'), bitrate=1800)
-    # ani.save('C:\\Liang\\DVmodeltree1_popsum1q.mp4', writer=writer)
+    Writer = animation.writers['ffmpeg']
+    writer = Writer(fps=1, metadata=dict(artist='Me'), bitrate=1800)
+    ani.save('C:\\Liang\\Googlebox\\Research\\Project2\\BaleenWhales\\BaleenWhale2w.mp4', writer=writer)
 else:
     print('Junk simulation! Please try again or elevate K.')

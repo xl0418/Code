@@ -40,7 +40,6 @@ distance_list = []
 ratio_dis = []
 valid_length = []
 timescaling_list = []
-dividing_list = []
 heritability_list =[]
 count = 0
 particle_size = 100
@@ -54,17 +53,14 @@ logTL = lengthdata_array[length_index,1].astype(np.float)
 
 timescale_vec = [20000,40000,80000]
 heritability_vec = [1,0.5]
-dividing_vec = [1,4]
 for timescaling_index in range(3):
-    for dividing_index in range(2):
         for heritability_index in range(2):
             print(count)
             count += 1
             timescaling = timescale_vec[timescaling_index]
             heritability = heritability_vec[heritability_index]
-            dividing = dividing_vec[dividing_index]
 
-            length = 10 ** logTL / dividing
+            length = 10 ** logTL
             obsZ = sorted(length)
 
             with open(dir_path + 'result_cluster/Est/predictsim%i_t5.csv' % count) as csv_file:
@@ -81,7 +77,6 @@ for timescaling_index in range(3):
             distance_list.append(tp_distance)
             ratio_dis.append(tp_distance/total_distance)
             timescaling_list.append(np.repeat(timescaling,len(simZ)))
-            dividing_list.append(np.repeat(dividing,len(simZ)))
             heritability_list.append(np.repeat(heritability,len(simZ)))
 
 
@@ -89,31 +84,25 @@ distance_list_flat = [item for sublist in distance_list for item in sublist]
 ratio_dis_flat = [item for sublist in ratio_dis for item in sublist]
 
 timescaling_list_flat = [item for sublist in timescaling_list for item in sublist]
-dividing_list_flat = [item for sublist in dividing_list for item in sublist]
 heritability_list_flat = [item for sublist in heritability_list for item in sublist]
 
 
 ss_list = {'distance':distance_list_flat,'timescale':timescaling_list_flat,
-            'dividing':dividing_list_flat,'heritability':heritability_list_flat,'ratio':ratio_dis_flat}
+            'heritability':heritability_list_flat,'ratio':ratio_dis_flat}
 ss_df = pd.DataFrame(ss_list)
 
 
-f, axes = plt.subplots(1, 2,figsize = (9,12),sharex=True,sharey=True)
+f, axes = plt.subplots(1, 1,figsize = (9,12),sharex=True,sharey=True)
 ax1 = sns.boxplot(x="timescale", y="distance",
                  hue="heritability", palette=["m", "g"],
-                 data=ss_df[lambda ss_df: ss_df.dividing == 1],
+                 data=ss_df,
                   linewidth=1, ax=axes[0], showfliers=False)
 ax1.title.set_text('Dividing scalar: 1')
-ax2 = sns.boxplot(x="timescale", y="distance",
-                 hue="heritability", palette=["m", "g"],
-                 data=ss_df[lambda ss_df: ss_df.dividing == 4],
-                  linewidth=1, ax=axes[1], showfliers=False)
 
-ax2.title.set_text('Dividing scalar: 4')
 
 handles_gamma, labels_gamma = ax1.get_legend_handles_labels()
 
-for ax in [ax1,ax2]:
+for ax in [ax1]:
     ax.set_ylabel('')
     ax.set_xlabel('')
     ax.legend_.remove()

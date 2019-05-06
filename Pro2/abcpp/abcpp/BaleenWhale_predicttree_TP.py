@@ -19,7 +19,7 @@ dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 files = dir_path + 'treedata/'
 
 # estimation results
-fileMS_name = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/BWMSt40000_d1_f1'
+fileMS_name = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/BWest_t20000_h1'
 fileMS = fileMS_name + '.npy'
 
 assert os.path.isfile(fileMS),"%s doesn't exist!" % fileMS
