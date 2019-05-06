@@ -50,13 +50,13 @@ if simresult['sim_time'] == td.sim_evo_time:
     population_tips = population_RI_dr[evo_time,:][~np.isnan(population_RI_dr[evo_time,:])]
 
     # trait_RI_dr[np.where(trait_RI_dr == 0)[0],np.where(trait_RI_dr == 0)[1]] = np.nan
-
-    # population_RI_dr[np.where(population_RI_dr == 0)[0],np.where(population_RI_dr == 0)[1]] = np.nan
+    population_RI_dr = population_RI_dr.astype(float)
+    population_RI_dr[np.where(population_RI_dr == 0)[0],np.where(population_RI_dr == 0)[1]] = np.nan
     num_plots = total_species
 
 
 
-    x = np.arange(evo_time//ani_gap+1)
+    x = np.arange(evo_time+1)
     labels = []
     plt.subplot(2, 2, 1)
     for i in range(1, num_plots + 1):
