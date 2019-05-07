@@ -52,9 +52,9 @@ empirical_data = {'species':extantlabels_array,'TL':logTL}
 ed_df = pd.DataFrame(empirical_data)
 ed_df.to_csv(data_dir+'Est/emp.csv', sep=',', index=False)
 
-timescale_vec = [20000,40000,80000]
+timescale_vec = [20000,40000,60000,80000]
 heritability_vec = [1,0.5]
-for timescaling_index in range(3):
+for timescaling_index in range(4):
     for heritability_index in range(2):
         print(count)
         count += 1

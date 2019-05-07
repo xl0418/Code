@@ -45,10 +45,10 @@ obsZ_emp[,1] = extantspecieslabel
 species_label = extantspecieslabel
 sorted.species.labels <- obsZ_emp[order(obsZ_emp[,2]),1]
 
-s.vec <- rep(c('20K','40K','80K'),each = 2)
-h.vec <- rep(c(1,0.5),3)
+s.vec <- rep(c('20K','40K','60K','80K'),each = 2)
+h.vec <- rep(c(1,0.5),4)
 
-for(count in c(1:6)){
+for(count in c(1:8)){
   simfile = paste0(dir,'predictsim',count,'_vm.csv')
     
   # predict simulations
