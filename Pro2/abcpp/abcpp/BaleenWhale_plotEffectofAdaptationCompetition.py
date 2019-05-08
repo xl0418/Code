@@ -144,7 +144,7 @@ sns.set(style="ticks")
 def reg_com(a, x):
     return 2*a*x*np.exp(-a*x**2)
 
-xlim = [-300,300]
+xlim = [-1000,1000]
 
 # empirical strength of competition
 
@@ -160,12 +160,15 @@ def emp_com(a, zi):
 comdis = np.arange(xlim[0], xlim[1], 0.1)
 
 fig_pair_com = sns.FacetGrid(pair_df, col="heritability", row="timescale",margin_titles=True,xlim=(xlim[0], xlim[1]))
-fig_pair_com.map(plt.scatter, "pairwise_distance", "pairwise_com", alpha=.5)
+# fig_pair_com.map(plt.scatter, "pairwise_distance", "pairwise_com", alpha=.5)
+fig_pair_com.set_ylabels('Competition strength')
+fig_pair_com.set_xlabels('Trait distance')
+
 fig_count = 0
 for ax in fig_pair_com.axes.flat:
     comstre = reg_com(a_list[fig_count],comdis)
     emp_pair_strength, emp_pair_dis = emp_com(a_list[fig_count], zi=emp_Z)
-    # ax.scatter(emp_pair_dis.flatten(),emp_pair_strength.flatten(),c='red',alpha = 0.5)
+    ax.scatter(emp_pair_dis.flatten(),emp_pair_strength.flatten(),c='red',alpha = 0.5)
     ax.plot(comdis, comstre, c=".2", ls="--")
     fig_count +=1
 fig_pair_com.add_legend();
@@ -175,6 +178,9 @@ fig_pair_com.add_legend();
 com_ada_xlim = [np.min(sum_df['sum_com']),np.max(sum_df['sum_com'])]
 fig_sum_ada_com = sns.FacetGrid(sum_df, col="heritability", row="timescale",margin_titles=True,xlim=(com_ada_xlim[0], com_ada_xlim[1]))
 fig_sum_ada_com.map(plt.scatter, "sum_com", "sum_ada", alpha=.5)
+fig_sum_ada_com.set_ylabels('Adaptation strength')
+fig_sum_ada_com.set_xlabels('Competition distance')
+
 for ax in fig_sum_ada_com.axes.flat:
     x_data = np.arange(com_ada_xlim[0],com_ada_xlim[1],(com_ada_xlim[1]-com_ada_xlim[0])/100)
     y_data = -x_data
