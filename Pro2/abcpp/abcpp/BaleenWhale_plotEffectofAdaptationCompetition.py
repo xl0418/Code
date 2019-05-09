@@ -53,6 +53,8 @@ pairwise_deltaZ_list = []
 a_list = []
 sum_com_list = []
 sum_adaptation_list = []
+Z_list = []
+N_list = []
 count = 0
 K=10e5
 nu=1/(100*K)
@@ -62,6 +64,7 @@ for label in extantlabels_array:
 
 logTL = lengthdata_array[length_index,1].astype(np.float)
 emp_Z = 10**logTL
+obsZ = sorted(emp_Z)
 meantrait = np.mean(emp_Z)
 timescale_vec = [20000,40000,60000,80000]
 heritability_vec = [1,0.5]
@@ -114,6 +117,8 @@ for timescaling_index in range(4):
         unique_pairwise_delta_Z = delta_Z.flatten()
         pairwise_com_list.append(unique_pairwise_com)
         pairwise_deltaZ_list.append(unique_pairwise_delta_Z)
+        Z_list.append(Z_vec)
+        N_list.append(N_vec)
 
         sum_com_list.append(sum_com)
         sum_adaptation_list.append(sum_adaptation)
@@ -133,12 +138,19 @@ heritability_pair_list_flat = [item for sublist in heritability_pair_list for it
 timescaling_sum_list_flat = [item for sublist in timescaling_sum_list for item in sublist]
 heritability_sum_list_flat= [item for sublist in heritability_sum_list for item in sublist]
 
+Z_list_flat = [item for sublist in Z_list for item in sublist]
+N_list_flat = [item for sublist in N_list for item in sublist]
+
 pair_pd = {'pairwise_com':pairwise_com_list_flat,'pairwise_distance':pairwise_deltaZ_list_flat,
            'timescale':timescaling_pair_list_flat,'heritability':heritability_pair_list_flat}
 sum_pd = {'sum_com':sum_com_list_flat,'sum_ada':sum_adaptation_list_flat,
            'timescale':timescaling_sum_list_flat,'heritability':heritability_sum_list_flat}
+Z_N_pd = {'Z':Z_list_flat,'N':N_list_flat,
+           'timescale':timescaling_sum_list_flat,'heritability':heritability_sum_list_flat}
+
 pair_df = pd.DataFrame(pair_pd)
 sum_df = pd.DataFrame(sum_pd)
+Z_N_df = pd.DataFrame(Z_N_pd)
 
 sns.set(style="ticks")
 def reg_com(a, x):
@@ -156,7 +168,7 @@ def emp_com(a, zi):
     return pairwis_com,T
 
 
-
+# pairwise competition against trait distance plot
 comdis = np.arange(xlim[0], xlim[1], 0.1)
 
 fig_pair_com = sns.FacetGrid(pair_df, col="heritability", row="timescale",margin_titles=True,xlim=(xlim[0], xlim[1]))
@@ -174,7 +186,7 @@ for ax in fig_pair_com.axes.flat:
 fig_pair_com.add_legend();
 
 
-
+# total adaptation against competition plot
 com_ada_xlim = [np.min(sum_df['sum_com']),np.max(sum_df['sum_com'])]
 fig_sum_ada_com = sns.FacetGrid(sum_df, col="heritability", row="timescale",margin_titles=True,xlim=(com_ada_xlim[0], com_ada_xlim[1]))
 fig_sum_ada_com.map(plt.scatter, "sum_com", "sum_ada", alpha=.5)
@@ -189,3 +201,13 @@ for ax in fig_sum_ada_com.axes.flat:
 fig_sum_ada_com.add_legend();
 
 
+
+# trait against population plot
+Z_N_xlim = [np.min(Z_N_df['Z']),np.max(Z_N_df['Z'])]
+fig_Z_N = sns.FacetGrid(Z_N_df, col="heritability", row="timescale",margin_titles=True,xlim=(Z_N_xlim[0], Z_N_xlim[1]))
+fig_Z_N.map(plt.scatter, "Z", "N", alpha=.5)
+fig_Z_N.set_ylabels('Traits')
+fig_Z_N.set_xlabels('Abundances')
+
+
+fig_Z_N.add_legend();
