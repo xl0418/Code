@@ -75,7 +75,7 @@ def DVSimMetabolism(td, param):
         mu = Ni * r * np.exp(-gamma * dtz**2 + (1 - beta / Ki)) # un-truncated mean
         if np.any(mu <= 1.0):       # mu < 1.0 + 1.11e-16
             if (break_on_mu):
-                print(i, "invalid mean population size")
+                # print(i, "invalid mean population size")
                 break
         ztp_lambda = dvcpp.ztp_lambda_from_untruncated_mean(mu)
         population_RI_dr[i + 1, idx] = dvcpp.ztpoisson(ztp_lambda)
@@ -98,8 +98,8 @@ def DVSimMetabolism(td, param):
                 # speciation
                 parent = next_event[1]
                 parentN = population_RI_dr[i + 1, parent]
-                if parentN <= 1:
-                    print(i, "attempt to split singleton")
+                # if parentN <= 1:
+                    # print(i, "attempt to split singleton")
                     # results in split <- 0, will be trapped by sanity check below
                 split = dvcpp.split_binomial50(parentN)
                 population_RI_dr[i + 1, daughter] = parentN - split
@@ -114,15 +114,15 @@ def DVSimMetabolism(td, param):
 
         # sanity check
         if np.any(population_RI_dr[i + 1, idx] < 1):
-            print(i, 'Inconsistent extinction')
+            # print(i, 'Inconsistent extinction')
             break
         if np.any(V[i + 1, idx] < 0.0) or np.any(V[i + 1, idx] > 100000.0):
-            print(i, 'runaway variance')
+            # print(i, 'runaway variance')
             break
-        print(i)
     row_ext = np.where(population_RI_dr == 0)[0]
     col_ext = np.where(population_RI_dr == 0)[1]
     V[row_ext, col_ext] = None
     trait_RI_dr[row_ext, col_ext] = None
-    return { 'sim_time': i + 1, 'N': population_RI_dr, 'Z': trait_RI_dr, 'V': V }
+    return { 'sim_time': i + 1, 'N': population_RI_dr[td.sim_evo_time], 'Z': trait_RI_dr[td.sim_evo_time],
+             'V': V[td.sim_evo_time] }
 

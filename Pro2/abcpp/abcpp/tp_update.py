@@ -1,66 +1,82 @@
 import numpy as np
 from scipy.stats import norm
-def tp_update(previous_bestfitted_index_TP,propose_model,params_TP,weight_gamma_TP,weight_a_TP,
-              weight_nu_TP):
+def tp_update(previous_bestfitted_index,propose_model,params,weight_gamma,weight_a,
+              weight_nu,weight_vm,modelindex):
     # Room in TP model to sample new paras
-    previous_gamma_TP = params_TP[previous_bestfitted_index_TP, 0]
-    previous_a_TP = params_TP[previous_bestfitted_index_TP, 1]
-    previous_nu_TP = params_TP[previous_bestfitted_index_TP, 3]
+    previous_gamma = params[previous_bestfitted_index, 0]
+    previous_a = params[previous_bestfitted_index, 1]
+    previous_nu = params[previous_bestfitted_index, 2]
+    previous_vm = params[previous_bestfitted_index, 3]
 
-    weight_gamma_TP = weight_gamma_TP[previous_bestfitted_index_TP] / sum(weight_gamma_TP[previous_bestfitted_index_TP])
-    weight_a_TP = weight_a_TP[previous_bestfitted_index_TP] / sum(weight_a_TP[previous_bestfitted_index_TP])
-    weight_nu_TP = weight_nu_TP[previous_bestfitted_index_TP] / sum(weight_nu_TP[previous_bestfitted_index_TP])
+    weight_gamma = weight_gamma[previous_bestfitted_index] / sum(weight_gamma[previous_bestfitted_index])
+    weight_a = weight_a[previous_bestfitted_index] / sum(weight_a[previous_bestfitted_index])
+    weight_nu = weight_nu[previous_bestfitted_index] / sum(weight_nu[previous_bestfitted_index])
+    weight_vm = weight_vm[previous_bestfitted_index] / sum(weight_vm[previous_bestfitted_index])
 
-    gamma_pre_mean_TP = np.sum(previous_gamma_TP * weight_gamma_TP)
-    gamma_pre_var_TP = np.sum((previous_gamma_TP - gamma_pre_mean_TP) ** 2 * weight_gamma_TP)
-
-    a_pre_mean_TP = np.sum(previous_a_TP * weight_a_TP)
-    a_pre_var_TP = np.sum((previous_a_TP - a_pre_mean_TP) ** 2 * weight_a_TP)
-    nu_pre_mean_TP = np.sum(previous_nu_TP * weight_nu_TP)
-    nu_pre_var_TP = np.sum((previous_nu_TP - nu_pre_mean_TP) ** 2 * weight_nu_TP)
+    gamma_pre_mean = np.sum(previous_gamma * weight_gamma)
+    gamma_pre_var = np.sum((previous_gamma - gamma_pre_mean) ** 2 * weight_gamma)
+    a_pre_mean = np.sum(previous_a * weight_a)
+    a_pre_var = np.sum((previous_a - a_pre_mean) ** 2 * weight_a)
+    nu_pre_mean = np.sum(previous_nu * weight_nu)
+    nu_pre_var = np.sum((previous_nu - nu_pre_mean) ** 2 * weight_nu)
+    vm_pre_mean = np.sum(previous_vm * weight_vm)
+    vm_pre_var = np.sum((previous_vm - vm_pre_mean) ** 2 * weight_vm)
 
     # sample parameters by the weights computed in last loop.
-    population_TP = len(np.where(propose_model == 0)[0])
-    sample_gamma_index_TP = np.random.choice(previous_bestfitted_index_TP, population_TP, p=weight_gamma_TP)
-    sample_a_index_TP = np.random.choice(previous_bestfitted_index_TP, population_TP, p=weight_a_TP)
-    sample_nu_index_TP = np.random.choice(previous_bestfitted_index_TP, population_TP, p=weight_nu_TP)
+    population = len(np.where(propose_model == modelindex)[0])
+    sample_gamma_index = np.random.choice(previous_bestfitted_index, population, p=weight_gamma)
+    sample_a_index = np.random.choice(previous_bestfitted_index, population, p=weight_a)
+    sample_nu_index = np.random.choice(previous_bestfitted_index, population, p=weight_nu)
+    sample_vm_index = np.random.choice(previous_bestfitted_index, population, p=weight_vm)
 
     # mean of the sample for gamma
-    propose_gamma0_TP = params_TP[sample_gamma_index_TP, 0]
+    propose_gamma0 = params[sample_gamma_index, 0]
     # draw new gamma with mean and variance
-    propose_gamma_TP = abs(np.random.normal(propose_gamma0_TP, np.sqrt(2 * gamma_pre_var_TP)))
+    propose_gamma = abs(np.random.normal(propose_gamma0, np.sqrt(2 * gamma_pre_var)))
     # mean of the sample for a
-    propose_a0_TP = params_TP[sample_a_index_TP, 1]
+    propose_a0 = params[sample_a_index, 1]
     # draw new a with mean and variance
-    propose_a_TP = abs(np.random.normal(propose_a0_TP, np.sqrt(2 * a_pre_var_TP)))
+    propose_a = abs(np.random.normal(propose_a0, np.sqrt(2 * a_pre_var)))
     # mean of the sample for nu
-    propose_nu0_TP = params_TP[sample_nu_index_TP, 3]
+    propose_nu0 = params[sample_nu_index, 2]
     # draw new nu with mean and variance
-    propose_nu_TP = abs(np.random.normal(propose_nu0_TP, np.sqrt(2 * nu_pre_var_TP)))
+    propose_nu = abs(np.random.normal(propose_nu0, np.sqrt(2 * nu_pre_var)))
+    # mean of the sample for Vm
+    propose_vm0 = params[sample_nu_index, 3]
+    # draw new Vm with mean and variance
+    propose_vm = abs(np.random.normal(propose_vm0, np.sqrt(2 * vm_pre_var)))
 
-    extend_weight_gamma_TP = weight_gamma_TP[previous_bestfitted_index_TP.searchsorted(sample_gamma_index_TP)]
-    extend_weight_a_TP = weight_a_TP[previous_bestfitted_index_TP.searchsorted(sample_a_index_TP)]
-    extend_weight_nu_TP = weight_nu_TP[previous_bestfitted_index_TP.searchsorted(sample_nu_index_TP)]
+    extend_weight_gamma = weight_gamma[previous_bestfitted_index.searchsorted(sample_gamma_index)]
+    extend_weight_a = weight_a[previous_bestfitted_index.searchsorted(sample_a_index)]
+    extend_weight_nu = weight_nu[previous_bestfitted_index.searchsorted(sample_nu_index)]
+    extend_weight_vm = weight_vm[previous_bestfitted_index.searchsorted(sample_vm_index)]
 
     # compute new weights for gamma and a
-    weight_gamma_denominator_TP = np.sum(extend_weight_gamma_TP * norm.pdf(propose_gamma_TP, propose_gamma0_TP,
-                                                                           np.sqrt(2 * gamma_pre_var_TP)))
-    weight_gamma_numerator_TP = norm.pdf(propose_gamma_TP, gamma_pre_mean_TP, np.sqrt(2 * gamma_pre_var_TP))
-    weight_gamma_TP = weight_gamma_numerator_TP / weight_gamma_denominator_TP
+    weight_gamma_denominator = np.sum(extend_weight_gamma * norm.pdf(propose_gamma, propose_gamma0,
+                                                                           np.sqrt(2 * gamma_pre_var)))
+    weight_gamma_numerator = norm.pdf(propose_gamma, gamma_pre_mean, np.sqrt(2 * gamma_pre_var))
+    weight_gamma = weight_gamma_numerator / weight_gamma_denominator
 
-    weight_a_denominator_TP = np.sum(extend_weight_a_TP * norm.pdf(propose_a_TP, propose_a0_TP,
-                                                                   np.sqrt(2 * a_pre_var_TP)))
-    weight_a_numerator_TP = norm.pdf(propose_a_TP, a_pre_mean_TP, np.sqrt(2 * a_pre_var_TP))
-    weight_a_TP = weight_a_numerator_TP / weight_a_denominator_TP
+    weight_a_denominator = np.sum(extend_weight_a * norm.pdf(propose_a, propose_a0,
+                                                                   np.sqrt(2 * a_pre_var)))
+    weight_a_numerator = norm.pdf(propose_a, a_pre_mean, np.sqrt(2 * a_pre_var))
+    weight_a = weight_a_numerator / weight_a_denominator
 
-    weight_nu_denominator_TP = np.sum(extend_weight_nu_TP * norm.pdf(propose_nu_TP, propose_nu0_TP,
-                                                                     np.sqrt(2 * nu_pre_var_TP)))
-    weight_nu_numerator_TP = norm.pdf(propose_nu_TP, nu_pre_mean_TP, np.sqrt(2 *nu_pre_var_TP))
-    weight_nu_TP = weight_nu_numerator_TP / weight_nu_denominator_TP
+    weight_nu_denominator = np.sum(extend_weight_nu * norm.pdf(propose_nu, propose_nu0,
+                                                                     np.sqrt(2 * nu_pre_var)))
+    weight_nu_numerator = norm.pdf(propose_nu, nu_pre_mean, np.sqrt(2 *nu_pre_var))
+    weight_nu = weight_nu_numerator / weight_nu_denominator
+
+    weight_vm_denominator = np.sum(extend_weight_vm * norm.pdf(propose_vm, propose_vm0,
+                                                                     np.sqrt(2 * vm_pre_var)))
+    weight_vm_numerator = norm.pdf(propose_vm, vm_pre_mean, np.sqrt(2 *vm_pre_var))
+    weight_vm = weight_vm_numerator / weight_vm_denominator
+
     # normalize the weights
     # total_simulation[t] = sim_count
-    weight_gamma_TP = weight_gamma_TP / sum(weight_gamma_TP)
-    weight_a_TP = weight_a_TP / sum(weight_a_TP)
-    weight_nu_TP = weight_nu_TP / sum(weight_nu_TP)
+    weight_gamma = weight_gamma / sum(weight_gamma)
+    weight_a = weight_a / sum(weight_a)
+    weight_nu = weight_nu / sum(weight_nu)
+    weight_vm = weight_vm / sum(weight_vm)
 
-    return weight_gamma_TP,weight_a_TP,weight_nu_TP,propose_gamma_TP,propose_a_TP,propose_nu_TP
+    return weight_gamma,weight_a,weight_nu,weight_vm,propose_gamma,propose_a,propose_nu,propose_vm

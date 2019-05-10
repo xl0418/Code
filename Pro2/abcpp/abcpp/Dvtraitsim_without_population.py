@@ -117,12 +117,12 @@ def DVSimLiang_nopop(td, param):
 		# 	print(i, 'Inconsistent extinction')
 		# 	break
 		if np.any(V[i + 1, idx] < 0.0) or np.any(V[i + 1, idx] > 1e20):
-			print(i, 'runaway variance')
+			# print(i, 'runaway variance')
 			break
 
 	# row_ext = np.where(population_RI_dr == 0)[0]
 	# col_ext = np.where(population_RI_dr == 0)[1]
 	# V[row_ext, col_ext] = None
 	# trait_RI_dr[row_ext, col_ext] = None
-	return { 'sim_time': i + 1, 'Z': trait_RI_dr, 'V': V }
+	return { 'sim_time': i + 1, 'Z': trait_RI_dr[td.sim_evo_time], 'V': V[td.sim_evo_time] }
 

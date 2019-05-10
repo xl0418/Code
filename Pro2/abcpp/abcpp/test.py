@@ -2,6 +2,7 @@ import os,sys
 sys.path.append('C:/Liang/abcpp_ms2/abcpp')
 import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParamLiang
+from dvtraitsim_py import DVSimLiang
 sys.path.append('C:/Liang/Code/Pro2/abcpp/abcpp/')
 from Dvtraitsim_without_population import DVSimLiang_nopop
 from Dvtraitsim_metabolism import DVSimMetabolism
@@ -51,3 +52,30 @@ for replicate in range(100):
         pic = 1
 
 
+
+
+K = 1e8
+nu = 1e-4
+meantrait = 1300
+
+param_metabolism = DVParamLiang(gamma=1e-6, a=1e-4, K=K,h=1, nu=nu, r=1, theta=meantrait,V00=.1,V01=.1, Vmax=100, inittrait=meantrait, initpop=1e7,
+                                initpop_sigma=10.0, break_on_mu=False)
+
+for replicate in range(100):
+    print(replicate)
+
+    simresult = DVSimLiang(td, param_metabolism)
+
+    if simresult['sim_time'] == td.sim_evo_time:
+        pic = 0
+        break
+    else:
+        pic = 1
+
+ratio31 = np.array(simresult['Vcomponent3'])/np.array(simresult['Vcomponent1'])
+ratio32 = np.array(simresult['Vcomponent3'])/np.array(simresult['Vcomponent2'])
+x = np.arange(0,len(ratio31))
+import matplotlib.pyplot as plt
+plt.scatter(x,ratio31,marker='+',label='V_sele/V_rep')
+plt.scatter(x,ratio32,marker='o',label='V_sele/V_mut',s=0.1)
+plt.legend()
