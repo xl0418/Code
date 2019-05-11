@@ -199,8 +199,8 @@ for g in range(generations):
         Z = np.vstack([Z,Z_modelTVP])
             # V = np.nan_to_num(V)
             #GOF: Goodness of fit
-    else:
-        valid_TVP = []
+        if  len(valid_TVP) == 0:
+            print('No complete results from TVP model ')
 
 
     if TV_sample_length>0:
@@ -212,18 +212,18 @@ for g in range(generations):
         for valid_TV_Z in valid_TV:
             Z_modeltv = simmodeltv_list[valid_TV_Z]['Z']
             Z = np.vstack([Z, sorted(Z_modeltv)])
-    else:
-        valid_TV = []
+        if len(valid_TV) == 0:
+            print('No complete results from TV model ')
 
     if TVM_sample_length>0:
-        print('NH simulations start...')
+        print('TVM simulations start...')
         simmodeltvm_list = num_cores.starmap(DVSimMetabolism, zip(repeat(td), params_TVM))
         valid_TVM = np.where([simmodeltvm_list[i]['sim_time']==td.sim_evo_time for i in range(population)])[0]
         for valid_TVM_Z in valid_TVM:
             Z_modeltvm = simmodeltvm_list[valid_TVM_Z]['Z']
             Z = np.vstack([Z, sorted(Z_modeltvm)])
-    else:
-        valid_TVM = []
+        if len(valid_TVM) == 0:
+            print('No complete results from TVM model ')
 
     Z = Z[1:,]
 
@@ -327,18 +327,25 @@ for g in range(generations):
    if len(np.where(propose_model==1)[0])>0:
         params_TV_update = params_TV[:,[0,1,4,9]]
         modelinex = 1
-        # update TP paras and weights
-        weight_gamma_TV,weight_a_TV,weight_nu_TV,weight_vm_TV,propose_gamma_TV,propose_a_TV,propose_nu_TV,propose_vm_TV=\
-            tp_update(previous_bestfitted_index_TV, propose_model, params_TV_update, weight_gamma_TV,
-                      weight_a_TV, weight_nu_TV, weight_vm_TV,modelinex)
-        modelTV = np.where(propose_model==modelinex)
-        params_TV = np.tile(sampleparam_TV, (len(modelTV[0]), 1))
-        params_TV[:, 0] = propose_gamma_TV
-        params_TV[:, 1] = propose_a_TV
-        params_TV[:, 4] = propose_nu_TV
-        params_TV[:, 9] = propose_vm_TV
+        if len(valid_TV)>0:
+            # update TP paras and weights
+            weight_gamma_TV,weight_a_TV,weight_nu_TV,weight_vm_TV,propose_gamma_TV,propose_a_TV,propose_nu_TV,propose_vm_TV=\
+                tp_update(previous_bestfitted_index_TV, propose_model, params_TV_update, weight_gamma_TV,
+                          weight_a_TV, weight_nu_TV, weight_vm_TV,modelinex)
+            modelTV = np.where(propose_model==modelinex)
+            params_TV = np.tile(sampleparam_TV, (len(modelTV[0]), 1))
+            params_TV[:, 0] = propose_gamma_TV
+            params_TV[:, 1] = propose_a_TV
+            params_TV[:, 4] = propose_nu_TV
+            params_TV[:, 9] = propose_vm_TV
+        else:
+            params_TV = np.tile(sampleparam_TV, (population, 1))  # duplicate
+            params_TV[:, 0] = np.random.uniform(0, prior[1], params_TV.shape[0])  # randomize 'gamma'
+            params_TV[:, 1] = np.random.uniform(0, prior[3], params_TV.shape[0])  # randomize 'a'
+            params_TV[:, 4] = np.random.uniform(0, prior[5], params_TV.shape[0])  # randomize 'nu'
+            params_TV[:, 9] = np.random.uniform(prior[6], prior[7], params_TV.shape[0])  # randomize 'Vm'
 
-   if len(np.where(propose_model==2)[0])>0:
+if len(np.where(propose_model==2)[0])>0:
         params_TVM_update = params_TVM[:,[0,1,4,9]]
         modelinex = 2
         # update TP paras and weights
@@ -364,4 +371,4 @@ para_data = {'model_data': model_data,'fitness': fitness, 'gamma_data_TVP':gamma
              }
 
 
-np.save(savedir,para_data)
+# np.save(savedir,para_data)

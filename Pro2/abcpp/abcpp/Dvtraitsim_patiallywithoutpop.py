@@ -5,23 +5,23 @@ from dvtraitsim_shared import DVTreeData
 import dvtraitsim_cpp as dvcpp
 
 
-def competition_functions_metabolism(a, zi, nj):
-	# competition functions, Liang's model.
-    #
-	# returns beta = Sum_j( exp(-a(zi-zj)^2) * Nj * zj^(9/4))
-	# 		sigma = Sum_j( 2a * (zi-zj) * exp(-a(zi-zj)^2) * Nj* zj^(9/4))
-	# 		sigmaSqr = Sum_j( 4a^2 * (zi-zj)^2 * exp(-a(zi-zj)^2) * Nj* zj^(9/4))
-    zj = zi
-    T = zi[:, np.newaxis] - zi  # trait-distance matrix (via 'broadcasting')
-    t1 = np.exp(-a * T ** 2) * nj * zj ** (9/4)
-    t2 = (2 * a) * T
-    beta = np.sum(t1, axis=1)
-    sigma = np.sum(t2 * t1, axis=1)
-    sigmasqr = np.sum(t2 ** 2 * t1, axis=1)
-    return beta, sigma, sigmasqr
+def competition_functions_nopop(a, zi):
+	""" competition functions, Liang's model.
+
+	returns beta = Sum_j( exp(-a(zi-zj)^2) * Nj)
+			sigma = Sum_j( 2a * (zi-zj) * exp(-a(zi-zj)^2) * Nj)
+			sigmaSqr = Sum_j( 4a^2 * (zi-zj)^2 * exp(-a(zi-zj)^2) * Nj)
+	"""
+	T = zi[:, np.newaxis] - zi  # trait-distance matrix (via 'broadcasting')
+	t1 = np.exp(-a * T ** 2)
+	t2 = (2 * a) * T
+	beta = np.sum(t1, axis=1)
+	sigma = np.sum(t2 * t1, axis=1)
+	sigmasqr = np.sum(t2 ** 2 * t1, axis=1)
+	return beta, sigma, sigmasqr
 
 
-def DVSimMetabolism(td, param):
+def DVSimLiang_pnopop(td, param):
     # parameters from DVParamLiang
     gamma = param[0]
     a = param[1]
@@ -54,7 +54,7 @@ def DVSimMetabolism(td, param):
     V[0, idx] = [V00, V01];
 
     #  initialize condition for species trait and population
-    trait_RI_dr[0, idx] = inittrait  # trait for species
+    trait_RI_dr[0, idx] = np.array([3.0*inittrait/2.0,inittrait/2.0])  # trait for species
     population_RI_dr[0, idx] = np.random.normal(initpop, initpop_sigma, 2).astype(np.int32)
     node = 0;
     next_event = events[node];
@@ -67,22 +67,26 @@ def DVSimMetabolism(td, param):
         zi = trait_RI_dr[i, idx]
         Ki = K
         dtz = theta - zi
-        beta, sigma, sigmasqr = competition_functions_metabolism(a, zi, Ni)
+        beta, sigma, sigmasqr = competition_functions_nopop(a, zi)
 
         # update
         var_trait = Vi / (2.0 * Ni)
-        trait_RI_dr[i + 1, idx] = zi + h2 * Vi * (2.0 * gamma * dtz + 1 / Ki * sigma) + np.random.normal(0.0, var_trait)
-        mu = Ni * r * np.exp(-gamma * dtz**2 + (1 - beta / Ki)) # un-truncated mean
+        trait_RI_dr[i + 1, idx] = zi + h2 * Vi * (2.0 * gamma * dtz +  sigma/Ki) + np.random.normal(0.0, var_trait)
+        mu = Ni * r * np.exp(-gamma * dtz**2 + (1 - beta/Ki)) # un-truncated mean
+        # print(Ni[0],i)
         if np.any(mu <= 1.0):       # mu < 1.0 + 1.11e-16
             if (break_on_mu):
                 # print(i, "invalid mean population size")
                 break
         ztp_lambda = dvcpp.ztp_lambda_from_untruncated_mean(mu)
-        population_RI_dr[i + 1, idx] = dvcpp.ztpoisson(ztp_lambda)
-        V[i + 1, idx] = (1-h2/2.0)*Vi  + 2.0*h2 * Ni * nu * Vmax / (1.0 + 4.0 * Ni * nu) \
+        if np.any(ztp_lambda>1e9):
+            break
+        else:
+            population_RI_dr[i + 1, idx] = dvcpp.ztpoisson(ztp_lambda)
+        V[i + 1, idx] = (1-h2/2.0)*Vi + 2.0*h2 * Ni * nu * Vmax / (1.0 + 4.0 * Ni * nu) \
                         + h2/2.0 * Vi**2 * (
                             -2.0 * gamma + 4.0 * gamma**2 * dtz**2 +
-                                1.0 / Ki * (2.0 * a * beta - sigmasqr) + 4.0 * gamma / Ki *
+                            1.0 / Ki * (2.0 * a * beta - sigmasqr) + 4.0 * gamma/ Ki   *
                                 dtz * sigma + sigma**2 / Ki**2
                             )
         # events
@@ -93,13 +97,13 @@ def DVSimMetabolism(td, param):
                 extinct_species = next_event[1]
                 V[i + 1, extinct_species] = None
                 trait_RI_dr[i + 1, extinct_species] = None
-                population_RI_dr[i + 1, extinct_species] = 0
+                # population_RI_dr[i + 1, extinct_species] = 0
             else:
                 # speciation
                 parent = next_event[1]
                 parentN = population_RI_dr[i + 1, parent]
-                # if parentN <= 1:
-                    # print(i, "attempt to split singleton")
+                if parentN <= 1:
+                    print(i, "attempt to split singleton")
                     # results in split <- 0, will be trapped by sanity check below
                 split = dvcpp.split_binomial50(parentN)
                 population_RI_dr[i + 1, daughter] = parentN - split
@@ -116,13 +120,14 @@ def DVSimMetabolism(td, param):
         if np.any(population_RI_dr[i + 1, idx] < 1):
             # print(i, 'Inconsistent extinction')
             break
-        if np.any(V[i + 1, idx] < 0.0) or np.any(V[i + 1, idx] > 100000.0):
+        if np.any(V[i + 1, idx] < 0.0) or np.any(V[i + 1, idx] > 1e20):
             # print(i, 'runaway variance')
             break
+
     row_ext = np.where(population_RI_dr == 0)[0]
     col_ext = np.where(population_RI_dr == 0)[1]
     V[row_ext, col_ext] = None
     trait_RI_dr[row_ext, col_ext] = None
-    return { 'sim_time': i + 1, 'N': population_RI_dr[td.sim_evo_time], 'Z': trait_RI_dr[td.sim_evo_time],
-             'V': V[td.sim_evo_time] }
+    return { 'sim_time': i + 1, 'Z': trait_RI_dr[td.sim_evo_time], 'V': V[td.sim_evo_time],
+         'N':population_RI_dr }
 
