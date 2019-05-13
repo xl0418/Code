@@ -4,8 +4,8 @@ import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 from dvtraitsim_py import DVSimLiang
 sys.path.append('C:/Liang/Code/Pro2/abcpp/abcpp/')
-from Dvtraitsim_without_population import DVSimLiang_nopop
-from Dvtraitsim_metabolism import DVSimMetabolism
+from Dvtraitsim_TV import DVSimLiang_nopop
+from Dvtraitsim_TVM import DVSimMetabolism
 from Dvtraitsim_patiallywithoutpop import DVSimLiang_pnopop
 from multiprocessing import Pool
 from itertools import repeat

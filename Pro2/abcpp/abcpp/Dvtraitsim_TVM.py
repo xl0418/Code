@@ -40,7 +40,6 @@ def DVSimMetabolism(td, param):
 
     sim_evo_time = td.sim_evo_time
     events = td.sim_events
-    h4 = h2 * h2
 
     # Initialize trait evolution and population evolution matrices
     trait_RI_dr = np.zeros((sim_evo_time + 1, td.total_species))  # trait

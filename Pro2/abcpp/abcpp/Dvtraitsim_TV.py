@@ -2,15 +2,14 @@ import numpy as np
 import os,sys
 sys.path.append('C:/Liang/abcpp_ms2/abcpp')
 from dvtraitsim_shared import DVTreeData
-import dvtraitsim_cpp as dvcpp
 
 
 def competition_functions_nopop(a, zi):
 	""" competition functions, Liang's model.
 
-	returns beta = Sum_j( exp(-a(zi-zj)^2) * Nj)
-			sigma = Sum_j( 2a * (zi-zj) * exp(-a(zi-zj)^2) * Nj)
-			sigmaSqr = Sum_j( 4a^2 * (zi-zj)^2 * exp(-a(zi-zj)^2) * Nj)
+	returns beta = Sum_j( exp(-a(zi-zj)^2))
+			sigma = Sum_j( 2a * (zi-zj) * exp(-a(zi-zj)^2))
+			sigmaSqr = Sum_j( 4a^2 * (zi-zj)^2 * exp(-a(zi-zj)^2))
 	"""
 	T = zi[:, np.newaxis] - zi  # trait-distance matrix (via 'broadcasting')
 	t1 = np.exp(-a * T ** 2)
@@ -40,7 +39,6 @@ def DVSimLiang_nopop(td, param):
 
     sim_evo_time = td.sim_evo_time
     events = td.sim_events
-    h4 = h2 * h2
 
     # Initialize trait evolution and population evolution matrices
     trait_RI_dr = np.zeros((sim_evo_time + 1, td.total_species))  # trait
@@ -65,7 +63,6 @@ def DVSimLiang_nopop(td, param):
         Ni = K
         Vi = V[i, idx]
         zi = trait_RI_dr[i, idx]
-        Ki = K
         dtz = theta - zi
         beta, sigma, sigmasqr = competition_functions_nopop(a, zi)
 
