@@ -1,14 +1,10 @@
 import sys
-sys.path.append('C:/Liang/abcpp_ms2/abcpp')
+sys.path.append('C:/Liang/abcpp_ms4/abcpp')
 import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
 sys.path.append('C:/Liang/Code/Pro2/abcpp/abcpp/')
-from Dvtraitsim_TV import DVSimLiang_nopop
-from Dvtraitsim_TVM import DVSimMetabolism
 import csv
-from multiprocessing import Pool
-from itertools import repeat
 from tp_update import tp_update
 
 
@@ -27,11 +23,8 @@ def normalized_norm(x, y):
 
 K_TVP=1e6
 K_TV = 1e6
-K_TVM = 1e13
+K_TVM = 1e9
 nu=1e-4
-
-num_cores = Pool(8)  # the number of cores
-
 
 
 #full tree
@@ -76,7 +69,7 @@ sampleparam_TVM = DVParamLiang(gamma=1, a=1, K=K_TVM,h=1, nu=nu, r=1, theta=mean
 
 # pop = dvcpp.DVSim(td, obs_param)
 
-population = 1000
+population = 2000
 generations = 30
 total_population = population*3
 
@@ -189,7 +182,7 @@ for g in range(generations):
     if TVP_sample_length>0:
         print('TVP simulations start...')
 
-        simmodelTVP = dvcpp.DVSimLiang(td, params_TVP)
+        simmodelTVP = dvcpp.DVSimTVP(td, params_TVP)
         valid_TVP = np.where(simmodelTVP['sim_time'] == td.sim_evo_time)[0]
         Z_modelTVP = simmodelTVP['Z'][valid_TVP]
         i, j = argsort2D(Z_modelTVP)
@@ -207,23 +200,26 @@ for g in range(generations):
         print('TV simulations start...')
         # model 1
         # for param_drury in params_DR:
-        simmodeltv_list = num_cores.starmap(DVSimLiang_nopop, zip(repeat(td), params_TV))
-        valid_TV = np.where([simmodeltv_list[i]['sim_time']==td.sim_evo_time for i in range(population)])[0]
-        for valid_TV_Z in valid_TV:
-            Z_modeltv = simmodeltv_list[valid_TV_Z]['Z']
-            Z = np.vstack([Z, sorted(Z_modeltv)])
-        if len(valid_TV) == 0:
-            print('No complete results from TV model ')
+        simmodelTV = dvcpp.DVSimTV(td, params_TV)
+        valid_TV = np.where(simmodelTV['sim_time'] == td.sim_evo_time)[0]
+        Z_modelTV = simmodelTV['Z'][valid_TV]
+        i, j = argsort2D(Z_modelTV)
+        Z_modelTV = Z_modelTV[i, j]
+        # V = pop['V'][valid][i, j]
+        Z_modelTV = np.nan_to_num(Z_modelTV)
+        Z = np.vstack([Z, Z_modelTV])
+
 
     if TVM_sample_length>0:
         print('TVM simulations start...')
-        simmodeltvm_list = num_cores.starmap(DVSimMetabolism, zip(repeat(td), params_TVM))
-        valid_TVM = np.where([simmodeltvm_list[i]['sim_time']==td.sim_evo_time for i in range(population)])[0]
-        for valid_TVM_Z in valid_TVM:
-            Z_modeltvm = simmodeltvm_list[valid_TVM_Z]['Z']
-            Z = np.vstack([Z, sorted(Z_modeltvm)])
-        if len(valid_TVM) == 0:
-            print('No complete results from TVM model ')
+        simmodelTVM = dvcpp.DVSimTVM(td, params_TVM)
+        valid_TVM = np.where(simmodelTVM['sim_time'] == td.sim_evo_time)[0]
+        Z_modelTVM = simmodelTV['Z'][valid_TVM]
+        i, j = argsort2D(Z_modelTVM)
+        Z_modelTVM = Z_modelTVM[i, j]
+        # V = pop['V'][valid][i, j]
+        Z_modelTVM = np.nan_to_num(Z_modelTVM)
+        Z = np.vstack([Z, Z_modelTVM])
 
     Z = Z[1:,]
 
