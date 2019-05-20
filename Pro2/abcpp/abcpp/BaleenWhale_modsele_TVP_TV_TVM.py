@@ -76,7 +76,7 @@ sampleparam_TVM = DVParamLiang(gamma=1, a=1, K=K_TVM,h=1, nu=nu, r=1, theta=mean
 
 # pop = dvcpp.DVSim(td, obs_param)
 
-population = 1000
+population = 10000
 generations = 30
 total_population = population*3
 

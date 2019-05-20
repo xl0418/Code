@@ -1,9 +1,7 @@
 import sys
-sys.path.append('C:/Liang/abcpp_ms5/abcpp')
 import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
-sys.path.append('C:/Liang/Code/Pro2/abcpp/abcpp/')
 import csv
 from tp_update import tp_update
 
@@ -28,10 +26,11 @@ nu=1e-4
 
 
 #full tree
-dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
+dir_path = '/home/p274981/abcpp/'
 
-files = dir_path + 'treedata/'
-savedir = dir_path + 'TVP_TV_TVM/modelselec.npy'
+files = dir_path + 'BaleenWhales/treedata/'
+
+savedir = dir_path + 'BaleenWhales/modelselec2w.npy'
 
 td = DVTreeData(path=files, scalar=20000)
 
@@ -40,7 +39,7 @@ with open(files+'extantspecieslabels.csv') as csv_file:
     csv1_reader = csv.reader(csv_file, delimiter=',')
     extantlabels = list(csv1_reader)
 
-with open(dir_path+'slater_length_data.csv') as csv_file:
+with open(files+'slater_length_data.csv') as csv_file:
     csv2_reader = csv.reader(csv_file, delimiter=',')
     lengthdata = list(csv2_reader)
 
@@ -311,8 +310,8 @@ for g in range(generations):
         modelinex = 0
         # update TP paras and weights
         weight_gamma_TVP,weight_a_TVP,weight_nu_TVP,weight_vm_TVP,propose_gamma_TVP,propose_a_TVP,propose_nu_TVP,propose_vm_TVP=\
-            tp_update(previous_bestfitted_index_TVP, propose_model, params_TVP_update, weight_gamma_TVP,
-                      weight_a_TVP, weight_nu_TVP, weight_vm_TVP,modelinex)
+        tp_update(previous_bestfitted_index_TVP, propose_model, params_TVP_update, weight_gamma_TVP,
+                  weight_a_TVP, weight_nu_TVP, weight_vm_TVP,modelinex)
         modelTVP = np.where(propose_model==modelinex)
         params_TVP = np.tile(sampleparam_TVP, (len(modelTVP[0]), 1))
         params_TVP[:, 0] = propose_gamma_TVP
@@ -320,7 +319,7 @@ for g in range(generations):
         params_TVP[:, 4] = propose_nu_TVP
         params_TVP[:, 9] = propose_vm_TVP
 
-   if len(np.where(propose_model==1)[0])>0:
+    if len(np.where(propose_model==1)[0])>0:
         params_TV_update = params_TV[:,[0,1,4,9]]
         modelinex = 1
         if len(valid_TV)>0:
@@ -367,4 +366,4 @@ para_data = {'model_data': model_data,'fitness': fitness, 'gamma_data_TVP':gamma
              }
 
 
-# np.save(savedir,para_data)
+np.save(savedir,para_data)
