@@ -11,9 +11,10 @@ def competition_functions_metabolism(a, zi, nj):
 	# returns beta = Sum_j( exp(-a(zi-zj)^2) * Nj * zj^(9/4))
 	# 		sigma = Sum_j( 2a * (zi-zj) * exp(-a(zi-zj)^2) * Nj* zj^(9/4))
 	# 		sigmaSqr = Sum_j( 4a^2 * (zi-zj)^2 * exp(-a(zi-zj)^2) * Nj* zj^(9/4))
-    zj = zi
+	# preliminary fix: zi might bwe negative
+    zm = np.power(np.maximum(0.0, zi), 9/4)
     T = zi[:, np.newaxis] - zi  # trait-distance matrix (via 'broadcasting')
-    t1 = np.exp(-a * T ** 2) * nj * zj ** (9/4)
+    t1 = np.exp(-a * T ** 2) * nj * zm
     t2 = (2 * a) * T
     beta = np.sum(t1, axis=1)
     sigma = np.sum(t2 * t1, axis=1)
@@ -21,7 +22,7 @@ def competition_functions_metabolism(a, zi, nj):
     return beta, sigma, sigmasqr
 
 
-def DVSimMetabolism(td, param):
+def DVSimTVM(td, param):
     # parameters from DVParamLiang
     gamma = param[0]
     a = param[1]
@@ -57,7 +58,6 @@ def DVSimMetabolism(td, param):
     population_RI_dr[0, idx] = np.random.normal(initpop, initpop_sigma, 2).astype(np.int32)
     node = 0;
     next_event = events[node];
-
     # trait-population co-evolution model, Liang
     for i in range(sim_evo_time):
         # pull current state
@@ -76,6 +76,10 @@ def DVSimMetabolism(td, param):
             if (break_on_mu):
                 # print(i, "invalid mean population size")
                 break
+
+        if np.any(mu > 2**28):
+            print(i, 'run-away lambda')
+            break
         ztp_lambda = dvcpp.ztp_lambda_from_untruncated_mean(mu)
         population_RI_dr[i + 1, idx] = dvcpp.ztpoisson(ztp_lambda)
         V[i + 1, idx] = (1-h2/2.0)*Vi  + 2.0*h2 * Ni * nu * Vmax / (1.0 + 4.0 * Ni * nu) \
@@ -116,12 +120,11 @@ def DVSimMetabolism(td, param):
             # print(i, 'Inconsistent extinction')
             break
         if np.any(V[i + 1, idx] < 0.0) or np.any(V[i + 1, idx] > 100000.0):
-            # print(i, 'runaway variance')
+            print(i, 'runaway variance')
             break
     row_ext = np.where(population_RI_dr == 0)[0]
     col_ext = np.where(population_RI_dr == 0)[1]
     V[row_ext, col_ext] = None
     trait_RI_dr[row_ext, col_ext] = None
-    return { 'sim_time': i + 1, 'N': population_RI_dr[td.sim_evo_time], 'Z': trait_RI_dr[td.sim_evo_time],
-             'V': V[td.sim_evo_time] }
+    return { 'sim_time': i + 1, 'N': population_RI_dr, 'Z': trait_RI_dr, 'V': V }
 

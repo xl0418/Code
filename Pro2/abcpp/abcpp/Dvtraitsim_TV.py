@@ -20,7 +20,7 @@ def competition_functions_nopop(a, zi):
 	return beta, sigma, sigmasqr
 
 
-def DVSimLiang_nopop(td, param):
+def DVSimTV(td, param):
     # parameters from DVParamLiang
     gamma = param[0]
     a = param[1]
@@ -115,5 +115,5 @@ def DVSimLiang_nopop(td, param):
     # col_ext = np.where(population_RI_dr == 0)[1]
     # V[row_ext, col_ext] = None
     # trait_RI_dr[row_ext, col_ext] = None
-    return { 'sim_time': i + 1, 'Z': trait_RI_dr[td.sim_evo_time], 'V': V[td.sim_evo_time]}
+    return { 'sim_time': i + 1, 'Z': trait_RI_dr, 'V': V}
 

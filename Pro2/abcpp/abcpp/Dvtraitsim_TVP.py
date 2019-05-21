@@ -19,7 +19,7 @@ def competition_functions_Liang(a, zi, nj):
 	return beta, sigma, sigmasqr
 
 
-def DVSimLiang(td, param):
+def DVSimTVP(td, param):
 	# parameters from DVParamLiang
 	gamma = param[0]
 	a = param[1]
@@ -122,5 +122,5 @@ def DVSimLiang(td, param):
 	col_ext = np.where(population_RI_dr == 0)[1]
 	V[row_ext, col_ext] = None
 	trait_RI_dr[row_ext, col_ext] = None
-	return { 'sim_time': i + 1, 'N': population_RI_dr, 'Z': trait_RI_dr, 'V': V}
+	return { 'sim_time': i + 1, 'N': population_RI_dr, 'Z': trait_RI_dr, 'V': V }
 

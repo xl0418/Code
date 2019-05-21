@@ -23,7 +23,7 @@ def normalized_norm(x, y):
 
 K_TVP=1e6
 K_TV = 1e6
-K_TVM = 1e12
+K_TVM = 1e11
 nu=1e-4
 
 
@@ -70,7 +70,7 @@ sampleparam_TVM = DVParamLiang(gamma=1, a=1, K=K_TVM,h=1, nu=nu, r=1, theta=mean
 # pop = dvcpp.DVSim(td, obs_param)
 
 population = 10000
-generations = 5
+generations = 10
 total_population = population*3
 
 prior = [0.0,1e-4,0.0,1e-2,0.0,1e-2,20.0,500.0]
@@ -320,7 +320,7 @@ for g in range(generations):
         params_TVP[:, 4] = propose_nu_TVP
         params_TVP[:, 9] = propose_vm_TVP
 
-   if len(np.where(propose_model==1)[0])>0:
+    if len(np.where(propose_model==1)[0])>0:
         params_TV_update = params_TV[:,[0,1,4,9]]
         modelinex = 1
         if len(valid_TV)>0:

@@ -67,6 +67,12 @@ class DVTreeData:
 
 
 # converts named parameters in numpy.array
-def DVParam(gamma, a, K, nu, r, theta, Vmax, inittrait, initpop, initpop_sigma, break_on_mu):
-    return np.array([gamma, a, K, nu, r, theta, Vmax, inittrait, initpop, initpop_sigma, 1.0 if break_on_mu else 0.0]).astype(float)
+# inittrait, initpop and initpop_sigma are not used in DVTraitsim keep this for all model variants 
+def DVParamLiang(gamma, a, K, h, nu, r, theta, V00, V01, Vmax, inittrait, initpop, initpop_sigma, break_on_mu):
+    return np.array([gamma, a, K, h, nu, r, theta, V00, V01, Vmax, inittrait, initpop, initpop_sigma, 1.0 if break_on_mu else 0.0]).astype(float)
+
+# converts named parameters in numpy.array
+# deprecated 
+def DVParamDrury(gamma, a, theta, m, inittrait, var_trait):
+    return np.array([gamma, a, theta, m, inittrait, var_trait]).astype(float)
 

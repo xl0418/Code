@@ -324,7 +324,7 @@ for g in range(generations):
         params_TVP[:, 4] = propose_nu_TVP
         params_TVP[:, 9] = propose_vm_TVP
 
-   if len(np.where(propose_model==1)[0])>0:
+    if len(np.where(propose_model==1)[0])>0:
         params_TV_update = params_TV[:,[0,1,4,9]]
         modelinex = 1
         if len(valid_TV)>0:
