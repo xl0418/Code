@@ -15,9 +15,18 @@ td = DVTreeData(path=files, scalar=2000)
 K = 1e6
 nu = 1e-4
 meantrait = 1300
-obs_param = DVParamLiang(gamma=1e-7, a=1e-4, K=K,h=1, nu=nu, r=1, theta=meantrait,V00=.1,V01=.1, Vmax=100, inittrait=meantrait, initpop=1e5,
-                                initpop_sigma=10.0, break_on_mu=False)
-simresult = DVSimTV(td, obs_param)
+gamma_TVM_est =  7.539611977498784e-05 #np.mean(gamma_TVM[fit_index_TVM])
+a_TVM_est = 0.0021762021948271803 #np.mean(a_TVM[fit_index_TVM])
+nu_TVM_est =0.0036982608897495085 # np.mean(nu_TVM[fit_index_TVM])
+vm_TVM_est = 42.941# np.mean(vm_TVM[fit_index_TVM])
+
+# obs_param = DVParamLiang(gamma=1e-7, a=1e-4, K=K,h=1, nu=nu, r=1, theta=meantrait,V00=.1,V01=.1, Vmax=100, inittrait=meantrait, initpop=1e5,
+#                                 initpop_sigma=10.0, break_on_mu=False)
+obs_param = DVParamLiang(gamma=gamma_TVM_est, a=a_TVM_est, K=1e15, h=1, nu=nu_TVM_est, r=1, theta=meantrait,
+                         V00=.5,V01=.5, Vmax=vm_TVM_est, inittrait=meantrait, initpop=1e5,
+                     initpop_sigma=10.0, break_on_mu=False)
+
+simresult = DVSimTVM(td, obs_param)
 simresult['Z'][-1]
 #
 #

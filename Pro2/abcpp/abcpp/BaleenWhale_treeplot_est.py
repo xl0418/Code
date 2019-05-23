@@ -1,5 +1,5 @@
 import sys, os
-import platform
+import csv
 sys.path.append('C:/Liang/abcpp_ms5/abcpp')
 from Dvtraitsim_TVP import DVSimTVP
 from dvtraitsim_shared import DVTreeData, DVParamLiang
@@ -112,9 +112,42 @@ for img in range(3):
 
 
 
+def argsort2D(X):
+    return np.arange(len(X))[:, np.newaxis], np.argsort(X, axis=1)
 
+with open(files+'extantspecieslabels.csv') as csv_file:
+    csv1_reader = csv.reader(csv_file, delimiter=',')
+    extantlabels = list(csv1_reader)
+
+with open(dir_path+'slater_length_data.csv') as csv_file:
+    csv2_reader = csv.reader(csv_file, delimiter=',')
+    lengthdata = list(csv2_reader)
+
+extantlabels_array = np.array(extantlabels)[1:,1]
+lengthdata_array = np.array(lengthdata)
+length_index = []
+for label in extantlabels_array:
+    length_index.append(np.where(lengthdata_array[:,0]==label)[0][0])
+
+logTL = lengthdata_array[length_index,1].astype(np.float)
+length = 10**logTL
+obsZ = length
+s = np.argsort(obsZ)
+obsZ = obsZ[s]
+
+trait_TVP_sorted = np.array(sorted(trait_TVP[-1]))
+diff_norm_TVP = np.linalg.norm(trait_TVP_sorted - obsZ)
+
+trait_TV_sorted = np.array(sorted(trait_TV[-1]))
+diff_norm_TV = np.linalg.norm(trait_TV_sorted - obsZ)
+
+np.linalg.norm(trait_TV_sorted - trait_TVP_sorted)
 dir_fig = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/traittree'
 
+
+gap_tvp = np.array([trait_TVP_sorted[i+1]-trait_TVP_sorted[i] for i in range(len(trait_TVP_sorted)-1)])
+gap_tv = np.array([trait_TV_sorted[i+1]-trait_TV_sorted[i] for i in range(len(trait_TV_sorted)-1)])
+gap_obs = np.array([obsZ[i+1]-obsZ[i] for i in range(len(obsZ)-1)])
 #
 # f1.savefig(dir_fig+'TP2w.png')
 # plt.close(f1)

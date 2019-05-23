@@ -70,7 +70,7 @@ sampleparam_TVM = DVParamLiang(gamma=1, a=1, K=K_TVM,h=1, nu=nu, r=1, theta=mean
 # pop = dvcpp.DVSim(td, obs_param)
 
 population = 10000
-generations = 10
+generations = 4
 total_population = population*3
 
 prior = [0.0,1e-4,0.0,1e-2,0.0,1e-2,20.0,500.0]
@@ -131,7 +131,7 @@ a_data_TV[0,:] = params_TV[:,1]
 nu_data_TV[0,:] = params_TV[:,4]
 vm_data_TV[0,:] = params_TV[:,9]
 
-gamma_data_TV[0,:] = params_TVM[:,0]
+gamma_data_TVM[0,:] = params_TVM[:,0]
 a_data_TVM[0,:] = params_TVM[:,1]
 nu_data_TVM[0,:] = params_TVM[:,4]
 vm_data_TVM[0,:] = params_TVM[:,9]
@@ -214,7 +214,7 @@ for g in range(generations):
         print('TVM simulations start...')
         simmodelTVM = dvcpp.DVSimTVM(td, params_TVM)
         valid_TVM = np.where(simmodelTVM['sim_time'] == td.sim_evo_time)[0]
-        Z_modelTVM = simmodelTV['Z'][valid_TVM]
+        Z_modelTVM = simmodelTVM['Z'][valid_TVM]
         i, j = argsort2D(Z_modelTVM)
         Z_modelTVM = Z_modelTVM[i, j]
         # V = pop['V'][valid][i, j]
@@ -255,12 +255,12 @@ for g in range(generations):
 
     propose_model = model_params
 
-    q5_TVP = np.argsort(fitness[g, :population-1])[-int(population // 200)]  # best 5%
-    q5_TV = np.argsort(fitness[g, population:2*population-1])[-int(population // 200)]+population  # best 5%
-    q5_TVM = np.argsort(fitness[g, 2*population:3*population-1])[-int(population // 200)]+2*population  # best 5%
+    q5_TVP = np.argsort(fitness[g, :population])[-int(population // 200)]  # best 5%
+    q5_TV = np.argsort(fitness[g, population:2*population])[-int(population // 200)]+population  # best 5%
+    q5_TVM = np.argsort(fitness[g, 2*population:3*population])[-int(population // 200)]+2*population  # best 5%
 
-    fit_index_TVP = np.where(fitness[g, :population-1] > fitness[g, q5_TVP])[0]
-    fit_index_TV = np.where(fitness[g, population:2*population-1] > fitness[g, q5_TV])[0]+population
+    fit_index_TVP = np.where(fitness[g, :population] > fitness[g, q5_TVP])[0]
+    fit_index_TV = np.where(fitness[g, population:2*population] > fitness[g, q5_TV])[0]+population
     fit_index_TVM = np.where(fitness[g, 2*population:] > fitness[g, q5_TVM])[0]+2*population
 
     previous_bestfitted_index_TVP = fit_index_TVP
