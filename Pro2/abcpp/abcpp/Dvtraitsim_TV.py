@@ -1,6 +1,6 @@
 import numpy as np
 import os,sys
-sys.path.append('C:/Liang/abcpp_ms2/abcpp')
+sys.path.append('C:/Liang/abcpp_ms5/abcpp')
 from dvtraitsim_shared import DVTreeData
 
 

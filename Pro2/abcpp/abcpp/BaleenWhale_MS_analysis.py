@@ -54,10 +54,10 @@ a_TV_est = np.mean(a_TV[fit_index_TV])
 nu_TV_est = np.mean(nu_TV[fit_index_TV])
 vm_TV_est = np.mean(vm_TV[fit_index_TV])
 
-gamma_TVM_est =  7.539611977498784e-05 #np.mean(gamma_TVM[fit_index_TVM])
-a_TVM_est = 0.0021762021948271803 #np.mean(a_TVM[fit_index_TVM])
-nu_TVM_est =0.0036982608897495085 # np.mean(nu_TVM[fit_index_TVM])
-vm_TVM_est = 42.941# np.mean(vm_TVM[fit_index_TVM])
+gamma_TVM_est =  4.559e-09 #np.mean(gamma_TVM[fit_index_TVM])
+a_TVM_est = 8.433e-04 #np.mean(a_TVM[fit_index_TVM])
+nu_TVM_est =5.806e-01 # np.mean(nu_TVM[fit_index_TVM])
+vm_TVM_est = 48.9645# np.mean(vm_TVM[fit_index_TVM])
 
 td = DVTreeData(path=obs_file, scalar=timescaling)
 
@@ -119,7 +119,7 @@ param_TV = DVParamLiang(gamma=gamma_TV_est, a=a_TV_est, K=1e6, h=1, nu=nu_TV_est
 simtraits(param = param_TV,replicates=1000,obs_dir= obs_file,timescaling=20000,mode = 'TV')
 
 # sim TVM
-param_TVM = DVParamLiang(gamma=gamma_TVM_est, a=a_TVM_est, K=1e15, h=1, nu=nu_TVM_est, r=1, theta=meantrait,
+param_TVM = DVParamLiang(gamma=gamma_TVM_est, a=a_TVM_est, K=1e12, h=1, nu=nu_TVM_est, r=1, theta=meantrait,
                          V00=.5,V01=.5, Vmax=vm_TVM_est, inittrait=meantrait, initpop=1e5,
                      initpop_sigma=10.0, break_on_mu=False)
 

@@ -38,7 +38,7 @@ obsZ_emp[,1] = extantspecieslabel
 species_label = extantspecieslabel
 sorted.species.labels <- obsZ_emp[order(obsZ_emp[,2]),1]
 
-mode.label = c('TVP','TV')
+mode.label = c('TVP','TV','TVM')
 
 for(count in mode.label){
   simfile = paste0(dir,'predictsim',count,'.csv')

@@ -16,7 +16,7 @@ r = 1  # growth rate
 Vmax = 100
 scalar = 2000
 K=10e5
-K_TVM = 1e10
+K_TVM = 1e12
 nu=1e-4
 timegap = 1
 

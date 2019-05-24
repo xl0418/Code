@@ -1,6 +1,6 @@
 import numpy as np
 import os,sys
-sys.path.append('C:/Liang/abcpp_ms2/abcpp')
+sys.path.append('C:/Liang/abcpp_ms5/abcpp')
 from dvtraitsim_shared import DVTreeData
 import dvtraitsim_cpp as dvcpp
 
@@ -119,7 +119,7 @@ def DVSimTVM(td, param):
         if np.any(population_RI_dr[i + 1, idx] < 1):
             # print(i, 'Inconsistent extinction')
             break
-        if np.any(V[i + 1, idx] < 0.0) or np.any(V[i + 1, idx] > 100000.0):
+        if np.any(V[i + 1, idx] < 0.0) or np.any(V[i + 1, idx] > 10000000000000.0):
             print(i, 'runaway variance')
             break
     row_ext = np.where(population_RI_dr == 0)[0]

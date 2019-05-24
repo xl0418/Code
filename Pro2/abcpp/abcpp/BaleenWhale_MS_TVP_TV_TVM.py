@@ -23,7 +23,7 @@ def normalized_norm(x, y):
 
 K_TVP=1e6
 K_TV = 1e6
-K_TVM = 1e11
+K_TVM = 1e12
 nu=1e-4
 
 
@@ -73,7 +73,8 @@ population = 10000
 generations = 4
 total_population = population*3
 
-prior = [0.0,1e-4,0.0,1e-2,0.0,1e-2,20.0,500.0]
+prior = [0.0,1e-4,0.0,1e-2,0.0,1.0,10.0,500.0]
+prior_TVM = [0.0,1e-8,0.0,1e-3,0.0,1.0,10.0,500.0]
 
 
 params_TVP = np.tile(sampleparam_TVP, (population, 1))  # duplicate
@@ -89,10 +90,10 @@ params_TV[:, 4] = np.random.uniform(prior[4], prior[5], params_TV.shape[0])  # r
 params_TV[:, 9] = np.random.uniform(prior[6], prior[7], params_TV.shape[0])  # randomize 'Vm'
 
 params_TVM = np.tile(sampleparam_TVM, (population, 1))  # duplicate
-params_TVM[:, 0] = np.random.uniform(prior[0], prior[1], params_TVM.shape[0])  # randomize 'gamma'
-params_TVM[:, 1] = np.random.uniform(prior[2], prior[3], params_TVM.shape[0])  # randomize 'a'
-params_TVM[:, 4] = np.random.uniform(prior[4], prior[5], params_TVM.shape[0])  # randomize 'nu'
-params_TVM[:, 9] = np.random.uniform(prior[6], prior[7], params_TVM.shape[0])  # randomize 'Vm'
+params_TVM[:, 0] = np.random.uniform(prior_TVM[0], prior_TVM[1], params_TVM.shape[0])  # randomize 'gamma'
+params_TVM[:, 1] = np.random.uniform(prior_TVM[2], prior_TVM[3], params_TVM.shape[0])  # randomize 'a'
+params_TVM[:, 4] = np.random.uniform(prior_TVM[4], prior_TVM[5], params_TVM.shape[0])  # randomize 'nu'
+params_TVM[:, 9] = np.random.uniform(prior_TVM[6], prior_TVM[7], params_TVM.shape[0])  # randomize 'Vm'
 
 # model choice
 model_index = np.array([0,1,2])
