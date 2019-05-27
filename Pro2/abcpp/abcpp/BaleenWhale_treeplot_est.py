@@ -14,26 +14,26 @@ import matplotlib.pyplot as plt
 r = 1  # growth rate
 Vmax_TVP = 332
 Vmax_TV = 92.8
-Vmax_TVM = 64.5
+Vmax_TVM = 48.0
 
 gamma_TVP = 9.954e-7
 gamma_TV = 4.072e-6
-gamma_TVM = 2.394e-5
+gamma_TVM = 4.311e-9
 
 a_TVP = 2.365e-4
 a_TV = 2.437e-5
-a_TVM = 2.378e-3
+a_TVM = 8.577e-4
 
 nu_TVP = 3.038e-3
 nu_TV = 2.933e-3
-nu_TVM = 5.392e-3
+nu_TVM = 4.955e-3
 
 scalar = 20000
 K=10e5
-K_TVM = 1e13
+K_TVM = 1e12
 
 # let's try to find a true simulation:
-
+model_label = ['TVP','TV','TVM']
 
 #full tree and pruned tree directory
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
@@ -109,7 +109,8 @@ for i in range(1, num_lines + 1):
 for img in range(3):
     axes1[img].xaxis.set_major_locator(plt.NullLocator())
     axes1[img].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
-
+    axes1[img].set_ylabel(model_label[img])
+    axes1[img].yaxis.set_label_position("right")
 
 
 def argsort2D(X):

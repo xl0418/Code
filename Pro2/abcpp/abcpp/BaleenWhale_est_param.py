@@ -33,7 +33,7 @@ lengthdata_array = np.array(lengthdata)
 length_index = []
 gamma_list = []
 a_list = []
-nv_list = []
+nu_list = []
 distance_list = []
 ratio_dis = []
 valid_length = []
@@ -77,8 +77,10 @@ for timescaling_index in range(3):
 
             gamma_vec = est_data['gamma'][generation-1]*1e7
             a_vec = est_data['a'][generation-1]*1e4
+            nu_vec = est_data['nu'][-1]
             gamma_list.append(gamma_vec.tolist())
             a_list.append(a_vec.tolist())
+            nu_list.append(nu_vec.tolist())
             timescaling_list.append(np.repeat(timescaling,population))
             heri_list.append(np.repeat(heritability,population))
 

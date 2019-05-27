@@ -42,7 +42,7 @@ def tp_update(previous_bestfitted_index,propose_model,params,weight_gamma,weight
     # draw new nu with mean and variance
     propose_nu = abs(np.random.normal(propose_nu0, np.sqrt(2 * nu_pre_var)))
     # mean of the sample for Vm
-    propose_vm0 = params[sample_nu_index, 3]
+    propose_vm0 = params[sample_vm_index, 3]
     # draw new Vm with mean and variance
     propose_vm = abs(np.random.normal(propose_vm0, np.sqrt(2 * vm_pre_var)))
 

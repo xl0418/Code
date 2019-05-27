@@ -44,20 +44,20 @@ fit_index_TVP = np.where(fitness[ :population] > fitness[ q5_TVP])[0]
 fit_index_TV = np.where(fitness[ population:2 * population] > fitness[ q5_TV])[0]
 fit_index_TVM = np.where(fitness[ 2 * population:] > fitness[ q5_TVM])[0]
 
-gamma_TVP_est = np.mean(gamma_TVP[fit_index_TVP])
-a_TVP_est = np.mean(a_TVP[fit_index_TVP])
-nu_TVP_est = np.mean(nu_TVP[fit_index_TVP])
-vm_TVP_est = np.mean(vm_TVP[fit_index_TVP])
+gamma_TVP_est = 9.960e-7 #np.mean(gamma_TVP[fit_index_TVP])
+a_TVP_est = 2.363e-4 # np.mean(a_TVP[fit_index_TVP])
+nu_TVP_est = 3.763e-3 #np.mean(nu_TVP[fit_index_TVP])
+vm_TVP_est = 334 # np.mean(vm_TVP[fit_index_TVP])
 
 gamma_TV_est = np.mean(gamma_TV[fit_index_TV])
 a_TV_est = np.mean(a_TV[fit_index_TV])
 nu_TV_est = np.mean(nu_TV[fit_index_TV])
 vm_TV_est = np.mean(vm_TV[fit_index_TV])
 
-gamma_TVM_est =  4.559e-09 #np.mean(gamma_TVM[fit_index_TVM])
-a_TVM_est = 8.433e-04 #np.mean(a_TVM[fit_index_TVM])
-nu_TVM_est =5.806e-01 # np.mean(nu_TVM[fit_index_TVM])
-vm_TVM_est = 48.9645# np.mean(vm_TVM[fit_index_TVM])
+gamma_TVM_est =  4.311e-09 #np.mean(gamma_TVM[fit_index_TVM])
+a_TVM_est = 8.577e-04 #np.mean(a_TVM[fit_index_TVM])
+nu_TVM_est =4.955e-01 # np.mean(nu_TVM[fit_index_TVM])
+vm_TVM_est = 48# np.mean(vm_TVM[fit_index_TVM])
 
 td = DVTreeData(path=obs_file, scalar=timescaling)
 
@@ -79,6 +79,12 @@ def simtraits(param, replicates,obs_dir,timescaling,mode):
         Z_df = pd.DataFrame(Z)
         savefilename = obs_dir + 'predictsim%s.csv' % mode
         Z_df.to_csv(savefilename, sep=',', index=False)
+        if mode != 'TV':
+            N = predictsim['N'][valid]
+            N = np.nan_to_num(N)
+            N_df = pd.DataFrame(N)
+            savefilename = obs_dir + 'predictsimN%s.csv' % mode
+            N_df.to_csv(savefilename, sep=',', index=False)
     else:
         return print('No valid simulation...')
 
