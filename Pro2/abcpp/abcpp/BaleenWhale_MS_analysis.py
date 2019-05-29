@@ -20,21 +20,21 @@ obs_file = dir_path + 'treedata/'
 
 est_data = np.load(data_name).item()
 fitness = est_data['fitness'][-1]
+Z = est_data['Z']
+gamma_TVP = est_data['gamma_data_TVP'][-2]
+a_TVP = est_data['a_data_TVP'][-2]
+nu_TVP = est_data['nu_data_TVP'][-2]
+vm_TVP = est_data['vm_data_TVP'][-2]
 
-gamma_TVP = est_data['gamma_data_TVP'][-1]
-a_TVP = est_data['a_data_TVP'][-1]
-nu_TVP = est_data['nu_data_TVP'][-1]
-vm_TVP = est_data['vm_data_TVP'][-1]
+gamma_TV = est_data['gamma_data_TV'][-2]
+a_TV = est_data['a_data_TV'][-2]
+nu_TV = est_data['nu_data_TV'][-2]
+vm_TV = est_data['vm_data_TV'][-2]
 
-gamma_TV = est_data['gamma_data_TV'][-1]
-a_TV = est_data['a_data_TV'][-1]
-nu_TV = est_data['nu_data_TV'][-1]
-vm_TV = est_data['vm_data_TV'][-1]
-
-gamma_TVM = est_data['gamma_data_TVM'][-1]
-a_TVM = est_data['a_data_TVM'][-1]
-nu_TVM = est_data['nu_data_TVM'][-1]
-vm_TVM = est_data['vm_data_TVM'][-1]
+gamma_TVM = est_data['gamma_data_TVM'][-2]
+a_TVM = est_data['a_data_TVM'][-2]
+nu_TVM = est_data['nu_data_TVM'][-2]
+vm_TVM = est_data['vm_data_TVM'][-2]
 
 q5_TVP = np.argsort(fitness[ :population ])[-int(population // 200)]  # best 5%
 q5_TV = np.argsort(fitness[population:2 * population ])[-int(population // 200)] + population  # best 5%
@@ -44,20 +44,20 @@ fit_index_TVP = np.where(fitness[ :population] > fitness[ q5_TVP])[0]
 fit_index_TV = np.where(fitness[ population:2 * population] > fitness[ q5_TV])[0]
 fit_index_TVM = np.where(fitness[ 2 * population:] > fitness[ q5_TVM])[0]
 
-gamma_TVP_est = 9.960e-7 #np.mean(gamma_TVP[fit_index_TVP])
-a_TVP_est = 2.363e-4 # np.mean(a_TVP[fit_index_TVP])
-nu_TVP_est = 3.763e-3 #np.mean(nu_TVP[fit_index_TVP])
-vm_TVP_est = 334 # np.mean(vm_TVP[fit_index_TVP])
+gamma_TVP_est = np.mean(gamma_TVP[fit_index_TVP])
+a_TVP_est = np.mean(a_TVP[fit_index_TVP])
+nu_TVP_est = np.mean(nu_TVP[fit_index_TVP])
+vm_TVP_est = np.mean(vm_TVP[fit_index_TVP])
 
 gamma_TV_est = np.mean(gamma_TV[fit_index_TV])
 a_TV_est = np.mean(a_TV[fit_index_TV])
 nu_TV_est = np.mean(nu_TV[fit_index_TV])
 vm_TV_est = np.mean(vm_TV[fit_index_TV])
 
-gamma_TVM_est =  4.311e-09 #np.mean(gamma_TVM[fit_index_TVM])
-a_TVM_est = 8.577e-04 #np.mean(a_TVM[fit_index_TVM])
-nu_TVM_est =4.955e-01 # np.mean(nu_TVM[fit_index_TVM])
-vm_TVM_est = 48# np.mean(vm_TVM[fit_index_TVM])
+gamma_TVM_est =  np.mean(gamma_TVM[fit_index_TVM])
+a_TVM_est = np.mean(a_TVM[fit_index_TVM])
+nu_TVM_est =np.mean(nu_TVM[fit_index_TVM])
+vm_TVM_est =  np.mean(vm_TVM[fit_index_TVM])
 
 td = DVTreeData(path=obs_file, scalar=timescaling)
 

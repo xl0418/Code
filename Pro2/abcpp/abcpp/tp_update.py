@@ -54,7 +54,7 @@ def tp_update(previous_bestfitted_index,propose_model,params,weight_gamma,weight
     # compute new weights for gamma and a
     weight_gamma_denominator = np.sum(extend_weight_gamma * norm.pdf(propose_gamma, propose_gamma0,
                                                                            np.sqrt(2 * gamma_pre_var)))
-    weight_gamma_numerator = norm.pdf(propose_gamma, gamma_pre_mean, np.sqrt(2 * gamma_pre_var))
+    weight_gamma_numerator = norm.pdf(propose_gamma, gamma_pre_mean, np.sqrt(2 * gamma_pre_var))  # Estimation script is using gamma_prior_mean and gamma_prior_var
     weight_gamma = weight_gamma_numerator / weight_gamma_denominator
 
     weight_a_denominator = np.sum(extend_weight_a * norm.pdf(propose_a, propose_a0,

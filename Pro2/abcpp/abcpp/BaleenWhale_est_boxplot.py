@@ -54,37 +54,53 @@ heritability_vec = [0.5,1]
 
 
 for timescaling_index in range(5):
-        for heritability_index in range(2):
-            print(count)
-            count += 1
-            timescaling = timescale_vec[timescaling_index]
-            heritability = heritability_vec[heritability_index]
+    for heritability_index in range(2):
+        print(count)
+        count += 1
+        timescaling = timescale_vec[timescaling_index]
+        heritability = heritability_vec[heritability_index]
 
-            data_name = data_dir + 'BWest_t%i_h%i.npy' % (int(timescaling), int(heritability_index))
-            est_data = np.load(data_name).item()
-            generation = len(est_data['gamma'])
-            population = len(est_data['gamma'][0])
+        data_name = data_dir + 'BWest_t%i_h%i.npy' % (int(timescaling), int(heritability_index))
+        est_data = np.load(data_name).item()
+        generation = len(est_data['gamma'])
+        population = len(est_data['gamma'][0])
+        fitness = est_data['fitness'][-1]
+        valid = est_data['valid']
+        q5 = np.argsort(fitness)[-len(valid) // 20]  # best 5%
+        fit_index = np.where(fitness > fitness[q5])[0]
 
-            # last_fitness = est_data['fitness'][generation - 1]
-            # q5 = np.argsort(last_fitness)[-population // 20]  # best 5%
-            # fit_index = np.where(last_fitness > last_fitness[q5])[0]
 
-            # mean of all samples
-            # gamma_mean = np.mean(est_data['gamma'][generation-1])
-            # a_mean = np.mean(est_data['a'][generation-1])
-            # nv_mean = np.mean(est_data['nu'][generation-1])
-            # mean of the top 5% samples
+        # last_fitness = est_data['fitness'][generation - 1]
+        # q5 = np.argsort(last_fitness)[-population // 20]  # best 5%
+        # fit_index = np.where(last_fitness > last_fitness[q5])[0]
 
-            gamma_vec = est_data['gamma'][-1]*1e7
-            a_vec = est_data['a'][-1]*1e5
-            nu_vec = est_data['nu'][-1]*1e5
-            vm_vec = est_data['vm'][-1]
-            gamma_list.append(gamma_vec.tolist())
-            a_list.append(a_vec.tolist())
-            nu_list.append(nu_vec.tolist())
-            vm_list.append(vm_vec.tolist())
-            timescaling_list.append(np.repeat(timescaling,population))
-            heri_list.append(np.repeat(heritability,population))
+        # mean of all samples
+        # gamma_mean = np.mean(est_data['gamma'][generation-1])
+        # a_mean = np.mean(est_data['a'][generation-1])
+        # nv_mean = np.mean(est_data['nu'][generation-1])
+        # mean of the top 5% samples
+
+        gamma_vec = est_data['gamma'][-2]*1e7
+        a_vec = est_data['a'][-2]*1e5
+        nu_vec = est_data['nu'][-2]*1e5
+        vm_vec = est_data['vm'][-2]
+
+        print('s=%i h2=%f 5th gamma = %.3e  a = %.3e nu = %.3e Vm = %f fitness = %f' % (timescaling,
+                                                                                        heritability,
+            np.mean(gamma_vec[fit_index])*1e-7,
+            np.mean(a_vec[fit_index])*1e-5, np.mean(nu_vec[fit_index])*1e-5,
+            np.mean(vm_vec[fit_index]), np.mean(fitness[fit_index])))
+        print('Var: gamma = %.3e  a = %.3e nu = %.3e Vm = %f fitness = %f' % (
+            np.var(gamma_vec[fit_index])*1e-7,
+            np.var(a_vec[fit_index])*1e-5, np.var(nu_vec[fit_index])*1e-5,
+            np.var(vm_vec[fit_index]), np.var(fitness[fit_index])))
+
+        gamma_list.append(gamma_vec.tolist())
+        a_list.append(a_vec.tolist())
+        nu_list.append(nu_vec.tolist())
+        vm_list.append(vm_vec.tolist())
+        timescaling_list.append(np.repeat(timescaling,population))
+        heri_list.append(np.repeat(heritability,population))
 
 
 
@@ -93,10 +109,11 @@ a_list_flat = np.array([item for sublist in a_list for item in sublist])
 nu_list_flat = np.array([item for sublist in nu_list for item in sublist])
 vm_list_flat = np.array([item for sublist in vm_list for item in sublist])
 
-est_array = np.concatenate([gamma_list_flat,a_list_flat,nu_list_flat,vm_list_flat])
-est_label = np.repeat(['gamma','alpha','nu','vm'],population*10)
-timescaling_list_flat = np.tile(np.repeat(timescale_vec,40000),4)
-heri_list_flat = np.tile(np.repeat(heritability_vec,20000),20)
+est_para = ['gamma','alpha','nu'] # ,'vm'
+est_array = np.concatenate([gamma_list_flat,a_list_flat,nu_list_flat]) # ,vm_list_flat
+est_label = np.repeat(est_para,population*len(heritability_vec)*len(timescale_vec))
+timescaling_list_flat = np.tile(np.repeat(timescale_vec,population*len(heritability_vec)),len(est_para))
+heri_list_flat = np.tile(np.repeat(heritability_vec,population),len(est_para)*len(timescale_vec))
 
 
 ss_list = {'est':est_array,'est_label':est_label,
