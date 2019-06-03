@@ -1,12 +1,9 @@
 
-event2L = function(result,mode = 'R'){
-  if(mode == 'R'){
-  ticks = result$log$sT[length(result$log$sT)]
-  }
-  if(mode == 'Matlab'){
-    ticks = result$turnover
-  }
-  L_raw = cbind(result$events$T,result$events$ancestor+1,result$events$sp+1)
+event2L = function(events,turnover){
+  colnames(events) = c('T','ns','x','y','sp','ancestor')
+  ticks = turnover
+
+  L_raw = cbind(events$T,events$ancestor+1,events$sp+1)
   
   L_raw[which(L_raw[,2]==0),2] = -1
   L_raw = rbind(c(0,0,1),c(0,1,2),L_raw)

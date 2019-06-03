@@ -41,7 +41,7 @@ timescaling_list = []
 heri_list = []
 count = 0
 particle_size = 100
-K=10e8
+K=1e6
 nu=1/(100*K)
 
 for label in extantlabels_array:
@@ -84,16 +84,17 @@ for timescaling_index in range(5):
         a_vec = est_data['a'][-2]*1e5
         nu_vec = est_data['nu'][-2]*1e5
         vm_vec = est_data['vm'][-2]
+        inflow_mutation = 2*K*nu_vec*1e-5 * vm_vec/(1+4*K*nu_vec*1e-5)
 
-        print('s=%i h2=%f 5th gamma = %.3e  a = %.3e nu = %.3e Vm = %f fitness = %f' % (timescaling,
+        print('s=%i h2=%f 5th gamma = %.3e  a = %.3e nu = %.3e Vm = %f inflow = %f' % (timescaling,
                                                                                         heritability,
             np.mean(gamma_vec[fit_index])*1e-7,
             np.mean(a_vec[fit_index])*1e-5, np.mean(nu_vec[fit_index])*1e-5,
-            np.mean(vm_vec[fit_index]), np.mean(fitness[fit_index])))
-        print('Var: gamma = %.3e  a = %.3e nu = %.3e Vm = %f fitness = %f' % (
+            np.mean(vm_vec[fit_index]), np.mean(inflow_mutation[fit_index])))
+        print('Var: gamma = %.3e  a = %.3e nu = %.3e Vm = %f inflow = %f' % (
             np.var(gamma_vec[fit_index])*1e-7,
             np.var(a_vec[fit_index])*1e-5, np.var(nu_vec[fit_index])*1e-5,
-            np.var(vm_vec[fit_index]), np.var(fitness[fit_index])))
+            np.var(vm_vec[fit_index]), np.var(inflow_mutation[fit_index])))
 
         gamma_list.append(gamma_vec.tolist())
         a_list.append(a_vec.tolist())
@@ -109,8 +110,8 @@ a_list_flat = np.array([item for sublist in a_list for item in sublist])
 nu_list_flat = np.array([item for sublist in nu_list for item in sublist])
 vm_list_flat = np.array([item for sublist in vm_list for item in sublist])
 
-est_para = ['gamma','alpha','nu'] # ,'vm'
-est_array = np.concatenate([gamma_list_flat,a_list_flat,nu_list_flat]) # ,vm_list_flat
+est_para = ['gamma','alpha','nu','vm'] # ,'vm'
+est_array = np.concatenate([gamma_list_flat,a_list_flat,nu_list_flat,vm_list_flat]) # ,vm_list_flat
 est_label = np.repeat(est_para,population*len(heritability_vec)*len(timescale_vec))
 timescaling_list_flat = np.tile(np.repeat(timescale_vec,population*len(heritability_vec)),len(est_para))
 heri_list_flat = np.tile(np.repeat(heritability_vec,population),len(est_para)*len(timescale_vec))

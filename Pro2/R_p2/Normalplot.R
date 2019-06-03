@@ -10,14 +10,14 @@ plot(xseq, densities, col="darkgreen",xlab="", ylab="Density",
      xlim = c(0,1))
 
 y1 = function(x){
-  y = 0.1*x*exp(-0.1*x^2)
+  y = 2e-4*x*exp(-2e-4*x^2)
   return(y)
 }
 y2 = function(x){
   y = 0.5*x*exp(-0.5*x^2)
   return(y)
 }
-curve(y1,0,10)
+curve(y1,-1000,1000)
 curve(y2,0,10)
 
 

@@ -1,26 +1,26 @@
-phi_vec = c(0,0.1,0.3,1,3,10)
-psi_vec = c(0,0.2,0.4,0.6,0.8,1)
+psi_vec = c(0,0.2,0.4,0.6,0.8)
+sig_phi = c(0,0.2,0.4,0.6,0.8,1)
 L = 333
 v=0.0001
 
-ticks=100000
+ticks=100000000
 log=1e8
 for(scenario in c(0:2)){
   # scenario = 0
   if(scenario == 0){
-    sA=0.1
-    sB=0.1
+    s_spar=0.1
+    s_disp=0.1
     sce = "L"
     scefile = "low"
   }else if(scenario == 1){
-    sA=10
-    sB=10
+    s_spar=10
+    s_disp=10
     sce = "M"
     scefile = "med"
     
   }else if(scenario == 2){
-    sA=1000
-    sB=1000
+    s_spar=1000
+    s_disp=1000
     sce = "H"
     scefile = "high"
     
@@ -30,15 +30,15 @@ for(scenario in c(0:2)){
 
   count = 0
   append = TRUE
-  for(i in c(1:6)){
-    for(j in c(1:6)){
+  for(i in c(1:length(psi_vec))){
+    for(j in c(1:length(sig_phi))){
       count = count +1
-      # str = paste0('L=',L,' v=',v,' phi=',phi_vec[i], ' psi=',psi_vec[j],
-      #              ' sA=',sA, ' sB=',sB, ' ticks=',ticks, ' log=',log,' continue=neutral.m', ' file=Lphi',i,'psi',j
+      # str = paste0('L=',L,' v=',v,' Psi=',psi_vec[i], ' s_phi=',sig_phi[j],
+      #              ' s_spar=',sA, ' s_disp=',sB, ' ticks=',ticks,' continue=neutral.m', ' file=Lpsi',i,'s_phi',j
       #              ,'.m')
-      str = sprintf('L=%i v=%.4f phi=%.4f psi=%.4f sA=%.1f sB=%.1f ticks=%i log=%i continue=neutral.m file=%s/%sphi%ipsi%i.m',
-                    L,v,phi_vec[i],psi_vec[j],sA,sB,ticks, log,formatC(ticks),sce,i,j)
-      filename<-paste0("C:/Liang/Googlebox/Research/Project3/simdata_",formatC(ticks),"newpara/spatialpara",scefile,formatC(ticks),".txt")
+      str = sprintf('L=%i v=%.4f Psi=%.4f s_phi=%.4f s_spar=%.1f s_disp=%.1f ticks=%i continue=neutral.m file=%s/%spsi%is_phi%i.m',
+                    L,v,psi_vec[i],sig_phi[j],s_spar,s_disp,ticks,formatC(ticks),sce,i,j)
+      filename<-paste0("C:/Liang/Googlebox/Research/Project3/simdata_1e9/spatialpara",scefile,formatC(ticks),".txt")
       if(count == 1){
         # write(str, file=filename,append=FALSE)
         cat(str,'\n', file=filename, append=FALSE, sep='')
@@ -50,7 +50,7 @@ for(scenario in c(0:2)){
   }
   
   # generate bash files
-  bashfilename = paste0("C:/Liang/Googlebox/Research/Project3/simdata_",formatC(ticks),"newpara/spatialsim",scefile,formatC(ticks),".sh")
+  bashfilename = paste0("C:/Liang/Googlebox/Research/Project3/simdata_1e9/spatialsim",scefile,formatC(ticks),".sh")
   bashsetting = sprintf('#!/bin/bash
 #SBATCH --time=9-23:59:00
 #SBATCH --partition=gelifes
