@@ -68,8 +68,8 @@ sampleparam_TVM = DVParamLiang(gamma=1, a=1, K=K_TVM,h=1, nu=nu, r=1, theta=mean
 
 # pop = dvcpp.DVSim(td, obs_param)
 
-population = 20000
-generations = 30
+population = 2000
+generations = 4
 total_population = population*3
 
 prior = [0.0,1e-4,0.0,1e-2,0.0,1e-2,10.0,500.0]
@@ -361,9 +361,9 @@ if len(np.where(propose_model==2)[0])>0:
 para_data = {'model_data': model_data,'fitness': fitness, 'gamma_data_TVP':gamma_data_TVP,
              'a_data_TVP':a_data_TVP,'nu_data_TVP':nu_data_TVP,'vm_data_TVP':vm_data_TVP,
               'gamma_data_TV':gamma_data_TV,
-             'a_data_TV':a_data_TV,'nu_data_TV':nu_data_TV,'vm_data_TV':vm_data_TVP,
+             'a_data_TV':a_data_TV,'nu_data_TV':nu_data_TV,'vm_data_TV':vm_data_TV,
              'gamma_data_TVM': gamma_data_TVM,
-             'a_data_TVM': a_data_TVP, 'nu_data_TVM': nu_data_TVM, 'vm_data_TVM': vm_data_TVM,
+             'a_data_TVM': a_data_TVM, 'nu_data_TVM': nu_data_TVM, 'vm_data_TVM': vm_data_TVM,
              }
 
 

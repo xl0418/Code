@@ -1,4 +1,4 @@
-
+library(DDD)
 dir <- 'C:/Liang/jc_standalone/x64/Release/'
 filename <- paste0(dir,'Dneu.csv')
 dmatrix = read.csv(filename,header = FALSE)
@@ -16,3 +16,5 @@ colnames(eventtable) = c('T','ns','x','y','sp','ancestor')
 event2L.func <- 'C:/Liang/Code/Pro3/R_p3/event2L.R'
 source(event2L.func)
 L.neutral <- event2L(eventtable,turnover)
+phy = DDD::L2phylo(L.neutral,dropextinct = F)
+plot(phy,show.tip.label = FALSE)
