@@ -125,8 +125,8 @@ param_TV = DVParamLiang(gamma=gamma_TV_est, a=a_TV_est, K=1e6, h=1, nu=nu_TV_est
 simtraits(param = param_TV,replicates=1000,obs_dir= obs_file,timescaling=20000,mode = 'TV')
 
 # sim TVM
-param_TVM = DVParamLiang(gamma=gamma_TVM_est, a=a_TVM_est/1.5, K=1e12, h=1, nu=nu_TVM_est, r=1, theta=meantrait-500,
-                         V00=.5,V01=.5, Vmax=vm_TVM_est, inittrait=meantrait-500, initpop=1e5,
+param_TVM = DVParamLiang(gamma=gamma_TVM_est, a=a_TVM_est, K=1e12, h=1, nu=nu_TVM_est, r=1, theta=meantrait,
+                         V00=.5,V01=.5, Vmax=vm_TVM_est, inittrait=meantrait, initpop=1e5,
                      initpop_sigma=10.0, break_on_mu=False)
 
 simtraits(param = param_TVM,replicates=100,obs_dir= obs_file,timescaling=20000,mode = 'TVM')

@@ -1,5 +1,4 @@
 import sys
-sys.path.append('C:/Liang/abcpp_ms5/abcpp')
 import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
@@ -27,10 +26,11 @@ nu=1e-4
 
 
 #full tree
-dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
+dir_path = '/home/p274981/abcpp/'
 
-files = dir_path + 'treedata/'
-savedir = dir_path + 'TVP_TV_TVM/modelselec.npy'
+files = dir_path + 'BaleenWhales/treedata/'
+
+savedir = dir_path + 'BaleenWhales/modelselec2w.npy'
 
 td = DVTreeData(path=files, scalar=20000)
 
@@ -39,7 +39,7 @@ with open(files+'extantspecieslabels.csv') as csv_file:
     csv1_reader = csv.reader(csv_file, delimiter=',')
     extantlabels = list(csv1_reader)
 
-with open(dir_path+'slater_length_data.csv') as csv_file:
+with open(files+'slater_length_data.csv') as csv_file:
     csv2_reader = csv.reader(csv_file, delimiter=',')
     lengthdata = list(csv2_reader)
 
@@ -68,8 +68,8 @@ sampleparam_TVM = DVParamLiang(gamma=1, a=1, K=K_TVM,h=1, nu=nu, r=1, theta=mean
 
 # pop = dvcpp.DVSim(td, obs_param)
 
-population = 2000
-generations = 4
+population = 30000
+generations = 50
 total_population = population*3
 
 lefttrait = np.min(obsZ)
@@ -380,7 +380,7 @@ if len(np.where(propose_model==2)[0])>0:
 
 #
 
-para_data = {'model_data': model_data,'fitness': fitness,
+para_data = {'model_data': model_data,'fitness': fitness,'Z': Z,
              'gamma_data_TVP':gamma_data_TVP,'a_data_TVP':a_data_TVP,'nu_data_TVP':nu_data_TVP,
              'vm_data_TVP':vm_data_TVP, 'theta_data_TVP':theta_data_TVP,
               'gamma_data_TV':gamma_data_TV,'a_data_TV':a_data_TV,'nu_data_TV':nu_data_TV,
@@ -390,4 +390,5 @@ para_data = {'model_data': model_data,'fitness': fitness,
              }
 
 
-# np.save(savedir,para_data)
+
+np.save(savedir,para_data)
