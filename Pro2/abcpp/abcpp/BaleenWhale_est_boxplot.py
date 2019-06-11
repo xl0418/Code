@@ -80,9 +80,9 @@ for timescaling_index in range(5):
         # nv_mean = np.mean(est_data['nu'][generation-1])
         # mean of the top 5% samples
 
-        gamma_vec = est_data['gamma'][-2]*1e7
+        gamma_vec = est_data['gamma'][-2]*1e8
         a_vec = est_data['a'][-2]*1e5
-        nu_vec = est_data['nu'][-2]*1e5
+        nu_vec = est_data['nu'][-2]*1e4
         vm_vec = est_data['vm'][-2]
         inflow_mutation = 2*K*nu_vec*1e-5 * vm_vec/(1+4*K*nu_vec*1e-5)
 
@@ -122,9 +122,12 @@ ss_list = {'est':est_array,'est_label':est_label,
             'heri':heri_list_flat}
 ss_df = pd.DataFrame(ss_list)
 
-sns.catplot(x="est_label", y="est", hue="heri", col="s",
-     data=ss_df, kind="box", height=4, aspect=.7)
-
+vioplot = sns.catplot(x="est_label", y="est", hue="heri", col="s",
+     data=ss_df, kind="violin",height=5, aspect=.6)
+vioplot.set(ylim=(-50,400))
+vioplot.set_xticklabels(["$\gamma \cdot 10^{-8}$", "$\\alpha \cdot 10^{-5}$", "$\\nu \cdot 10^{-4}$","$V_{m}$"])
+vioplot.set_axis_labels("", "Estimate value")
+vioplot._legend.set_title('$h^2$')
 #
 # g = sns.FacetGrid(ss_df, col="s",  row="heri",margin_titles=True)
 # g.map(sns.boxplot, "est_label", "est")

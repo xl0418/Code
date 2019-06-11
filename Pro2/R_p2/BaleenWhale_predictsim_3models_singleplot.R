@@ -120,7 +120,7 @@ p_finalTVM <- facet_plot(plot_sepboxplt_TVM+xlim_tree(40), panel="TL of TVM", da
 #   theme(plot.title = element_text(hjust = 0.5))
 
 
-
+p_finalTVM
 
 savefile = paste0(dir,'predictimage_TVP_TV_TVM',count,'.png')
 ggsave(savefile,p_finalTVM)
