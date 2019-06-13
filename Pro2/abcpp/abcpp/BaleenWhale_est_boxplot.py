@@ -15,7 +15,7 @@ def normalized_norm(x, y):
 
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
-data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/'
+data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0529/'
 
 obs_file = dir_path + 'treedata/'
 
@@ -66,7 +66,7 @@ for timescaling_index in range(5):
         population = len(est_data['gamma'][0])
         fitness = est_data['fitness'][-1]
         valid = est_data['valid']
-        q5 = np.argsort(fitness)[-len(valid) // 20]  # best 5%
+        q5 = np.argsort(fitness)[-int(population // 20+1)]  # best 5%
         fit_index = np.where(fitness > fitness[q5])[0]
 
 
@@ -80,28 +80,28 @@ for timescaling_index in range(5):
         # nv_mean = np.mean(est_data['nu'][generation-1])
         # mean of the top 5% samples
 
-        gamma_vec = est_data['gamma'][-2]*1e8
-        a_vec = est_data['a'][-2]*1e5
-        nu_vec = est_data['nu'][-2]*1e4
-        vm_vec = est_data['vm'][-2]
+        gamma_vec = est_data['gamma'][-2][fit_index] #*1e8
+        a_vec = est_data['a'][-2][fit_index]#*1e5
+        nu_vec = est_data['nu'][-2][fit_index]#*1e4
+        vm_vec = est_data['vm'][-2][fit_index]
         inflow_mutation = 2*K*nu_vec*1e-5 * vm_vec/(1+4*K*nu_vec*1e-5)
 
         print('s=%i h2=%f 5th gamma = %.3e  a = %.3e nu = %.3e Vm = %f inflow = %f' % (timescaling,
                                                                                         heritability,
-            np.mean(gamma_vec[fit_index])*1e-7,
-            np.mean(a_vec[fit_index])*1e-5, np.mean(nu_vec[fit_index])*1e-5,
-            np.mean(vm_vec[fit_index]), np.mean(inflow_mutation[fit_index])))
+            np.mean(gamma_vec),
+            np.mean(a_vec), np.mean(nu_vec),
+            np.mean(vm_vec), np.mean(inflow_mutation)))
         print('Var: gamma = %.3e  a = %.3e nu = %.3e Vm = %f inflow = %f' % (
-            np.var(gamma_vec[fit_index])*1e-7,
-            np.var(a_vec[fit_index])*1e-5, np.var(nu_vec[fit_index])*1e-5,
-            np.var(vm_vec[fit_index]), np.var(inflow_mutation[fit_index])))
+            np.var(gamma_vec),
+            np.var(a_vec), np.var(nu_vec),
+            np.var(vm_vec), np.var(inflow_mutation)))
 
         gamma_list.append(gamma_vec.tolist())
         a_list.append(a_vec.tolist())
         nu_list.append(nu_vec.tolist())
         vm_list.append(vm_vec.tolist())
-        timescaling_list.append(np.repeat(timescaling,population))
-        heri_list.append(np.repeat(heritability,population))
+        timescaling_list.append(np.repeat(timescaling,len(gamma_vec)))
+        heri_list.append(np.repeat(heritability,len(gamma_vec)))
 
 
 
@@ -112,9 +112,9 @@ vm_list_flat = np.array([item for sublist in vm_list for item in sublist])
 
 est_para = ['gamma','alpha','nu','vm'] # ,'vm'
 est_array = np.concatenate([gamma_list_flat,a_list_flat,nu_list_flat,vm_list_flat]) # ,vm_list_flat
-est_label = np.repeat(est_para,population*len(heritability_vec)*len(timescale_vec))
-timescaling_list_flat = np.tile(np.repeat(timescale_vec,population*len(heritability_vec)),len(est_para))
-heri_list_flat = np.tile(np.repeat(heritability_vec,population),len(est_para)*len(timescale_vec))
+est_label = np.repeat(est_para,len(gamma_vec)*len(heritability_vec)*len(timescale_vec))
+timescaling_list_flat = np.tile(np.repeat(timescale_vec,len(gamma_vec)*len(heritability_vec)),len(est_para))
+heri_list_flat = np.tile(np.repeat(heritability_vec,len(gamma_vec)),len(est_para)*len(timescale_vec))
 
 
 ss_list = {'est':est_array,'est_label':est_label,
@@ -122,12 +122,29 @@ ss_list = {'est':est_array,'est_label':est_label,
             'heri':heri_list_flat}
 ss_df = pd.DataFrame(ss_list)
 
-vioplot = sns.catplot(x="est_label", y="est", hue="heri", col="s",
-     data=ss_df, kind="violin",height=5, aspect=.6)
-vioplot.set(ylim=(-50,400))
-vioplot.set_xticklabels(["$\gamma \cdot 10^{-8}$", "$\\alpha \cdot 10^{-5}$", "$\\nu \cdot 10^{-4}$","$V_{m}$"])
+# vioplot = sns.catplot(x="est_label", y="est", hue="heri", col="s",
+#      data=ss_df, kind="violin",height=5, aspect=.6)
+vioplot = sns.catplot(x="s", y="est", hue="heri", col="est_label",
+     data=ss_df, kind="violin",height=5, aspect=.6,sharey=False)
+# vioplot.set(ylim=(-50,400))
+# vioplot.set_xticklabels(["$\gamma \cdot 10^{-8}$", "$\\alpha \cdot 10^{-5}$", "$\\nu \cdot 10^{-4}$","$V_{m}$"])
+# vioplot.set_axis_labels("", "Estimate value")
+# vioplot._legend.set_title('$h^2$')
+
+
+vioplot.set_xticklabels(["20K","40K","60K","80K","100K",])
 vioplot.set_axis_labels("", "Estimate value")
 vioplot._legend.set_title('$h^2$')
+axes = vioplot.axes.flatten()
+axes[0].set_title("$\gamma$")
+axes[1].set_title("$\\alpha$")
+axes[2].set_title("$\\nu$")
+axes[3].set_title("$V_m$")
+for axe in axes:
+    axe.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+
+
+# axes[4].set_title("$\\theta $")
 #
 # g = sns.FacetGrid(ss_df, col="s",  row="heri",margin_titles=True)
 # g.map(sns.boxplot, "est_label", "est")
