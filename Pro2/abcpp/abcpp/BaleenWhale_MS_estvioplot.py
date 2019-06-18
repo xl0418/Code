@@ -166,36 +166,63 @@ axes[4].set_title("$\\theta $")
 
 Z = est_data['Z']
 diff_norm = np.linalg.norm(Z - obsZ, axis=1)
-plt.hist(diff_norm,bins=100)
+plt.hist(diff_norm,bins=200)
 TVP_index = np.where(fitness[:population]>0)[0]
 TV_index = np.where(fitness[population:2*population]>0)[0]+population
 TVM_index = np.where(fitness[2*population:]>0)[0]+2*population
+plot_tvm_index = np.where(fitness[TVM_index]>np.min(fitness[TVP_index]))[0]+2*population
 
 plt.hist(diff_norm[:len(TVP_index)])
 plt.hist(diff_norm[len(TVP_index):len(TVP_index)+len(TV_index)])
-plt.hist(diff_norm[len(TVP_index)+len(TV_index):])
+plt.hist(diff_norm[plot_tvm_index])
 
 import sys
 sys.path.append('C:/Liang/abcpp_ms5/abcpp')
-import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
-td = DVTreeData(path=obs_file, scalar=20000)
+td = DVTreeData(path=obs_file, scalar=2000)
 
-largeini = np.where(theta_vec_TVM>2000)[0]
-param_TVM = DVParamLiang(gamma=1, a=1, K=1e12, h=1, nu=1, r=1, theta=1,
+largeini = 100
+param_TVM = DVParamLiang(gamma=1, a=1, K=1e6, h=1, nu=1, r=1, theta=1,
                          V00=.5,V01=.5, Vmax=1, inittrait=1300, initpop=1e5,
                      initpop_sigma=10.0, break_on_mu=False)
-params = np.tile(param_TVM,(len(largeini),1))
-params[:,0]=gamma_vec_TVM[largeini]*1e-8
-params[:,1]=a_vec_TVM[largeini]*1e-6
-params[:,4]=nu_vec_TVM[largeini]*1e-4
-params[:,6]=theta_vec_TVM[largeini]
-params[:,9]=vm_vec_TVM[largeini]
+params = np.tile(param_TVM,(largeini,1))
+params[:,0]=np.mean(gamma_vec_TVP)*1e-8
+params[:,1]=np.mean(a_vec_TVP)*1e-6
+params[:,4]=np.mean(nu_vec_TVP)*1e-4
+params[:,6]=np.mean(theta_vec_TVP)
 
-predictsim = dvcpp.DVSimTVM(td, params)
-valid = np.where(predictsim['sim_time'] == td.sim_evo_time)[0]
-Z = predictsim['Z'][valid]
-i, j = argsort2D(Z)
-Z_modelTVM = Z[i, j]
-diff_norm = np.linalg.norm(Z_modelTVM - obsZ, axis=1)
+vm_test = [20,60,100,140,180,220]
+diff_list = []
+vm_list=[]
+v_list = []
+for vm in vm_test:
+    params[:,9]=vm
+    predictsim = dvcpp.DVSimTVP(td, params)
+    valid = np.where(predictsim['sim_time'] == td.sim_evo_time)[0]
+    Z = predictsim['Z'][valid]
+    V = predictsim['V'][valid]
+    i, j = argsort2D(Z)
+    Z_modelTVP = Z[i, j]
+    diff_norm = np.linalg.norm(Z_modelTVP - obsZ, axis=1)
+    diff_list.append(diff_norm)
+    vm_list.append(np.repeat(vm,len(diff_norm)))
+    v_list.append(V[i,j].flatten())
+
+diff_flatten = np.array([item for sublist in diff_list for item in sublist])
+vm_flatten = np.array([item for sublist in vm_list for item in sublist])
+v_flatten = np.array([item for sublist in v_list for item in sublist])
+vm_v_label = np.repeat(vm_test,15*largeini)
+
+diff_df = pd.DataFrame({'diff':diff_flatten,'vm':vm_flatten})
+v_df = pd.DataFrame({'v':v_flatten,'vm':vm_v_label})
+
+for vm in vm_test:
+    sns.distplot( diff_df[diff_df["vm"]==vm ]['diff'] , label=str(vm))
+plt.legend()
+
+
+for vm in vm_test:
+    sns.distplot( v_df[v_df["vm"]==vm ]['v'] , label=vm)
+plt.legend()
+

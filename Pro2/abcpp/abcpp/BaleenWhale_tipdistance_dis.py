@@ -277,13 +277,13 @@ traitpopdf_pd = pd.DataFrame(traitpopdf_list)
 fig_traitpop, axes_traitpop = plt.subplots(1, 2,sharey=True,sharex=True)
 axes_traitpop = axes_traitpop.flatten()
 
-ax_traitpoptvp = sns.scatterplot(x="Trait", y="Abundance", data=traitpopdf_pd[traitpopdf_pd['model']=='TVP'],
-                 ax= axes_traitpop[0],color="skyblue")
+ax_traitpoptvp = sns.scatterplot(x="Trait", y="Abundance",s=10, data=traitpopdf_pd[traitpopdf_pd['model']=='TVP'],
+                 ax= axes_traitpop[0],color="red")
 ax_traitpoptvp.set_title('TVP')
 
 
-ax_traitpoptvm = sns.scatterplot(x="Trait", y="Abundance", data=traitpopdf_pd[traitpopdf_pd['model']=='TVM'],
-                 ax= axes_traitpop[1],color="skyblue")
+ax_traitpoptvm = sns.scatterplot(x="Trait", y="Abundance",s=10, data=traitpopdf_pd[traitpopdf_pd['model']=='TVM'],
+                 ax= axes_traitpop[1],color="red")
 ax_traitpoptvm.set_title('TVM')
 axes_traitpop[0].ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 
@@ -305,8 +305,29 @@ traitpopdf_pd = pd.DataFrame(traitpopdf_list)
 
 fig_meta, axes_meta = plt.subplots(1, 1,sharey=True,sharex=True)
 
-axes_meta = sns.scatterplot(x="Trait", y="Metabolism", data=traitpopdf_pd[traitpopdf_pd['model']=='TVM'],
-                 ax= axes_meta,color="skyblue")
+axes_meta = sns.scatterplot(x="Trait", y="Metabolism",s=3, data=traitpopdf_pd[traitpopdf_pd['model']=='TVM'],
+                 ax= axes_meta,color="red")
 axes_meta.set_title('TVM')
+
+
+# test the energetic equivalence rule
+trait_TVM_array = trait_TVM_array.flatten()
+log_trait = np.log10(trait_TVM_array).reshape((-1, 1))
+pop_tvm_flatten = pop_TVM_array.flatten()
+
+from sklearn.linear_model import LinearRegression
+model = LinearRegression().fit(log_trait,pop_tvm_flatten)
+print('slope:', model.coef_)
+
+model_label = np.repeat(['TVM'],15000)
+traitpopdf_list = {'Abundance':pop_tvm_flatten, 'Trait':log_trait,'model':model_label}
+traitpopdf_pd = pd.DataFrame(traitpopdf_list)
+
+
+fig_traitpop, axes_traitpop = plt.subplots(1, 1,sharey=True,sharex=True)
+
+axes_traitpop = sns.scatterplot(x="Trait", y="Abundance",s=10, data=traitpopdf_pd[traitpopdf_pd['model']=='TVM'],
+                 ax= axes_traitpop,color="red")
+ax_traitpoptvp.set_title('TVM')
 
 
