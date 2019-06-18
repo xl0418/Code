@@ -3,7 +3,7 @@ sig_phi = c(0,1e2,1e4,1e6,1e8,-1)
 L = 333
 v=0.0001
 
-ticks=100000000
+ticks=10000000
 log=1e8
 for(scenario in c(0:2)){
   # scenario = 0
@@ -59,10 +59,11 @@ for(scenario in c(0:2)){
 #SBATCH --cpus-per-task=36
 #SBATCH --mem=12GB 
 #SBATCH --job-name=%s%ssim
+#SBATCH --output=PJC%s.log
 #SBATCH --mail-type=FAIL,TIME_LIMIT 
 #SBATCH --mail-user=xl0418@gmail.com 
-./jc batch=spatialparamed%s.txt
-  ',formatC(ticks),scefile,formatC(ticks)
+./jc batch=spatialpara%s%s.txt
+  ',formatC(ticks),scefile,sce,scefile,formatC(ticks)
   )
   cat(bashsetting,file=bashfilename)
 }

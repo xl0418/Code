@@ -8,10 +8,10 @@ from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
 import csv
 population = 30000
-timescaling = 20000
+timescaling = 40000
 total_population = population * 3
 data_dir = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/'
-data_name = data_dir + '/result_est_opt/modelselec2w.npy'
+data_name = data_dir + '/result_0617/modelselec4w.npy'
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 
 obs_file = dir_path + 'treedata/'
@@ -83,6 +83,11 @@ def simtraits(param, replicates,obs_dir,timescaling,mode):
         Z_df = pd.DataFrame(Z)
         savefilename = obs_dir + 'predictsim%s.csv' % mode
         Z_df.to_csv(savefilename, sep=',', index=False)
+        V = predictsim['V'][valid]
+        V = np.nan_to_num(V)
+        V_df = pd.DataFrame(V)
+        savefilename_V = obs_dir + 'predictsimV%s.csv' % mode
+        V_df.to_csv(savefilename_V, sep=',', index=False)
         if mode != 'TV':
             N = predictsim['N'][valid]
             N = np.nan_to_num(N)
@@ -119,21 +124,21 @@ param_TVP = DVParamLiang(gamma=gamma_TVP_est, a=a_TVP_est, K=1e6, h=1, nu=nu_TVP
                          V00=.5,V01=.5, Vmax=vm_TVP_est, inittrait=meantrait, initpop=1e5,
                      initpop_sigma=10.0, break_on_mu=False)
 
-simtraits(param = param_TVP,replicates=1000,obs_dir= obs_file,timescaling=20000,mode = 'TVP')
+simtraits(param = param_TVP,replicates=1000,obs_dir= obs_file,timescaling=timescaling,mode = 'TVP')
 
 # sim TV
 param_TV = DVParamLiang(gamma=gamma_TV_est, a=a_TV_est, K=1e6, h=1, nu=nu_TV_est, r=1, theta=theta_TV_est,
                          V00=.5,V01=.5, Vmax=vm_TV_est, inittrait=meantrait, initpop=1e5,
                      initpop_sigma=10.0, break_on_mu=False)
 
-simtraits(param = param_TV,replicates=1000,obs_dir= obs_file,timescaling=20000,mode = 'TV')
+simtraits(param = param_TV,replicates=1000,obs_dir= obs_file,timescaling=timescaling,mode = 'TV')
 
 # sim TVM
 param_TVM = DVParamLiang(gamma=gamma_TVM_est, a=a_TVM_est, K=1e12, h=1, nu=nu_TVM_est, r=1, theta=theta_TVM_est,
                          V00=.5,V01=.5, Vmax=vm_TVM_est, inittrait=meantrait, initpop=1e5,
                      initpop_sigma=10.0, break_on_mu=False)
 
-simtraits(param = param_TVM,replicates=1000,obs_dir= obs_file,timescaling=20000,mode = 'TVM')
+simtraits(param = param_TVM,replicates=1000,obs_dir= obs_file,timescaling=timescaling,mode = 'TVM')
 
 
 model_index = np.array([0,1,2])

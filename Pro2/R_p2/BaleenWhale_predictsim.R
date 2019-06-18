@@ -16,7 +16,7 @@ if(os == 'Darwin'){
   source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
   source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
   emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
-  dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/Est/'
+  dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/result_0617/'
 }
 emdata = read.nexus(emdatadir)
 
@@ -45,10 +45,10 @@ obsZ_emp[,1] = extantspecieslabel
 species_label = extantspecieslabel
 sorted.species.labels <- obsZ_emp[order(obsZ_emp[,2]),1]
 
-s.vec <- rep(c('20K','40K','60K','80K'),each = 2)
-h.vec <- rep(c(1,0.5),4)
+s.vec <- rep(c('20K','40K','60K','80K','100K'),each = 2)
+h.vec <- rep(c(0.5,1),5)
 
-for(count in c(1:8)){
+for(count in c(1:10)){
   simfile = paste0(dir,'predictsim',count,'_vm.csv')
     
   # predict simulations

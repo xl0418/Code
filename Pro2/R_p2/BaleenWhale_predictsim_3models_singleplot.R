@@ -89,7 +89,7 @@ obsZ_mean = 10^(obsZ_emp[,2])
 d_meanemp = data.frame(species=species_label, trait=obsZ_mean)
 
 
-plot_tree <- ggtree(phylo_test)+geom_tiplab(size=2) #+xlim(0,80)
+plot_tree <- ggtree(phylo_test)+geom_tiplab(size=3.5) #+xlim(0,80)
 
 
 plot_sepboxplt_TVP <- facet_plot(plot_tree, panel="TL of TVP", data=d_all_TVP, geom_boxploth, 

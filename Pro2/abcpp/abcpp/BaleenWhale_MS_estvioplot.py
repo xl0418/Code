@@ -15,7 +15,7 @@ def normalized_norm(x, y):
 
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
-data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/result_est_opt/'
+data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/result_0617/'
 
 obs_file = dir_path + 'treedata/'
 
@@ -57,7 +57,7 @@ obsZ = sorted(10**logTL)
 # timescaling = timescale_vec[timescaling_index]
 # heritability = heritability_vec[heritability_index]
 
-data_name = data_dir + 'modelselec2w.npy'
+data_name = data_dir + 'modelselec4w.npy'
 est_data = np.load(data_name).item()
 population = int(len(est_data['model_data'][0])/3)
 fitness = est_data['fitness'][-1]
