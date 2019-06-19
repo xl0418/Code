@@ -180,7 +180,7 @@ import sys
 sys.path.append('C:/Liang/abcpp_ms5/abcpp')
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
-td = DVTreeData(path=obs_file, scalar=2000)
+td = DVTreeData(path=obs_file, scalar=200000)
 
 largeini = 100
 param_TVM = DVParamLiang(gamma=1, a=1, K=1e6, h=1, nu=1, r=1, theta=1,
@@ -196,33 +196,142 @@ vm_test = [20,60,100,140,180,220]
 diff_list = []
 vm_list=[]
 v_list = []
+n_list = []
 for vm in vm_test:
     params[:,9]=vm
     predictsim = dvcpp.DVSimTVP(td, params)
     valid = np.where(predictsim['sim_time'] == td.sim_evo_time)[0]
     Z = predictsim['Z'][valid]
     V = predictsim['V'][valid]
+    N = predictsim['N'][valid]
     i, j = argsort2D(Z)
     Z_modelTVP = Z[i, j]
+    N_modelTVP = N[i,j]
+    V_modelTVP = V[i,j]
     diff_norm = np.linalg.norm(Z_modelTVP - obsZ, axis=1)
     diff_list.append(diff_norm)
     vm_list.append(np.repeat(vm,len(diff_norm)))
-    v_list.append(V[i,j].flatten())
+    v_list.append(V_modelTVP.flatten())
+    n_list.append(N_modelTVP.flatten())
 
 diff_flatten = np.array([item for sublist in diff_list for item in sublist])
 vm_flatten = np.array([item for sublist in vm_list for item in sublist])
 v_flatten = np.array([item for sublist in v_list for item in sublist])
-vm_v_label = np.repeat(vm_test,15*largeini)
+n_flatten = np.array([item for sublist in n_list for item in sublist])
 
+vm_v_label = np.repeat(vm_test,15*largeini)
+species_label = np.tile(range(15),largeini*len(vm_test))
 diff_df = pd.DataFrame({'diff':diff_flatten,'vm':vm_flatten})
 v_df = pd.DataFrame({'v':v_flatten,'vm':vm_v_label})
+n_df = pd.DataFrame({'n':n_flatten,'species':species_label,'vm':vm_v_label})
 
+# goodness of fit
 for vm in vm_test:
     sns.distplot( diff_df[diff_df["vm"]==vm ]['diff'] , label=str(vm))
 plt.legend()
 
-
+# variance
 for vm in vm_test:
     sns.distplot( v_df[v_df["vm"]==vm ]['v'] , label=vm)
 plt.legend()
 
+# population
+
+g = sns.catplot(x="species", y="n",
+             hue="vm", col="vm",
+              data=n_df, kind="box",
+             height=4, aspect=.7)
+for ax in g.axes.flat:
+    ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+
+
+
+# n distribution across different time steps
+
+replicates = 100
+param_TVM = DVParamLiang(gamma=1, a=1, K=1e6, h=1, nu=1, r=1, theta=1,
+                         V00=.5,V01=.5, Vmax=1, inittrait=1300, initpop=1e5,
+                     initpop_sigma=10.0, break_on_mu=False)
+params = np.tile(param_TVM,(replicates,1))
+params[:,0]=np.mean(gamma_vec_TVP)*1e-8
+params[:,1]=np.mean(a_vec_TVP)*1e-6
+params[:,4]=np.mean(nu_vec_TVP)*1e-4
+params[:,6]=np.mean(theta_vec_TVP)
+params[:, 9] = np.mean(vm_vec_TVP)
+
+t_test = [5000,10000,20000,40000,80000,120000] #
+diff_list = []
+time_list=[]
+v_list = []
+n_list = []
+for timevalue in t_test:
+    td = DVTreeData(path=obs_file, scalar=timevalue)
+    predictsim = dvcpp.DVSimTVP(td, params)
+    valid = np.where(predictsim['sim_time'] == td.sim_evo_time)[0]
+    Z = predictsim['Z'][valid]
+    V = predictsim['V'][valid]
+    N = predictsim['N'][valid]
+    i, j = argsort2D(Z)
+    Z_modelTVP = Z[i, j]
+    N_modelTVP = N[i,j]
+    V_modelTVP = V[i,j]
+    diff_norm = np.linalg.norm(Z_modelTVP - obsZ, axis=1)
+    diff_list.append(diff_norm)
+    time_list.append(np.repeat(timevalue,len(diff_norm)))
+    v_list.append(V_modelTVP.flatten())
+    n_list.append(N_modelTVP.flatten())
+
+diff_flatten = np.array([item for sublist in diff_list for item in sublist])
+time_flatten = np.array([item for sublist in time_list for item in sublist])
+v_flatten = np.array([item for sublist in v_list for item in sublist])
+n_flatten = np.array([item for sublist in n_list for item in sublist])
+
+time_v_label = np.repeat(t_test,15*replicates)
+species_label = np.tile(range(15),replicates*len(t_test))
+diff_df = pd.DataFrame({'diff':diff_flatten,'time':time_flatten})
+v_df = pd.DataFrame({'v':v_flatten,'time':time_v_label})
+n_df = pd.DataFrame({'n':n_flatten,'species':species_label,'time':time_v_label})
+
+# goodness of fit
+for time in t_test:
+    sns.distplot( diff_df[diff_df["time"]==time ]['diff'] , label=str(time))
+plt.legend()
+
+# variance
+for time in t_test:
+    sns.distplot( v_df[v_df["time"]==time ]['v'] , label=time)
+plt.legend()
+
+# population
+
+g = sns.catplot(x="species", y="n",
+             hue="time", col="time",
+              data=n_df, kind="box",
+             height=4, aspect=.7)
+for ax in g.axes.flat:
+    ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+
+
+
+
+
+
+def competition_functions_Liang(a, zi, nj):
+	""" competition functions, Liang's model.
+
+	returns beta = Sum_j( exp(-a(zi-zj)^2) * Nj)
+			sigma = Sum_j( 2a * (zi-zj) * exp(-a(zi-zj)^2) * Nj)
+			sigmaSqr = Sum_j( 4a^2 * (zi-zj)^2 * exp(-a(zi-zj)^2) * Nj)
+	"""
+	T = zi[:, np.newaxis] - zi  # trait-distance matrix (via 'broadcasting')
+	t1 = np.exp(-a * T ** 2) * nj
+	t2 = (2 * a) * T
+	beta = np.sum(t1, axis=1)
+	# sigma = np.sum(t2 * t1, axis=1)
+	# sigmasqr = np.sum(t2 ** 2 * t1, axis=1)
+	return beta #, sigma, sigmasqr
+
+gamma = np.mean(gamma_vec_TVP)*1e-8
+dtz = np.mean(theta_vec_TVP) - Z_modelTVP[0]
+beta = competition_functions_Liang(np.mean(a_vec_TVP)*1e-6, Z_modelTVP[0], N_modelTVP[0])
+np.exp(-gamma * dtz**2 + (1 - beta / 1e6))

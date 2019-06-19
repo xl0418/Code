@@ -15,7 +15,7 @@ def normalized_norm(x, y):
 
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
-data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/result_0617/'
+data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0527/'
 
 obs_file = dir_path + 'treedata/'
 
@@ -34,6 +34,7 @@ gamma_list = []
 a_list = []
 nu_list = []
 vm_list = []
+theta_list = []
 distance_list = []
 ratio_dis = []
 valid_length = []
@@ -84,6 +85,9 @@ for timescaling_index in range(5):
         a_vec = est_data['a'][-2][fit_index]#*1e5
         nu_vec = est_data['nu'][-2][fit_index]#*1e4
         vm_vec = est_data['vm'][-2][fit_index]
+        if 'theta' in est_data:
+            theta_vec = est_data['theta'][-2][fit_index]
+
         inflow_mutation = 2*K*nu_vec*1e-5 * vm_vec/(1+4*K*nu_vec*1e-5)
 
         print('s=%i h2=%f 5th gamma = %.3e  a = %.3e nu = %.3e Vm = %f inflow = %f' % (timescaling,
@@ -100,6 +104,9 @@ for timescaling_index in range(5):
         a_list.append(a_vec.tolist())
         nu_list.append(nu_vec.tolist())
         vm_list.append(vm_vec.tolist())
+        if 'theta' in est_data:
+            theta_list.append(theta_vec.tolist())
+
         timescaling_list.append(np.repeat(timescaling,len(gamma_vec)))
         heri_list.append(np.repeat(heritability,len(gamma_vec)))
 
@@ -109,9 +116,13 @@ gamma_list_flat = np.array([item for sublist in gamma_list for item in sublist])
 a_list_flat = np.array([item for sublist in a_list for item in sublist])
 nu_list_flat = np.array([item for sublist in nu_list for item in sublist])
 vm_list_flat = np.array([item for sublist in vm_list for item in sublist])
-
-est_para = ['gamma','alpha','nu','vm'] # ,'vm'
-est_array = np.concatenate([gamma_list_flat,a_list_flat,nu_list_flat,vm_list_flat]) # ,vm_list_flat
+if 'theta' in est_data:
+    theta_list_flat = np.array([item for sublist in theta_list for item in sublist])
+    est_para = ['gamma','alpha','nu','vm','theta'] # ,'vm'
+    est_array = np.concatenate([gamma_list_flat,a_list_flat,nu_list_flat,vm_list_flat,theta_list_flat]) # ,vm_list_flat
+else:
+    est_para = ['gamma', 'alpha', 'nu', 'vm']  # ,'vm'
+    est_array = np.concatenate([gamma_list_flat, a_list_flat, nu_list_flat, vm_list_flat])
 est_label = np.repeat(est_para,len(gamma_vec)*len(heritability_vec)*len(timescale_vec))
 timescaling_list_flat = np.tile(np.repeat(timescale_vec,len(gamma_vec)*len(heritability_vec)),len(est_para))
 heri_list_flat = np.tile(np.repeat(heritability_vec,len(gamma_vec)),len(est_para)*len(timescale_vec))
@@ -124,7 +135,7 @@ ss_df = pd.DataFrame(ss_list)
 
 # vioplot = sns.catplot(x="est_label", y="est", hue="heri", col="s",
 #      data=ss_df, kind="violin",height=5, aspect=.6)
-vioplot = sns.catplot(x="s", y="est", hue="heri", col="est_label",
+vioplot = sns.catplot(x="s", y="est", hue="heri", col="est_label",palette=["r", "b"],
      data=ss_df, kind="violin",height=5, aspect=.6,sharey=False)
 # vioplot.set(ylim=(-50,400))
 # vioplot.set_xticklabels(["$\gamma \cdot 10^{-8}$", "$\\alpha \cdot 10^{-5}$", "$\\nu \cdot 10^{-4}$","$V_{m}$"])
@@ -132,7 +143,7 @@ vioplot = sns.catplot(x="s", y="est", hue="heri", col="est_label",
 # vioplot._legend.set_title('$h^2$')
 
 
-vioplot.set_xticklabels(["20K","40K","60K","80K","100K",])
+vioplot.set_xticklabels(["20K","40K","60K","80K","100K"])
 vioplot.set_axis_labels("", "Estimate value")
 vioplot._legend.set_title('$h^2$')
 axes = vioplot.axes.flatten()
@@ -140,6 +151,9 @@ axes[0].set_title("$\gamma$")
 axes[1].set_title("$\\alpha$")
 axes[2].set_title("$\\nu$")
 axes[3].set_title("$V_m$")
+if 'theta' in est_data:
+    axes[4].set_title("$\\theta$")
+
 for axe in axes:
     axe.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
