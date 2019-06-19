@@ -180,7 +180,7 @@ import sys
 sys.path.append('C:/Liang/abcpp_ms5/abcpp')
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
-td = DVTreeData(path=obs_file, scalar=200000)
+td = DVTreeData(path=obs_file, scalar=1000)
 
 largeini = 100
 param_TVM = DVParamLiang(gamma=1, a=1, K=1e6, h=1, nu=1, r=1, theta=1,
@@ -315,7 +315,7 @@ for ax in g.axes.flat:
 
 
 
-
+# calculate growth rate
 def competition_functions_Liang(a, zi, nj):
 	""" competition functions, Liang's model.
 
@@ -334,4 +334,7 @@ def competition_functions_Liang(a, zi, nj):
 gamma = np.mean(gamma_vec_TVP)*1e-8
 dtz = np.mean(theta_vec_TVP) - Z_modelTVP[0]
 beta = competition_functions_Liang(np.mean(a_vec_TVP)*1e-6, Z_modelTVP[0], N_modelTVP[0])
-np.exp(-gamma * dtz**2 + (1 - beta / 1e6))
+gr1q = np.exp(-gamma * dtz**2 + (1 - beta / 1e6))
+
+
+gr4w

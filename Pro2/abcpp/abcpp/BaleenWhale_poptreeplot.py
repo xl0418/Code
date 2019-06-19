@@ -162,4 +162,16 @@ dir_fig = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/traittree'
 
 f1.savefig(dir_fig+'TP2w.png')
 plt.close(f1)
+plt.show(f1)
 
+def show_figure(fig):
+
+    # create a dummy figure and use its
+    # manager to display "fig"
+
+    dummy = plt.figure()
+    new_manager = dummy.canvas.manager
+    new_manager.canvas.figure = fig
+    fig.set_canvas(new_manager.canvas)
+
+show_figure(f1)
