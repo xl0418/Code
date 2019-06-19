@@ -9,12 +9,12 @@ library(gridExtra)
 source(paste0(getwd(),'/g_legend.R'))
 source('C:/Liang/Code/Pro3/R_p3/event2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro3/R_p3/multipleplot.R', echo=TRUE)
-dir = 'C:/Liang/Googlebox/Research/Project3/simtestnew10e5/10e5/'
-scenario = c('LR','MR','HR')
-jclabel = c(0,.001,.01,.1,.5,1)
-plabel = jclabel
-diversity.upperlimit = 300
-diversity.lowerlimit = 0
+dir = 'C:/Liang/Googlebox/Research/Project3/1e+06/'
+scenario = c('Levent','Mevent','Hevent')
+jclabel = c(0,0.2,0.4,0.6,0.8,1)
+plabel = c(0,1e2,1e4,1e6,1e8,-1)
+diversity.upperlimit = 140
+diversity.lowerlimit = 80
 lowcol = "#F2F0F7"
 highcol = '#54278F'
 tas1 = list()
@@ -26,15 +26,16 @@ for(i_n in c(1:3)){
   for(i in c(1:6)){
     for(j in c(1:6)){
       comb=paste0(i,j)
-      rname = paste0(dir,sce,comb,'.Rdata')
-      source(rname)
-      r_df_g = cbind(ncol(R),plabel[i],jclabel[j])
+      rname = paste0(dir,sce,comb,'.csv')
+      events = read.csv(rname,header = FALSE)
+      ns = tail(events[,2],n=1)
+      r_df_g = cbind(ns,jclabel[i],plabel[j])
       r_df = rbind(r_df,r_df_g)
       
     }
   }
   df = as.data.frame(r_df)
-  colnames(df) = c('Richness','phi','psi')
+  colnames(df) = c('Richness','psi','phi')
   df$psi = as.character(df$psi)
   df$phi = as.character(df$phi)
   df$phi = factor(df$phi,levels = plabel )

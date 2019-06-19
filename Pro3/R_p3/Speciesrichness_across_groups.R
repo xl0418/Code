@@ -9,7 +9,7 @@ for(i in c(1:6)){
     comb=paste0(i,j)
     eventname = paste0(dir,'Mevent',comb,'.csv')
     turnovername = paste0(dir,'Mturnover',comb,'.Rdata')
-    events = read.csv(eventname)
+    events = read.csv(eventname,header = FALSE)
     # source(turnovername)
     colnames(events) = c('T','ns','x','y','sp','ancestor')
     # L = event2L(events, turnover)
