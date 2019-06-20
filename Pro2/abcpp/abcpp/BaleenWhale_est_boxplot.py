@@ -15,7 +15,7 @@ def normalized_norm(x, y):
 
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
-data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0527/'
+data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/result_0617/'
 
 obs_file = dir_path + 'treedata/'
 
@@ -90,11 +90,11 @@ for timescaling_index in range(5):
 
         inflow_mutation = 2*K*nu_vec*1e-5 * vm_vec/(1+4*K*nu_vec*1e-5)
 
-        print('s=%i h2=%f 5th gamma = %.3e  a = %.3e nu = %.3e Vm = %f inflow = %f' % (timescaling,
+        print('s=%i h2=%f 5th gamma = %.3e  a = %.3e nu = %.3e Vm = %f min(Vm) = %f' % (timescaling,
                                                                                         heritability,
             np.mean(gamma_vec),
             np.mean(a_vec), np.mean(nu_vec),
-            np.mean(vm_vec), np.mean(inflow_mutation)))
+            np.mean(vm_vec), np.min(vm_vec)))
         print('Var: gamma = %.3e  a = %.3e nu = %.3e Vm = %f inflow = %f' % (
             np.var(gamma_vec),
             np.var(a_vec), np.var(nu_vec),
