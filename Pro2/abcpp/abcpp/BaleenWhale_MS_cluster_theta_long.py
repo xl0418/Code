@@ -32,7 +32,7 @@ files = dir_path + 'BaleenWhales/treedata/'
 
 savedir = dir_path + 'BaleenWhales/modelselec2w.npy'
 
-td = DVTreeData(path=files, scalar=40000)
+td = DVTreeData(path=files, scalar=20000)
 
 
 with open(files+'extantspecieslabels.csv') as csv_file:

@@ -78,8 +78,8 @@ obs_param = DVParamLiang(gamma=1, a=1, K=K,h=np.sqrt(heri_sqr), nu=nu, r=1, thet
 
 # pop = dvcpp.DVSim(td, obs_param)
 
-population = 30000
-generations = 30
+population = 40000
+generations = 60
 params = np.tile(obs_param, (population, 1))  # duplicate
 params[:, 0] = np.random.uniform(0.0, 1e-5, params.shape[0])  # randomize 'gamma'
 params[:, 1] = np.random.uniform(0.0, 1e-2, params.shape[0])  # randomize 'a'
@@ -132,7 +132,7 @@ for g in range(generations):
         # fitness[g,valid] += 1.0 - normalized_norm(np.sqrt(V), np.sqrt(obsV))
 
     # print something...
-    q5 = np.argsort(fitness[g,:])[-len(valid)// 20]  # best 5%
+    q5 = np.argsort(fitness[g,:])[-len(valid)// 200]  # best 0.5%
     fit_index = np.where(fitness[g,:] > fitness[g,q5])[0]
 
     print('Iteration = %d 5th gamma = %.3e  a = %.3e nu = %.3e Vm = %f theta = %f fitness = %f' % (g, np.mean(params[fit_index, 0]),
