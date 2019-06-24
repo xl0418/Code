@@ -15,7 +15,7 @@ def normalized_norm(x, y):
 
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
-data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0527/'
+data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0529/'
 
 obs_file = dir_path + 'treedata/'
 
@@ -88,6 +88,12 @@ for timescaling_index in range(5):
         if 'theta' in est_data:
             theta_vec = est_data['theta'][-1][fit_index]
 
+        gamma_vec = (gamma_vec-np.mean(gamma_vec))/np.sqrt(np.var(gamma_vec))
+        a_vec = (a_vec-np.mean(a_vec))/np.sqrt(np.var(a_vec))
+        nu_vec = (nu_vec-np.mean(nu_vec))/np.sqrt(np.var(nu_vec))
+        vm_vec = (vm_vec-np.mean(vm_vec))/np.sqrt(np.var(vm_vec))
+        if 'theta' in est_data:
+            theta_vec = (theta_vec-np.mean(theta_vec))/np.sqrt(np.var(theta_vec))
         inflow_mutation = 2*K*nu_vec*1e-5 * vm_vec/(1+4*K*nu_vec*1e-5)
 
         print('s=%i h2=%f 5th gamma = %.3e  a = %.3e nu = %.3e Vm = %f min(Vm) = %f' % (timescaling,
@@ -100,70 +106,35 @@ for timescaling_index in range(5):
             np.var(a_vec), np.var(nu_vec),
             np.var(vm_vec), np.var(inflow_mutation)))
 
-        gamma_list.append(gamma_vec.tolist())
-        a_list.append(a_vec.tolist())
-        nu_list.append(nu_vec.tolist())
-        vm_list.append(vm_vec.tolist())
         if 'theta' in est_data:
-            theta_list.append(theta_vec.tolist())
+            est_para_df = pd.DataFrame({'gamma':gamma_vec,'alpha':a_vec,'nu':nu_vec,'vm':vm_vec,'theta':theta_vec})
+        else:
+            est_para_df = pd.DataFrame({'gamma':gamma_vec,'alpha':a_vec,'nu':nu_vec,'vm':vm_vec})
 
-        timescaling_list.append(np.repeat(timescaling,len(gamma_vec)))
-        heri_list.append(np.repeat(heritability,len(gamma_vec)))
+        pplot = sns.pairplot(est_para_df, kind="reg",markers="+")
+        plt.suptitle('s=%i,$h^2$=%.1f' % ((int(timescaling), heritability)),
+                     size=15,x=0.53,y=1)
+        #
+        # corr = est_para_df.corr()
+        # # Generate a mask for the upper triangle
+        # mask = np.zeros_like(corr, dtype=np.bool)
+        # mask[np.triu_indices_from(mask)] = True
+        #
+        # # Set up the matplotlib figure
+        # f, ax = plt.subplots(figsize=(11, 9))
+        #
+        # # Generate a custom diverging colormap
+        # cmap = sns.diverging_palette(220, 10, as_cmap=True)
+        #
+        # # Draw the heatmap with the mask and correct aspect ratio
+        # sns.heatmap(corr, mask=mask, cmap=cmap, vmax=1, center=0,
+        #             square=True, linewidths=.5, cbar_kws={"shrink": .5})
+        # plt.title('s=%i,$h^2$=%.1f' % ((int(timescaling), heritability)))
 
-
-
-gamma_list_flat = np.array([item for sublist in gamma_list for item in sublist])
-a_list_flat = np.array([item for sublist in a_list for item in sublist])
-nu_list_flat = np.array([item for sublist in nu_list for item in sublist])
-vm_list_flat = np.array([item for sublist in vm_list for item in sublist])
-if 'theta' in est_data:
-    theta_list_flat = np.array([item for sublist in theta_list for item in sublist])
-    est_para = ['gamma','alpha','nu','vm','theta'] # ,'vm'
-    est_array = np.concatenate([gamma_list_flat,a_list_flat,nu_list_flat,vm_list_flat,theta_list_flat]) # ,vm_list_flat
-else:
-    est_para = ['gamma', 'alpha', 'nu', 'vm']  # ,'vm'
-    est_array = np.concatenate([gamma_list_flat, a_list_flat, nu_list_flat, vm_list_flat])
-est_label = np.repeat(est_para,len(gamma_vec)*len(heritability_vec)*len(timescale_vec))
-timescaling_list_flat = np.tile(np.repeat(timescale_vec,len(gamma_vec)*len(heritability_vec)),len(est_para))
-heri_list_flat = np.tile(np.repeat(heritability_vec,len(gamma_vec)),len(est_para)*len(timescale_vec))
-
-
-ss_list = {'est':est_array,'est_label':est_label,
-           's':timescaling_list_flat,
-            'heri':heri_list_flat}
-ss_df = pd.DataFrame(ss_list)
-
-# vioplot = sns.catplot(x="est_label", y="est", hue="heri", col="s",
-#      data=ss_df, kind="violin",height=5, aspect=.6)
-vioplot = sns.catplot(x="s", y="est", hue="heri", col="est_label",palette=["r", "b"],
-     data=ss_df, kind="violin",height=5, aspect=.6,sharey=False)
-# vioplot.set(ylim=(-50,400))
-# vioplot.set_xticklabels(["$\gamma \cdot 10^{-8}$", "$\\alpha \cdot 10^{-5}$", "$\\nu \cdot 10^{-4}$","$V_{m}$"])
-# vioplot.set_axis_labels("", "Estimate value")
-# vioplot._legend.set_title('$h^2$')
-
-
-vioplot.set_xticklabels(["20K","40K","60K","80K","100K"])
-vioplot.set_axis_labels("", "Estimate value")
-vioplot._legend.set_title('$h^2$')
-axes = vioplot.axes.flatten()
-axes[0].set_title("$\gamma$")
-axes[1].set_title("$\\alpha$")
-axes[2].set_title("$\\nu$")
-axes[3].set_title("$V_m$")
-if 'theta' in est_data:
-    axes[4].set_title("$\\theta$")
-
-for axe in axes:
-    axe.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-
-
-# axes[4].set_title("$\\theta $")
-#
-# g = sns.FacetGrid(ss_df, col="s",  row="heri",margin_titles=True)
-# g.map(sns.boxplot, "est_label", "est")
-# g.set_xlabels('$\gamma $ $(10^{-7})$')
-# g.set_ylabels('$\\alpha $ $(10^{-4})$')
-# axes = g.axes.flatten()
-# axes[0].set_title("$h^{2}=0.5$")
-# axes[1].set_title("$h^{2}=1$")
+        #
+        # figsave = data_dir+ 'corr_t%i_h%i.png' % (int(timescaling_index), int(heritability_index))
+        # f.savefig(figsave)
+        # plt.close(f)
+        figsave = data_dir+ 'corr_t%i_h%i.png' % (int(timescaling_index), int(heritability_index))
+        plt.savefig(figsave)
+        plt.close()
