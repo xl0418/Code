@@ -93,27 +93,25 @@ plot_tree <- ggtree(phylo_test)+geom_tiplab(size=3.5) #+xlim(0,80)
 
 
 plot_sepboxplt_TVP <- facet_plot(plot_tree, panel="TL of TVP", data=d_all_TVP, geom_boxploth, 
-                             mapping = aes(x=traitall, group=label ))  + theme_tree2()+
-  theme(strip.background = element_rect(fill="#99CCFF"))
+                             mapping = aes(x=traitall, group=label,medcol="black"),color='#67D5B5',fill= '#67D5B5')  + theme_tree2()
 
 p_finalTVP <- facet_plot(plot_sepboxplt_TVP+xlim_tree(40), panel="TL of TVP", data=d_meanemp, geom_point, 
                         mapping = aes(x=trait, group=label ),color = 'red')
 
 
 plot_sepboxplt_TV <- facet_plot(p_finalTVP, panel="TL of TV", data=d_all_TV, geom_boxploth, 
-                             mapping = aes(x=traitall, group=label ))  + theme_tree2()+
-  theme(strip.background = element_rect(fill="#99CCFF"))
+                             mapping = aes(x=traitall, group=label ),color='#e77e4d',fill='#e77e4d' )  + theme_tree2()
 
 p_finalTV <- facet_plot(plot_sepboxplt_TV+xlim_tree(40), panel="TL of TV", data=d_meanemp, geom_point, 
                         mapping = aes(x=trait, group=label ),color = 'red')
 
 
 plot_sepboxplt_TVM <- facet_plot(p_finalTV, panel="TL of TVM", data=d_all_TVM, geom_boxploth, 
-                                mapping = aes(x=traitall, group=label ))  + theme_tree2()+
-  theme(strip.background = element_rect(fill="#99CCFF"))
+                                mapping = aes(x=traitall, group=label),color='#84B1ED',fill='#84B1ED'  )  + theme_tree2()
 
 p_finalTVM <- facet_plot(plot_sepboxplt_TVM+xlim_tree(40), panel="TL of TVM", data=d_meanemp, geom_point, 
-                        mapping = aes(x=trait, group=label ),color = 'red')
+                        mapping = aes(x=trait, group=label ),color = 'red')+
+  theme(strip.background = element_rect(colour="white", fill="white"))
 
 
 # p_finalTP <- p_finalTP+ggtitle(count)+

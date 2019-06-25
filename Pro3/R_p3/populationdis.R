@@ -6,23 +6,26 @@ library(viridis)
 source(paste0(getwd(),'/g_legend.R'))
 source('C:/Liang/Code/Pro3/R_p3/event2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro3/R_p3/multipleplot.R', echo=TRUE)
-dir = 'C:/Liang/Googlebox/Research/Project3/simdata_1e+07newpara/1e+07/'
+dir = 'C:/Liang/Googlebox/Research/Project3/1e+07/'
+sce = 'H'
 
 r_df = NULL
 for(i in c(1:6)){
   for(j in c(1:6)){
     comb=paste0(i,j)
-    rname = paste0(dir,'MR',comb,'.Rdata')
-    source(rname)
-    r_df_g = cbind(t(log(R)),i,j)
+    rname = paste0(dir,sce,'R',comb,'.csv')
+    abundance.dis = read.csv(rname,header = FALSE)
+    r_df_g = cbind(t(log(abundance.dis)),i,j)
     r_df = rbind(r_df,r_df_g)
     
   }
 }
-psi_vec = c(0,.2,.4,.6,.8,1)
-phi_vec = c(0,.1,.3,1,3,10)
+jclabel = c(0,0.2,0.4,0.6,0.8,1)
+plabel = c(0,1e2,1e4,1e6,1e8,-1)
+psi_vec = c(0,0.2,0.4,0.6,0.8,1)
+phi_vec = c(0,1e2,1e4,1e6,1e8,-1)
 popdf = as.data.frame(r_df)
-colnames(popdf) = c('Abundance','phi','psi')
+colnames(popdf) = c('Abundance','psi','phi')
 popdf$psi = as.character(popdf$psi)
 popdf$phi = as.character(popdf$phi)
 
@@ -60,7 +63,7 @@ grob1 = textGrob("Number of species", gp=gpar(fontsize=16),rot = 90)
 grob2 = arrangeGrob(grobs = dislist, layout_matrix = m)
 grob4 = textGrob("(log) Abundance", gp=gpar(fontsize=16),rot = 0)
 grob3 = textGrob("")
-grob5 = textGrob("Intermediate spatial strength", gp=gpar(fontsize=16))
+grob5 = textGrob("High spatial strength", gp=gpar(fontsize=16))
 
 grid.arrange(grob3,grob5,grob3,grob1,grob2,mylegend,grob3,grob4,grob3,ncol = 3, widths = c(1,24,2),heights = c(1,20,1))
 

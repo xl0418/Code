@@ -9,11 +9,11 @@ library(gridExtra)
 source(paste0(getwd(),'/g_legend.R'))
 source('C:/Liang/Code/Pro3/R_p3/event2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro3/R_p3/multipleplot.R', echo=TRUE)
-dir = 'C:/Liang/Googlebox/Research/Project3/1e+06/'
+dir = 'C:/Liang/Googlebox/Research/Project3/1e+07/'
 scenario = c('Levent','Mevent','Hevent')
 jclabel = c(0,0.2,0.4,0.6,0.8,1)
 plabel = c(0,1e2,1e4,1e6,1e8,-1)
-diversity.upperlimit = 140
+diversity.upperlimit = 250
 diversity.lowerlimit = 80
 lowcol = "#F2F0F7"
 highcol = '#54278F'
