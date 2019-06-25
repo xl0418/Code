@@ -15,7 +15,7 @@ def normalized_norm(x, y):
 
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
-data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/result_0617/'
+data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0529/'
 
 obs_file = dir_path + 'treedata/'
 
@@ -44,7 +44,8 @@ count = 0
 particle_size = 100
 K=1e6
 nu=1/(100*K)
-
+alphavalue = 0.8
+cmapvalue = 'OrRd'
 for label in extantlabels_array:
     length_index.append(np.where(lengthdata_array[:,0]==label)[0][0])
 
@@ -70,19 +71,7 @@ for timescaling_index in range(5):
         q5 = np.argsort(fitness)[-int(population // 20+1)]  # best 5%
         fit_index = np.where(fitness > fitness[q5])[0]
         pick_fitness = fitness[fit_index]
-        fit_sorted = sorted(pick_fitness)
-        order = [np.where(fit_sorted==pick_fitness[i])[0][0] for i in range(len(fit_index))]
-        # last_fitness = est_data['fitness'][generation - 1]
-        # q5 = np.argsort(last_fitness)[-population // 20]  # best 5%
-        # fit_index = np.where(last_fitness > last_fitness[q5])[0]
 
-        # mean of all samples
-        # gamma_mean = np.mean(est_data['gamma'][generation-1])
-        # a_mean = np.mean(est_data['a'][generation-1])
-        # nv_mean = np.mean(est_data['nu'][generation-1])
-        # mean of the top 5% samples
-        fitness_level = np.repeat(['1','2','3','4'],250)
-        color_fitness = fitness_level[order]
         gamma_vec = est_data['gamma'][-1][fit_index] #*1e8
         a_vec = est_data['a'][-1][fit_index]#*1e5
         nu_vec = est_data['nu'][-1][fit_index]#*1e4
@@ -111,40 +100,43 @@ for timescaling_index in range(5):
 
         if 'theta' in est_data:
             est_para_df = pd.DataFrame({'gamma':gamma_vec,'alpha':a_vec,'nu':nu_vec,'vm':vm_vec,
-                                       'fitness':color_fitness,'theta':theta_vec})
+                                       'theta':theta_vec})
+            scatter_fig, axes = plt.subplots(5, 5, sharex=True, sharey=True,figsize=(9,9))
+            for i in range(5):
+                for j in range(5):
+                    axes[i][j].scatter(est_para_df[est_para_df.columns[i]], est_para_df[est_para_df.columns[j]],
+                                       marker='+', c=pick_fitness,
+                                       alpha=alphavalue, cmap=cmapvalue)
+
+            axes[4][0].set_ylabel('$\\theta$')
+            axes[4][0].set_xlabel('$\gamma$')
+            axes[4][1].set_xlabel('$\\alpha$')
+            axes[4][2].set_xlabel('$\\nu$')
+            axes[4][3].set_xlabel('$V_m$')
+            axes[4][4].set_xlabel('$\\theta$')
+
         else:
-            est_para_df = pd.DataFrame({'gamma':gamma_vec,'alpha':a_vec,'nu':nu_vec,'vm':vm_vec,
-                                        'fitness':color_fitness})
-        if 'theta' in est_data:
-            pplot = sns.pairplot(est_para_df,hue='fitness',vars=["gamma", "alpha", "nu", "vm",'theta'],
-        kind="reg",markers="+")
-        else:
-            pplot = sns.pairplot(est_para_df, hue='fitness', vars=["gamma", "alpha", "nu", "vm"],
-                                 kind="reg", markers="+")
+            est_para_df = pd.DataFrame({'gamma':gamma_vec,'alpha':a_vec,'nu':nu_vec,'vm':vm_vec})
+            scatter_fig, axes = plt.subplots(4, 4, sharex=True, sharey=True,figsize=(9,9))
+            for i in range(4):
+                for j in range(4):
+                    axes[i][j].scatter(est_para_df[est_para_df.columns[i]], est_para_df[est_para_df.columns[j]],
+                                       marker='+', c=pick_fitness,
+                                       alpha=alphavalue, cmap=cmapvalue)
+            axes[3][0].set_xlabel('$\gamma$')
+            axes[3][1].set_xlabel('$\\alpha$')
+            axes[3][2].set_xlabel('$\\nu$')
+            axes[3][3].set_xlabel('$V_m$')
+
+        axes[0][0].set_ylabel('$\gamma$')
+        axes[1][0].set_ylabel('$\\alpha$')
+        axes[2][0].set_ylabel('$\\nu$')
+        axes[3][0].set_ylabel('$V_m$')
+
 
         plt.suptitle('s=%i,$h^2$=%.1f' % ((int(timescaling), heritability)),
                      size=15,x=0.53,y=1)
-        #
-        # corr = est_para_df.corr()
-        # # Generate a mask for the upper triangle
-        # mask = np.zeros_like(corr, dtype=np.bool)
-        # mask[np.triu_indices_from(mask)] = True
-        #
-        # # Set up the matplotlib figure
-        # f, ax = plt.subplots(figsize=(11, 9))
-        #
-        # # Generate a custom diverging colormap
-        # cmap = sns.diverging_palette(220, 10, as_cmap=True)
-        #
-        # # Draw the heatmap with the mask and correct aspect ratio
-        # sns.heatmap(corr, mask=mask, cmap=cmap, vmax=1, center=0,
-        #             square=True, linewidths=.5, cbar_kws={"shrink": .5})
-        # plt.title('s=%i,$h^2$=%.1f' % ((int(timescaling), heritability)))
 
-        #
-        # figsave = data_dir+ 'corr_t%i_h%i.png' % (int(timescaling_index), int(heritability_index))
-        # f.savefig(figsave)
-        # plt.close(f)
-        figsave = data_dir+ 'corr_t%i_h%i.png' % (int(timescaling_index), int(heritability_index))
+        figsave = data_dir+ 'scatter_t%i_h%i.png' % (int(timescaling_index), int(heritability_index))
         plt.savefig(figsave)
         plt.close()
