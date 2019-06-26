@@ -1,4 +1,4 @@
-psi_vec = c(0,0.2,0.4,0.6,0.8,1)
+psi_vec = c(0,0.5,1)
 sig_phi = c(0,1e2,1e4,1e6,1e8,-1)
 L = 333
 v=0.0001
@@ -38,7 +38,7 @@ for(scenario in c(0:2)){
       #              ,'.m')
       str = sprintf('L=%i v=%.4f Psi=%.4f s_phi=%.4f s_spar=%.1f s_disp=%.1f ticks=%i continue=neutral.m file=%s/%spsi%is_phi%i.m',
                     L,v,psi_vec[i],sig_phi[j],s_spar,s_disp,ticks,formatC(ticks),sce,i,j)
-      filename<-paste0("C:/Liang/Googlebox/Research/Project3/simdata_1e9/spatialpara",scefile,formatC(ticks),".txt")
+      filename<-paste0("C:/Liang/Googlebox/Research/Project3/replicate_sim/spatialpara",scefile,formatC(ticks),".txt")
       if(count == 1){
         # write(str, file=filename,append=FALSE)
         cat(str,'\n', file=filename, append=FALSE, sep='')
@@ -50,13 +50,13 @@ for(scenario in c(0:2)){
   }
   
   # generate bash files
-  bashfilename = paste0("C:/Liang/Googlebox/Research/Project3/simdata_1e9/spatialsim",scefile,formatC(ticks),".sh")
+  bashfilename = paste0("C:/Liang/Googlebox/Research/Project3/replicate_sim/spatialsim",scefile,formatC(ticks),".sh")
   bashsetting = sprintf('#!/bin/bash
 #SBATCH --time=9-23:59:00
 #SBATCH --partition=gelifes
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=36
+#SBATCH --cpus-per-task=18
 #SBATCH --mem=12GB 
 #SBATCH --job-name=%s%ssim
 #SBATCH --output=PJC%s.log

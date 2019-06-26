@@ -15,7 +15,7 @@ def normalized_norm(x, y):
 
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
-data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0527/'
+data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0625_notheta/'
 
 obs_file = dir_path + 'treedata/'
 

@@ -89,35 +89,43 @@ obsZ_mean = 10^(obsZ_emp[,2])
 d_meanemp = data.frame(species=species_label, trait=obsZ_mean)
 
 
-plot_tree <- ggtree(phylo_test)+geom_tiplab(size=3.5) #+xlim(0,80)
+plot_tree <- ggtree(phylo_test) +geom_tiplab(size=3.5) #+xlim(0,80)
 
 
-plot_sepboxplt_TVP <- facet_plot(plot_tree, panel="TL of TVP", data=d_all_TVP, geom_boxploth, 
-                             mapping = aes(x=traitall, group=label,medcol="black"),color='#67D5B5',fill= '#67D5B5')  + theme_tree2()
+plot_sepboxplt_TVP <- facet_plot(plot_tree, panel="TVP", data=d_all_TVP, geom_boxploth, 
+                             mapping = aes(x=traitall, group=label),color='#3ac569',fill= '#cff0da',outlier.colour = NULL)  + theme_tree2()
 
-p_finalTVP <- facet_plot(plot_sepboxplt_TVP+xlim_tree(40), panel="TL of TVP", data=d_meanemp, geom_point, 
-                        mapping = aes(x=trait, group=label ),color = 'red')
-
-
-plot_sepboxplt_TV <- facet_plot(p_finalTVP, panel="TL of TV", data=d_all_TV, geom_boxploth, 
-                             mapping = aes(x=traitall, group=label ),color='#e77e4d',fill='#e77e4d' )  + theme_tree2()
-
-p_finalTV <- facet_plot(plot_sepboxplt_TV+xlim_tree(40), panel="TL of TV", data=d_meanemp, geom_point, 
-                        mapping = aes(x=trait, group=label ),color = 'red')
+p_finalTVP <- facet_plot(plot_sepboxplt_TVP+xlim_tree(40), panel="TVP", data=d_meanemp, geom_point, 
+                        mapping = aes(x=trait, group=label ),color = 'black')
 
 
-plot_sepboxplt_TVM <- facet_plot(p_finalTV, panel="TL of TVM", data=d_all_TVM, geom_boxploth, 
-                                mapping = aes(x=traitall, group=label),color='#84B1ED',fill='#84B1ED'  )  + theme_tree2()
+plot_sepboxplt_TV <- facet_plot(p_finalTVP, panel="TV", data=d_all_TV, geom_boxploth, 
+                             mapping = aes(x=traitall, group=label ),color='#f9320c',fill='#f1bbba',outlier.colour = NULL )  + theme_tree2()
 
-p_finalTVM <- facet_plot(plot_sepboxplt_TVM+xlim_tree(40), panel="TL of TVM", data=d_meanemp, geom_point, 
-                        mapping = aes(x=trait, group=label ),color = 'red')+
-  theme(strip.background = element_rect(colour="white", fill="white"))
+p_finalTV <- facet_plot(plot_sepboxplt_TV+xlim_tree(40), panel="TV", data=d_meanemp, geom_point, 
+                        mapping = aes(x=trait, group=label ),color = 'black')
+
+
+plot_sepboxplt_TVM <- facet_plot(p_finalTV, panel="TVM", data=d_all_TVM, geom_boxploth, 
+                                mapping = aes(x=traitall, group=label),color='#6a60a9',fill='#dedcee' ,outlier.colour = NULL )  + theme_tree2()
+
+p_finalTVM <- facet_plot(plot_sepboxplt_TVM+xlim_tree(40), panel="TVM", data=d_meanemp, geom_point, 
+                        mapping = aes(x=trait, group=label ),color = 'black')+
+  theme(strip.background = element_rect(colour="white", fill="white"), 
+        strip.text.x = element_text(size=12, face="bold"),
+        axis.line = element_line(colour = "black", 
+                                 size = 1, linetype = "solid"))
 
 
 # p_finalTP <- p_finalTP+ggtitle(count)+
 #   theme(plot.title = element_text(hjust = 0.5))
 
 
+
+
+lbs <- c(Tree = "Phylogenetic tree\nof baleen whales", TVP = "Trait evolution \n+ population dynamics",
+         TV = "Trait evolution", TVM ="Trait evolution \n+ metabolism dynamics" )
+facet_labeller(p_finalTVM, lbs)
 p_finalTVM
 
 savefile = paste0(dir,'predictimage_TVP_TV_TVM',count,'.png')
