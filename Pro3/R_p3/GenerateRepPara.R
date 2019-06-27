@@ -38,8 +38,8 @@ for(scenario in c(0:2)){
       for(rep.sim in c(1:60)){
         count = count +1
 
-        str = sprintf('L=%i v=%.4f Psi=%.4f s_phi=%.4f s_spar=%.1f s_disp=%.1f ticks=%i continue=neutral.m file=%s/%s/%spsi%is_phi%irep%i.m',
-                      L,v,psi_vec[i],sig_phi[j],s_spar,s_disp,ticks,formatC(ticks),subDir,sce,i,j,rep.sim)
+        str = sprintf('L=%i v=%.4f Psi=%.4f s_phi=%.4f s_spar=%.1f s_disp=%.1f ticks=%i seed=%i continue=neutral.m file=%s/%s/%spsi%is_phi%irep%i.m',
+                      L,v,psi_vec[i],sig_phi[j],s_spar,s_disp,ticks,rep.sim,formatC(ticks),subDir,sce,i,j,rep.sim)
         filename<-paste0(dir,"/spatialpara",formatC(ticks),sce,i,j,".txt")
         if(count == 1){
           # write(str, file=filename,append=FALSE)

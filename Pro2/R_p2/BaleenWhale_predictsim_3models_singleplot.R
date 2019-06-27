@@ -89,7 +89,7 @@ obsZ_mean = 10^(obsZ_emp[,2])
 d_meanemp = data.frame(species=species_label, trait=obsZ_mean)
 
 
-plot_tree <- ggtree(phylo_test) +geom_tiplab(size=3.5) #+xlim(0,80)
+plot_tree <- ggtree(phylo_test,size=.5) +geom_tiplab(size=3.5,fontface="bold") #+xlim(0,80)
 
 
 plot_sepboxplt_TVP <- facet_plot(plot_tree, panel="TVP", data=d_all_TVP, geom_boxploth, 
@@ -122,11 +122,11 @@ p_finalTVM <- facet_plot(plot_sepboxplt_TVM+xlim_tree(40), panel="TVM", data=d_m
 
 
 
-
+p_finalTVM
 lbs <- c(Tree = "Phylogenetic tree\nof baleen whales", TVP = "Trait evolution \n+ population dynamics",
          TV = "Trait evolution", TVM ="Trait evolution \n+ metabolism dynamics" )
 facet_labeller(p_finalTVM, lbs)
-p_finalTVM
+
 
 savefile = paste0(dir,'predictimage_TVP_TV_TVM',count,'.png')
 ggsave(savefile,p_finalTVM)
