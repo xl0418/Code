@@ -135,8 +135,8 @@ ss_df = pd.DataFrame(ss_list)
 
 # vioplot = sns.catplot(x="est_label", y="est", hue="heri", col="s",
 #      data=ss_df, kind="violin",height=5, aspect=.6)
-vioplot = sns.catplot(x="s", y="est", hue="heri", col="est_label",palette=["r", "b"],
-     data=ss_df, kind="violin",height=5, aspect=.6,sharey=False)
+vioplot = sns.catplot(x="s", y="est", hue="heri", col="est_label",palette=["#feee7d", "#00dffc"],
+     data=ss_df, kind="violin",height=5, aspect=.6,sharey=False,scale ='count',linewidth =1.5,inner="quartile")
 # vioplot.set(ylim=(-50,400))
 # vioplot.set_xticklabels(["$\gamma \cdot 10^{-8}$", "$\\alpha \cdot 10^{-5}$", "$\\nu \cdot 10^{-4}$","$V_{m}$"])
 # vioplot.set_axis_labels("", "Estimate value")
