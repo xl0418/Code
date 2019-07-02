@@ -31,6 +31,7 @@ phylo_test$tip.label <- extantspecieslabel
 phylo_test$node.label <- c(1:14)
 # plot(phylo_test,show.tip.label = TRUE,show.node.label = TRUE)
 
+# writeNexus(phylo_test,file='C:/Liang/Googlebox/Research/Project2/BaleenWhales/treedata/bw.nex')
 # Extract the order names of simulated species
 prunedL = phylo2L(phylo_test)
 pl = prunedL$L
@@ -57,8 +58,6 @@ sorted.species.labels <- obsZ_emp[order(obsZ_emp[,2]),1]
 obsZ_pic = 10^obsZ_emp[,2]
 names(obsZ_pic) = extantspecieslabel
 
-# empirical contrast
-empirical_pic<-pic(obsZ_pic,phylo_test)
 
 
 # calculate sim contrast
@@ -115,7 +114,9 @@ TVP.pic <- c()
 TV.pic <- c()
 TVM.pic <- c()
 
-scaled = TRUE
+scaled = FALSE
+# empirical contrast
+empirical_pic<-pic(obsZ_pic,phylo_test, scaled = scaled)
 
 for(size in c(1:samplesize)){
   TVP.pic <- rbind(TVP.pic,pic(predictZ_matrix_TVP[size,],phylo_test, scaled = scaled))
