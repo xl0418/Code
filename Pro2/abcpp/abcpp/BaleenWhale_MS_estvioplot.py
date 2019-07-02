@@ -15,7 +15,7 @@ def normalized_norm(x, y):
 
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
-data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0529/'
+data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0702/'
 
 obs_file = dir_path + 'treedata/'
 
@@ -175,6 +175,9 @@ plot_tvm_index = np.where(fitness[TVM_index]>np.min(fitness[TVP_index]))[0]+2*po
 plt.hist(diff_norm[:len(TVP_index)])
 plt.hist(diff_norm[len(TVP_index):len(TVP_index)+len(TV_index)])
 plt.hist(diff_norm[plot_tvm_index])
+
+
+
 
 import sys
 sys.path.append('C:/Liang/abcpp_ms5/abcpp')
@@ -336,5 +339,3 @@ dtz = np.mean(theta_vec_TVP) - Z_modelTVP[0]
 beta = competition_functions_Liang(np.mean(a_vec_TVP)*1e-6, Z_modelTVP[0], N_modelTVP[0])
 gr1q = np.exp(-gamma * dtz**2 + (1 - beta / 1e6))
 
-
-gr4w
