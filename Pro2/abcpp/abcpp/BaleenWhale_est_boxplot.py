@@ -15,7 +15,7 @@ def normalized_norm(x, y):
 
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
-data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0625_notheta/'
+data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0702/'
 
 obs_file = dir_path + 'treedata/'
 
@@ -50,11 +50,11 @@ for label in extantlabels_array:
 
 logTL = lengthdata_array[length_index,1].astype(np.float)
 
-timescale_vec = [20000,40000,60000,80000,100000]
+timescale_vec = [20000,40000,60000,80000] #,100000
 heritability_vec = [0.5,1]
 
 
-for timescaling_index in range(5):
+for timescaling_index in range(len(timescale_vec)):
     for heritability_index in range(2):
         print(count)
         count += 1
