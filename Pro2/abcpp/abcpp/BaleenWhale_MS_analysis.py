@@ -7,11 +7,11 @@ import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
 import csv
-population = 30000
-timescaling = 40000
+population = 40000
+timescaling = 20000
 total_population = population * 3
 data_dir = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/'
-data_name = data_dir + '/result_0617/modelselec4w.npy'
+data_name = data_dir + '/results_0702/modelselec2w.npy'
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 
 obs_file = dir_path + 'treedata/'
@@ -19,23 +19,23 @@ obs_file = dir_path + 'treedata/'
 est_data = np.load(data_name).item()
 fitness = est_data['fitness'][-1]
 Z = est_data['Z']
-gamma_TVP = est_data['gamma_data_TVP'][-2]
-a_TVP = est_data['a_data_TVP'][-2]
-nu_TVP = est_data['nu_data_TVP'][-2]
-vm_TVP = est_data['vm_data_TVP'][-2]
-theta_TVP = est_data['theta_data_TVP'][-2]
+gamma_TVP = est_data['gamma_data_TVP'][-1]
+a_TVP = est_data['a_data_TVP'][-1]
+nu_TVP = est_data['nu_data_TVP'][-1]
+vm_TVP = est_data['vm_data_TVP'][-1]
+theta_TVP = est_data['theta_data_TVP'][-1]
 
-gamma_TV = est_data['gamma_data_TV'][-2]
-a_TV = est_data['a_data_TV'][-2]
-nu_TV = est_data['nu_data_TV'][-2]
-vm_TV = est_data['vm_data_TV'][-2]
-theta_TV = est_data['theta_data_TV'][-2]
+gamma_TV = est_data['gamma_data_TV'][-1]
+a_TV = est_data['a_data_TV'][-1]
+nu_TV = est_data['nu_data_TV'][-1]
+vm_TV = est_data['vm_data_TV'][-1]
+theta_TV = est_data['theta_data_TV'][-1]
 
-gamma_TVM = est_data['gamma_data_TVM'][-2]
-a_TVM = est_data['a_data_TVM'][-2]
-nu_TVM = est_data['nu_data_TVM'][-2]
-vm_TVM = est_data['vm_data_TVM'][-2]
-theta_TVM = est_data['theta_data_TVM'][-2]
+gamma_TVM = est_data['gamma_data_TVM'][-1]
+a_TVM = est_data['a_data_TVM'][-1]
+nu_TVM = est_data['nu_data_TVM'][-1]
+vm_TVM = est_data['vm_data_TVM'][-1]
+theta_TVM = est_data['theta_data_TVM'][-1]
 
 q5_TVP = np.argsort(fitness[ :population ])[-int(population // 200+1)]  # best 5%
 q5_TV = np.argsort(fitness[population:2 * population ])[-int(population // 200+1)] + population  # best 5%
