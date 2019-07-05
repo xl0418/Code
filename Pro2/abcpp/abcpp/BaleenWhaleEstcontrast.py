@@ -125,8 +125,8 @@ obs_param = DVParamLiang(gamma=1, a=1, K=K,h=np.sqrt(heri_sqr), nu=nu, r=1, thet
 
 # pop = dvcpp.DVSim(td, obs_param)
 
-population = 5000
-generations = 4
+population = 30000
+generations = 20
 params = np.tile(obs_param, (population, 1))  # duplicate
 params[:, 0] = np.random.uniform(0.0, 1e-5, params.shape[0])  # randomize 'gamma'
 params[:, 1] = np.random.uniform(0.0, 1e-2, params.shape[0])  # randomize 'a'
@@ -207,8 +207,16 @@ for g in range(generations):
         #     sim_pic_thisbatch.append(sim_pic_ordered)
 
 
-        pic_ordered_list = num_cores.starmap(pic_compute, zip(repeat(tree_sim), Z,repeat(taxa1)))
+        pic_ordered_list = num_cores.starmap(pic_compute, zip(repeat(tree_sim), Z,repeat(taxa1),range(num_valid_sims)))
 
+        # in case the parallel computation returns disordered output
+        order_list = []
+        contrast_list = []
+        for i in range(num_valid_sims):
+            order_list.append(pic_ordered_list[i][1])
+            contrast_list.append(pic_ordered_list[i][0])
+        ordered_contrast_list = [contrast_list[item] for item in np.argsort(order_list)]
+        contrast_array = np.vstack(ordered_contrast_list)
         # test_list = []
         # for i in range(len(valid)):
         #     test_list.append(pic_ordered_list[i][0])
@@ -217,7 +225,7 @@ for g in range(generations):
 
         #GOF: Goodness of fit
         fitness[g,valid] += 1.0 - normalized_norm(Z, obsZ)
-        fitness[g,valid] += 1.0 - normalized_norm(emp_pic_orded_node, pic_ordered_list)
+        fitness[g,valid] += 1.0 - normalized_norm(emp_pic_orded_node, contrast_array)
 
     # print something...
     q5 = np.argsort(fitness[g,:])[-len(valid)// 200]  # best 0.5%

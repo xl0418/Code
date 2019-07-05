@@ -1,7 +1,7 @@
 import dendropy
 from dendropy.model import continuous
 import numpy as np
-def pic_compute(tree_sim,Z_singleset,taxa1):
+def pic_compute(tree_sim,Z_singleset,taxa1,order_sim):
 
     simchar_dict = {}
     keys = ["B.mysticetus", "B.acutorostrata", "C.marginata", "B.borealis",
@@ -23,4 +23,4 @@ def pic_compute(tree_sim,Z_singleset,taxa1):
         sim_pic.append(nd.pic_contrast_raw)
         sim_label.append(int(nd.label))
     sim_pic_ordered = np.array(sim_pic)[np.argsort(sim_label)]
-    return sim_pic_ordered
+    return sim_pic_ordered,order_sim

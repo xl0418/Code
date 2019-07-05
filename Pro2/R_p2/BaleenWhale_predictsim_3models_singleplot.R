@@ -66,7 +66,7 @@ predictN_TVP = read.csv(simfile_NTVP)/1e5
 predictN_TVM = read.csv(simfile_NTVM)/1e5
 
 
-sort = 1
+sort = 0
 
 if(sort == 0){
   predictZ_matrix_TVP = as.matrix(predictZ_TVP)
@@ -169,21 +169,18 @@ p_finalTVM <- facet_plot(plot_sepboxplt_TVM+xlim_tree(40), panel="TVM", data=d_m
         axis.line = element_line(colour = "black", 
                                  size = 1, linetype = "solid"))
 
-
-# p_finalTP <- p_finalTP+ggtitle(count)+
-#   theme(plot.title = element_text(hjust = 0.5))
-p_final_pop_TVP <- facet_plot(p_finalTVM, panel = 'pop', 
-                 data = df_mean_pop, geom = geom_barh,
-                 mapping =  aes(x=Pop, fill = model),width = 0.5,
-                 stat='identity' ) 
-
-p_final_pop_TVP
+# 
+# p_final_pop_TVP <- facet_plot(p_finalTVM, panel = 'pop', 
+#                  data = df_mean_pop, geom = geom_barh,
+#                  mapping =  aes(x=Pop, fill = model),width = 0.5,
+#                  stat='identity' ) 
+# 
+# p_final_pop_TVP
 
 
 lbs <- c(Tree = "Phylogenetic tree\nof baleen whales", TVP = "Trait evolution \n+ population dynamics",
-         TV = "Trait evolution", TVM ="Trait evolution \n+ metabolism dynamics" ,
-         pop="Abundance distribution (10)")
-facet_labeller(p_final_pop_TVP, lbs)
+         TV = "Trait evolution", TVM ="Trait evolution \n+ metabolism dynamics") # ,pop="Abundance distribution (10)")
+facet_labeller(p_finalTVM, lbs)
 
 
 savefile = paste0(dir,'predictimage_TVP_TV_TVM',count,'.png')

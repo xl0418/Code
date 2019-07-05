@@ -161,10 +161,17 @@ for g in range(generations):
     if num_valid_sims > 0:
         Z = pop['Z'][valid]
         pic_ordered_list = num_cores.starmap(pic_compute, zip(repeat(tree_sim), Z,repeat(taxa1)))
-
+        # in case the parallel computation returns disordered output
+        order_list = []
+        contrast_list = []
+        for i in range(num_valid_sims):
+            order_list.append(pic_ordered_list[i][1])
+            contrast_list.append(pic_ordered_list[i][0])
+        ordered_contrast_list = [contrast_list[item] for item in np.argsort(order_list)]
+        contrast_array = np.vstack(ordered_contrast_list)
         #GOF: Goodness of fit
         fitness[g,valid] += 1.0 - normalized_norm(Z, obsZ)
-        fitness[g,valid] += 1.0 - normalized_norm(emp_pic_orded_node, pic_ordered_list)
+        fitness[g,valid] += 1.0 - normalized_norm(emp_pic_orded_node, contrast_array)
 
     # print something...
     q5 = np.argsort(fitness[g,:])[-len(valid)// 200]  # best 0.5%
