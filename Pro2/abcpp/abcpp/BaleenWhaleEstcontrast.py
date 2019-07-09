@@ -88,10 +88,10 @@ annotate_pic_statistics=True,state_values_as_node_labels=False,corrected_edge_le
 emp_pic = []
 label = []
 for nd in ctree_emp.postorder_internal_node_iter():
-    emp_pic.append(nd.pic_contrast_raw)
+    emp_pic.append(nd.pic_contrast_standardized)
     label.append(int(nd.label))
 
-emp_pic_orded_node = np.array(emp_pic)[np.argsort(label)]
+emp_pic_orded_node = abs(np.array(emp_pic)[np.argsort(label)])
 
 
 tree_sim = dendropy.Tree.get(
@@ -216,7 +216,7 @@ for g in range(generations):
             order_list.append(pic_ordered_list[i][1])
             contrast_list.append(pic_ordered_list[i][0])
         ordered_contrast_list = [contrast_list[item] for item in np.argsort(order_list)]
-        contrast_array = np.vstack(ordered_contrast_list)
+        contrast_array = abs(np.vstack(ordered_contrast_list))
         # test_list = []
         # for i in range(len(valid)):
         #     test_list.append(pic_ordered_list[i][0])

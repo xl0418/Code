@@ -83,7 +83,7 @@ if(sort == 0){
   predictZ_matrix_TVP = as.matrix(predictZ_TVP)
   predictZ_matrix_TV = as.matrix(predictZ_TV)
   predictZ_matrix_TVM = as.matrix(predictZ_TVM)
-
+  
   dimnames(predictZ_matrix_TVP)[[2]] = sim.species.col.names
   dimnames(predictZ_matrix_TV)[[2]] = sim.species.col.names
   dimnames(predictZ_matrix_TVM)[[2]] = sim.species.col.names
@@ -99,7 +99,7 @@ if(sort == 0){
   predictZ_matrix_TVP=t(apply(predictZ_matrix_TVP,1,sort))
   predictZ_matrix_TV=t(apply(predictZ_matrix_TV,1,sort))
   predictZ_matrix_TVM=t(apply(predictZ_matrix_TVM,1,sort))
-
+  
   dimnames(predictZ_matrix_TVP)[[2]] = sorted.species.labels
   dimnames(predictZ_matrix_TV)[[2]] = sorted.species.labels
   dimnames(predictZ_matrix_TVM)[[2]] = sorted.species.labels
@@ -125,65 +125,45 @@ for(size in c(1:samplesize)){
   
 }
 restructured_col <- c(2,3,4,1,5,7,6,13,14,8,9,10,11,12)
+restructured_col_plottree <- c(2,3,4,1,7,6,11,12,10,9,8,14,13,5)
 TVP.pic <- TVP.pic[,restructured_col]
 TV.pic <- TV.pic[,restructured_col]
 TVM.pic <- TVM.pic[,restructured_col]
 
-res.TVP.pic <- TVP.pic
-colname.of.node <- c("B.mysticetus", "E.australis"       
-                     , "E.glacialis", "E.japonica"        
-                     , "C.marginata", "B.acutorostrata" ,"B.bonaerensis"  
-                     , "E.robustus" , "B.physalus", "M.novaeangliae"
-                     , "B.musculus" , "B.omurai", "B.borealis" ,"B.brydei"
-)
 
-colnames(res.TVP.pic) <- colname.of.node
 
-d_all_TVP = as.data.frame(as.table(res.TVP.pic))[,2:3]
+d_all_TVP = as.data.frame(as.table(TVP.pic))[,2:3]
 colnames(d_all_TVP) = c('betspecies','contrast')
 d_all_TV = as.data.frame(as.table(TV.pic))[,2:3]
 colnames(d_all_TV) = c('betspecies','contrast')
 d_all_TVM = as.data.frame(as.table(TVM.pic))[,2:3]
 colnames(d_all_TVM) = c('betspecies','contrast')
 
+df_emp = as.data.frame((as.table(empirical_pic)))
+colnames(df_emp) = c('betspecies','contrast')
+ordered.emp <- empirical_pic[restructured_col_plottree]
 
-recont.emp.con <- empirical_pic[restructured_col]
-d_meanemp = data.frame(betspecies=colname.of.node, contrast=empirical_pic)
+xe<-setNames(d_all_TVP$contrast,d_all_TVP$betspecies)
+emp_dots<-setNames(df_emp$contrast,df_emp$betspecies)
 
+par(mfrow=c(1,2))
+plotTree(phylo_test,mar=c(5.1,1.1,2.1,0))
+# nodelabels(text=phylo_test$node.label,node=phylo_test$node.label+Ntip(phylo_test),
+#            frame="none",adj=c(1.1,-0.4))
+par(mar=c(5.1,0.1,2.1,1.1))
+boxplot(xe~factor(names(xe),levels=restructured_col_plottree),horizontal=TRUE,
+        axes=FALSE,xlim=c(1,Ntip(phylo_test)),at = c(2:15)-0.5,varwidth=TRUE)
+stripchart(emp_dots~factor(names(emp_dots),levels=restructured_col_plottree), horizontal=TRUE, 
+           method = "jitter", add = TRUE, pch = 20,at = c(2:15)-0.5, col = 'red')
+axis(1)
+title(xlab="log(body size)")
 
-plot_tree <- ggtree(phylo_test,size=.5) +geom_tiplab(size=3.5,fontface="bold") #+xlim(0,80)
-
-
-plot_sepboxplt_TVP <- facet_plot(plot_tree, panel="TVP", data=d_all_TVP, geom_boxploth, 
-                                 mapping = aes(x=contrast, group=label),width = .5,position= "dodge",
-                                 color='#3ac569',fill= '#cff0da',outlier.colour = NULL) # + theme_tree2()
-
-p_finalTVP <- facet_plot(plot_sepboxplt_TVP+xlim_tree(40), panel="TVP", data=d_meanemp, geom_point, 
-                         mapping = aes(x=contrast, group=label ),color = 'black')
-
-
-plot_sepboxplt_TV <- facet_plot(p_finalTVP, panel="TV", data=d_all_TV, geom_boxploth, 
-                                mapping = aes(x=contrast, group=label ),color='#f9320c',fill='#f1bbba',outlier.colour = NULL )  + theme_tree2()
-
-p_finalTV <- facet_plot(plot_sepboxplt_TV+xlim_tree(40), panel="TV", data=d_meanemp, geom_point, 
-                        mapping = aes(x=contrast, group=label ),color = 'black')
-
-
-plot_sepboxplt_TVM <- facet_plot(p_finalTV, panel="TVM", data=d_all_TVM, geom_boxploth, 
-                                 mapping = aes(x=contrast, group=label),color='#6a60a9',fill='#dedcee' ,outlier.colour = NULL )  + theme_tree2()
-
-p_finalTVM <- facet_plot(plot_sepboxplt_TVM+xlim_tree(40), panel="TVM", data=d_meanemp, geom_point, 
-                         mapping = aes(x=contrast, group=label ),color = 'black')+
-  theme(strip.background = element_rect(colour="white", fill="white"), 
-        strip.text.x = element_text(size=12, face="bold"),
-        axis.line = element_line(colour = "black", 
-                                 size = 1, linetype = "solid"))
+boxplot(xe~factor(names(xe),levels=phylo_test$node.label),horizontal=TRUE,
+        axes=FALSE,xlim=c(1,Ntip(phylo_test)),at = c(2:15)-0.5,varwidth=TRUE)
+axis(1)
+title(xlab="log(body size)")
 
 
-p_finalTVM
-lbs <- c(Tree = "Phylogenetic tree\nof baleen whales", TVP = "Trait evolution \n+ population dynamics",
-         TV = "Trait evolution", TVM ="Trait evolution \n+ metabolism dynamics")
-facet_labeller(p_finalTVM, lbs)
 
 
 savefile = paste0(dir,'predictcontrastimage_TVP_TV_TVM_sorted',count,'.png')

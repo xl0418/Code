@@ -12,7 +12,7 @@ dir_path ='C:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 
 
 obs_file = dir_path + 'treedata/'
-simdata_file = dir_path + 'result_cluster/result_0617/'
+simdata_file = dir_path + 'result_cluster/Est/'
 sim_file_TVP = simdata_file+'predictsimTVP.csv'
 sim_file_TV = simdata_file + 'predictsimTV.csv'
 sim_file_TVM = simdata_file + 'predictsimTVM.csv'
@@ -305,14 +305,14 @@ traitpopdf_pd = pd.DataFrame(traitpopdf_list)
 
 fig_meta, axes_meta = plt.subplots(1, 1,sharey=True,sharex=True)
 
-axes_meta = sns.scatterplot(x="Trait", y="Metabolism",s=3, data=traitpopdf_pd[traitpopdf_pd['model']=='TVM'],
+axes_meta = sns.scatterplot(x="Trait", y="Metabolism",s=4, data=traitpopdf_pd[traitpopdf_pd['model']=='TVM'],
                  ax= axes_meta,color="red")
 axes_meta.set_title('TVM')
 
 
 # test the energetic equivalence rule
 trait_TVM_array = trait_TVM_array.flatten()
-log_trait = np.log10(trait_TVM_array).reshape((-1, 1))
+log_trait = np.log10(trait_TVM_array)  #.reshape((-1, 1))
 pop_tvm_flatten = pop_TVM_array.flatten()
 
 from sklearn.linear_model import LinearRegression
