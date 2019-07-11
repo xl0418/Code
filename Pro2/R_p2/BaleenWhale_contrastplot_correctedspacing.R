@@ -152,7 +152,8 @@ plotTree(phylo_test,mar=c(5.1,1.1,2.1,0))
 #            frame="none",adj=c(1.1,-0.4))
 par(mar=c(5.1,0.1,2.1,1.1))
 boxplot(xe~factor(names(xe),levels=restructured_col_plottree),horizontal=TRUE,
-        axes=FALSE,xlim=c(1,Ntip(phylo_test)),at = c(2:15)-0.5,varwidth=TRUE,ylim=c(-1500,1500))
+        axes=FALSE,xlim=c(1,Ntip(phylo_test)),at = c(2:15)-0.5,varwidth=TRUE,
+        ylim=c(-1500,1500),notch=TRUE,col='#cff0da')
 stripchart(emp_dots~factor(names(emp_dots),levels=restructured_col_plottree), horizontal=TRUE, 
            method = "jitter", add = TRUE, pch = 20,at = c(2:15)-0.5, col = 'red')
 axis(1)

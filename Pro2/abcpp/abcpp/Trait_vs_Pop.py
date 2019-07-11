@@ -19,16 +19,16 @@ singlesim = False
 gamma_vec = np.array([0,0.001,0.01,0.1,0.5,1])
 a_vec = gamma_vec
 
-for no_tree in range(10,23):
+for no_tree in range(1,2):
     print(no_tree)
 # no_tree= 5
     dir_path = 'c:/Liang/Googlebox/Research/Project2'
     files = dir_path + '/treesim_newexp/example%d/' % no_tree
 
-    td = DVTreeData(path=files, scalar=10000)
+    td = DVTreeData(path=files, scalar=20000)
     K = 10e8
     nu=1/(100*K)
-    num = 101
+    num = 11
     trait_w = []
     trait_v = []
     pop_w = []
@@ -101,21 +101,22 @@ for no_tree in range(10,23):
         for index_a in range(len(a_vec)):
             a=a_vec[index_a]
             print(count)
-            if len(normed_trait[count]) == 1:
+            if len(trait_w[count]) == 1:
                 axes1[index_g,index_a].plot()
                 axes2[index_g,index_a].plot()
                 axes3[index_g,index_a].plot()
 
             else:
-                # trait = trait_w[count]
-                # traitvar = trait_v[count]
-                # pop = pop_w[count]
-                trait = normed_trait[count]
-                traitvar = normed_traitvar[count]
-                pop = normed_pop[count]
-                axes1[index_g, index_a].set_xlim([-0.2,1.2])
-                axes2[index_g, index_a].set_xlim([-0.2,1.2])
-                axes3[index_g, index_a].set_xlim([-0.2,1.2])
+                trait = trait_w[count]
+                traitvar = trait_v[count]
+                pop = pop_w[count]
+                #
+                # trait = normed_trait[count]
+                # traitvar = normed_traitvar[count]
+                # pop = normed_pop[count]
+                # axes1[index_g, index_a].set_xlim([-0.2,1.2])
+                # axes2[index_g, index_a].set_xlim([-0.2,1.2])
+                # axes3[index_g, index_a].set_xlim([-0.2,1.2])
 
                 # Generate and plot a random bivariate dataset
                 # sns.kdeplot(trait, pop, cmap=cmap, shade=True, cut=5, ax=ax)

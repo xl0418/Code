@@ -224,7 +224,7 @@ for g in range(generations):
         print("---PIC calculation: %s seconds ---" % (time.time() - start_time))
 
         #GOF: Goodness of fit
-        fitness[g,valid] += 1.0 - normalized_norm(Z, obsZ)
+        # fitness[g,valid] += 1.0 - normalized_norm(Z, obsZ)
         fitness[g,valid] += 1.0 - normalized_norm(emp_pic_orded_node, contrast_array)
 
     # print something...

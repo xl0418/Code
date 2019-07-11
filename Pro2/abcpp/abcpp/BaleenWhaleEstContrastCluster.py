@@ -15,7 +15,7 @@ from pic_compute import pic_compute
 #
 # argsort of 2-dimensional arrays is awkward
 # returns i,j so that X[i,j] == np.sort(X)
-num_cores = Pool(30)  # the number of cores
+num_cores = Pool(20)  # the number of cores
 
 def argsort2D(X):
     return np.arange(len(X))[:, np.newaxis], np.argsort(X, axis=1)
@@ -85,7 +85,7 @@ for nd in ctree_emp.postorder_internal_node_iter():
     emp_pic.append(nd.pic_contrast_raw)
     label.append(int(nd.label))
 
-emp_pic_orded_node = np.array(emp_pic)[np.argsort(label)]
+emp_pic_orded_node = abs(np.array(emp_pic)[np.argsort(label)])
 
 
 tree_sim = dendropy.Tree.get(
@@ -160,7 +160,9 @@ for g in range(generations):
         print("WARNING:Valid simulations are too scarce!")
     if num_valid_sims > 0:
         Z = pop['Z'][valid]
-        pic_ordered_list = num_cores.starmap(pic_compute, zip(repeat(tree_sim), Z,repeat(taxa1)))
+        pic_ordered_list = num_cores.starmap(pic_compute,
+                                             zip(repeat(tree_sim), Z, repeat(taxa1), range(num_valid_sims)))
+
         # in case the parallel computation returns disordered output
         order_list = []
         contrast_list = []
@@ -168,7 +170,7 @@ for g in range(generations):
             order_list.append(pic_ordered_list[i][1])
             contrast_list.append(pic_ordered_list[i][0])
         ordered_contrast_list = [contrast_list[item] for item in np.argsort(order_list)]
-        contrast_array = np.vstack(ordered_contrast_list)
+        contrast_array = abs(np.vstack(ordered_contrast_list))
         #GOF: Goodness of fit
         fitness[g,valid] += 1.0 - normalized_norm(Z, obsZ)
         fitness[g,valid] += 1.0 - normalized_norm(emp_pic_orded_node, contrast_array)

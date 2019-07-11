@@ -5,7 +5,7 @@ library(ggplot2)
 library(ggstance)
 library(ggimage)
 library(DDD)
-
+library(export)
 source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
 emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
@@ -189,6 +189,9 @@ facet_labeller(p_finalTVM, lbs)
 savefile = paste0(dir,'predictcontrastimage_TVP_TV_TVM_sorted',count,'.png')
 ggsave(savefile,p_finalTVM)
 
+# filen <- paste0(dir,"ggplot")
+# graph2ppt(x=p_finalTVM, file=filen)
+# graph2doc(x=p_finalTVM, file=filen, aspectr=0.5)
 
 
 
