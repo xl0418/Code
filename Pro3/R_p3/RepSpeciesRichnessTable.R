@@ -9,6 +9,7 @@ library(gridExtra)
 source(paste0(getwd(),'/g_legend.R'))
 source('C:/Liang/Code/Pro3/R_p3/event2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro3/R_p3/barplot3d.R', echo=TRUE)
+moviedir = 'C:/Liang/Googlebox/Research/Project3/batchsim_results/'
 dir = 'C:/Liang/Googlebox/Research/Project3/batchsim_results/1e+07/'
 scenario = c('Levent','Mevent','Hevent')
 sce.short = c('L','M','H')
@@ -40,10 +41,14 @@ for(i_n in c(1:3)){
   }
 }
 z = r_df[,c(1:5)]
+z[,1] = min(z)
 
+open3d()
+barplot3d(z,alpha=0.6,mode='m5')
+if (!rgl.useNULL())
+  play3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20)
+  # movie3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20,dir=moviedir,fps=20)
 
-
-barplot3d(z,alpha=0.4,mode='m5')
 
 ## Save your images to files if you wish
 rgl.snapshot(filename="example.png")

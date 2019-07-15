@@ -52,11 +52,11 @@ stackplot.3d<-function(x,y,z,alpha=1,topcol="#078E53",sidecol="#aaaaaa",mode='m5
   }else if(mode=='m5'){
     ## Determine the coordinates of each surface of the column and its edges
     x1=c(rep(c(x[1],x[2],x[2],x[1]),3),rep(x[1],4),rep(x[2],4))
-    z1=c(rep(z.q1,4),rep(c(z.q1,z.q1,z.q3,z.q3),4))
+    z1=c(rep(z.bot,4),rep(c(z.bot,z.bot,z.mean,z.mean),4))
     y1=c(y[1],y[1],y[2],y[2],rep(y[1],4),rep(y[2],4),rep(c(y[1],y[2],y[2],y[1]),2))
     x2=c(rep(c(x[1],x[1],x[2],x[2]),2),rep(c(x[1],x[2],rep(x[1],3),rep(x[2],3)),2),
          rep((x[1]+x[2])/2,2))
-    z2=c(rep(c(z.q1,z.q3),4),rep(z.q1,8),rep(z.q3,8), z.bot,z.top)
+    z2=c(rep(c(z.bot,z.mean),4),rep(z.bot,8),rep(z.mean,8), z.q1,z.q3)
     y2=c(rep(y[1],4),rep(y[2],4),rep(c(rep(y[1],3),rep(y[2],3),y[1],y[2]),2),
          rep((y[1]+y[2])/2,2))
     
@@ -64,17 +64,28 @@ stackplot.3d<-function(x,y,z,alpha=1,topcol="#078E53",sidecol="#aaaaaa",mode='m5
     ## Side surfaces of the main box
     rgl.quads(x1,z1,y1,col=rep(sidecol,each=4),alpha=alpha,lit=FALSE)
     ## Top and bottom surfaces of the main box
-    rgl.quads(c(x[1],x[2],x[2],x[1]),rep(z.q3,4),c(y[1],y[1],y[2],y[2]),
+    rgl.quads(c(x[1],x[2],x[2],x[1]),rep(z.mean,4),c(y[1],y[1],y[2],y[2]),
               col=rep(topcol,each=4),alpha=1,lit=FALSE) 
-    rgl.quads(c(x[1],x[2],x[2],x[1]),rep(z.q1,4),c(y[1],y[1],y[2],y[2]),
-              col=rep(topcol,each=4),alpha=1,lit=FALSE) 
+    # rgl.quads(c(x[1],x[2],x[2],x[1]),rep(z.q1,4),c(y[1],y[1],y[2],y[2]),
+    #           col=rep(topcol,each=4),alpha=1,lit=FALSE) 
     ## Max and min surfaces
-    rgl.quads(c(x[1],x[2],x[2],x[1]),rep(z.top,4),c(y[1],y[1],y[2],y[2]),
-              col=rep(topcol,each=4),alpha=.2,lit=FALSE) 
-    rgl.quads(c(x[1],x[2],x[2],x[1]),rep(z.bot,4),c(y[1],y[1],y[2],y[2]),
-              col=rep(topcol,each=4),alpha=.2,lit=FALSE) 
+    # rgl.quads(c(x[1],x[2],x[2],x[1]),rep(z.top,4),c(y[1],y[1],y[2],y[2]),
+    #           col=rep(topcol,each=4),alpha=.2,lit=FALSE) 
+    # rgl.quads(c(x[1],x[2],x[2],x[1]),rep(z.bot,4),c(y[1],y[1],y[2],y[2]),
+    #           col=rep(topcol,each=4),alpha=.2,lit=FALSE) 
     ## This line adds black edges to the column
     rgl.lines(x2,z2,y2,col="#000000",lit=FALSE)
+    
+    # bg.x = c(rep(c(10,10),4),rep(c(10,70),4))
+    # bg.y = c(rep(rep(c(80,120,160,200),each = 2),2))
+    # bg.z = c(rep(c(-10,-100),4),rep(c(-100,-100),4))
+    # rgl.lines(bg.x,bg.y,bg.z,col="#000000",lit=FALSE)
+    
+    bg.x = rep(c(rep(10,46),seq(10,70,2)),4)
+    bg.y = rep(c(80,120,160,200),each=77)
+    bg.z = rep(c(seq(-10,-100,-2),rep(-100,31)),4)
+    rgl.points(bg.x,bg.y,bg.z,col="#000000",lit=FALSE,size = 0.3)
+    
   }
  
 }
@@ -172,5 +183,13 @@ barplot3d<-function(z,alpha=1,scalexy=10,scalez=1,gap=0.2,mode='m5'){
   
   ## Set the viewpoint and add axes and labels
   rgl.viewpoint(theta=50,phi=40,fov=0)
-  axes3d("y-+",labels=TRUE)
+  axes3d("y-+",labels=TRUE,at=seq(80,200,40),nticks=4)
+  # axis for phi
+  zlabels <- c('0','0.5','1')
+  axes3d("z+-", labels=zlabels,nticks=3,at=seq(-15,-35,-10))
+  # axis for sigma_phi
+  xlabels <- c('0','1e2','1e4','1e6','1e8','Inf')
+  axis3d("x-+",nticks=6,at=seq(15,65,10),labels=xlabels)
+  text3d(matrix(c(-10,95,40,140,80,80,10,-25,10),ncol=3),texts=c('Abundance', 'Phy', 'JC'))
+  
 }
