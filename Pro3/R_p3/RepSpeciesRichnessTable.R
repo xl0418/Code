@@ -43,17 +43,18 @@ for(i_n in c(1:3)){
 z = r_df[,c(1:5)]
 z[,1] = min(z)
 
+# Figure size
+r3dDefaults$windowRect <- c(0, 100, 800, 800) 
+
+# Animate the 3d plot and save as a gif
 open3d()
 barplot3d(z,alpha=0.6,mode='m5')
 if (!rgl.useNULL())
-  play3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20)
-  # movie3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20,dir=moviedir,fps=20)
+  # play3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20)
+  movie3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20,dir=moviedir,fps=10)
 
 
 ## Save your images to files if you wish
-rgl.snapshot(filename="example.png")
-df = as.data.frame(r_df)
-colnames(df) = c('Richness','psi','phi')
-df$psi = as.character(df$psi)
-df$phi = as.character(df$phi)
-df$phi = factor(df$phi,levels = plabel )
+barplot3d(z,alpha=0.6,mode='m5')
+rgl.snapshot(filename=paste0(moviedir,"example.png"))
+

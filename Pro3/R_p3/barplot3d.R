@@ -117,20 +117,20 @@ barplot3d<-function(z,alpha=1,scalexy=10,scalez=1,gap=0.2,mode='m5'){
   save <- par3d(skipRedraw=TRUE)
   on.exit(par3d(save))
   
-  ## Recreate Broad order
-  types=c("Low",'Intermediate','High')
-  contexts=c("jc1p1","jc1p2","jc1p3","jc1p4","jc1p5","jc1p6",
-             "jc2p1","jc2p2","jc2p3","jc2p4","jc2p5","jc2p6",
-             "jc3p1","jc3p2","jc3p3","jc3p4","jc3p5","jc3p6")
-  typeorder=c()
-  for(type in types){
-    typeorder=c(typeorder,paste(type,contexts,sep="_"))
-  }
-  names(z.top)=typeorder
-  names(z.bot)=typeorder
+  # ## Recreate Broad order
+  # types=c("Low",'Intermediate','High')
+  # contexts=c("jc1p1","jc1p2","jc1p3","jc1p4","jc1p5","jc1p6",
+  #            "jc2p1","jc2p2","jc2p3","jc2p4","jc2p5","jc2p6",
+  #            "jc3p1","jc3p2","jc3p3","jc3p4","jc3p5","jc3p6")
+  # typeorder=c()
+  # for(type in types){
+  #   typeorder=c(typeorder,paste(type,contexts,sep="_"))
+  # }
+  # names(z.top)=typeorder
+  # names(z.bot)=typeorder
   
   ## Reorder data into 6 regions
-  neworder=c(1:length(z.top))
+  neworder=c(1:nrow(z))
   
   ## Define dimensions of the plot 
   dimensions=c(9,6)
@@ -183,13 +183,13 @@ barplot3d<-function(z,alpha=1,scalexy=10,scalez=1,gap=0.2,mode='m5'){
   
   ## Set the viewpoint and add axes and labels
   rgl.viewpoint(theta=50,phi=40,fov=0)
-  axes3d("y-+",labels=TRUE,at=seq(80,200,40),nticks=4)
+  axes3d("y-+",labels=TRUE,at=seq(80,200,40),nticks=4,lwd=2)
   # axis for phi
   zlabels <- c('0','0.5','1')
-  axes3d("z+-", labels=zlabels,nticks=3,at=seq(-15,-35,-10))
+  axes3d("z+-", labels=zlabels,nticks=3,at=seq(-15,-35,-10),lwd=2)
   # axis for sigma_phi
   xlabels <- c('0','1e2','1e4','1e6','1e8','Inf')
-  axis3d("x-+",nticks=6,at=seq(15,65,10),labels=xlabels)
+  axis3d("x-+",nticks=6,at=seq(15,65,10),labels=xlabels,lwd=2)
   text3d(matrix(c(-10,95,40,140,80,80,10,-25,10),ncol=3),texts=c('Abundance', 'Phy', 'JC'))
   
 }
