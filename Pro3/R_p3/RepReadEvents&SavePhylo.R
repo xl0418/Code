@@ -11,6 +11,7 @@ dir <- 'C:/Liang/Googlebox/Research/Project3/batchsim_results/'
 neu.eventtablefile <- paste0(dir,'neutraldata/neuevent.csv')
 neu.eventtable <- read.csv(neu.eventtablefile,header = FALSE)
 turnover <- 1e9+1e7
+
 ev2l <- function(eventtable){
   L <- event2L(eventtable, turnover=1e9+1e7)
   phy = DDD::L2phylo(L,dropextinct = T)
@@ -21,10 +22,7 @@ colnames(neu.eventtable) = c('T','ns','x','y','sp','ancestor')
 
 scenario = c('Levent','Mevent','Hevent')
 sce.short = c('L','M','H')
-jclabel = c(0,0.5,1)
-plabel = c(0,1e2,1e4,1e6,1e8,-1)
 
-r_df = NULL
 
 for(i_n in c(1:3)){
   sce = scenario[i_n]
