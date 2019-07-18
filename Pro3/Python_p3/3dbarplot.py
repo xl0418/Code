@@ -8,7 +8,7 @@ import pandas as pd
 import seaborn as sns
 #Make sure these are floating point values:
 scale_x = 1.0
-scale_y = 2.0
+scale_y = 2.5
 scale_z = 1.0
 
 #Axes are scaled down to fit in scene
@@ -143,7 +143,8 @@ color_group_p = np.array([sns.color_palette("Paired")[1],sns.color_palette("Pair
 
 for i in range(1,4):
     group = 1
-    fig = plt.figure(figsize=(15, 10))
+    fig = plt.figure(figsize=(10, 6))
+    fig.subplots_adjust(left=0.1, right=1.1,bottom=0,top=1.2)
     ax = fig.add_subplot(111, projection='3d')
     nbins = 12
     width = .9

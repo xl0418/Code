@@ -52,5 +52,3 @@ for(i_n in c(1:3)){
   }
 }
 
-colless_df <- ldply(multitree, foo, metric = method)
-
