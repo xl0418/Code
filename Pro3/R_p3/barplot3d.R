@@ -81,9 +81,9 @@ stackplot.3d<-function(x,y,z,alpha=1,topcol="#078E53",sidecol="#aaaaaa",mode='m5
     # bg.z = c(rep(c(-10,-100),4),rep(c(-100,-100),4))
     # rgl.lines(bg.x,bg.y,bg.z,col="#000000",lit=FALSE)
     
-    bg.x = rep(c(rep(10,46),seq(10,70,2)),4)
-    bg.y = rep(c(80,120,160,200),each=77)
-    bg.z = rep(c(seq(-10,-100,-2),rep(-100,31)),4)
+    bg.x = rep(c(rep(10,56),seq(10,70,2)),4)
+    bg.y = rep(c(80,120,160,200),each=87)
+    bg.z = rep(c(seq(-10,-120,-2),rep(-120,31)),4)
     rgl.points(bg.x,bg.y,bg.z,col="#000000",lit=FALSE,size = 0.3)
     
   }
@@ -94,7 +94,7 @@ stackplot.3d<-function(x,y,z,alpha=1,topcol="#078E53",sidecol="#aaaaaa",mode='m5
 
 ## Calls stackplot.3d repeatedly to create a barplot
 ## z.top is the heights of the columns and must be an appropriately named vector
-barplot3d<-function(z,alpha=1,scalexy=10,scalez=1,gap=0.2,mode='m5'){
+barplot3d<-function(z,alpha=1,scalexy=10,scalez=1,gap=0.2,mode='m5',gap.sce.mode=TRUE){
   ## These lines allow the active rgl device to be updated with multiple changes
   ## This is necessary to add each column sequentially
   if(mode=='m2'){
@@ -136,14 +136,14 @@ barplot3d<-function(z,alpha=1,scalexy=10,scalez=1,gap=0.2,mode='m5'){
   dimensions=c(9,6)
   
   ## Scale column area and the gap between columns 
-  y=seq(1,dimensions[1])*scalexy
+  y=seq(1,dimensions[1]+2)*scalexy
   x=seq(1,dimensions[2])*scalexy
   gap=gap*scalexy
   
   z = z*scalez
   
   ## Set up colour palette
-  broadcolors=c("#74B655","#F2EC3C","#3F4F9D")
+  broadcolors=c("#8CD790","#EFDC05","#30A9DE")
   colors=as.vector(sapply(broadcolors,rep,18))
   
   ## Scale z.top coordinate
@@ -170,8 +170,10 @@ barplot3d<-function(z,alpha=1,scalexy=10,scalez=1,gap=0.2,mode='m5'){
     for(i in 1:dimensions[1]){
       for(j in 1:dimensions[2]){
         it=(i-1)*dimensions[2]+j # Variable to work out which column to plot; counts from 1:96
+        if(gap.sce.mode==TRUE)gap.sce = (i-1)%/%3*scalexy
+        else gap.sce=0
         stackplot.3d(c(gap+x[j],x[j]+scalexy),
-                     c(-gap-y[i],-y[i]-scalexy),
+                     c(-gap-y[i]-gap.sce,-y[i]-scalexy-gap.sce),
                      z[neworder[it],],
                      alpha=alpha,
                      topcol=colors[neworder[it]],
@@ -182,7 +184,8 @@ barplot3d<-function(z,alpha=1,scalexy=10,scalez=1,gap=0.2,mode='m5'){
   }
   
   ## Set the viewpoint and add axes and labels
-  rgl.viewpoint(theta=50,phi=40,fov=0)
+  ## theta: the horizontal angle    phi: the vertical angle
+  rgl.viewpoint(theta=70,phi=35,fov=30)
   axes3d("y-+",labels=TRUE,at=seq(80,200,40),nticks=4,lwd=2)
   # axis for phi
   zlabels <- c('0','0.5','1')
@@ -190,6 +193,8 @@ barplot3d<-function(z,alpha=1,scalexy=10,scalez=1,gap=0.2,mode='m5'){
   # axis for sigma_phi
   xlabels <- c('0','1e2','1e4','1e6','1e8','Inf')
   axis3d("x-+",nticks=6,at=seq(15,65,10),labels=xlabels,lwd=2)
-  text3d(matrix(c(-10,95,40,140,80,80,10,-25,10),ncol=3),texts=c('Abundance', 'Phy', 'JC'))
+  text3d(matrix(c(0,105,40,180,80,80,-40,-25,20),ncol=3),
+         texts=c('Abundance',expression(psi), expression(sigma[phi]) ),
+         cex = 2)
   
 }

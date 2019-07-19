@@ -11,8 +11,8 @@ source('C:/Liang/Code/Pro3/R_p3/event2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro3/R_p3/barplot3d.R', echo=TRUE)
 moviedir = 'C:/Liang/Googlebox/Research/Project3/batchsim_results/'
 dir = 'C:/Liang/Googlebox/Research/Project3/batchsim_results/1e+07/'
-scenario = c('Levent','Mevent','Hevent')
-sce.short = c('L','M','H')
+scenario = c('Hevent','Mevent','Levent')
+sce.short = c('H','M','L')
 jclabel = c(0,0.5,1)
 plabel = c(0,1e2,1e4,1e6,1e8,-1)
 diversity.upperlimit = 250
@@ -50,11 +50,14 @@ r3dDefaults$windowRect <- c(0, 100, 800, 800)
 open3d()
 barplot3d(z,alpha=0.6,mode='m5')
 if (!rgl.useNULL())
-  # play3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20)
-  movie3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20,dir=moviedir,fps=10)
+  play3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20)
+  # movie3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20,dir=moviedir,fps=10)
 
 
 ## Save your images to files if you wish
 barplot3d(z,alpha=0.6,mode='m5')
-rgl.snapshot(filename=paste0(moviedir,"example.png"))
+legend3d("topright", legend = paste('Scenario', c('A', 'B', 'C')), pch = 12,
+         col = c("#EE7785","#67D5B5","#84B1ED"), cex=1.5, inset=c(0.02))
+
+rgl.snapshot(filename=paste0(moviedir,"Species_richness.png"))
 
