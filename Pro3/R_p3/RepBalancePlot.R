@@ -12,7 +12,7 @@ scenario = c('Levent','Mevent','Hevent')
 sce.short = c('L','M','H')
 jclabel = c('0','0.5','1')
 plabel = c('0','1e2','1e4','1e6','1e8','Inf')
-i_n=1
+i_n=3
 sce = scenario[i_n]
 f.name = sce.short[i_n]
 # Compute the colless values and gamma values for a given phylo tree.
@@ -45,9 +45,10 @@ value.max <- max(colless_alldf$colvalue)
 
 
 plothis <- ggplot(colless_alldf, aes(colvalue)) +  # plot histogram of distribution of values
-  geom_histogram(binwidth = .5)+ theme_wsj() +
+  geom_histogram(binwidth = .5)+ theme_gdocs() +
   # theme_bw(base_size=18) + 
-  scale_x_continuous(limits=c(3,15), breaks=c(3,6,9,12,15)) + 
+  scale_x_continuous(limits=c(floor(value.min),ceiling(value.max)),
+                     breaks=seq(floor(value.min),ceiling(value.max),5)) + 
   # geom_vline(xintercept = -0.7, colour="red", linetype = "longdash") +
   # geom_vline(xintercept = 0.7, colour="red", linetype = "longdash") +
   labs(x=expression(" "),y=expression(" ")) 
@@ -57,7 +58,7 @@ plothis <- ggplot(colless_alldf, aes(colvalue)) +  # plot histogram of distribut
 
 
 wholeplot = plothis+facet_grid(psi~phi)+
-            stat_bin(bins=20)  +
+            stat_bin(bins=30)  +
   theme(strip.text.x = element_text(size=13),
         strip.text.y = element_text(size=13))
 

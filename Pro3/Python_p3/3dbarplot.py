@@ -92,7 +92,7 @@ jclabel = np.array(['0','0.5','1'])
 plabel = np.array(['0','1e2','1e4','1e6','1e8','Inf'])
 cmaps = OrderedDict()
 
-i_sce = 0
+i_sce = 2
 csv_name = scenario[i_sce]
 folder_name = sce_short[i_sce]
 

@@ -56,8 +56,8 @@ if (!rgl.useNULL())
 
 ## Save your images to files if you wish
 barplot3d(z,alpha=0.6,mode='m5')
-legend3d("topright", legend = paste('Scenario', c('A', 'B', 'C')), pch = 12,
-         col = c("#EE7785","#67D5B5","#84B1ED"), cex=1.5, inset=c(0.02))
+legend3d("topright", legend = c('High','Intermediate','Low'), pch = 12,
+         col = c("#8CD790","#EFDC05","#30A9DE"), cex=1.5, inset=c(0.02))
 
 rgl.snapshot(filename=paste0(moviedir,"Species_richness.png"))
 

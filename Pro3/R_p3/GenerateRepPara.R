@@ -2,25 +2,25 @@ psi_vec = c(0,0.5,1,0.25,0.75)
 sig_phi = c(0,1e2,1e4,1e6,1e8,-1)
 L = 333
 v=0.0001
-dir = "C:/Liang/Googlebox/Research/Project3/replicate_sim"
+dir = "C:/Liang/Googlebox/Research/Project3/replicate_sim_middlespatial"
 ticks=10000000
 log=1e8
 for(scenario in c(0:2)){
   # scenario = 0
   if(scenario == 0){
-    s_spar=0.1
-    s_disp=0.1
+    s_spar=0.01
+    s_disp=0.01
     sce = "L"
     scefile = "low"
   }else if(scenario == 1){
-    s_spar=10
-    s_disp=10
+    s_spar=1
+    s_disp=1
     sce = "M"
     scefile = "med"
     
   }else if(scenario == 2){
-    s_spar=1000
-    s_disp=1000
+    s_spar=100
+    s_disp=100
     sce = "H"
     scefile = "high"
     
