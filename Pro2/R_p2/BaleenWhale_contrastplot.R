@@ -9,7 +9,7 @@ library(export)
 source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
 emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
-dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/Est/'
+dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0724_contrast/'
 
 emdata = read.nexus(emdatadir)
 
@@ -130,6 +130,9 @@ TV.pic <- TV.pic[,restructured_col]
 TVM.pic <- TVM.pic[,restructured_col]
 
 res.TVP.pic <- TVP.pic
+res.TV.pic <- TVP.pic
+res.TVM.pic <- TVP.pic
+
 colname.of.node <- c("B.mysticetus", "E.australis"       
                      , "E.glacialis", "E.japonica"        
                      , "C.marginata", "B.acutorostrata" ,"B.bonaerensis"  
@@ -138,12 +141,14 @@ colname.of.node <- c("B.mysticetus", "E.australis"
 )
 
 colnames(res.TVP.pic) <- colname.of.node
+colnames(res.TV.pic) <- colname.of.node
+colnames(res.TVM.pic) <- colname.of.node
 
 d_all_TVP = as.data.frame(as.table(res.TVP.pic))[,2:3]
 colnames(d_all_TVP) = c('betspecies','contrast')
-d_all_TV = as.data.frame(as.table(TV.pic))[,2:3]
+d_all_TV = as.data.frame(as.table(res.TV.pic))[,2:3]
 colnames(d_all_TV) = c('betspecies','contrast')
-d_all_TVM = as.data.frame(as.table(TVM.pic))[,2:3]
+d_all_TVM = as.data.frame(as.table(res.TVM.pic))[,2:3]
 colnames(d_all_TVM) = c('betspecies','contrast')
 
 
@@ -163,14 +168,16 @@ p_finalTVP <- facet_plot(plot_sepboxplt_TVP+xlim_tree(40), panel="TVP", data=d_m
 
 
 plot_sepboxplt_TV <- facet_plot(p_finalTVP, panel="TV", data=d_all_TV, geom_boxploth, 
-                                mapping = aes(x=contrast, group=label ),color='#f9320c',fill='#f1bbba',outlier.colour = NULL )  + theme_tree2()
+                                mapping = aes(x=contrast, group=label ),width = .5,position= "dodge",
+                                color='#f9320c',fill='#f1bbba',outlier.colour = NULL ) # + theme_tree2()
 
 p_finalTV <- facet_plot(plot_sepboxplt_TV+xlim_tree(40), panel="TV", data=d_meanemp, geom_point, 
                         mapping = aes(x=contrast, group=label ),color = 'black')
 
 
 plot_sepboxplt_TVM <- facet_plot(p_finalTV, panel="TVM", data=d_all_TVM, geom_boxploth, 
-                                 mapping = aes(x=contrast, group=label),color='#6a60a9',fill='#dedcee' ,outlier.colour = NULL )  + theme_tree2()
+                                 mapping = aes(x=contrast, group=label),width = .5,position= "dodge",
+                                 color='#6a60a9',fill='#dedcee' ,outlier.colour = NULL ) # + theme_tree2()
 
 p_finalTVM <- facet_plot(plot_sepboxplt_TVM+xlim_tree(40), panel="TVM", data=d_meanemp, geom_point, 
                          mapping = aes(x=contrast, group=label ),color = 'black')+
@@ -181,6 +188,8 @@ p_finalTVM <- facet_plot(plot_sepboxplt_TVM+xlim_tree(40), panel="TVM", data=d_m
 
 
 p_finalTVM
+
+
 lbs <- c(Tree = "Phylogenetic tree\nof baleen whales", TVP = "Trait evolution \n+ population dynamics",
          TV = "Trait evolution", TVM ="Trait evolution \n+ metabolism dynamics")
 facet_labeller(p_finalTVM, lbs)

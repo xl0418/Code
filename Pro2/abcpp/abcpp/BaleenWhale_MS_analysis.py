@@ -11,7 +11,7 @@ population = 40000
 timescaling = 20000
 total_population = population * 3
 data_dir = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/'
-data_name = data_dir + '/results_0702/modelselec2w.npy'
+data_name = data_dir + '/results_0724_contrast/modelselec2w.npy'
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 
 obs_file = dir_path + 'treedata/'
