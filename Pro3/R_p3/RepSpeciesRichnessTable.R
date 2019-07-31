@@ -51,7 +51,7 @@ open3d()
 barplot3d(z,alpha=0.6,mode='m5')
 if (!rgl.useNULL())
   play3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20)
-  # movie3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20,dir=moviedir,fps=10)
+  movie3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20,dir=moviedir,fps=10)
 
 
 ## Save your images to files if you wish

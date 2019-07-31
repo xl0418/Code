@@ -9,8 +9,8 @@ library(DDD)
 source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
 emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
-dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/Est/'
-
+dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0724_contrast/'
+dir_emp = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/Est/'
 emdata = read.nexus(emdatadir)
 
 dropextinct = T
@@ -32,7 +32,7 @@ plot(phylo_test,show.tip.label = TRUE)
 
 
 # empirical data
-fileemp_name = paste0(dir,'emp.csv')
+fileemp_name = paste0(dir_emp,'emp.csv')
 obsZ_emp = read.csv(fileemp_name)
 obsZ_emp[,1] = extantspecieslabel
 species_label = extantspecieslabel
@@ -66,7 +66,7 @@ predictN_TVP = read.csv(simfile_NTVP)/1e5
 predictN_TVM = read.csv(simfile_NTVM)/1e5
 
 
-sort = 0
+sort = 1
 
 if(sort == 0){
   predictZ_matrix_TVP = as.matrix(predictZ_TVP)
@@ -184,7 +184,7 @@ facet_labeller(p_finalTVM, lbs)
 
 
 savefile = paste0(dir,'predictimage_TVP_TV_TVM',count,'.png')
-ggsave(savefile,p_finalTVM)
+# ggsave(savefile,p_finalTVM)
 
 
 

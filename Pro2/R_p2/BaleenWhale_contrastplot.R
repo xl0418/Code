@@ -10,6 +10,7 @@ source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
 emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
 dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0724_contrast/'
+dir_emp = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/Est/'
 
 emdata = read.nexus(emdatadir)
 
@@ -48,7 +49,7 @@ for(i in c(1:15)){
 
 
 # empirical data
-fileemp_name = paste0(dir,'emp.csv')
+fileemp_name = paste0(dir_emp,'emp.csv')
 obsZ_emp = read.csv(fileemp_name)
 obsZ_emp[,1] = extantspecieslabel
 species_label = extantspecieslabel
@@ -116,7 +117,7 @@ TVM.pic <- c()
 
 scaled = FALSE
 # empirical contrast
-empirical_pic<-pic(obsZ_pic,phylo_test, scaled = scaled)
+empirical_pic<-abs(pic(obsZ_pic,phylo_test, scaled = scaled))
 
 for(size in c(1:samplesize)){
   TVP.pic <- rbind(TVP.pic,pic(predictZ_matrix_TVP[size,],phylo_test, scaled = scaled))
@@ -129,9 +130,9 @@ TVP.pic <- TVP.pic[,restructured_col]
 TV.pic <- TV.pic[,restructured_col]
 TVM.pic <- TVM.pic[,restructured_col]
 
-res.TVP.pic <- TVP.pic
-res.TV.pic <- TVP.pic
-res.TVM.pic <- TVP.pic
+res.TVP.pic <- abs(TVP.pic)
+res.TV.pic <- abs(TV.pic)
+res.TVM.pic <- abs(TVM.pic)
 
 colname.of.node <- c("B.mysticetus", "E.australis"       
                      , "E.glacialis", "E.japonica"        
@@ -156,14 +157,14 @@ recont.emp.con <- empirical_pic[restructured_col]
 d_meanemp = data.frame(betspecies=colname.of.node, contrast=empirical_pic)
 
 
-plot_tree <- ggtree(phylo_test,size=.5) +geom_tiplab(size=3.5,fontface="bold") #+xlim(0,80)
+plot_tree <- ggtree(phylo_test,size=.5) +geom_tiplab(size=3.5,fontface="bold") #+xlim(0,1500)
 
 
 plot_sepboxplt_TVP <- facet_plot(plot_tree, panel="TVP", data=d_all_TVP, geom_boxploth, 
                                  mapping = aes(x=contrast, group=label),width = .5,position= "dodge",
                                  color='#3ac569',fill= '#cff0da',outlier.colour = NULL) # + theme_tree2()
 
-p_finalTVP <- facet_plot(plot_sepboxplt_TVP+xlim_tree(40), panel="TVP", data=d_meanemp, geom_point, 
+p_finalTVP <- facet_plot(plot_sepboxplt_TVP+xlim_tree(45), panel="TVP", data=d_meanemp, geom_point, 
                          mapping = aes(x=contrast, group=label ),color = 'black')
 
 
@@ -171,20 +172,21 @@ plot_sepboxplt_TV <- facet_plot(p_finalTVP, panel="TV", data=d_all_TV, geom_boxp
                                 mapping = aes(x=contrast, group=label ),width = .5,position= "dodge",
                                 color='#f9320c',fill='#f1bbba',outlier.colour = NULL ) # + theme_tree2()
 
-p_finalTV <- facet_plot(plot_sepboxplt_TV+xlim_tree(40), panel="TV", data=d_meanemp, geom_point, 
+p_finalTV <- facet_plot(plot_sepboxplt_TV+xlim_tree(45), panel="TV", data=d_meanemp, geom_point, 
                         mapping = aes(x=contrast, group=label ),color = 'black')
 
 
 plot_sepboxplt_TVM <- facet_plot(p_finalTV, panel="TVM", data=d_all_TVM, geom_boxploth, 
                                  mapping = aes(x=contrast, group=label),width = .5,position= "dodge",
-                                 color='#6a60a9',fill='#dedcee' ,outlier.colour = NULL ) # + theme_tree2()
+                                 color='#6a60a9',fill='#dedcee' ,outlier.colour = NULL )  + theme_tree2()
 
-p_finalTVM <- facet_plot(plot_sepboxplt_TVM+xlim_tree(40), panel="TVM", data=d_meanemp, geom_point, 
+p_finalTVM <- facet_plot(plot_sepboxplt_TVM+xlim_tree(45), panel="TVM", data=d_meanemp, geom_point, 
                          mapping = aes(x=contrast, group=label ),color = 'black')+
   theme(strip.background = element_rect(colour="white", fill="white"), 
         strip.text.x = element_text(size=12, face="bold"),
         axis.line = element_line(colour = "black", 
-                                 size = 1, linetype = "solid"))
+                                 size = 1, linetype = "solid"))+
+  xlim_expand(c(0,1500), 'TVP')+xlim_expand(c(0,1500), 'TV')+xlim_expand(c(0,1500), 'TVM')
 
 
 p_finalTVM
@@ -194,9 +196,9 @@ lbs <- c(Tree = "Phylogenetic tree\nof baleen whales", TVP = "Trait evolution \n
          TV = "Trait evolution", TVM ="Trait evolution \n+ metabolism dynamics")
 facet_labeller(p_finalTVM, lbs)
 
-
-savefile = paste0(dir,'predictcontrastimage_TVP_TV_TVM_sorted',count,'.png')
-ggsave(savefile,p_finalTVM)
+# 
+# savefile = paste0(dir,'predictcontrastimage_TVP_TV_TVM_sorted',count,'.png')
+# ggsave(savefile,p_finalTVM)
 
 # filen <- paste0(dir,"ggplot")
 # graph2ppt(x=p_finalTVM, file=filen)
