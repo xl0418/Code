@@ -13,7 +13,7 @@ sce.short = c('L','M','H')
 
 abund.df = NULL
 max.logabund = 12
-i_n=1
+i_n=3
 sce = scenario[i_n]
 f.name = sce.short[i_n]
 for(i in c(1:3)){
@@ -55,7 +55,7 @@ sce.plot <- ggplot(abund.df) +
              labeller = label_parsed)+
   theme_gdocs()+ scale_color_calc()+
   scale_x_continuous(name="Abundance (log)", breaks=seq(1,12,1),labels = c(freq$mids,5.75)) +
-  scale_y_continuous(name="Number of species")+
+  scale_y_continuous(name="Number of species",breaks=seq(0,60,20))+
   theme(axis.text.x = element_text(angle = 90,vjust = 0.5))
 
 filenames <-  paste0(plot_dir,'abundance_dis_',f.name,'.png')

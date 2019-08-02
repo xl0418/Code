@@ -42,32 +42,33 @@ colnames(colless_alldf) = c('colvalue','psi','phi')
 
 value.min <- min(colless_alldf$colvalue)
 value.max <- max(colless_alldf$colvalue)
+colless_alldf$psi1 <- factor(colless_alldf$psi, labels = c('psi==0','0.5','1'))
+colless_alldf$phi1 <- factor(colless_alldf$phi, labels = c('sigma[phi]==0','10^2',
+                                                           '10^4','10^6','10^8','Inf'))
 
 
 plothis <- ggplot(colless_alldf, aes(colvalue)) +  # plot histogram of distribution of values
-  geom_histogram(binwidth = .5)+ theme_gdocs() +
-  # theme_bw(base_size=18) + 
+  geom_histogram(bins=20,color="#255359",fill='#58B2DC')+ theme_gdocs() +
   scale_x_continuous(limits=c(floor(value.min),ceiling(value.max)),
                      breaks=seq(floor(value.min),ceiling(value.max),5)) + 
-  # geom_vline(xintercept = -0.7, colour="red", linetype = "longdash") +
-  # geom_vline(xintercept = 0.7, colour="red", linetype = "longdash") +
-  labs(x=expression(" "),y=expression(" ")) 
-# background_grid(major = 'y', minor = "none") + # add thin horizontal lines 
-# panel_border()
+  labs(x=method,y="Frequency") 
 
 
 
-wholeplot = plothis+facet_grid(psi~phi)+
-            stat_bin(bins=30)  +
+
+wholeplot = plothis+facet_grid(psi1~phi1, 
+                               labeller = label_parsed)+
   theme(strip.text.x = element_text(size=13),
         strip.text.y = element_text(size=13))
 
-y.grob <- textGrob("Frequency", 
-                   gp=gpar(fontface="bold", col="black", fontsize=10), rot=90)
-
-x.grob <- textGrob(paste(method,"index"), 
-                   gp=gpar(fontface="bold", col="black", fontsize=10))
-
-#add to plot
-
-grid.arrange(arrangeGrob(wholeplot, left = y.grob, bottom = x.grob))
+wholeplot
+# 
+# y.grob <- textGrob("Frequency", 
+#                    gp=gpar(fontface="bold", col="black", fontsize=10), rot=90)
+# 
+# x.grob <- textGrob(paste(method,"index"), 
+#                    gp=gpar(fontface="bold", col="black", fontsize=10))
+# 
+# #add to plot
+# 
+# grid.arrange(arrangeGrob(wholeplot, left = y.grob, bottom = x.grob))
