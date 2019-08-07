@@ -6,13 +6,13 @@ library(ggplot2)
 library(grid)
 library(gridExtra)
 library(ggthemes)
-method = 'gamma'
+method = 'colless'
 dir <- 'C:/Liang/Googlebox/Research/Project3/batchsim_results/'
 scenario = c('Levent','Mevent','Hevent')
 sce.short = c('L','M','H')
 jclabel = c('0','0.5','1')
 plabel = c('0','1e2','1e4','1e6','1e8','Inf')
-i_n=3
+i_n=2
 sce = scenario[i_n]
 f.name = sce.short[i_n]
 # Compute the colless values and gamma values for a given phylo tree.
@@ -40,8 +40,16 @@ for(i in c(1:3)){
 }
 colnames(colless_alldf) = c('colvalue','psi','phi')
 
-value.min <- min(colless_alldf$colvalue)
-value.max <- max(colless_alldf$colvalue)
+if(method=='gamma'){
+  value.min <- 0
+  value.max <- 15
+  gap <- 3
+}else{
+  value.min <- 10
+  value.max <- 50
+  gap <- 10
+}
+
 colless_alldf$psi1 <- factor(colless_alldf$psi, labels = c('psi==0','0.5','1'))
 colless_alldf$phi1 <- factor(colless_alldf$phi, labels = c('sigma[phi]==0','10^2',
                                                            '10^4','10^6','10^8','Inf'))
@@ -49,8 +57,8 @@ colless_alldf$phi1 <- factor(colless_alldf$phi, labels = c('sigma[phi]==0','10^2
 
 plothis <- ggplot(colless_alldf, aes(colvalue)) +  # plot histogram of distribution of values
   geom_histogram(bins=20,color="#255359",fill='#58B2DC')+ theme_gdocs() +
-  scale_x_continuous(limits=c(floor(value.min),ceiling(value.max)),
-                     breaks=seq(floor(value.min),ceiling(value.max),5)) + 
+  scale_x_continuous(limits=c(value.min,value.max),
+                     breaks=seq(value.min,value.max,gap)) + 
   labs(x=method,y="Frequency") 
 
 
@@ -62,6 +70,8 @@ wholeplot = plothis+facet_grid(psi1~phi1,
         strip.text.y = element_text(size=13))
 
 wholeplot
+savefilename <- paste0(dir,f.name,'_',method,'.pdf')
+ggsave(savefilename,wholeplot,width = 15,height = 10)
 # 
 # y.grob <- textGrob("Frequency", 
 #                    gp=gpar(fontface="bold", col="black", fontsize=10), rot=90)

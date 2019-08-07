@@ -12,7 +12,7 @@ dir_path ='C:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 
 
 obs_file = dir_path + 'treedata/'
-simdata_file = dir_path + 'result_cluster/results_0724_contrast/'
+simdata_file = dir_path + 'result_cluster/results_0729_contrast_trait/'
 sim_file_TVP = simdata_file+'predictsimTVP.csv'
 sim_file_TV = simdata_file + 'predictsimTV.csv'
 sim_file_TVM = simdata_file + 'predictsimTVM.csv'

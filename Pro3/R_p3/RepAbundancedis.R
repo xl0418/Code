@@ -13,7 +13,7 @@ sce.short = c('L','M','H')
 
 abund.df = NULL
 max.logabund = 12
-i_n=3
+i_n=1
 sce = scenario[i_n]
 f.name = sce.short[i_n]
 for(i in c(1:3)){
