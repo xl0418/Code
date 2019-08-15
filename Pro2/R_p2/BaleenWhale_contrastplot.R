@@ -9,7 +9,7 @@ library(export)
 source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
 emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
-dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0724_contrast/'
+dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0702/'
 dir_emp = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/Est/'
 
 emdata = read.nexus(emdatadir)
@@ -38,6 +38,8 @@ prunedL = phylo2L(phylo_test)
 pl = prunedL$L
 phylo_pl = DDD::L2phylo(pl)
 # plot(phylo_pl,show.tip.label = TRUE,show.node.label = TRUE)
+# edgelabels(round(phylo_pl$edge.length,digit=2), col="black", font=.5)
+
 
 rank.sim.species <- as.numeric(gsub("t","", phylo_pl$tip.label))
 sim.species.col.names = c()
@@ -115,7 +117,7 @@ TVP.pic <- c()
 TV.pic <- c()
 TVM.pic <- c()
 
-scaled = FALSE
+scaled = TRUE
 # empirical contrast
 empirical_pic<-abs(pic(obsZ_pic,phylo_test, scaled = scaled))
 
@@ -154,7 +156,7 @@ colnames(d_all_TVM) = c('betspecies','contrast')
 
 
 recont.emp.con <- empirical_pic[restructured_col]
-d_meanemp = data.frame(betspecies=colname.of.node, contrast=empirical_pic)
+d_meanemp = data.frame(betspecies=colname.of.node, contrast=recont.emp.con)
 
 
 plot_tree <- ggtree(phylo_test,size=.5) +geom_tiplab(size=3.5,fontface="bold") #+xlim(0,1500)
@@ -186,14 +188,14 @@ p_finalTVM <- facet_plot(plot_sepboxplt_TVM+xlim_tree(45), panel="TVM", data=d_m
         strip.text.x = element_text(size=12, face="bold"),
         axis.line = element_line(colour = "black", 
                                  size = 1, linetype = "solid"))+
-  xlim_expand(c(0,1500), 'TVP')+xlim_expand(c(0,1500), 'TV')+xlim_expand(c(0,1500), 'TVM')
+  xlim_expand(c(0,500), 'TVP')+xlim_expand(c(0,500), 'TV')+xlim_expand(c(0,500), 'TVM')
 
 
 p_finalTVM
 
 
-lbs <- c(Tree = "Phylogenetic tree\nof baleen whales", TVP = "Trait evolution \n+ population dynamics",
-         TV = "Trait evolution", TVM ="Trait evolution \n+ metabolism dynamics")
+lbs <- c(Tree = "Phylogenetic tree\nof baleen whales", TVP = "Trait evolution \n+ population dynamics\n(the AWC model)",
+         TV = "Trait evolution\n(the UWC model)", TVM ="Trait evolution \n+ metabolism dynamics\n(the MWC model)")
 facet_labeller(p_finalTVM, lbs)
 
 # 

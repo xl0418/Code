@@ -17,7 +17,7 @@ def normalized_norm(x, y):
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster' \
-           '/results_0729_contrast_trait/'
+           '/results_0702/'
 
 obs_file = dir_path + 'treedata/'
 
@@ -64,10 +64,11 @@ est_data = np.load(data_name).item()
 population = int(len(est_data['model_data'][0]) / 3)
 fitness = est_data['fitness'][-1]
 
-q5_TVP = np.argsort(fitness[:population])[-int(population // 2 + 1)]  # best 5%
+q5_TVP = np.argsort(fitness[:population])[-int(population // 20 + 1)]  # best 5%
 q5_TV = np.argsort(fitness[population:2 * population])[
-            -int(population // 2 + 1)] + population  # best 5%
-q5_TVM = np.argsort(fitness[2 * population:])[-int(population // 2 + 1)] + 2 * population  # best 5%
+            -int(population // 20 + 1)] + population  # best 5%
+q5_TVM = np.argsort(fitness[2 * population:])[-int(population // 20 + 1)] + 2 * population  #
+# best 5%
 
 fit_index_TVP = np.where(fitness[:population] > fitness[q5_TVP])[0]
 fit_index_TV = np.where(fitness[population:2 * population] > fitness[q5_TV])[0] + population

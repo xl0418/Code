@@ -24,10 +24,10 @@ scenario = c('Levent','Mevent','Hevent')
 sce.short = c('L','M','H')
 
 
-for(i_n in c(2,3)){
+for(i_n in c(1:3)){
   sce = scenario[i_n]
   f.name = sce.short[i_n]
-  for(i in c(1,4,5)){
+  for(i in c(1:5)){
     for(j in c(1:6)){
       sim.event.list=list()
       for(rep in c(1:100)){

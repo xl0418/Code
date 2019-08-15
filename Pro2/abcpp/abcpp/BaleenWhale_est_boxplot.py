@@ -15,7 +15,8 @@ def normalized_norm(x, y):
 
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
-data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0729_contrast_trait/'
+data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster' \
+           '/results_0702/'
 
 obs_file = dir_path + 'treedata/'
 
@@ -150,6 +151,7 @@ axes = vioplot.axes.flatten()
 axes[0].set_title("$\gamma$")
 axes[1].set_title("$\\alpha$")
 axes[2].set_title("$\\nu$")
+axes[2].set_xlabel("Time scaling parameter $s$")
 axes[3].set_title("$V_m$")
 if 'theta' in est_data:
     axes[4].set_title("$\\theta$")
