@@ -27,8 +27,8 @@ sce.short = c('L','M','H')
 for(i_n in c(1:3)){
   sce = scenario[i_n]
   f.name = sce.short[i_n]
-  for(i in c(1:5)){
-    for(j in c(1:6)){
+  for(i in c(2,3)){
+    for(j in c(1,2,3,4,6)){
       sim.event.list=list()
       for(rep in c(1:100)){
         comb=paste0(i,j)

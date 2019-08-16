@@ -6,13 +6,13 @@ library(ggplot2)
 library(grid)
 library(gridExtra)
 library(ggthemes)
-method = 'colless'
-dir <- 'C:/Liang/Googlebox/Research/Project3/batchsim_results/'
+method = 'gamma'
+dir <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_final1/'
 scenario = c('Levent','Mevent','Hevent')
 sce.short = c('L','M','H')
-jclabel = c('0','0.5','1')
+jclabel = c('0','0.25','0.5','0.75','1')
 plabel = c('0','1e2','1e4','1e6','1e8','Inf')
-i_n=2
+i_n=1
 sce = scenario[i_n]
 f.name = sce.short[i_n]
 # Compute the colless values and gamma values for a given phylo tree.
@@ -25,18 +25,25 @@ foo <- function(x, metric = "colless") {
   } else stop("metric should be one of colless or gamma")
 }
 
+i.true.order = 1
 
 colless_alldf = data.frame()
-for(i in c(1:3)){
+for(i in c(1,4,2,5,3)){
   for(j in c(1:6)){
-    comb=paste0(i,j)
+    if(i==1){
+      comb=paste0(i,i)
+    }else{
+      comb=paste0(i,j)
+    }    
     multitreefile <- paste0(dir,'1e+07/spatialpara1e+07',f.name,comb,'/multitree',f.name,comb,'.tre')
     trees <- read.tree(multitreefile)
     colless_df <- ldply(trees, foo, metric = method)  # calculate metric for each tree
-    colless_df = cbind(colless_df,jclabel[i],plabel[j])
+    colless_df = cbind(colless_df,jclabel[i.true.order],plabel[j])
     colless_alldf = rbind(colless_alldf,colless_df)
     
   }
+  i.true.order=i.true.order+1
+  
 }
 colnames(colless_alldf) = c('colvalue','psi','phi')
 
@@ -50,7 +57,7 @@ if(method=='gamma'){
   gap <- 10
 }
 
-colless_alldf$psi1 <- factor(colless_alldf$psi, labels = c('psi==0','0.5','1'))
+colless_alldf$psi1 <- factor(colless_alldf$psi, labels = c('psi==0','0.25','0.5','0.75','1'))
 colless_alldf$phi1 <- factor(colless_alldf$phi, labels = c('sigma[phi]==0','10^2',
                                                            '10^4','10^6','10^8','Inf'))
 

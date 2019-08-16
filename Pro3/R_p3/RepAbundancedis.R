@@ -6,21 +6,27 @@ library(viridis)
 library("RColorBrewer")
 library(grid)
 library(gridExtra)
-dir = 'C:/Liang/Googlebox/Research/Project3/batchsim_results/1e+07/'
-plot_dir = 'C:/Liang/Googlebox/Research/Project3/batchsim_results/'
+dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_final1/1e+07/'
+plot_dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_final1/'
 scenario = c('LR','MR','HR')
 sce.short = c('L','M','H')
 
 abund.df = NULL
 max.logabund = 12
-i_n=1
+i_n=2
 sce = scenario[i_n]
 f.name = sce.short[i_n]
-for(i in c(1:3)){
+i.true.order = 1
+for(i in c(1,4,2,5,3)){
   for(j in c(1:6)){
   abund=NULL
-  for(rep in c(61:100)){
+  if(i==1){
+    comb=paste0(i,i)
+  }else{
     comb=paste0(i,j)
+  }
+  
+  for(rep in c(1:100)){
     rname = paste0(dir,'spatialpara1e+07',f.name,comb,'/',sce,comb,'rep',rep,'.csv')
     Rs = read.csv(rname,header = FALSE)
     log.Rs = log10(Rs)
@@ -36,14 +42,15 @@ for(i in c(1:3)){
     sd.sim <- c(sd.sim,matrix(0,1,12-col.quan))
     
   }
-  abund.df = rbind(abund.df,cbind(mean.sim,sd.sim,i,j,c(1:12)))
+  abund.df = rbind(abund.df,cbind(mean.sim,sd.sim,i.true.order,j,c(1:12)))
   }
+  i.true.order=i.true.order+1
 }
 
 colnames(abund.df) <- c('mean','sd','JCvalue','phyvalue','species')
 abund.df <- as.data.frame(abund.df)
 
-abund.df$JCvalue1 <- factor(abund.df$JCvalue, labels = c('psi==0','0.5','1'))
+abund.df$JCvalue1 <- factor(abund.df$JCvalue, labels = c('psi==0','0.25','0.5','0.75','1'))
 abund.df$phyvalue1 <- factor(abund.df$phyvalue, labels = c('sigma[phi]==0','10^2',
                                                            '10^4','10^6','10^8','Inf'))
 
