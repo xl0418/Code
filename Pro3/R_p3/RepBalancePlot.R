@@ -6,7 +6,7 @@ library(ggplot2)
 library(grid)
 library(gridExtra)
 library(ggthemes)
-method = 'gamma'
+method = 'colless'
 dir <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_final1/'
 scenario = c('Levent','Mevent','Hevent')
 sce.short = c('L','M','H')
@@ -52,8 +52,8 @@ if(method=='gamma'){
   value.max <- 15
   gap <- 3
 }else{
-  value.min <- 10
-  value.max <- 50
+  value.min <- 5
+  value.max <- 40
   gap <- 10
 }
 
