@@ -3,7 +3,9 @@ sig_phi = c(0,1e2,1e4,1e6,1e8,-1)
 L = 333
 v=0.0001
 batch.size=10
-dir = "C:/Liang/Googlebox/Research/Project3/replicate_sim_smallbatch_part1_1_60"
+dir = "C:/Liang/Googlebox/Research/Project3/replicate_sim_redo_test_1-5_1"
+dir.folder = paste0(dir,"/1e+07")
+dir.create(file.path(dir.folder), showWarnings = FALSE)
 ticks=10000000
 log=1e8
 for(scenario in c(0:2)){
@@ -30,11 +32,11 @@ for(scenario in c(0:2)){
   }
   
   append = TRUE
-  for(i in c(1:3)){
-    for(j in c(1:length(sig_phi))){
+  for(i in c(2:5)){
+    for(j in c(1)){
       subDir = paste0("spatialpara",formatC(ticks),sce,i,j)
-      dir.create(file.path(dir, subDir), showWarnings = FALSE)
-      setwd(file.path(dir, subDir))
+      dir.create(file.path(dir.folder, subDir), showWarnings = FALSE)
+      setwd(file.path(dir.folder, subDir))
       count = 0
       for(rep.sim in c(1:100)){
         

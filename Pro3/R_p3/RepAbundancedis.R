@@ -10,7 +10,7 @@ dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_final1/1e+07/'
 plot_dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_final1/'
 scenario = c('LR','MR','HR')
 sce.short = c('L','M','H')
-
+x.breaks = seq(0,18,2)
 abund.df = NULL
 max.logabund = 12
 i_n=3
@@ -29,20 +29,20 @@ for(i in c(1,4,2,5,3)){
   for(rep in c(1:100)){
     rname = paste0(dir,'spatialpara1e+07',f.name,comb,'/',sce,comb,'rep',rep,'.csv')
     Rs = read.csv(rname,header = FALSE)
-    log.Rs = log10(Rs)
-    freq = hist(as.numeric(log.Rs),plot=FALSE,breaks = seq(0,5.5,0.5))
+    log.Rs = log2(Rs)
+    freq = hist(as.numeric(log.Rs),plot=FALSE,breaks = x.breaks)
     counts = freq$counts
     abund = rbind(abund, counts)
   }
   mean.sim = apply(abund,MARGIN=2,FUN=mean)
   sd.sim = sqrt(apply(abund,MARGIN=2,FUN=var))
   col.quan = length(mean.sim)
-  if(col.quan<12){
-    mean.sim <- c(mean.sim,matrix(0,1,12-col.quan))
-    sd.sim <- c(sd.sim,matrix(0,1,12-col.quan))
+  if(col.quan<length(x.breaks)){
+    mean.sim <- c(mean.sim,matrix(0,1,length(x.breaks)-col.quan))
+    sd.sim <- c(sd.sim,matrix(0,1,length(x.breaks)-col.quan))
     
   }
-  abund.df = rbind(abund.df,cbind(mean.sim,sd.sim,i.true.order,j,c(1:12)))
+  abund.df = rbind(abund.df,cbind(mean.sim,sd.sim,i.true.order,j,c(1:length(x.breaks))))
   }
   i.true.order=i.true.order+1
 }
@@ -50,9 +50,11 @@ for(i in c(1,4,2,5,3)){
 colnames(abund.df) <- c('mean','sd','JCvalue','phyvalue','species')
 abund.df <- as.data.frame(abund.df)
 
-abund.df$JCvalue1 <- factor(abund.df$JCvalue, labels = c('psi==0','0.25','0.5','0.75','1'))
-abund.df$phyvalue1 <- factor(abund.df$phyvalue, labels = c('sigma[phi]==0','10^2',
-                                                           '10^4','10^6','10^8','Inf'))
+abund.df$JCvalue1 <- factor(abund.df$JCvalue, labels = c('psi==0','psi==0.25','psi==0.5',
+                                                         'psi==0.75','psi==1'))
+abund.df$phyvalue1 <- factor(abund.df$phyvalue, labels = c('sigma[phi]==0','sigma[phi]==10^2',
+                                                           'sigma[phi]==10^4','sigma[phi]==10^6',
+                                                           'sigma[phi]==10^8','sigma[phi]==Inf'))
 
 
 sce.plot <- ggplot(abund.df) +
@@ -61,7 +63,7 @@ sce.plot <- ggplot(abund.df) +
   facet_grid(JCvalue1~phyvalue1, 
              labeller = label_parsed)+
   theme_gdocs()+ scale_color_calc()+
-  scale_x_continuous(name="Abundance (log)", breaks=seq(1,12,1),labels = c(freq$mids,5.75)) +
+  scale_x_continuous(name="Abundance (log2)", breaks=seq(1,length(x.breaks),1),labels = x.breaks) +
   scale_y_continuous(name="Number of species",breaks=seq(0,60,20))+
   theme(axis.text.x = element_text(angle = 90,vjust = 0.5))
 
