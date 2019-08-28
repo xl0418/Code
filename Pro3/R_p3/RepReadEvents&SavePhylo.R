@@ -6,7 +6,7 @@ n.cores <- detectCores()
 event2L.func <- 'C:/Liang/Code/Pro3/R_p3/event2L.R'
 source(event2L.func)
 
-dir <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_final1/'
+dir <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_LM/'
 
 neu.eventtablefile <- paste0(dir,'neutraldata/neuevent.csv')
 neu.eventtable <- read.csv(neu.eventtablefile,header = FALSE)
@@ -24,10 +24,10 @@ scenario = c('Levent','Mevent','Hevent')
 sce.short = c('L','M','H')
 
 
-for(i_n in c(1:3)){
+for(i_n in c(2)){
   sce = scenario[i_n]
   f.name = sce.short[i_n]
-  for(i in c(2,3)){
+  for(i in c(1)){
     for(j in c(1,2,3,4,6)){
       sim.event.list=list()
       for(rep in c(1:100)){

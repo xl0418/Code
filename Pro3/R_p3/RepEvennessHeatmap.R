@@ -14,7 +14,7 @@ sce.short = c('L','M','H')
 x.breaks = seq(0,18,2)
 evenness.df = NULL
 max.logabund = 12
-i_n=3
+i_n=1
 sce = scenario[i_n]
 f.name = sce.short[i_n]
 i.true.order = 1
@@ -50,20 +50,24 @@ evenness.df$phyvalue1 <- factor(evenness.df$phyvalue, labels = c('sigma[phi]==0'
                                                            'sigma[phi]==10^4','sigma[phi]==10^6',
                                                            'sigma[phi]==10^8','sigma[phi]==Inf'))
 
-
+xlabels <- c(~list(psi==0),~list(psi==0.25),~list(psi==0.5),
+             ~list(psi==0.75),~list(psi==1))
+ylabels <- c(~list(phi==Inf),~list(phi==10^{-2}),~list(phi==10^{-4}),
+             ~list(phi==10^{-6}),~list(phi==10^{-8}),~list(phi==0))
 
 p <- ggplot(evenness.df, aes(JCvalue1, phyvalue1)) + geom_tile(aes(fill = mean),
-       colour = "white") + scale_fill_gradient(low = "white", high = "steelblue",
-                                               breaks=c(0,0.5,1),labels=c("Minimum",0.5,"Maximum"),
-                                               limits=c(0,1))
+       colour = "white") + scale_fill_gradient(low = "white", high = "steelblue")
 base_size <- 9
 p+ theme_grey(base_size = base_size) + labs(x = "", y = "") + 
-  scale_x_discrete(expand = c(0, 0)) +scale_y_discrete(expand = c(0, 0)) + 
+  geom_text(aes(label = round(mean, 3)))+
+  scale_x_discrete(expand = c(0, 0),labels=xlabels) +scale_y_discrete(expand = c(0, 0),
+                                                                      labels=ylabels) + 
   theme(legend.position = "none",axis.ticks = element_blank(), 
-       axis.text.x = element_text(size = base_size *2, angle = 0, hjust = 0, colour = "grey50"))
+       axis.text.x = element_text(size = base_size *2, angle = 0, hjust = 0, colour = "black"),
+  axis.text.y = element_text(size = base_size *2, angle = 0, hjust = 0, colour = "black"))
 
 
 
-filenames <-  paste0(plot_dir,'abundance_dis_',f.name,'.png')
+filenames <-  paste0(plot_dir,'Evenness_',f.name,'.png')
 ggsave(filenames,sce.plot,width = 15, height = 10,dpi=300)
 
