@@ -47,5 +47,11 @@ event2L = function(events,turnover){
       }
     }
   }
-  return(L_exi)
+  true.row = which(L_exi[,4]==-1)[2]
+  true.crown.time=L_exi[true.row,1]
+  true.L = L_exi[true.row:nrow(L_exi),]
+  true.L[,3] = true.L[,3]-true.L[1,3]+2
+  true.L = rbind(c(true.crown.time,0,1,-1),true.L)
+  
+  return(true.L)
 }

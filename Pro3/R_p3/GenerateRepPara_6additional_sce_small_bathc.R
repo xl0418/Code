@@ -11,7 +11,9 @@ log=1e8
 for(scenario in c(1:6)){
   dir.scefolder = paste0(dir,"/sce",scenario)
   dir.folder = paste0(dir.scefolder,"/1e+07")
+  dir.create(file.path(dir.scefolder), showWarnings = FALSE)
   dir.create(file.path(dir.folder), showWarnings = FALSE)
+  
   dir.simfolder = paste0(dir.scefolder,"/sim_scripts")
   dir.create(file.path(dir.simfolder), showWarnings = FALSE)
   # scenario = 1
@@ -58,7 +60,7 @@ for(scenario in c(1:6)){
                       L,v,psi_vec[i],sig_phi[j],s_spar,s_disp,ticks,rep.sim,formatC(ticks),subDir,sce,i,j,rep.sim)
         if(count%%batch.size == 0){
           no.batch = count%/%batch.size+1
-          filename<-paste0(dir,"/spatialpara",formatC(ticks),sce,i,j,"batch",no.batch,".txt")
+          filename<-paste0(dir.simfolder,"/spatialpara",formatC(ticks),sce,i,j,"batch",no.batch,".txt")
           
           # write(str, file=filename,append=FALSE)
           cat(str,'\n', file=filename, append=FALSE, sep='')

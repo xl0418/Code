@@ -157,7 +157,7 @@ if 'theta' in est_data:
     axes[4].set_title("$\\theta$")
 
 for axe in axes:
-    axe.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    axe.ticklabel_format(style='sci', axis='y', scilimits=(0,0),useMathText=True)
 
 
 # axes[4].set_title("$\\theta $")
