@@ -27,10 +27,10 @@ sce.short = c('L','M','H')
 for(i_n in c(2)){
   sce = scenario[i_n]
   f.name = sce.short[i_n]
-  for(i in c(3:5)){
-    for(j in c(1,2,3,4,6)){
+  for(i in c(1)){
+    for(j in c(1)){
       sim.event.list=list()
-      for(rep in c(1:100)){
+      for(rep in c(1:16)){
         comb=paste0(i,j)
         rname = paste0(dir,'1e+07/spatialpara1e+07',f.name,comb,'/',sce,comb,'rep',rep,'.csv')
         events = read.csv(rname,header = FALSE)
@@ -39,7 +39,7 @@ for(i_n in c(2)){
         sim.event.list <- c(sim.event.list,list(sim.events))
         
       }
-      multitreefile <- paste0(dir,'1e+07/spatialpara1e+07',f.name,comb,'/multitree',f.name,comb,'.tre')
+      multitreefile <- paste0(dir,'1e+07/spatialpara1e+07',f.name,comb,'/TESTmultitree',f.name,comb,'.tre')
       clust <- makeCluster(n.cores)
       clusterExport(clust, list("sim.event.list","event2L","L2phylo"))
       multitree <- parLapply(clust, sim.event.list, ev2l)
