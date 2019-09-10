@@ -1,7 +1,7 @@
 library(DDD)
 library(ape)
 library(parallel)
-n.cores <- detectCores()
+n.cores <- 4 #detectCores()
 
 event2L.func <- 'C:/Liang/Code/Pro3/R_p3/event2L.R'
 source(event2L.func)
