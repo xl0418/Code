@@ -3,7 +3,7 @@ sig_phi = c(0,1e2,1e4,1e6,1e8,-1)
 L = 333
 v=0.0001
 batch.size=10
-dir = "C:/Liang/Googlebox/Research/Project3/replicate_sim_6additional_sce"
+dir = "C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces"
 
 
 ticks=10000000
