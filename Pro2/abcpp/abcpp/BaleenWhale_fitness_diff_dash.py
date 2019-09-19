@@ -14,6 +14,7 @@ spe_label = ['spe%i' % i for i in range(1,16)]
 
 
 input_data = pd.read_csv(test_file)
+input_data = input_data.drop(input_data.columns[[0]], axis=1)
 data = []
 for i in spe_label:
     for j in spe_label:
@@ -29,17 +30,47 @@ app.layout = html.Div([
     html.H1('Difference in fitness'),
     html.Div([
 
+        # html.Div([
+        #     html.H4('Select generation'),
+        #     dcc.Dropdown(
+        #         id='Gen_dropdown',
+        #         options=[{'label': i, 'value': i} for i in POS],
+        #         value=POS_default
+        #
+        #     ),
+        #
+        # ],
+        #     style={'width': '48%', 'display': 'inline-block'}),
+
         html.Div([
-            html.H4('Select generation'),
-            dcc.Dropdown(
+            dcc.Slider(
                 id='Gen_dropdown',
-                options=[{'label': i, 'value': i} for i in POS],
-                value=POS_default
-
+                min=0,
+                max=POS.max(),
+                step=1,
+                value=10,
+                marks={
+                    0: {'label': 'Start', 'style': {'color': '#77b0b1'}},
+                    221: {'label': '1'},
+                    1084: {'label': '2'},
+                    1205: {'label': '3'},
+                    1265: {'label': '4'},
+                    1349: {'label': '5'},
+                    1470: {'label': '6'},
+                    1496: {'label': '7'},
+                    1551: {'label': '8'},
+                    1756: {'label': '9'},
+                    1787: {'label': '10'},
+                    1881: {'label': '11'},
+                    1964: {'label': '12'},
+                    2018: {'label': '13'},
+                    2058: {'label': 'Present', 'style': {'color': '#f50'}}
+                }
             ),
-
+            html.Div(id='slider-output-container', style={'margin-top': 20})
         ],
-            style={'width': '48%', 'display': 'inline-block'}),
+            style={'width': '80%', 'display': 'inline-block'}),
+
 
         dcc.Graph(id='heatmap',
                   figure={
@@ -59,7 +90,11 @@ app.layout = html.Div([
 
 ])
 
-
+@app.callback(
+    dash.dependencies.Output('slider-output-container', 'children'),
+    [dash.dependencies.Input('Gen_dropdown', 'value')])
+def update_output(value):
+    return 'You have selected the time point {}'.format(value)
 
 @app.callback(
     dash.dependencies.Output(component_id='heatmap', component_property='figure'),
@@ -69,7 +104,7 @@ def update_graph(Gen_dropdown):
     heatmap_data = \
     input_data[(input_data['Generation'] == Gen_dropdown)][
         ['Spe1', 'Spe2', 'Diff']]
-    heatmap_data = pd.merge(data, heatmap_data, on=['Spe1', 'Spe2'], how='outer').fillna(0)
+    # heatmap_data = pd.merge(data, heatmap_data, on=['Spe1', 'Spe2'], how='outer').fillna(0)
     print(Gen_dropdown)
     maxsale = heatmap_data[heatmap_data['Diff'] == heatmap_data['Diff'].max()]
     maxsale = maxsale.reset_index()
@@ -83,9 +118,7 @@ def update_graph(Gen_dropdown):
             ygap=2,
             colorscale='Viridis')],
         'layout': go.Layout(
-            title='MAJORITY OF SOLD AT ' + str.upper(
-                Gen_dropdown) + ' IS ON ' + str.upper(maxsale['Spec1'][0]) + ' ' + str(
-                maxsale['Spec2'][0])
+            title=''
         )
 
     }
