@@ -6,7 +6,7 @@ import plotly.graph_objs as go
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
-test_file = dir_path + 'test_diff.csv'
+test_file = dir_path + 'test_diff_full_ratio.csv'
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
@@ -51,20 +51,20 @@ app.layout = html.Div([
                 value=10,
                 marks={
                     0: {'label': 'Start', 'style': {'color': '#77b0b1'}},
-                    221: {'label': '1'},
-                    1084: {'label': '2'},
-                    1205: {'label': '3'},
-                    1265: {'label': '4'},
-                    1349: {'label': '5'},
-                    1470: {'label': '6'},
-                    1496: {'label': '7'},
-                    1551: {'label': '8'},
-                    1756: {'label': '9'},
-                    1787: {'label': '10'},
-                    1881: {'label': '11'},
-                    1964: {'label': '12'},
-                    2018: {'label': '13'},
-                    2058: {'label': 'Present', 'style': {'color': '#f50'}}
+                    4430: {'label': '1'},
+                    21684: {'label': '2'},
+                    24118: {'label': '3'},
+                    25302: {'label': '4'},
+                    26992: {'label': '5'},
+                    29419: {'label': '6'},
+                    29929: {'label': '7'},
+                    31032: {'label': '8'},
+                    35134: {'label': '9'},
+                    35758: {'label': '10'},
+                    37629: {'label': '11'},
+                    39287: {'label': '12'},
+                    40364: {'label': '13'},
+                    41168: {'label': 'P', 'style': {'color': '#f50'}}
                 }
             ),
             html.Div(id='slider-output-container', style={'margin-top': 20})

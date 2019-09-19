@@ -15,11 +15,10 @@ r = 1  # growth rate
 a = 2.346e-04  # intensity of competition
 K = 10e5  # carrying capacity
 kscale=1000
-delta_pop = .001  # Variance of random walk of population
-nu=1.319e-04
-Vmax = 265
+nu=1.1e-03
+Vmax = 70
 scalar = 20000
-ani_gap = 200
+ani_gap = 10
 
 
 def competition_functions_Liang(a, zi, nj):
@@ -182,9 +181,16 @@ if simresult['sim_time'] == td.sim_evo_time:
         fitness_species[i,ind] = r * np.exp(-gamma * dtz ** 2 + (1 - beta / Ki))
         fitness_species_deltav[i,ind] = r * np.exp(-gamma * dtz ** 2 + (1 - beta_delta / Ki))
         fitslice = fitness_species[i,ind]
-        fitness_di[:len(ind),:len(ind)] = fitslice[:, np.newaxis] - fitslice
-        np.fill_diagonal(fitness_di,fitness_species[i,] - fitness_species_deltav[i,])
-        fitness_difference_list.append(abs(fitness_di))
+        fitness_di[:len(ind),:len(ind)] = abs(fitslice[:, np.newaxis] - fitslice)
+        temp_mat = fitness_di[:len(ind),:len(ind)]
+        temp_mat[np.where(temp_mat==0)[0],np.where(temp_mat==0)[1]]=2
+        min_inter_fitness = sort(temp_mat)[:,0]
+        # if(len(np.where(min_inter_fitness==0)[0])>0 and i>0):
+        #     print(i)
+        #     break
+        np.fill_diagonal(fitness_di,abs(fitness_species[i,] - fitness_species_deltav[i,]))
+        fitness_di[ind,:] = fitness_di[ind,:]/min_inter_fitness[:,None]
+        fitness_difference_list.append(fitness_di)
 
     diff_list = pd.DataFrame([])
     for generation in range(len(fitness_difference_list)):
@@ -202,7 +208,7 @@ if simresult['sim_time'] == td.sim_evo_time:
     diff_list.insert(0,'Generation',generation_time)
 
     diff_list.rename(columns={0:'Diff'}, inplace=True)
-    test_file = dir_path+'test_diff.csv'
+    test_file = dir_path+'test_diff_full_ratio.csv'
     diff_list.to_csv(test_file)
     # fig, ax = plt.subplots()
     #
