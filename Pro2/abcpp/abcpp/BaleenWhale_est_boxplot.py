@@ -16,7 +16,7 @@ def normalized_norm(x, y):
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster' \
-           '/results_0702/'
+           '/results_0920_UMTD_PICs/'
 
 obs_file = dir_path + 'treedata/'
 
@@ -63,7 +63,7 @@ for timescaling_index in range(len(timescale_vec)):
         heritability = heritability_vec[heritability_index]
 
         data_name = data_dir + 'BWest_t%i_h%i.npy' % (int(timescaling), int(heritability_index))
-        est_data = np.load(data_name).item()
+        est_data = np.load(data_name,allow_pickle = True).item()
         generation = len(est_data['gamma'])
         population = len(est_data['gamma'][0])
         fitness = est_data['fitness'][-1]
