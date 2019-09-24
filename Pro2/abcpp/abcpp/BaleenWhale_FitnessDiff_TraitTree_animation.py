@@ -1,6 +1,7 @@
 import sys, os
-sys.path.append('C:/Liang/abcpp_ms5/abcpp')
+sys.path.append('C:/Liang/abcpp_ms6/abcpp')
 from Dvtraitsim_TVP import DVSimTVP
+from Dvtraitsim_TVM import DVSimTVM
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 from matplotlib.pylab import *
 import matplotlib.pyplot as plt

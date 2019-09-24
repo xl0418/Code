@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-sys.path.append('C:/Liang/abcpp_ms5/abcpp')
+sys.path.append('C:/Liang/abcpp_ms6/abcpp')
 
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
@@ -106,15 +106,15 @@ sampleparam_TVM = DVParamLiang(gamma=1, a=1, K=K_TVM,h=1, nu=nu, r=1, theta=0,V0
 
 # pop = dvcpp.DVSim(td, obs_param)
 
-population = 2000
-generations = 40
+population = 2000000
+generations = 20
 total_population = population*3
 
 lefttrait = np.min(obsZ)
 righttrait = np.max(obsZ)
 
-prior = [0.0,1e-4,0.0,1e-2,0.0,1e-2,10.0,500.0,lefttrait,righttrait]
-prior_TVM = [0.0,1e-8,0.0,1e-3,0.0,1e-2,10.0,500.0,lefttrait,righttrait]
+prior = [0.0,1e-4,0.0,1e-2,0.0,1e-2,1.0,500.0,lefttrait,righttrait]
+prior_TVM = [0.0,1e-4,0.0,1e-2,0.0,1e-2,0.0,100.0,lefttrait,righttrait]
 
 
 params_TVP = np.tile(sampleparam_TVP, (population, 1))  # duplicate
@@ -294,7 +294,7 @@ for g in range(generations):
 
     if TVM_sample_length>0:
         print('TVM simulations start...')
-        simmodelTVM = dvcpp.DVSimTVM(td, params_TVM)
+        simmodelTVM = dvcpp.DVSimTVMLog10(td, params_TVM)
         valid_TVM = np.where(simmodelTVM['sim_time'] == td.sim_evo_time)[0]
         num_valid_sims_TVM = len(valid_TVM)
         Z_modelTVM = simmodelTVM['Z'][valid_TVM]

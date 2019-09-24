@@ -8,7 +8,9 @@ hist(lowertri.dmatrix)
 min(lowertri.dmatrix)
 
 
-eventtablefile <- paste0(dir,'neuevent.csv')
+
+dir <- 'C:\\Liang\\Googlebox\\Research\\Project3\\replicate_neutral\\sce1\\1e+09\\spatialpara1e+09NE11\\'
+eventtablefile <- paste0(dir,'NEevent11rep100.csv')
 eventtable <- read.csv(eventtablefile,header = FALSE)
 turnover <- 1e9
 colnames(eventtable) = c('T','ns','x','y','sp','ancestor')
