@@ -1,5 +1,5 @@
 psi_vec = c(0,0.5,1,0.25,0.75)
-sig_phi = c(0,sqrt(2)*1e2/2,sqrt(2)*1e4/2,sqrt(2)*1e6/2,sqrt(2)*1e8/2,-1)
+sig_phi = c(sqrt(2)/2,sqrt(2)*1e2/2,sqrt(2)*1e4/2,sqrt(2)*1e6/2,sqrt(2)*1e8/2,-1)
 L = 333
 v=0.0001
 disp_vec = c(0.1,1,10)

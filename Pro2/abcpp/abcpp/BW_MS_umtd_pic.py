@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-sys.path.append('C:/Liang/abcpp_ms6/abcpp')
+sys.path.append('C:/Liang/abcpp_ms7/abcpp')
 
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
@@ -106,7 +106,7 @@ sampleparam_TVM = DVParamLiang(gamma=1, a=1, K=K_TVM,h=1, nu=nu, r=1, theta=0,V0
 
 # pop = dvcpp.DVSim(td, obs_param)
 
-population = 2000000
+population = 40000
 generations = 20
 total_population = population*3
 
@@ -114,7 +114,7 @@ lefttrait = np.min(obsZ)
 righttrait = np.max(obsZ)
 
 prior = [0.0,1e-4,0.0,1e-2,0.0,1e-2,1.0,500.0,lefttrait,righttrait]
-prior_TVM = [0.0,1e-4,0.0,1e-2,0.0,1e-2,0.0,100.0,lefttrait,righttrait]
+prior_TVM = [0.0,1e-9,0.0,1e-9,0.0,1e-2,0.0,1.0,lefttrait,righttrait]
 
 
 params_TVP = np.tile(sampleparam_TVP, (population, 1))  # duplicate
