@@ -45,7 +45,7 @@ def plotest(treenovector):
                     dire = '/Users/dudupig/GoogleDrive'
                 file = dire + '/Research/Project2/smc_newdata/test%d/smc%dg%da.npy' % (tree,gindicator,aindicator)
                 if os.path.isfile(file):
-                    para_data = np.load(file).item()
+                    para_data = np.load(file,allow_pickle=True).item()
                     generation = len(para_data['gamma'])
                     population = len(para_data['gamma'][0])
                     gamma_list.append(para_data['gamma'][generation - 1])

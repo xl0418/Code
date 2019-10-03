@@ -1,6 +1,6 @@
 import numpy as np
 import os,sys
-sys.path.append('C:/Liang/abcpp_ms7/abcpp')
+sys.path.append('C:/Liang/abcpp_ms8/abcpp')
 from dvtraitsim_shared import DVTreeData
 import dvtraitsim_cpp as dvcpp
 
@@ -198,7 +198,7 @@ def DVSimTVMLog10(td, param):
         mu = Ni * r * np.exp(-gamma * dtz**2 + (1 - beta / Ki)) # un-truncated mean
         if np.any(mu <= 1.0):       # mu < 1.0 + 1.11e-16
             if (break_on_mu):
-                # print(i, "invalid mean population size")
+                print(i, "invalid mean population size")
                 break
 
         if np.any(mu > 2**28):
@@ -241,7 +241,7 @@ def DVSimTVMLog10(td, param):
 
         # sanity check
         if np.any(population_RI_dr[i + 1, idx] < 1):
-            # print(i, 'Inconsistent extinction')
+            print(i, 'Inconsistent extinction')
             break
         if np.any(V[i + 1, idx] < 0.0) or np.any(V[i + 1, idx] > 100000.0):
             print(i, 'runaway variance')
