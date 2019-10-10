@@ -58,10 +58,10 @@ species_label = extantspecieslabel
 sorted.species.labels <- obsZ_emp[order(obsZ_emp[,2]),1]
 
 
-obsZ_pic = 10^obsZ_emp[,2]
+obsZ_pic = obsZ_emp[,2]
 names(obsZ_pic) = extantspecieslabel
 
-phylosig(phylo_test,obsZ_pic,test=TRUE,method = 'lambda')
+phylosig(phylo_test,obsZ_pic,test=TRUE,method = 'K')
 
 # calculate sim contrast
 mode.label = c('TVP','TV','TVM')

@@ -152,3 +152,25 @@ for gamma in range(1,20):
         # else:
         #     print('No valid simulations')
 
+
+# Test tvp simulation on cluster. V00 V01 should be small. Otherwise, no complete simulations.
+K=1e6
+lefttrait=2.7
+righttrait=3.3
+prior = [3, 5.1, 80, 270, 0.0, nu*100, 0, 1e-3, lefttrait, righttrait]
+sampleparam_TVP = DVParamLiang(gamma=1, a=1, K=K,h=1, nu=nu, r=1, theta=0,V00=.001,V01=.001,
+                               Vmax=100, inittrait=3, initpop=1e5,
+                                initpop_sigma=10.0, break_on_mu=False)
+params_TVP = np.tile(sampleparam_TVP, (population, 1))  # duplicate
+params_TVP[:, 0] = np.random.uniform(prior[0], prior[1], params_TVP.shape[0])  # randomize 'gamma'
+params_TVP[:, 1] = np.random.uniform(prior[2], prior[3], params_TVP.shape[0])  # randomize 'a'
+params_TVP[:, 4] = np.random.uniform(prior[4], prior[5], params_TVP.shape[0])  # randomize 'nu'
+params_TVP[:, 6] = np.random.uniform(prior[8], prior[9], params_TVP.shape[0])  # randomize 'theta'
+params_TVP[:, 9] = np.random.uniform(prior[6], prior[7], params_TVP.shape[0])  # randomize 'Vm'
+
+simmodelTVP = dvcpp.DVSimTVP(td, params_TVP)
+valid_TVP = np.where(simmodelTVP['sim_time'] == td.sim_evo_time)[0]
+if len(simmodelTVP['Z'][valid_TVP]) > 0:
+    print(gamma, a)
+    simmodelTVP['Z'][valid_TVP].max()
+    simmodelTVP['Z'][valid_TVP].min()
