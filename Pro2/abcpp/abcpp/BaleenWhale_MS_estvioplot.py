@@ -60,7 +60,7 @@ obsZ = sorted(10 ** logTL)
 # heritability = heritability_vec[heritability_index]
 
 data_name = data_dir + 'modelselec2w.npy'
-est_data = np.load(data_name).item()
+est_data = np.load(data_name,allow_pickle=True).item()
 population = int(len(est_data['model_data'][0]) / 3)
 fitness = est_data['fitness'][-1]
 
@@ -136,7 +136,7 @@ print('Var: gamma = %.3e  a = %.3e nu = %.3e Vm = %f theta = %f' % (
     np.var(vm_vec_TVM), np.var(theta_vec_TVM)))
 
 est_para = ['gamma', 'alpha', 'nu', 'vm', 'theta']  # ,'vm'
-model_para = ['TVP', 'TV', 'TVM']
+model_para = ['AWC', 'UWC', 'MWC']
 est_array = np.concatenate([gamma_vec_TVP, a_vec_TVP, nu_vec_TVP, vm_vec_TVP, theta_vec_TVP,
                             gamma_vec_TV, a_vec_TV, nu_vec_TV, vm_vec_TV, theta_vec_TV,
                             gamma_vec_TVM, a_vec_TVM, nu_vec_TVM, vm_vec_TVM,
@@ -148,7 +148,7 @@ ss_list = {'est': est_array, 'est_label': est_label,
            'model_label': model_label}
 ss_df = pd.DataFrame(ss_list)
 
-vioplot = sns.catplot(x="model_label", y="est", col="est_label",
+vioplot = sns.catplot(x="model_label", y="est", col="est_label",palette=["#CB1B45","#FAD689","#0D5661"],
                       data=ss_df, kind="box", height=5, aspect=.6, sharey=False)
 # vioplot.set(ylim=(-50,400))
 # vioplot.set_xticklabels(["$\gamma \cdot 10^{-8}$", "$\\alpha \cdot 10^{-5}$", "$\\nu \cdot 10^{
@@ -161,6 +161,10 @@ axes[1].set_title("$\\alpha \cdot 10^{-6}$")
 axes[2].set_title("$\\nu \cdot 10^{-4}$")
 axes[3].set_title("$V_m $")
 axes[4].set_title("$\\theta $")
+
+
+
+
 
 Z = est_data['Z']
 diff_norm = np.linalg.norm(Z - obsZ, axis=1)

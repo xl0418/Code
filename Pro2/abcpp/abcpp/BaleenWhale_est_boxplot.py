@@ -16,7 +16,7 @@ def normalized_norm(x, y):
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster' \
-           '/results_0930_smtd/'
+           '/results_0930_umtd_pics/'
 
 obs_file = dir_path + 'treedata/'
 
@@ -136,7 +136,7 @@ ss_df = pd.DataFrame(ss_list)
 
 # vioplot = sns.catplot(x="est_label", y="est", hue="heri", col="s",
 #      data=ss_df, kind="violin",height=5, aspect=.6)
-vioplot = sns.catplot(x="s", y="est", hue="heri", col="est_label",palette=["#feee7d", "#00dffc"],
+vioplot = sns.catplot(x="s", y="est", hue="heri", col="est_label",palette=[ "#FAD689","#CB1B45"],
      data=ss_df, kind="violin",height=5, aspect=.6,sharey=False,scale ='count',linewidth =1,inner="quartile")
 # vioplot.set(ylim=(-50,400))
 # vioplot.set_xticklabels(["$\gamma \cdot 10^{-8}$", "$\\alpha \cdot 10^{-5}$", "$\\nu \cdot 10^{-4}$","$V_{m}$"])

@@ -17,7 +17,7 @@ sce.short = c('H','M','L')
 jclabel = c(0,0.25,0.5,0.75,1)
 plabel = c(0,1e2,1e4,1e6,1e8,-1)
 diversity.upperlimit = 250
-diversity.lowerlimit = 80
+diversity.lowerlimit = 95
 lowcol = "#F2F0F7"
 highcol = '#54278F'
 tas1 = list()
@@ -48,7 +48,7 @@ for(i_n in c(1:3)){
   }
 }
 z = r_df[,c(1:5)]
-z[,1] = min(z)
+z[,1] = 95 # min(z)
 
 # Figure size
 r3dDefaults$windowRect <- c(0, 100, 800, 800) 
@@ -70,4 +70,22 @@ legend3d("topright", legend = c('Low spatiality','Intermediate spatiality','High
          col = c("#8CD790","#EFDC05","#30A9DE"), cex=1.5, inset=c(0.02))
 
 rgl.snapshot(filename=paste0(moviedir,"Species_richness.png"))
+
+
+testz = z
+testz[,1] = 96
+# Test 15*18 9 groups
+color.plate = c('#DB4D6D','#F596AA','#FEDFE1',
+                '#CB4042','#EB7A77','#F19483',
+                '#D0104C','#B5495B','#E87A90'
+                )
+# Figure size
+r3dDefaults$windowRect <- c(0, 100, 800, 800) 
+
+# Animate the 3d plot and save as a gif
+open3d()
+barplot3d(testz,group.dim=c(15,18),alpha=0.7,barcolors = color.plate,
+          y.intercept=c(95,120,160,200))
+legend3d("topright", legend = c('Low spatiality','Intermediate spatiality','High spatiality'), pch = 12,
+         col = c("#8CD790","#EFDC05","#30A9DE"), cex=1.5, inset=c(0.02))
 

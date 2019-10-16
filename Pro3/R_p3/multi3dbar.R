@@ -66,7 +66,8 @@ stackplot.3d<-function(x,y,z,alpha=1,topcol="#078E53",sidecol="#aaaaaa"){
 
 ## Calls stackplot.3d repeatedly to create a barplot
 ## z.top is the heights of the columns and must be an appropriately named vector
-barplot3d<-function(z,group.dim=c(15,6),no.group=3,alpha=1,scalexy=10,scalez=1,gap=0.2,gap.sce.mode=TRUE,
+barplot3d<-function(z,group.dim=c(15,18),no.column=3,no.row=3,alpha=1,scalexy=10,scalez=1,
+                    gap=0.2,gap.sce.mode=TRUE,y.intercept=c(80,120,160,200),
                     barcolors=c("#8CD790","#EFDC05","#30A9DE")){
   ## These lines allow the active rgl device to be updated with multiple changes
   ## This is necessary to add each column sequentially
@@ -74,8 +75,8 @@ barplot3d<-function(z,group.dim=c(15,6),no.group=3,alpha=1,scalexy=10,scalez=1,g
   if(dim(z)[2]!=5){
     return(print('5 columns are expected!'))
   }
-  if(length(barcolors)!=no.group){
-    barcolors = rep(barcolors[1],no.group)
+  if(length(barcolors)!=no.column*no.row){
+    barcolors = rep(barcolors[1],no.column)
     print("WARNING: the number of barcolors doesn't match the number of groups! The color
           is uniformed by the first color element!")
   }
@@ -90,19 +91,24 @@ barplot3d<-function(z,group.dim=c(15,6),no.group=3,alpha=1,scalexy=10,scalez=1,g
   
   ## Define dimensions of the plot 
 
-  if(group.dim[1]%%no.group!=0){
+  if(group.dim[1]%%no.column!=0){
     return(print("Number of groups deviding dim 1 is not an integer!"))
   }
   ## Scale column area and the gap between columns 
-  y=seq(1,dimensions[1]+no.group-1)*scalexy
-  x=seq(1,dimensions[2])*scalexy
+  y=seq(1,dimensions[1]+no.column-1)*scalexy
+  x=seq(1,dimensions[2]+no.row-1)*scalexy
   gap=gap*scalexy
   
   z = z*scalez
   
   ## Set up colour palette
   broadcolors=barcolors
-  colors=as.vector(sapply(broadcolors,rep,dimensions[1]*dimensions[2]/no.group))
+  colors1 = rep(broadcolors[1:3],dimensions[1]/no.column)
+  colors2 = rep(broadcolors[4:6],dimensions[1]/no.column)
+  colors3 = rep(broadcolors[7:9],dimensions[1]/no.column)
+  colors = rep(c(colors1,colors2,colors3),each = dimensions[2]/no.row)
+  
+  # colors=as.vector(sapply(broadcolors,rep,dimensions[2]/no.row))
   
   ## Scale z.top coordinate
 
@@ -110,10 +116,18 @@ barplot3d<-function(z,group.dim=c(15,6),no.group=3,alpha=1,scalexy=10,scalez=1,g
   for(i in 1:dimensions[1]){
     for(j in 1:dimensions[2]){
       it=(i-1)*dimensions[2]+j # Variable to work out which column to plot; counts from 1:96
-      if(gap.sce.mode==TRUE)gap.sce = (i-1)%/%(dimensions[1]/no.group)*scalexy
-      else gap.sce=0
-      stackplot.3d(c(gap+x[j],x[j]+scalexy),
-                   c(-gap-y[i]-gap.sce,-y[i]-scalexy-gap.sce),
+      if(gap.sce.mode==TRUE){
+        gap.sce.i = (i-1)%/%(dimensions[1]/no.column)*scalexy
+        gap.sce.j = (j-1)%/%(dimensions[2]/no.row)*scalexy
+        
+      }
+      else{
+        gap.sce.i=0
+        gap.sce.j=0
+        
+      }
+      stackplot.3d(c(gap+x[j]+gap.sce.j,x[j]+scalexy+gap.sce.j),
+                   c(-gap-y[i]-gap.sce.i,-y[i]-scalexy-gap.sce.i),
                    z[neworder[it],],
                    alpha=alpha,
                    topcol=colors[neworder[it]],
@@ -123,7 +137,6 @@ barplot3d<-function(z,group.dim=c(15,6),no.group=3,alpha=1,scalexy=10,scalez=1,g
   }
   
   dot.gap = 2
-  y.intercept = c(80,120,160,200)
   # Background grid lines
   bg.x = rep(c(rep(10,y[length(y)]/dot.gap+1),seq(10,x[length(x)]+scalexy,dot.gap)),length(y.intercept))
   bg.y = rep(y.intercept,each=length(bg.x)/length(y.intercept))
@@ -136,14 +149,16 @@ barplot3d<-function(z,group.dim=c(15,6),no.group=3,alpha=1,scalexy=10,scalez=1,g
   ## Set the viewpoint and add axes and labels
   ## theta: the horizontal angle    phi: the vertical angle
   rgl.viewpoint(theta=70,phi=35,fov=30)
-  axes3d("y-+",labels=TRUE,at=seq(80,200,40),nticks=4,lwd=2)
+  axes3d("y-+",labels=TRUE,
+         at=y.intercept,
+         nticks=4,lwd=2)
   # axis for phi
   zlabels <- c('0','0.25','0.5','0.75','1')
   axes3d("z+-", labels=zlabels,nticks=length(zlabels),at=seq(-15,-55,-10),lwd=2)
   # axis for sigma_phi
   xlabels <- c('0','1e2','1e4','1e6','1e8','Inf')
   axis3d("x-+",nticks=6,at=seq(15,65,10),labels=xlabels,lwd=2)
-  text3d(matrix(c(0,105,40,180,80,80,-40,-25,20),ncol=3),
+  text3d(matrix(c(0,245,40,180,80,80,-40,-25,20),ncol=3),
          texts=c('Diversity',expression(psi), expression(sigma[phi]) ),
          cex = 2)
   
