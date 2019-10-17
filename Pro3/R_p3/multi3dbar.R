@@ -157,9 +157,9 @@ barplot3d<-function(z,group.dim=c(15,18),no.column=3,no.row=3,alpha=1,scalexy=10
   axes3d("z+-", labels=zlabels,nticks=length(zlabels),at=seq(-15,-55,-10),lwd=2)
   # axis for sigma_phi
   xlabels <- c('0','1e2','1e4','1e6','1e8','Inf')
-  axis3d("x-+",nticks=6,at=seq(15,65,10),labels=xlabels,lwd=2)
-  text3d(matrix(c(0,245,40,180,80,80,-40,-25,20),ncol=3),
-         texts=c('Diversity',expression(psi), expression(sigma[phi]) ),
+  axis3d("x-+",nticks=6,at=seq(155,205,10),labels=xlabels,lwd=2)
+  text3d(matrix(c(0,245,190,200,80,80,-40,-25,20),ncol=3),
+         texts=c('Diversity',expression(psi), expression(phi) ),
          cex = 2)
   
 }

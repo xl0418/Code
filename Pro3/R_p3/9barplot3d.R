@@ -94,26 +94,11 @@ stackplot.3d<-function(x,y,z,alpha=1,topcol="#078E53",sidecol="#aaaaaa",mode='m5
 
 ## Calls stackplot.3d repeatedly to create a barplot
 ## z.top is the heights of the columns and must be an appropriately named vector
-barplot3d<-function(z,alpha=1,scalexy=10,scalez=1,gap=0.2,mode='m5',gap.sce.mode=TRUE){
+barplot3d<-function(z,alpha=1,scalexy=10,scalez=1,gap=0.2,gap.sce.mode=TRUE){
   ## These lines allow the active rgl device to be updated with multiple changes
   ## This is necessary to add each column sequentially
-  if(mode=='m2'){
-    if(dim(z)[2] != 2){
-      return(print('2 columns are expected!'))
-    }
-    z=z[,c(1,2)]
-    
-  }else if(mode=='m5'){
-    if(dim(z)[2]!=5){
-      return(print('5 columns are expected!'))
-    }
-    z=z[,c(1:5)]
-    
-  }else{
-    return(print('Pls specify mode!'))
-  }
-  
-  
+  z=z[,c(1:5)]
+
   save <- par3d(skipRedraw=TRUE)
   on.exit(par3d(save))
   

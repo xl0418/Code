@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-sys.path.append('C:/Liang/abcpp_ms7/abcpp')
+sys.path.append('C:/Liang/abcpp_ms8/abcpp')
 
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
@@ -26,7 +26,7 @@ def normalized_norm(x, y):
     max_err = np.nanmax(diff_norm)
     return diff_norm / max_err
 
-num_cores = Pool(6)  # the number of cores
+num_cores = Pool(8)  # the number of cores
 
 K_TVP=1e6
 K_TV = 1e6
@@ -95,26 +95,28 @@ tree_sim = dendropy.Tree.get(
     taxon_namespace=taxa1)
 print('trying to estimate the parameters','...')
 
-
 # let's try to find a true simulation:
-sampleparam_TVP = DVParamLiang(gamma=1, a=1, K=K_TVP,h=1, nu=nu, r=1, theta=0,V00=.1,V01=.1, Vmax=100, inittrait=meantrait, initpop=1e5,
+sampleparam_TVP = DVParamLiang(gamma=1, a=1, K=K_TVP,h=1, nu=nu, r=1, theta=0,V00=.0001,V01=.0001,
+                               Vmax=100, inittrait=meantrait, initpop=1e5,
                                 initpop_sigma=10.0, break_on_mu=False)
-sampleparam_TV = DVParamLiang(gamma=1, a=1, K=K_TV,h=1, nu=nu, r=1, theta=0,V00=.1,V01=.1, Vmax=100, inittrait=meantrait, initpop=1e5,
+sampleparam_TV = DVParamLiang(gamma=1, a=1, K=K_TV,h=1, nu=nu, r=1, theta=0,V00=.0001,V01=.0001,
+                              Vmax=100, inittrait=meantrait, initpop=1e5,
                                 initpop_sigma=10.0, break_on_mu=False)
-sampleparam_TVM = DVParamLiang(gamma=1, a=1, K=K_TVM,h=1, nu=nu, r=1, theta=0,V00=.1,V01=.1, Vmax=100.0, inittrait=meantrait, initpop=1e5,
+sampleparam_TVM = DVParamLiang(gamma=1, a=1, K=K_TVM,h=1, nu=nu, r=1, theta=0,V00=.0001,V01=.0001,
+                               Vmax=100.0, inittrait=meantrait, initpop=1e5,
                                 initpop_sigma=10.0, break_on_mu=False)
 
 # pop = dvcpp.DVSim(td, obs_param)
 
-population = 40000
+population = 1000
 generations = 20
 total_population = population*3
 
 lefttrait = np.min(obsZ)
 righttrait = np.max(obsZ)
 
-prior = [0.0,1e-4,0.0,1e-2,0.0,1e-2,1.0,500.0,lefttrait,righttrait]
-prior_TVM = [0.0,1e-9,0.0,1e-9,0.0,1e-2,0.0,1.0,lefttrait,righttrait]
+prior = [3, 5.1, 80, 270,0.0, nu*100,0, 1e-3,lefttrait,righttrait]
+prior_TVM = [0.5,5,800,1500,0.0, nu*100,0, 0.5e-3,lefttrait,righttrait]
 
 
 params_TVP = np.tile(sampleparam_TVP, (population, 1))  # duplicate
@@ -255,8 +257,8 @@ for g in range(generations):
                 contrast_list.append(pic_ordered_list[i][0])
             ordered_contrast_list = [contrast_list[item] for item in np.argsort(order_list)]
             contrast_array = abs(np.vstack(ordered_contrast_list))
-            # i, j = argsort2D(Z_modelTVP)
-            # Z_modelTVP = Z_modelTVP[i, j]
+            #i, j = argsort2D(Z_modelTVP)
+            #Z_modelTVP = Z_modelTVP[i, j]
             # V = pop['V'][valid][i, j]
             Z_modelTVP = np.nan_to_num(Z_modelTVP)
             Z = np.vstack([Z,Z_modelTVP])
@@ -285,8 +287,8 @@ for g in range(generations):
             contrast_list.append(pic_ordered_list[i][0])
         ordered_contrast_list = [contrast_list[item] for item in np.argsort(order_list)]
         contrast_array = abs(np.vstack(ordered_contrast_list))
-        # i, j = argsort2D(Z_modelTV)
-        # Z_modelTV = Z_modelTV[i, j]
+        #i, j = argsort2D(Z_modelTV)
+        #Z_modelTV = Z_modelTV[i, j]
         # V = pop['V'][valid][i, j]
         Z_modelTV = np.nan_to_num(Z_modelTV)
         Z = np.vstack([Z, Z_modelTV])
@@ -308,8 +310,8 @@ for g in range(generations):
             contrast_list.append(pic_ordered_list[i][0])
         ordered_contrast_list = [contrast_list[item] for item in np.argsort(order_list)]
         contrast_array = abs(np.vstack(ordered_contrast_list))
-        # i, j = argsort2D(Z_modelTVM)
-        # Z_modelTVM = Z_modelTVM[i, j]
+        #i, j = argsort2D(Z_modelTVM)
+        #Z_modelTVM = Z_modelTVM[i, j]
         # V = pop['V'][valid][i, j]
         Z_modelTVM = np.nan_to_num(Z_modelTVM)
         Z = np.vstack([Z, Z_modelTVM])
@@ -327,7 +329,7 @@ for g in range(generations):
     # eudis = eudistance(Z, obsZ)
 
 
-    fitness[g,valid] += 1 - eudis
+    #fitness[g,valid] += 1 - eudis
     fitness[g,valid] += 1 - eudis_pic
 
 
@@ -441,7 +443,7 @@ for g in range(generations):
             params_TV[:, 9] = propose_vm_TV
             params_TV[:, 6] = propose_theta_TV
 
-if len(np.where(propose_model==2)[0])>0:
+    if len(np.where(propose_model==2)[0])>0:
         params_TVM_update = params_TVM[:,[0,1,4,9,6]]
         modelinex = 2
         # update TP paras and weights
@@ -459,7 +461,7 @@ if len(np.where(propose_model==2)[0])>0:
 
 #
 
-para_data = {'model_data': model_data,'fitness': fitness,'Z': Z,
+    para_data = {'model_data': model_data,'fitness': fitness,'Z': Z,
              'gamma_data_TVP':gamma_data_TVP,'a_data_TVP':a_data_TVP,'nu_data_TVP':nu_data_TVP,
              'vm_data_TVP':vm_data_TVP, 'theta_data_TVP':theta_data_TVP,
               'gamma_data_TV':gamma_data_TV,'a_data_TV':a_data_TV,'nu_data_TV':nu_data_TV,
@@ -469,5 +471,4 @@ para_data = {'model_data': model_data,'fitness': fitness,'Z': Z,
              }
 
 
-
-np.save(savedir,para_data)
+    np.save(savedir,para_data)

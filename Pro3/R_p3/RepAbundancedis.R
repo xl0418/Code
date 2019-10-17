@@ -10,7 +10,7 @@ dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_final1/1e+07/'
 plot_dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_final1/'
 scenario = c('LR','MR','HR')
 sce.short = c('L','M','H')
-x.breaks = seq(0,18,2)
+x.breaks = seq(0,18,1)
 abund.df = NULL
 max.logabund = 12
 i_n=3
@@ -56,16 +56,32 @@ abund.df$phyvalue1 <- factor(abund.df$phyvalue, labels = c('sigma[phi]==0','sigm
                                                            'sigma[phi]==10^4','sigma[phi]==10^6',
                                                            'sigma[phi]==10^8','sigma[phi]==Inf'))
 
+interleave <- function(x,y){
+  lx <- length(x)
+  ly <- length(y)
+  n <- max(lx,ly)
+  as.vector(rbind(rep(x, length.out=n), rep(y, length.out=n)))
+}
+
+d <- data.frame(x=1:10, y=rnorm(10))
+
+my_labs <- interleave(seq(1,length(x.breaks),2), "")
+my_labs = my_labs[1:19]
+
 
 sce.plot <- ggplot(abund.df) +
-  geom_bar( aes(x=species, y=mean), stat="identity", fill="#6A4028", alpha=0.7) +
-  geom_errorbar( aes(x=species, ymin=mean-sd, ymax=mean+sd), width=0.4, colour="#F596AA", alpha=0.7, size=1.3)+
+  geom_bar( aes(x=species, y=mean), stat="identity", fill="red", alpha=0.7) +
+  geom_errorbar( aes(x=species, ymin=mean-sd, ymax=mean+sd), width=0.4, colour="blue", alpha=0.7, size=1.3)+
+  geom_line(aes(species, mean),size=0.8,color="blue")+
   facet_grid(JCvalue1~phyvalue1, 
              labeller = label_parsed)+
-  theme_gdocs()+ scale_color_calc()+
-  scale_x_continuous(name="Abundance (log2)", breaks=seq(1,length(x.breaks),1),labels = x.breaks) +
+  #theme_gdocs()+ #scale_color_calc()+
+  scale_x_continuous(name="Abundance (log2)", breaks=seq(1,length(x.breaks),1),labels = my_labs) +
   scale_y_continuous(name="Number of species",breaks=seq(0,60,20))+
-  theme(axis.text.x = element_text(angle = 90,vjust = 0.5))
+  theme(axis.text.x = element_text(angle = 90,vjust = 0.5),panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"),
+        strip.background = element_blank(),strip.text.x = element_text(size = 12, colour = "black"),
+        strip.text.y = element_text(size = 12, colour = "black"))
 
 filenames <-  paste0(plot_dir,'abundance_dis_',f.name,'.png')
 ggsave(filenames,sce.plot,width = 15, height = 10,dpi=300)
