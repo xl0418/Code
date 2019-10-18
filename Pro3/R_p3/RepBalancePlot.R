@@ -6,7 +6,8 @@ library(ggplot2)
 library(grid)
 library(gridExtra)
 library(ggthemes)
-method = 'colless'
+source('C:/Liang/Code/Pro3/R_p3/deltar.R', echo=TRUE)
+method = 'deltar'
 dir <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_final1/'
 scenario = c('Levent','Mevent','Hevent')
 sce.short = c('L','M','H')
@@ -22,6 +23,8 @@ foo <- function(x, metric = "colless") {
     colless(xx, "yule")  # calculate colless' metric
   } else if (metric == "gamma") {
     gammaStat(x)
+  } else if (metric == "deltar") {
+    deltar(x)
   } else stop("metric should be one of colless or gamma")
 }
 
@@ -51,6 +54,11 @@ if(method=='gamma'){
   value.min <- 0
   value.max <- 15
   gap <- 3
+}else if(method=='deltar'){
+  value.min <- -1
+  value.max <- 1
+  gap <- 0.1
+
 }else{
   value.min <- 5
   value.max <- 40

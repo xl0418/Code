@@ -1,4 +1,5 @@
 deltar <- function(L){
+  if(class(L)=='phylo')L <- phylo2L(L)
   branchtime.first <- L[1,1]
   L.beginning <- length(which(L[,1]==branchtime.first))
   L.tips <- nrow(L)
