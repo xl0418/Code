@@ -74,11 +74,24 @@ for(tens1 in c(1:3)){
   
 
   plotl_est[[tens1]] <-ggplot(colless_alldf, aes(x=phi,y=colvalue)) +  # plot histogram of distribution of values
-    geom_boxplot(aes(fill=psi), position=position_dodge(.9))+ theme_gdocs() +
+    geom_boxplot(aes(fill=psi), position=position_dodge(.9),outlier.shape = NA)+ theme_tufte() +
     scale_fill_manual(values=c("#080808", "#4A225D", "#E83015","#F05E1C","#FFC408"))+
     labs(x=method,y="Frequency") +
-    theme(legend.position = "none")
-
+    theme(legend.position = "none",axis.title.x=element_blank(),axis.text.x=element_blank(),
+          axis.ticks.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_blank(),
+          axis.ticks.y=element_blank())
+  if(tens1 %in% c(1,4,7)){
+    plotl_est[[tens1]] <- plotl_est[[tens1]]+
+    theme(axis.title.y=element_text(color="black", size=10, face="bold"),
+          axis.text.y=element_text(color="black", size=10, face="bold"),
+          axis.ticks.y=element_line(),axis.line.y=element_line())
+  }
+  if(tens1 %in% c(7:9)){
+    plotl_est[[tens1]] <- plotl_est[[tens1]]+
+      theme(axis.title.x=element_text(color="black", size=10, face="bold"),
+            axis.text.x=element_text(color="black", size=10, face="bold"),
+            axis.ticks.x=element_line(),axis.line.x=element_line())
+  }
 
 }
 
