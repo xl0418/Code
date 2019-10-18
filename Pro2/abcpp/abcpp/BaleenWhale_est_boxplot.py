@@ -16,7 +16,7 @@ def normalized_norm(x, y):
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster' \
-           '/results_0930_umtd_pics/'
+           '/results_0930_pics/'
 
 obs_file = dir_path + 'treedata/'
 
@@ -156,8 +156,8 @@ axes[3].set_title("$V_m$")
 if 'theta' in est_data:
     axes[4].set_title("$\\theta$")
 
-for axe in axes:
-    axe.ticklabel_format(style='sci', axis='y', scilimits=(0,0),useMathText=True)
+for no_plots in range(1,4):
+    axes[no_plots].ticklabel_format(style='sci', axis='y', scilimits=(0,0),useMathText=True)
 
 
 # axes[4].set_title("$\\theta $")

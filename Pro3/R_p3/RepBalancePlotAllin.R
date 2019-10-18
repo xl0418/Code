@@ -125,3 +125,4 @@ grid.arrange(grob3,grob.sigdisp,grob3,grob.sigjc,grob2,mylegend,ncol = 3,
 
 savefilename <- paste0(dir,f.name,'_',method,'.pdf')
 ggsave(savefilename,wholeplot,width = 15,height = 10)
+
