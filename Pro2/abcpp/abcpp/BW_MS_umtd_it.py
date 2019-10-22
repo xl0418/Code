@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-sys.path.append('C:/Liang/abcpp_ms8/abcpp')
+sys.path.append('C:/Liang/abcpp_ms9/abcpp')
 
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
@@ -8,11 +8,12 @@ from scipy.stats import norm
 import csv
 import dendropy
 from dendropy.model import continuous
-from multiprocessing import Pool
 from itertools import repeat
+from itertools import starmap
 sys.path.append('C:/Liang/Code/Pro2/abcpp/abcpp/')
 from pic_compute import pic_compute
 from tp_update_theta import tp_update
+
 
 #
 # argsort of 2-dimensional arrays is awkward
@@ -26,7 +27,6 @@ def normalized_norm(x, y):
     max_err = np.nanmax(diff_norm)
     return diff_norm / max_err
 
-num_cores = Pool(8)  # the number of cores
 
 K_TVP=1e6
 K_TV = 1e6
@@ -110,7 +110,7 @@ sampleparam_TVM = DVParamLiang(gamma=1, a=1, K=K_TVM, h=1, nu=nu, r=1, theta=0, 
 
 # pop = dvcpp.DVSim(td, obs_param)
 
-population = 1000
+population = 40000
 generations = 3
 total_population = population * 3
 
@@ -252,9 +252,9 @@ for g in range(generations):
             print("WARNING:Valid simulations are too scarce!")
         if num_valid_sims_TVP > 0:
             Z_modelTVP = simmodelTVP['Z'][valid_TVP]
-            pic_ordered_list = num_cores.starmap(pic_compute,
+            pic_ordered_list = list(starmap(pic_compute,
                                                  zip(repeat(tree_sim), Z_modelTVP, repeat(taxa1),
-                                                     range(num_valid_sims_TVP)))
+                                                     range(num_valid_sims_TVP))))
             # in case the parallel computation returns disordered output
             order_list = []
             contrast_list = []
@@ -282,9 +282,9 @@ for g in range(generations):
         valid_TV = np.where(simmodelTV['sim_time'] == td.sim_evo_time)[0]
         num_valid_sims_TV = len(valid_TV)
         Z_modelTV = simmodelTV['Z'][valid_TV]
-        pic_ordered_list = num_cores.starmap(pic_compute,
+        pic_ordered_list = list(starmap(pic_compute,
                                              zip(repeat(tree_sim), Z_modelTV, repeat(taxa1),
-                                                 range(num_valid_sims_TV)))
+                                                 range(num_valid_sims_TV))))
         # in case the parallel computation returns disordered output
         order_list = []
         contrast_list = []
@@ -306,9 +306,9 @@ for g in range(generations):
         valid_TVM = np.where(simmodelTVM['sim_time'] == td.sim_evo_time)[0]
         num_valid_sims_TVM = len(valid_TVM)
         Z_modelTVM = simmodelTVM['Z'][valid_TVM]
-        pic_ordered_list = num_cores.starmap(pic_compute,
+        pic_ordered_list = list(starmap(pic_compute,
                                              zip(repeat(tree_sim), Z_modelTVM, repeat(taxa1),
-                                                 range(num_valid_sims_TVM)))
+                                                 range(num_valid_sims_TVM))))
         # in case the parallel computation returns disordered output
         order_list = []
         contrast_list = []
@@ -500,4 +500,3 @@ for g in range(generations):
                  }
 
     np.save(savedir, para_data)
-
