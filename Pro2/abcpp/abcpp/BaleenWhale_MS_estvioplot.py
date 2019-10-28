@@ -17,7 +17,7 @@ def normalized_norm(x, y):
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster' \
-           '/results_0702/'
+           '/results_ms_1028/'
 
 obs_file = dir_path + 'treedata/'
 
@@ -59,7 +59,7 @@ obsZ = sorted(10 ** logTL)
 # timescaling = timescale_vec[timescaling_index]
 # heritability = heritability_vec[heritability_index]
 
-data_name = data_dir + 'modelselec2w.npy'
+data_name = data_dir + 'modelselec2w_umtd_pics.npy'
 est_data = np.load(data_name,allow_pickle=True).item()
 population = int(len(est_data['model_data'][0]) / 3)
 fitness = est_data['fitness'][-1]
@@ -90,49 +90,49 @@ top_pop = len(previous_bestfitted_index_TVP)
 # nv_mean = np.mean(est_data['nu'][generation-1])
 # mean of the top 5% samples
 
-gamma_vec_TVP = est_data['gamma_data_TVP'][-2, previous_bestfitted_index_TVP] * 1e8
-a_vec_TVP = est_data['a_data_TVP'][-2, previous_bestfitted_index_TVP] * 1e6
-nu_vec_TVP = est_data['nu_data_TVP'][-2, previous_bestfitted_index_TVP] * 1e4
+gamma_vec_TVP = est_data['gamma_data_TVP'][-2, previous_bestfitted_index_TVP]
+a_vec_TVP = est_data['a_data_TVP'][-2, previous_bestfitted_index_TVP]
+nu_vec_TVP = est_data['nu_data_TVP'][-2, previous_bestfitted_index_TVP]
 vm_vec_TVP = est_data['vm_data_TVP'][-2, previous_bestfitted_index_TVP]
 theta_vec_TVP = est_data['theta_data_TVP'][-2, previous_bestfitted_index_TVP]
 
-gamma_vec_TV = est_data['gamma_data_TV'][-2, previous_bestfitted_index_TV] * 1e8
-a_vec_TV = est_data['a_data_TV'][-2, previous_bestfitted_index_TV] * 1e6
-nu_vec_TV = est_data['nu_data_TV'][-2, previous_bestfitted_index_TV] * 1e4
+gamma_vec_TV = est_data['gamma_data_TV'][-2, previous_bestfitted_index_TV]
+a_vec_TV = est_data['a_data_TV'][-2, previous_bestfitted_index_TV]
+nu_vec_TV = est_data['nu_data_TV'][-2, previous_bestfitted_index_TV]
 vm_vec_TV = est_data['vm_data_TV'][-2, previous_bestfitted_index_TV]
 theta_vec_TV = est_data['theta_data_TV'][-2, previous_bestfitted_index_TV]
 
-gamma_vec_TVM = est_data['gamma_data_TVM'][-2, previous_bestfitted_index_TVM] * 1e8
-a_vec_TVM = est_data['a_data_TVM'][-2, previous_bestfitted_index_TVM] * 1e6
-nu_vec_TVM = est_data['nu_data_TVM'][-2, previous_bestfitted_index_TVM] * 1e4
+gamma_vec_TVM = est_data['gamma_data_TVM'][-2, previous_bestfitted_index_TVM]
+a_vec_TVM = est_data['a_data_TVM'][-2, previous_bestfitted_index_TVM]
+nu_vec_TVM = est_data['nu_data_TVM'][-2, previous_bestfitted_index_TVM]
 vm_vec_TVM = est_data['vm_data_TVM'][-2, previous_bestfitted_index_TVM]
 theta_vec_TVM = est_data['theta_data_TVM'][-2, previous_bestfitted_index_TVM]
 
 print('TVP 5th gamma = %.3e  a = %.3e nu = %.3e Vm = %f theta = %f' % (
-    np.mean(gamma_vec_TVP) * 1e-8,
-    np.mean(a_vec_TVP) * 1e-6, np.mean(nu_vec_TVP) * 1e-4,
+    np.mean(gamma_vec_TVP) ,
+    np.mean(a_vec_TVP) , np.mean(nu_vec_TVP) ,
     np.mean(vm_vec_TVP), np.mean(theta_vec_TVP)))
 print('Var: gamma = %.3e  a = %.3e nu = %.3e Vm = %f theta = %f' % (
-    np.var(gamma_vec_TVP) * 1e-8,
-    np.var(a_vec_TVP) * 1e-6, np.var(nu_vec_TVP) * 1e-4,
+    np.var(gamma_vec_TVP) ,
+    np.var(a_vec_TVP) , np.var(nu_vec_TVP) ,
     np.var(vm_vec_TVP), np.var(theta_vec_TVP)))
 
 print('TV 5th gamma = %.3e  a = %.3e nu = %.3e Vm = %f theta = %f' % (
-    np.mean(gamma_vec_TV) * 1e-8,
-    np.mean(a_vec_TV) * 1e-6, np.mean(nu_vec_TV) * 1e-4,
+    np.mean(gamma_vec_TV) ,
+    np.mean(a_vec_TV) , np.mean(nu_vec_TV),
     np.mean(vm_vec_TV), np.mean(theta_vec_TV)))
 print('Var: gamma = %.3e  a = %.3e nu = %.3e Vm = %f theta = %f' % (
-    np.var(gamma_vec_TV) * 1e-8,
-    np.var(a_vec_TV) * 1e-6, np.var(nu_vec_TV) * 1e-4,
+    np.var(gamma_vec_TV) ,
+    np.var(a_vec_TV) , np.var(nu_vec_TV) ,
     np.var(vm_vec_TV), np.var(theta_vec_TV)))
 
 print('TVM 5th gamma = %.3e  a = %.3e nu = %.3e Vm = %f theta = %f' % (
-    np.mean(gamma_vec_TVM) * 1e-8,
-    np.mean(a_vec_TVM) * 1e-6, np.mean(nu_vec_TVM) * 1e-4,
+    np.mean(gamma_vec_TVM) ,
+    np.mean(a_vec_TVM) , np.mean(nu_vec_TVM) ,
     np.mean(vm_vec_TVM), np.mean(theta_vec_TVM)))
 print('Var: gamma = %.3e  a = %.3e nu = %.3e Vm = %f theta = %f' % (
-    np.var(gamma_vec_TVM) * 1e-8,
-    np.var(a_vec_TVM) * 1e-6, np.var(nu_vec_TVM) * 1e-4,
+    np.var(gamma_vec_TVM),
+    np.var(a_vec_TVM) , np.var(nu_vec_TVM) ,
     np.var(vm_vec_TVM), np.var(theta_vec_TVM)))
 
 est_para = ['gamma', 'alpha', 'nu', 'vm', 'theta']  # ,'vm'
@@ -156,12 +156,14 @@ vioplot = sns.catplot(x="model_label", y="est", col="est_label",palette=["#CB1B4
 vioplot.set_axis_labels("", "Estimate value")
 # vioplot._legend.set_title('$h^2$')
 axes = vioplot.axes.flatten()
-axes[0].set_title("$\gamma \cdot 10^{-8}$")
-axes[1].set_title("$\\alpha \cdot 10^{-6}$")
-axes[2].set_title("$\\nu \cdot 10^{-4}$")
+axes[0].set_title("$\gamma $")
+axes[1].set_title("$\\alpha $")
+axes[2].set_title("$\\nu $")
 axes[3].set_title("$V_m $")
 axes[4].set_title("$\\theta $")
 
+for no_plots in range(0,4):
+    axes[no_plots].ticklabel_format(style='sci', axis='y', scilimits=(0,0),useMathText=True)
 
 
 

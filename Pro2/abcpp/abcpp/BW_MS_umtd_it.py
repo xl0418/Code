@@ -40,7 +40,7 @@ dir_path = 'c:/Liang/Googlebox/Research/Project2/'
 
 files = dir_path + 'BaleenWhales/treedata/'
 
-savedir = dir_path + 'BaleenWhales/modelselec2w_umtd_pics.npy'
+savedir = dir_path + 'BaleenWhales/modelselec2w_umtd_pics2.npy'
 
 td = DVTreeData(path=files, scalar=20000)
 

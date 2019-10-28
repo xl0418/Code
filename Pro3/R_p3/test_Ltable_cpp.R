@@ -6,11 +6,11 @@ n.cores <- detectCores()
 event2L.func <- 'C:/Liang/Code/Pro3/R_p3/event2L.R'
 source(event2L.func)
 
-dir <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_LM/'
+neu.eventtablefile <- 'C:/Liang/jc_standalone/x64/Release/NEevent11rep100.csv'
 
-neu.eventtablefile <- paste0(dir,'neutraldata/neuevent.csv')
 neu.eventtable <- read.csv(neu.eventtablefile,header = FALSE)
-turnover <- 1e9+1e7
+turnover <- 1e9
+L <- event2L(neu.eventtable, turnover=1e9)
 
 ev2l <- function(eventtable){
   L <- event2L(eventtable, turnover=1e9+1e7)

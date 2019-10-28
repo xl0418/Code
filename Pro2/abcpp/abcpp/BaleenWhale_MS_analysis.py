@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import pandas as pd
-sys.path.append('C:/Liang/abcpp_ms8/abcpp')
+sys.path.append('C:/Liang/abcpp_ms9/abcpp')
 import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
@@ -11,35 +11,35 @@ population = 40000
 timescaling = 20000
 total_population = population * 3
 data_dir = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/'
-data_name = data_dir + 'results_ms_0930/modelselec2w_pics.npy'
-obs_file = data_dir + 'results_ms_0930/'
+data_name = data_dir + 'results_ms_1028/modelselec2w_umtd_pics2.npy'
+obs_file = data_dir + 'results_ms_1028/'
 tree_data_file = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/treedata/'
 
 
 est_data = np.load(data_name,allow_pickle=True).item()
 fitness = est_data['fitness'][-1]
 Z = est_data['Z']
-gamma_TVP = est_data['gamma_data_TVP'][-1]
-a_TVP = est_data['a_data_TVP'][-1]
-nu_TVP = est_data['nu_data_TVP'][-1]
-vm_TVP = est_data['vm_data_TVP'][-1]
-theta_TVP = est_data['theta_data_TVP'][-1]
+gamma_TVP = est_data['gamma_data_TVP'][-2]
+a_TVP = est_data['a_data_TVP'][-2]
+nu_TVP = est_data['nu_data_TVP'][-2]
+vm_TVP = est_data['vm_data_TVP'][-2]
+theta_TVP = est_data['theta_data_TVP'][-2]
 
-gamma_TV = est_data['gamma_data_TV'][-1]
-a_TV = est_data['a_data_TV'][-1]
-nu_TV = est_data['nu_data_TV'][-1]
-vm_TV = est_data['vm_data_TV'][-1]
-theta_TV = est_data['theta_data_TV'][-1]
+gamma_TV = est_data['gamma_data_TV'][-2]
+a_TV = est_data['a_data_TV'][-2]
+nu_TV = est_data['nu_data_TV'][-2]
+vm_TV = est_data['vm_data_TV'][-2]
+theta_TV = est_data['theta_data_TV'][-2]
 
-gamma_TVM = est_data['gamma_data_TVM'][-1]
-a_TVM = est_data['a_data_TVM'][-1]
-nu_TVM = est_data['nu_data_TVM'][-1]
-vm_TVM = est_data['vm_data_TVM'][-1]
-theta_TVM = est_data['theta_data_TVM'][-1]
+gamma_TVM = est_data['gamma_data_TVM'][-2]
+a_TVM = est_data['a_data_TVM'][-2]
+nu_TVM = est_data['nu_data_TVM'][-2]
+vm_TVM = est_data['vm_data_TVM'][-2]
+theta_TVM = est_data['theta_data_TVM'][-2]
 
-q5_TVP = np.argsort(fitness[ :population ])[-int(population // 200+1)]  # best 5%
-q5_TV = np.argsort(fitness[population:2 * population ])[-int(population // 200+1)] + population  # best 5%
-q5_TVM = np.argsort(fitness[2 * population:3 * population])[-int(population // 200+1)] + 2 * population  # best 5%
+q5_TVP = np.argsort(fitness[ :population ])[-int(population // 20+1)]  # best 5%
+q5_TV = np.argsort(fitness[population:2 * population ])[-int(population // 20+1)] + population  # best 5%
+q5_TVM = np.argsort(fitness[2 * population:3 * population])[-int(population // 20+1)] + 2 * population  # best 5%
 
 fit_index_TVP = np.where(fitness[ :population] > fitness[ q5_TVP])[0]
 fit_index_TV = np.where(fitness[ population:2 * population] > fitness[ q5_TV])[0]
@@ -120,43 +120,43 @@ obsZ = obsZ[s]
 obsZ = obsZ.astype(np.float)
 meantrait = np.mean(obsZ)
 # sim TVP
-gamma_TVP_est=1e-2
-a_TVP_est=5
-nu_TVP_est=1.439e-03
-theta_TVP_est=3.078976
-vm_TVP_est=1e-2
+# gamma_TVP_est=1e-2
+# a_TVP_est=5
+# nu_TVP_est=1.439e-03
+# theta_TVP_est=3.078976
+# vm_TVP_est=1e-2
 
 param_TVP = DVParamLiang(gamma=gamma_TVP_est, a=a_TVP_est, K=1e6, h=1, nu=nu_TVP_est, r=1,
                          theta=theta_TVP_est,
-                         V00=.5,V01=.5, Vmax=vm_TVP_est, inittrait=meantrait, initpop=1e5,
+                         V00=.0001,V01=.0001, Vmax=vm_TVP_est, inittrait=meantrait, initpop=1e5,
                      initpop_sigma=10.0, break_on_mu=False)
 
-simtraits(param = param_TVP,replicates=100,obs_dir= obs_file,
+simtraits(param = param_TVP,replicates=1000,obs_dir= obs_file,
           tree_data_file=tree_data_file,timescaling=timescaling,mode = 'TVP')
-
-gamma_TV_est=1e-2
-a_TV_est=1e-2
-nu_TV_est=1.439e-03
-theta_TV_est=3.078976
-vm_TV_est=10.195081
+#
+# gamma_TV_est=1e-2
+# a_TV_est=1e-2
+# nu_TV_est=1.439e-03
+# theta_TV_est=3.078976
+# vm_TV_est=10.195081
 
 # sim TV
 param_TV = DVParamLiang(gamma=gamma_TV_est, a=a_TV_est, K=1e6, h=1, nu=nu_TV_est, r=1, theta=theta_TV_est,
-                         V00=.5,V01=.5, Vmax=vm_TV_est, inittrait=meantrait, initpop=1e5,
+                         V00=.0001,V01=.0001, Vmax=vm_TV_est, inittrait=meantrait, initpop=1e5,
                      initpop_sigma=10.0, break_on_mu=False)
 
-simtraits(param = param_TV,replicates=100,obs_dir= obs_file,tree_data_file=tree_data_file,
+simtraits(param = param_TV,replicates=1000,obs_dir= obs_file,tree_data_file=tree_data_file,
           timescaling=timescaling,mode = 'TV')
-
-gamma_TVM_est=4.901e-15
-a_TVM_est=3.531e-13
-nu_TVM_est=6.957e-04
-theta_TVM_est=3.078976
-vm_TVM_est=0.836507
+#
+# gamma_TVM_est=4.901e-15
+# a_TVM_est=3.531e-13
+# nu_TVM_est=6.957e-04
+# theta_TVM_est=3.078976
+# vm_TVM_est=0.836507
 
 # sim TVM
 param_TVM = DVParamLiang(gamma=gamma_TVM_est, a=a_TVM_est, K=1e12, h=1, nu=nu_TVM_est, r=1, theta=theta_TVM_est,
-                         V00=.5,V01=.5, Vmax=vm_TVM_est, inittrait=meantrait, initpop=1e5,
+                         V00=.0001,V01=.0001, Vmax=vm_TVM_est, inittrait=meantrait, initpop=1e5,
                      initpop_sigma=10.0, break_on_mu=False)
 
 simtraits(param = param_TVM,replicates=1000,obs_dir= obs_file,tree_data_file=tree_data_file,\
