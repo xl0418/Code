@@ -1,7 +1,7 @@
+import argparse
 import sys
+import os
 import numpy as np
-sys.path.append('C:/Liang/abcpp_ms10/abcpp')
-
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
 from scipy.stats import norm
@@ -10,10 +10,19 @@ import dendropy
 from dendropy.model import continuous
 from itertools import repeat
 from itertools import starmap
-sys.path.append('C:/Liang/Code/Pro2/abcpp/abcpp/')
 from pic_compute import pic_compute
 from tp_update_theta import tp_update
 
+
+# parse arguments
+parser = argparse.ArgumentParser(description='BaleenWhale arguments')
+parser.add_argument("--treedata", required=True, type=str, help="treedata directories")
+parser.add_argument("--result", required=True, type=str, help="result npy file")
+parser.add_argument("--num_threads", default=-1, required=False, type=int, help="number of threads")
+args = parser.parse_args()
+files = args.treedata
+output = args.result
+num_threads = args.num_threads
 
 #
 # argsort of 2-dimensional arrays is awkward
@@ -33,14 +42,6 @@ K_TV = 1e6
 K_TVM = 1e12
 nu=1e-4
 
-
-#full tree
-# dir_path = '/home/p286026/Liang/abcpp/'
-dir_path = 'c:/Liang/Googlebox/Research/Project2/'
-
-files = dir_path + 'BaleenWhales/treedata/'
-
-savedir = dir_path + 'BaleenWhales/modelselec2w_umtd_pics2.npy'
 
 td = DVTreeData(path=files, scalar=20000)
 
@@ -100,18 +101,18 @@ print('trying to estimate the parameters', '...')
 # let's try to find a true simulation:
 sampleparam_TVP = DVParamLiang(gamma=1, a=1, K=K_TVP, h=1, nu=nu, r=1, theta=0, V00=.0001,
                                V01=.0001, Vmax=100, inittrait=meantrait, initpop=1e5,
-                               initpop_sigma=10.0, break_on_mu=False)
+                               initpop_sigma=10.0, break_on_mu=False, num_threads=num_threads)
 sampleparam_TV = DVParamLiang(gamma=1, a=1, K=K_TV, h=1, nu=nu, r=1, theta=0, V00=.0001, V01=.0001,
                               Vmax=100, inittrait=meantrait, initpop=1e5,
-                              initpop_sigma=10.0, break_on_mu=False)
+                              initpop_sigma=10.0, break_on_mu=False, num_threads=num_threads)
 sampleparam_TVM = DVParamLiang(gamma=1, a=1, K=K_TVM, h=1, nu=nu, r=1, theta=0, V00=.0001,
                                V01=.0001, Vmax=100.0, inittrait=meantrait, initpop=1e5,
-                               initpop_sigma=10.0, break_on_mu=False)
+                               initpop_sigma=10.0, break_on_mu=False, num_threads=num_threads)
 
 # pop = dvcpp.DVSim(td, obs_param)
 
-population = 40000
-generations = 30
+population = 2000
+generations = 3
 total_population = population * 3
 
 lefttrait = np.min(obsZ)
@@ -499,4 +500,4 @@ for g in range(generations):
                  'vm_data_TVM': vm_data_TVM, 'theta_data_TVM': theta_data_TVM
                  }
 
-    np.save(savedir, para_data)
+    np.save(output, para_data)
