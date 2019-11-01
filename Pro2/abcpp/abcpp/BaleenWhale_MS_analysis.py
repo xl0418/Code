@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import pandas as pd
-sys.path.append('C:/Liang/abcpp_ms9/abcpp')
+sys.path.append('C:/Liang/abcpp_ms10/abcpp')
 import numpy as np
 from dvtraitsim_shared import DVTreeData, DVParamLiang
 import dvtraitsim_cpp as dvcpp
@@ -11,8 +11,8 @@ population = 40000
 timescaling = 20000
 total_population = population * 3
 data_dir = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/'
-data_name = data_dir + 'results_ms_1028/modelselec2w_umtd_pics2.npy'
-obs_file = data_dir + 'results_ms_1028/'
+data_name = data_dir + 'results_ms_1028/modelselec2w_smtd.npy'
+obs_file = data_dir + 'results_ms_1028/smtd_sim/'
 tree_data_file = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/treedata/'
 
 
@@ -37,9 +37,11 @@ nu_TVM = est_data['nu_data_TVM'][-2]
 vm_TVM = est_data['vm_data_TVM'][-2]
 theta_TVM = est_data['theta_data_TVM'][-2]
 
-q5_TVP = np.argsort(fitness[ :population ])[-int(population // 20+1)]  # best 5%
-q5_TV = np.argsort(fitness[population:2 * population ])[-int(population // 20+1)] + population  # best 5%
-q5_TVM = np.argsort(fitness[2 * population:3 * population])[-int(population // 20+1)] + 2 * population  # best 5%
+q5_TVP = np.argsort(fitness[ :population ])[-int(population // 200+1)]  # best 5%
+q5_TV = np.argsort(fitness[population:2 * population ])[-int(population // 200+1)] + population
+# best 5%
+q5_TVM = np.argsort(fitness[2 * population:3 * population])[-int(population // 200+1)] + 2 * \
+         population  # best 5%
 
 fit_index_TVP = np.where(fitness[ :population] > fitness[ q5_TVP])[0]
 fit_index_TV = np.where(fitness[ population:2 * population] > fitness[ q5_TV])[0]
@@ -77,6 +79,7 @@ def simtraits(param, replicates,obs_dir,tree_data_file,timescaling,mode):
     else:
         return print('Please sepcify mode...')
     valid = np.where(predictsim['sim_time'] == td.sim_evo_time)[0]
+    print(len(valid))
     if len(valid)>0:
         Z = predictsim['Z'][valid]
         Z = np.nan_to_num(Z)

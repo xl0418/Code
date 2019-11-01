@@ -9,7 +9,7 @@ library(export)
 source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
 emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
-dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_ms_1028/umtd_sim/'
+dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_ms_1028/smtd_sim/'
 dir_emp = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/Est/'
 
 emdata = read.nexus(emdatadir)
@@ -58,7 +58,7 @@ species_label = extantspecieslabel
 sorted.species.labels <- obsZ_emp[order(obsZ_emp[,2]),1]
 
 
-obsZ_pic = 10^obsZ_emp[,2]
+obsZ_pic = obsZ_emp[,2]
 names(obsZ_pic) = extantspecieslabel
 
 
@@ -80,7 +80,7 @@ predictZ_TVM = read.csv(simfile_TVM)
 
 
 
-sort = 0
+sort = 1
 
 if(sort == 0){
   predictZ_matrix_TVP = as.matrix(predictZ_TVP)
@@ -110,7 +110,9 @@ if(sort == 0){
 }
 
 
-samplesize = nrow(predictZ_matrix_TVP)
+samplesize_TVP = nrow(predictZ_matrix_TVP)
+samplesize_TV = nrow(predictZ_matrix_TV)
+samplesize_TVM = nrow(predictZ_matrix_TVM)
 
 
 TVP.pic <- c()
@@ -121,11 +123,14 @@ scaled = TRUE
 # empirical contrast
 empirical_pic<-abs(pic(obsZ_pic,phylo_test, scaled = scaled))
 
-for(size in c(1:samplesize)){
+for(size in c(1:samplesize_TVP)){
   TVP.pic <- rbind(TVP.pic,pic(predictZ_matrix_TVP[size,],phylo_test, scaled = scaled))
-  TV.pic <- rbind(TV.pic,pic(predictZ_matrix_TV[size,],phylo_test, scaled = scaled))
-  TVM.pic <- rbind(TVM.pic,pic(predictZ_matrix_TVM[size,],phylo_test, scaled = scaled))
-  
+}
+for(size in c(1:samplesize_TV)){
+TV.pic <- rbind(TV.pic,pic(predictZ_matrix_TV[size,],phylo_test, scaled = scaled))
+}
+for(size in c(1:samplesize_TVM)){
+TVM.pic <- rbind(TVM.pic,pic(predictZ_matrix_TVM[size,],phylo_test, scaled = scaled))
 }
 restructured_col <- c(2,3,4,1,5,7,6,13,14,8,9,10,11,12)
 TVP.pic <- TVP.pic[,restructured_col]
@@ -188,14 +193,14 @@ p_finalTVM <- facet_plot(plot_sepboxplt_TVM+xlim_tree(45), panel="TVM", data=d_m
         strip.text.x = element_text(size=12, face="bold"),
         axis.line = element_line(colour = "black", 
                                  size = 1, linetype = "solid"))+
-  xlim_expand(c(0,500), 'TVP')+xlim_expand(c(0,500), 'TV')+xlim_expand(c(0,500), 'TVM')
+  xlim_expand(c(0,0.1), 'TVP')+xlim_expand(c(0,0.1), 'TV')+xlim_expand(c(0,0.1), 'TVM')
 
 
 p_finalTVM
 
 
-lbs <- c(Tree = "Phylogenetic tree\nof baleen whales", TVP = "Trait evolution \n+ population dynamics\n(the AWC model)",
-         TV = "Trait evolution\n(the UWC model)", TVM ="Trait evolution \n+ metabolism dynamics\n(the MWC model)")
+lbs <- c(Tree = "Phylogenetic tree\nof baleen whales", TVP = "The AWC model",
+         TV = "The UWC model", TVM ="The MWC model")
 facet_labeller(p_finalTVM, lbs)
 
 # 
