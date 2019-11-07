@@ -9,7 +9,7 @@ library(export)
 source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
 emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
-dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_ms_1028/smtd_sim/'
+dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_ms_1107_continue40/pics_con_sim/'
 dir_emp = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/Est/'
 
 emdata = read.nexus(emdatadir)
@@ -80,7 +80,7 @@ predictZ_TVM = read.csv(simfile_TVM)
 
 
 
-sort = 1
+sort = 0
 
 if(sort == 0){
   predictZ_matrix_TVP = as.matrix(predictZ_TVP)

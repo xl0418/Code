@@ -297,6 +297,7 @@ fig_meta, axes_meta = plt.subplots(1, 1, sharey=True, sharex=True)
 axes_meta = sns.scatterplot(x="Trait", y="Metabolism", s=8,
                             data=traitpopdf_pd[traitpopdf_pd['model'] == 'TVM'],
                             ax=axes_meta, color="red")
+axes_meta.set_ylabel("Metabolic rate")
 axes_meta.set_title('MWC')
 
 # test the energetic equivalence rule

@@ -11,31 +11,31 @@ population = 40000
 timescaling = 20000
 total_population = population * 3
 data_dir = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/'
-data_name = data_dir + 'results_ms_1028/modelselec2w_smtd.npy'
-obs_file = data_dir + 'results_ms_1028/smtd_sim/'
+data_name = data_dir + 'results_ms_1107_continue40/pics_continue_to_40.npy'
+obs_file = data_dir + 'results_ms_1107_continue40/pics_con_sim/'
 tree_data_file = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/treedata/'
 
-
+iteration_of_est = -3
 est_data = np.load(data_name,allow_pickle=True).item()
-fitness = est_data['fitness'][-1]
+fitness = est_data['fitness'][iteration_of_est]
 Z = est_data['Z']
-gamma_TVP = est_data['gamma_data_TVP'][-2]
-a_TVP = est_data['a_data_TVP'][-2]
-nu_TVP = est_data['nu_data_TVP'][-2]
-vm_TVP = est_data['vm_data_TVP'][-2]
-theta_TVP = est_data['theta_data_TVP'][-2]
+gamma_TVP = est_data['gamma_data_TVP'][iteration_of_est]
+a_TVP = est_data['a_data_TVP'][iteration_of_est]
+nu_TVP = est_data['nu_data_TVP'][iteration_of_est]
+vm_TVP = est_data['vm_data_TVP'][iteration_of_est]
+theta_TVP = est_data['theta_data_TVP'][iteration_of_est]
 
-gamma_TV = est_data['gamma_data_TV'][-2]
-a_TV = est_data['a_data_TV'][-2]
-nu_TV = est_data['nu_data_TV'][-2]
-vm_TV = est_data['vm_data_TV'][-2]
-theta_TV = est_data['theta_data_TV'][-2]
+gamma_TV = est_data['gamma_data_TV'][iteration_of_est]
+a_TV = est_data['a_data_TV'][iteration_of_est]
+nu_TV = est_data['nu_data_TV'][iteration_of_est]
+vm_TV = est_data['vm_data_TV'][iteration_of_est]
+theta_TV = est_data['theta_data_TV'][iteration_of_est]
 
-gamma_TVM = est_data['gamma_data_TVM'][-2]
-a_TVM = est_data['a_data_TVM'][-2]
-nu_TVM = est_data['nu_data_TVM'][-2]
-vm_TVM = est_data['vm_data_TVM'][-2]
-theta_TVM = est_data['theta_data_TVM'][-2]
+gamma_TVM = est_data['gamma_data_TVM'][iteration_of_est]
+a_TVM = est_data['a_data_TVM'][iteration_of_est]
+nu_TVM = est_data['nu_data_TVM'][iteration_of_est]
+vm_TVM = est_data['vm_data_TVM'][iteration_of_est]
+theta_TVM = est_data['theta_data_TVM'][iteration_of_est]
 
 q5_TVP = np.argsort(fitness[ :population ])[-int(population // 200+1)]  # best 5%
 q5_TV = np.argsort(fitness[population:2 * population ])[-int(population // 200+1)] + population
