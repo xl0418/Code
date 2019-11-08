@@ -9,7 +9,7 @@ library(DDD)
 source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
 emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
-dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_0724_contrast/'
+dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_ms_1107_continue40/umtd_con_sim/'
 dir_emp = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/Est/'
 emdata = read.nexus(emdatadir)
 
@@ -100,8 +100,11 @@ if(sort == 0){
   for(Nrow in c(1:nrow(predictN_matrix_TVP))){
     predictN_matrix_TVP_sorted=rbind(predictN_matrix_TVP_sorted,
                               predictN_matrix_TVP[Nrow,TVP_Z_order[Nrow,]])
-    predictN_matrix_TVM_sorted=rbind(predictN_matrix_TVM_sorted,
-                                     predictN_matrix_TVM[Nrow,TVM_Z_order[Nrow,]])
+  }
+  
+  for(Nrow in c(1:nrow(predictN_matrix_TVM))){
+  predictN_matrix_TVM_sorted=rbind(predictN_matrix_TVM_sorted,
+                                   predictN_matrix_TVM[Nrow,TVM_Z_order[Nrow,]])
   }
   dimnames(predictZ_matrix_TVP)[[2]] = sorted.species.labels
   dimnames(predictZ_matrix_TV)[[2]] = sorted.species.labels
@@ -135,7 +138,7 @@ colnames(meanpop_TVM) = c('species','Pop','model')
 df_mean_pop = rbind(meanpop_TVP,meanpop_TVM)
 
 
-obsZ_mean = 10^(obsZ_emp[,2])
+obsZ_mean = (obsZ_emp[,2])
 
 
 
@@ -177,13 +180,13 @@ p_finalTVM <- facet_plot(plot_sepboxplt_TVM+xlim_tree(40), panel="TVM", data=d_m
 # 
 # p_final_pop_TVP
 
-
-lbs <- c(Tree = "Phylogenetic tree\nof baleen whales", TVP = "Trait evolution \n+ population dynamics",
-         TV = "Trait evolution", TVM ="Trait evolution \n+ metabolism dynamics") # ,pop="Abundance distribution (10)")
+p_finalTVM
+lbs <- c(Tree = "Phylogenetic tree\nof baleen whales", TVP = "The AWC model",
+         TV = "The UWC model", TVM ="The MWC model")
 facet_labeller(p_finalTVM, lbs)
 
 
-savefile = paste0(dir,'predictimage_TVP_TV_TVM',count,'.png')
+# savefile = paste0(dir,'predictimage_TVP_TV_TVM',count,'.png')
 # ggsave(savefile,p_finalTVM)
 
 
