@@ -21,7 +21,7 @@ dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 # data_name = data_dir + 'modelselec2w_umtd_pics.npy'
 
 data_dir = 'C:/Liang/abcpp_ms10/abcpp/'
-data_name = data_dir + 'smtd_continue_to_40.npy'
+data_name = data_dir + 'umtd_con40.npy'
 
 obs_file = dir_path + 'treedata/'
 
@@ -65,7 +65,7 @@ obsZ = sorted(10 ** logTL)
 
 est_data = np.load(data_name,allow_pickle=True).item()
 population = int(len(est_data['model_data'][0]) / 3)
-fitness = est_data['fitness'][-2]
+fitness = est_data['fitness'][-1]
 
 q5_TVP = np.argsort(fitness[:population])[-int(population // 200 + 1)]  # best 5%
 q5_TV = np.argsort(fitness[population:2 * population])[
