@@ -6,10 +6,11 @@ library(ggstance)
 library(ggimage)
 library(DDD)
 library(export)
+library(ape)
 source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
 emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
-dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_ms_1107_continue40/pics_con_sim/'
+dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_ms_1107_continue40/umtd_con_sim/'
 dir_emp = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/Est/'
 
 emdata = read.nexus(emdatadir)
@@ -122,6 +123,8 @@ TVM.pic <- c()
 scaled = TRUE
 # empirical contrast
 empirical_pic<-abs(pic(obsZ_pic,phylo_test, scaled = scaled))
+actual.bodylength = 10^(obsZ_pic)
+d_actualtrait = data.frame(species=species_label, trait=actual.bodylength)
 
 for(size in c(1:samplesize_TVP)){
   TVP.pic <- rbind(TVP.pic,pic(predictZ_matrix_TVP[size,],phylo_test, scaled = scaled))
@@ -163,8 +166,11 @@ colnames(d_all_TVM) = c('betspecies','contrast')
 recont.emp.con <- empirical_pic[restructured_col]
 d_meanemp = data.frame(betspecies=colname.of.node, contrast=recont.emp.con)
 
+whale.pics <- data.frame(node = c("2","6"),
+                images = c("C:/Liang/Googlebox/Research/Project2/BaleenWhales/whales_pics/CBalaenidae.png",
+                           "C:/Liang/Googlebox/Research/Project2/BaleenWhales/whales_pics/CBalaenopteroidea.png"))
 
-plot_tree <- ggtree(phylo_test,size=.5) +geom_tiplab(size=3.5,fontface="bold") #+xlim(0,1500)
+plot_tree <- ggtree(phylo_test,size=.5) +geom_tiplab(size=3.5,fontface="bold")#+xlim(0,50)
 
 
 plot_sepboxplt_TVP <- facet_plot(plot_tree, panel="TVP", data=d_all_TVP, geom_boxploth, 
@@ -193,15 +199,17 @@ p_finalTVM <- facet_plot(plot_sepboxplt_TVM+xlim_tree(45), panel="TVM", data=d_m
         strip.text.x = element_text(size=12, face="bold"),
         axis.line = element_line(colour = "black", 
                                  size = 1, linetype = "solid"))+
-  xlim_expand(c(0,0.1), 'TVP')+xlim_expand(c(0,0.1), 'TV')+xlim_expand(c(0,0.1), 'TVM')
+  xlim_expand(c(0,0.11), 'TVP')+xlim_expand(c(0,0.11), 'TV')+xlim_expand(c(0,0.11), 'TVM')
 
+add.length <- facet_plot(p_finalTVM, panel='bodylengthbar', data=d_actualtrait, geom=geom_segment, aes(x=0, xend=trait, y=y, yend=y),
+           size=5, color='#113285') +xlim_expand(c(0,2600), 'bodylengthbar')
 
-p_finalTVM
+add.length
 
 
 lbs <- c(Tree = "Phylogenetic tree\nof baleen whales", TVP = "The AWC model",
-         TV = "The UWC model", TVM ="The MWC model")
-facet_labeller(p_finalTVM, lbs)
+         TV = "The UWC model", TVM ="The MWC model", bodylengthbar =  "The actual length")
+facet_labeller(add.length, lbs)
 
 # 
 # savefile = paste0(dir,'predictcontrastimage_TVP_TV_TVM_sorted',count,'.png')

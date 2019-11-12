@@ -46,16 +46,17 @@ r = [0,1,2]
 barWidth = 0.85
 names = ('SMTD', 'UMTD+PICs', 'PICs')
 # Create green Bars
-plt.bar(r, tvp_gof, color='#b5ffb9', edgecolor='white', width=barWidth)
+tvp = plt.bar(r, tvp_gof, color='#F17C67', edgecolor='white', width=barWidth)
 # Create orange Bars
-plt.bar(r, tv_gof, bottom=tvp_gof, color='#f9bc86', edgecolor='white', width=barWidth)
+tv = plt.bar(r, tv_gof, bottom=tvp_gof, color='#FAD689', edgecolor='white', width=barWidth)
 # Create blue Bars
-plt.bar(r, tvm_gof, bottom=[i + j for i, j in zip(tvp_gof, tv_gof)], color='#a3acff',
+tvm = plt.bar(r, tvm_gof, bottom=[i + j for i, j in zip(tvp_gof, tv_gof)], color='#2EA9DF',
         edgecolor='white', width=barWidth)
 
 # Custom x axis
 plt.xticks(r, names)
-plt.xlabel("group")
-
+plt.legend((tvp,tv,tvm),
+           ('AWC','UWC','MWC'),loc='upper center', bbox_to_anchor=(0.5, 1.1),
+          ncol=3, fancybox=True)
 # Show graphic
 plt.show()
