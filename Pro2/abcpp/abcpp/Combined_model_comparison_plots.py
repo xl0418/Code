@@ -116,62 +116,6 @@ for data_folder in ['results_0930_smtd/', 'results_0930_umtd_pics/', 'results_09
     s3h0_list.append(s3h0)
     s3h1_list.append(s3h1)
 #
-#
-# r = [0,1,2]
-#
-# # plot
-# barWidth = 0.85
-# names = ('SMTD', 'UMTD+PICs', 'PICs')
-# # Create green Bars
-# h0_colors = ['#81C7D4','#33A6B8','#0089A7','#005CAF']
-# h1_colors = ['#B28FCE','#986DB2','#77428D','#4A225D']
-#
-# bar1 = plt.bar(r, s0h0_list, color=h0_colors[0], edgecolor='white', width=barWidth)
-# # Create orange Bars
-# bar2 = plt.bar(r, s0h1_list, bottom=s0h0_list, color=h1_colors[0], edgecolor='white',
-#                width=barWidth)
-# # Create blue Bars
-# bar3 = plt.bar(r, s1h0_list, bottom=[i + j for i, j in zip(s0h1_list, s0h0_list)],
-#                color=h0_colors[1],
-#         edgecolor='white', width=barWidth)
-#
-# bar4 = plt.bar(r, s1h1_list, bottom=[i + j +k for i, j,k in zip(s0h1_list, s0h0_list,s1h0_list)],
-#         color=h1_colors[1],
-#         edgecolor='white', width=barWidth)
-#
-# bar5 = plt.bar(r, s2h0_list, bottom=[i + j +k+m for i, j,k,m in zip(s0h1_list, s0h0_list,s1h0_list,
-#                                                              s1h1_list)],
-#         color=h0_colors[2],
-#         edgecolor='white', width=barWidth)
-#
-# bar6 = plt.bar(r, s2h1_list, bottom=[i + j +k+m+n for i, j,k,m,n in zip(s0h1_list, s0h0_list,
-#                                                                         s1h0_list,
-#                                                              s1h1_list,s2h0_list)],
-#         color=h1_colors[2],
-#         edgecolor='white', width=barWidth)
-#
-# bar7 = plt.bar(r, s3h0_list, bottom=[i + j +k+m+n+h for i, j,k,m,n,h in zip(s0h1_list, s0h0_list,
-#                                                                             s1h0_list,
-#                                                              s1h1_list,s2h0_list,s2h1_list)],
-#         color=h0_colors[3],
-#         edgecolor='white', width=barWidth)
-#
-# bar8 = plt.bar(r, s3h1_list, bottom=[i + j +k+m+n+h+u for i, j,k,m,n,h,u in zip(s0h1_list,
-#                                                                                 s0h0_list,
-#                                                                       s1h0_list,
-#                                                              s1h1_list,s2h0_list,s2h1_list,s3h0_list)],
-#         color=h1_colors[3],
-#         edgecolor='white', width=barWidth)
-# # Custom x axis
-# plt.xticks(r, names)
-# # plt.xlabel("group")
-# plt.legend((bar1[0],bar2[0],bar3[0],bar4[0],bar5[0],bar6[0],bar7[0],bar8[0]),
-#            ('s0h0','s0h1','s1h0','s1h1','s2h0','s2h1','s3h0','s3h1'))
-# plt.legend(ncol=8, bbox_to_anchor=(0, 1),
-#               loc='lower left', fontsize='small')
-# # Show graphic
-# plt.show()
-
 
 category_names = ['$s=20000,h^2=0.5$','$s=20000,h^2=1$',
                   '$s=40000,h^2=0.5$','$s=40000,h^2=1$',
@@ -188,45 +132,94 @@ results = {
 
 }
 
-def survey(results, category_names):
-    """
-    Parameters
-    ----------
-    results : dict
-        A mapping from question labels to a list of answers per category.
-        It is assumed all lists contain the same number of entries and that
-        it matches the length of *category_names*.
-    category_names : list of str
-        The category labels.
-    """
-    labels = list(results.keys())
-    data = np.array(list(results.values()))
-    data_cum = data.cumsum(axis=1)
-    category_colors = plt.get_cmap('RdYlGn')(
-        np.linspace(0.15, 0.85, data.shape[1]))
 
-    fig, ax = plt.subplots(figsize=(9.2, 5))
-    ax.invert_yaxis()
-    ax.xaxis.set_visible(False)
-    ax.set_xlim(0, np.sum(data, axis=1).max())
+data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster' \
+           '/results_ms_1028/'
+tvp_gof = []
+tv_gof = []
+tvm_gof = []
+for datafile in ['smtd_con40.npy', 'umtd_con40.npy', 'modelselec2w_pics.npy']:
+    data_name = data_dir + datafile
 
-    for i, (colname, color) in enumerate(zip(category_names, category_colors)):
-        widths = data[:, i]
-        starts = data_cum[:, i] - widths
-        ax.barh(labels, widths, left=starts, height=0.5,
-                label=colname, color=color)
-        # xcenters = starts + widths / 2
+    est_data = np.load(data_name,allow_pickle=True).item()
+    population = int(len(est_data['model_data'][0]) / 3)
+    fitness = est_data['fitness'][-1]
+    total_population = len(est_data['model_data'][0])
+    model_index = np.array([0, 1, 2])
+    model_params = np.repeat(model_index, repeats=population)
+    propose_model = model_params
+    q5 = np.argsort(fitness)[-int(total_population // 20)]  # best 25%
+    fit_index = np.where(fitness > fitness[q5])[0]
 
-        # r, g, b, _ = color
-        # text_color = 'white' if r * g * b < 0.5 else 'darkgrey'
-        # for y, (x, c) in enumerate(zip(xcenters, widths)):
-        #     ax.text(x, y, str(int(c)), ha='center', va='center',
-        #             color=text_color)
-    ax.legend(ncol=4, bbox_to_anchor=(0, 1),
-              loc='lower left', fontsize='small')
+    modelTVPperc = len(np.where(propose_model[fit_index] == 0)[0]) / len(fit_index)
+    modelTVperc = len(np.where(propose_model[fit_index] == 1)[0]) / len(fit_index)
+    modelTVMperc = len(np.where(propose_model[fit_index] == 2)[0]) / len(fit_index)
 
-    return fig, ax
+    tvp_gof.append(modelTVPperc)
+    tv_gof.append(modelTVperc)
+    tvm_gof.append(modelTVMperc)
 
 
-survey(results, category_names)
+
+model_names = ['AWC','UWC','MWC']
+models = {
+    'SMTD': [tvp_gof[0], tv_gof[0], tvm_gof[0]],
+    'UMTD+PICs': [tvp_gof[1], tv_gof[1],  tvm_gof[1]],
+    'PICs': [tvp_gof[2], tv_gof[2],  tvm_gof[2]]
+}
+
+
+"""
+Parameters
+----------
+results : dict
+    A mapping from question labels to a list of answers per category.
+    It is assumed all lists contain the same number of entries and that
+    it matches the length of *category_names*.
+category_names : list of str
+    The category labels.
+"""
+labels_1 = list(results.keys())
+data_1 = np.array(list(results.values()))
+data_cum_1 = data_1.cumsum(axis=1)
+category_colors_1 = plt.get_cmap('RdYlGn')(
+    np.linspace(0.15, 0.85, data_1.shape[1]))
+
+labels_2 = list(models.keys())
+data_2 = np.array(list(models.values()))
+data_cum_2 = data_2.cumsum(axis=1)
+category_colors_2 = plt.get_cmap('rainbow')(
+    np.linspace(0.15, 0.85, data_2.shape[1]))
+
+
+
+fig, axes = plt.subplots(nrows = 2, ncols = 1,figsize=(9, 9))
+axes[0].invert_yaxis()
+axes[0].xaxis.set_visible(False)
+axes[0].set_xlim(0, np.sum(data_1, axis=1).max())
+
+axes[1].invert_yaxis()
+axes[1].xaxis.set_visible(False)
+axes[1].set_xlim(0, np.sum(data_2, axis=1).max())
+
+for i, (colname, color) in enumerate(zip(category_names, category_colors_1)):
+    widths = data_1[:, i]
+    starts = data_cum_1[:, i] - widths
+    axes[0].barh(labels_1, widths, left=starts, height=0.5,
+            label=colname, color=color)
+
+axes[0].legend(ncol=4, bbox_to_anchor=(0, 1),
+          loc='lower left', fontsize='small')
+
+colors_three_models = ['#EE442F', '#601A4A','#85C0F9']
+for i, (colname, color) in enumerate(zip(model_names, category_colors_2)):
+    widths = data_2[:, i]
+    starts = data_cum_2[:, i] - widths
+    axes[1].barh(labels_2, widths, left=starts, height=0.5,
+            label=colname, color=colors_three_models[i])
+
+axes[1].legend(ncol=3, bbox_to_anchor=(0, 1),
+          loc='lower left', fontsize='small')
+
+
 plt.show()

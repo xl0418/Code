@@ -29,7 +29,7 @@ for datafile in ['smtd_con40.npy', 'umtd_con40.npy', 'modelselec2w_pics.npy']:
     model_index = np.array([0, 1, 2])
     model_params = np.repeat(model_index, repeats=population)
     propose_model = model_params
-    q5 = np.argsort(fitness)[-int(total_population // 4)]  # best 25%
+    q5 = np.argsort(fitness)[-int(total_population // 20)]  # best 25%
     fit_index = np.where(fitness > fitness[q5])[0]
 
     modelTVPperc = len(np.where(propose_model[fit_index] == 0)[0]) / len(fit_index)
@@ -59,4 +59,57 @@ plt.legend((tvp,tv,tvm),
            ('AWC','UWC','MWC'),loc='upper center', bbox_to_anchor=(0.5, 1.1),
           ncol=3, fancybox=True)
 # Show graphic
+plt.show()
+
+
+
+
+
+model_names = ['AWC','UWC','MWC']
+models = {
+    'SMTD': [tvp_gof[0], tv_gof[0], tvm_gof[0]],
+    'UMTD+PICs': [tvp_gof[1], tv_gof[1],  tvm_gof[1]],
+    'PICs': [tvp_gof[2], tv_gof[2],  tvm_gof[2]]
+}
+def survey(results, category_names):
+    """
+    Parameters
+    ----------
+    results : dict
+        A mapping from question labels to a list of answers per category.
+        It is assumed all lists contain the same number of entries and that
+        it matches the length of *category_names*.
+    category_names : list of str
+        The category labels.
+    """
+    labels = list(results.keys())
+    data = np.array(list(results.values()))
+    data_cum = data.cumsum(axis=1)
+    category_colors = plt.get_cmap('RdYlGn')(
+        np.linspace(0.15, 0.85, data.shape[1]))
+
+    fig, ax = plt.subplots(figsize=(9.2, 5))
+    ax.invert_yaxis()
+    ax.xaxis.set_visible(False)
+    ax.set_xlim(0, np.sum(data, axis=1).max())
+
+    for i, (colname, color) in enumerate(zip(category_names, category_colors)):
+        widths = data[:, i]
+        starts = data_cum[:, i] - widths
+        ax.barh(labels, widths, left=starts, height=0.5,
+                label=colname, color=color)
+        # xcenters = starts + widths / 2
+
+        # r, g, b, _ = color
+        # text_color = 'white' if r * g * b < 0.5 else 'darkgrey'
+        # for y, (x, c) in enumerate(zip(xcenters, widths)):
+        #     ax.text(x, y, str(int(c)), ha='center', va='center',
+        #             color=text_color)
+    ax.legend(ncol=3, bbox_to_anchor=(0, 1),
+              loc='lower left', fontsize='small')
+
+    return fig, ax
+
+
+survey(models, model_names)
 plt.show()
