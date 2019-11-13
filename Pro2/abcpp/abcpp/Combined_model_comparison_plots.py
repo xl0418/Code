@@ -138,7 +138,7 @@ data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster' \
 tvp_gof = []
 tv_gof = []
 tvm_gof = []
-for datafile in ['smtd_con40.npy', 'umtd_con40.npy', 'modelselec2w_pics.npy']:
+for datafile in ['smtd_con40.npy', 'umtd_con40.npy', 'pics_con40.npy']:
     data_name = data_dir + datafile
 
     est_data = np.load(data_name,allow_pickle=True).item()
