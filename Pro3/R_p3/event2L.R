@@ -1,5 +1,5 @@
 
-# event2L = function(events,turnover){
+event2L = function(events,turnover){
   colnames(events) = c('T','ns','x','y','sp','ancestor')
   ticks = turnover
   L_raw = cbind(events$T,events$ancestor+1,events$sp+1)
@@ -62,5 +62,5 @@
     L <- L_ini[which(L_ini[,4]==-1),]
   }
 
-  # return(L)
-# }
+  return(L)
+}

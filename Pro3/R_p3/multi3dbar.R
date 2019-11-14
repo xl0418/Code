@@ -67,7 +67,7 @@ stackplot.3d<-function(x,y,z,alpha=1,topcol="#078E53",sidecol="#aaaaaa"){
 ## Calls stackplot.3d repeatedly to create a barplot
 ## z.top is the heights of the columns and must be an appropriately named vector
 barplot3d<-function(z,group.dim=c(15,18),no.column=3,no.row=3,alpha=1,scalexy=10,scalez=1,
-                    gap=0.2,gap.sce.mode=TRUE,y.intercept=c(80,120,160,200),
+                    gap=0.2,gap.sce.mode=TRUE,y.intercept=c(30,150,250,400),
                     barcolors=c("#8CD790","#EFDC05","#30A9DE")){
   ## These lines allow the active rgl device to be updated with multiple changes
   ## This is necessary to add each column sequentially
@@ -86,9 +86,7 @@ barplot3d<-function(z,group.dim=c(15,18),no.column=3,no.row=3,alpha=1,scalexy=10
   save <- par3d(skipRedraw=TRUE)
   on.exit(par3d(save))
   
-  ## Reorder data into 6 regions
-  neworder=c(1:nrow(z))
-  
+ 
   ## Define dimensions of the plot 
 
   if(group.dim[1]%%no.column!=0){
@@ -109,13 +107,30 @@ barplot3d<-function(z,group.dim=c(15,18),no.column=3,no.row=3,alpha=1,scalexy=10
   colors = rep(c(colors1,colors2,colors3),each = dimensions[2]/no.row)
   
   # colors=as.vector(sapply(broadcolors,rep,dimensions[2]/no.row))
-  
+  dim.each.block = c(dimensions[1]/no.column,dimensions[2]/no.row)
+  size.each.block = dim.each.block[1]*dim.each.block[2]
   ## Scale z.top coordinate
-
+  
+  ## Reorder data into 6 regions
+  color.order = c(1:nrow(z))
+  neworder.first.i=NULL
+  for(i in 1:dim.each.block[1]){
+    for(j in 1:dimensions[2]){
+      neworder.temp=(j-1)%/%(dimensions[2]/no.row)*size.each.block + 
+        ifelse(j%%dim.each.block[2]==0,dim.each.block[2],j%%dim.each.block[2])+
+        dim.each.block[2]*(i-1) 
+      neworder.first.i = c(neworder.first.i,neworder.temp)
+      # Variable to work out which column to plot; counts from 1:96
+      print(neworder.temp)
+    }
+  }
+  neworder = c(neworder.first.i,neworder.first.i+90, neworder.first.i+180)
+  it=1
   ## Plot each of the columns
   for(i in 1:dimensions[1]){
     for(j in 1:dimensions[2]){
-      it=(i-1)*dimensions[2]+j # Variable to work out which column to plot; counts from 1:96
+         # Variable to work out which column to plot; counts from 1:96
+      color.it = (i-1)*dimensions[2] + j
       if(gap.sce.mode==TRUE){
         gap.sce.i = (i-1)%/%(dimensions[1]/no.column)*scalexy
         gap.sce.j = (j-1)%/%(dimensions[2]/no.row)*scalexy
@@ -130,9 +145,10 @@ barplot3d<-function(z,group.dim=c(15,18),no.column=3,no.row=3,alpha=1,scalexy=10
                    c(-gap-y[i]-gap.sce.i,-y[i]-scalexy-gap.sce.i),
                    z[neworder[it],],
                    alpha=alpha,
-                   topcol=colors[neworder[it]],
-                   sidecol=colors[neworder[it]]
+                   topcol=colors[color.order[color.it]],
+                   sidecol=colors[color.order[color.it]]
                    )
+      it = it +1
     }
   }
   
@@ -158,7 +174,7 @@ barplot3d<-function(z,group.dim=c(15,18),no.column=3,no.row=3,alpha=1,scalexy=10
   # axis for sigma_phi
   xlabels <- c('0','1e2','1e4','1e6','1e8','Inf')
   axis3d("x-+",nticks=6,at=seq(155,205,10),labels=xlabels,lwd=2)
-  text3d(matrix(c(0,245,190,200,80,80,-40,-25,20),ncol=3),
+  text3d(matrix(c(0,245,190,200,0,0,-40,-25,20),ncol=3),
          texts=c('Diversity',expression(psi), expression(phi) ),
          cex = 2)
   
