@@ -8,39 +8,52 @@ library(gridExtra)
 library(ggthemes)
 source('C:/Liang/Code/Pro3/R_p3/deltar.R', echo=TRUE)
 method = 'deltar'
-dir <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_final1/'
-scenario = c('Levent','Mevent','Hevent')
-sce.short = c('L','M','H')
+dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces/'
+sce.short = c('H','M','L')
+scenario = NULL
+sce.short.comb.vec = NULL
+for(i.letter in sce.short){
+  for(j.letter in sce.short){
+    sce.folder = paste0('sce',i.letter,j.letter)
+    scenario = c(scenario,sce.folder)
+    sce.short.comb = paste0(i.letter,j.letter)
+    sce.short.comb.vec = c(sce.short.comb.vec,sce.short.comb)
+  }
+}
+
+# Compute the colless values and gamma values for a given phylo tree.
+foo <- function(x, metric = "colless") {
+  if (metric == "colless") {
+    xx <- as.treeshape(x)  # convert to apTreeshape format
+    colless(xx, "yule")  # calculate colless' metric
+  } else if (metric == "gamma") {
+    gammaStat(x)
+  } else if (metric == "deltar") {
+    deltar(x)
+  } else stop("metric should be one of colless or gamma")
+}
+
 jclabel = c('0','0.25','0.5','0.75','1')
 plabel = c('0','1e2','1e4','1e6','1e8','Inf')
 plotl_est <- list()
 
-for(tens1 in c(1:3)){
-  sce = scenario[tens1]
-  f.name = sce.short[tens1]
-  # Compute the colless values and gamma values for a given phylo tree.
-  foo <- function(x, metric = "colless") {
-    if (metric == "colless") {
-      xx <- as.treeshape(x)  # convert to apTreeshape format
-      colless(xx, "yule")  # calculate colless' metric
-    } else if (metric == "gamma") {
-      gammaStat(x)
-    } else if (metric == "deltar") {
-      deltar(x)
-    } else stop("metric should be one of colless or gamma")
-  }
-  
+for(tens1 in c(1:9)){
+  scefolder = scenario[tens1]
+  letter.comb = sce.short.comb.vec[tens1]
   i.true.order = 1
+  print(scefolder)
   
   colless_alldf = data.frame()
   for(i in c(1,4,2,5,3)){
     for(j in c(1:6)){
-      if(i==1){
-        comb=paste0(i,i)
-      }else{
-        comb=paste0(i,j)
-      }    
-      multitreefile <- paste0(dir,'1e+07/spatialpara1e+07',f.name,comb,'/multitree',f.name,comb,'.tre')
+      
+      if(i_n == 8 & i == 2 & j==4 & rep %in% c(55,58)){
+        next
+      }
+      comb=paste0(i,j)
+      
+      multitreefile <- paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/','multitree',letter.comb,comb,'.tre')
+      
       trees <- read.tree(multitreefile)
       colless_df <- ldply(trees, foo, metric = method)  # calculate metric for each tree
       colless_df = cbind(colless_df,jclabel[i.true.order],plabel[j])
