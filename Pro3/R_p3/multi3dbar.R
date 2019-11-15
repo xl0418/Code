@@ -120,8 +120,6 @@ barplot3d<-function(z,group.dim=c(15,18),no.column=3,no.row=3,alpha=1,scalexy=10
         ifelse(j%%dim.each.block[2]==0,dim.each.block[2],j%%dim.each.block[2])+
         dim.each.block[2]*(i-1) 
       neworder.first.i = c(neworder.first.i,neworder.temp)
-      # Variable to work out which column to plot; counts from 1:96
-      print(neworder.temp)
     }
   }
   neworder = c(neworder.first.i,neworder.first.i+90, neworder.first.i+180)
@@ -170,12 +168,22 @@ barplot3d<-function(z,group.dim=c(15,18),no.column=3,no.row=3,alpha=1,scalexy=10
          nticks=4,lwd=2)
   # axis for phi
   zlabels <- c('0','0.25','0.5','0.75','1')
-  axes3d("z+-", labels=zlabels,nticks=length(zlabels),at=seq(-15,-55,-10),lwd=2)
+  axes3d("z+-", labels=zlabels,nticks=length(zlabels),at=seq(-15,-55,-10)*scalexy/10,lwd=2)
   # axis for sigma_phi
-  xlabels <- c('0','1e2','1e4','1e6','1e8','Inf')
-  axis3d("x-+",nticks=6,at=seq(155,205,10),labels=xlabels,lwd=2)
-  text3d(matrix(c(0,245,190,200,0,0,-40,-25,20),ncol=3),
+  xlabels <- c('1',expression(10^-2),expression(10^-4),expression(10^-6),expression(10^-8),'0')
+  axis3d("x-+",nticks=6,at=seq(155,205,10)*scalexy/10,labels=xlabels,lwd=2)
+  text3d(matrix(c(0,245,210,100,0,0,-40,-45,20)*scalexy/10,ncol=3),
          texts=c('Diversity',expression(psi), expression(phi) ),
          cex = 2)
+  # spatial distances indicators
+  text3d(matrix(c(0,0,0,40,120,180,150,150,150,150,150,150,
+                  -40,-90,-150,-200,-200,-200)*scalexy/10,ncol=3),
+         texts=c(expression(sigma[disp] == 10),
+                 expression(sigma[disp] == 1),
+                 expression(sigma[disp] == 0.1),
+                 expression(sigma[JC] == 10),
+                 expression(sigma[JC] == 1),
+                 expression(sigma[JC] == 0.1)),
+         cex = 1)
   
 }

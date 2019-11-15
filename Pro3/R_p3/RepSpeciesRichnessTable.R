@@ -70,7 +70,6 @@ barplot3d(z,alpha=0.6)
 legend3d("topright", legend = c('Low spatiality','Intermediate spatiality','High spatiality'), pch = 12,
          col = c("#8CD790","#EFDC05","#30A9DE"), cex=1.5, inset=c(0.02))
 
-rgl.snapshot(filename=paste0(moviedir,"Species_richness.png"))
 
 
 testz = z
@@ -86,7 +85,11 @@ r3dDefaults$windowRect <- c(0, 100, 800, 800)
 # Animate the 3d plot and save as a gif
 open3d()
 barplot3d(testz,group.dim=c(15,18),alpha=0.8,barcolors = color.plate,
-          y.intercept=c(35,150,250,400))
-legend3d("topright", legend = c('Low spatiality','Intermediate spatiality','High spatiality'), pch = 12,
-         col = c("#8CD790","#EFDC05","#30A9DE"), cex=1.5, inset=c(0.02))
+          y.intercept=c(35,150,250,400),gap = 0.2,scalexy = 30)
+# legend3d("topright", legend = c('Low spatiality','Intermediate spatiality','High spatiality'), pch = 12,
+#          col = c("#8CD790","#EFDC05","#30A9DE"), cex=1.5, inset=c(0.02))
+rgl.snapshot(filename=paste0(moviedir,"Species_richness.png"))
 
+if (!rgl.useNULL())
+  # play3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20)
+  movie3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20,dir=moviedir,fps=10)

@@ -6,6 +6,7 @@ library(viridis)
 library("RColorBrewer")
 library(grid)
 library(gridExtra)
+source('C:/Liang/Code/Pro3/R_p3/noplotltt95.R', echo=TRUE)
 plot_dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
 dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces/'
 sce.short = c('H','M','L')
@@ -22,7 +23,7 @@ for(i.letter in sce.short){
 
 x.breaks = seq(0,18,1)
 max.logabund = 12
-  
+
 for(i_n in c(1:9)){
   scefolder = scenario[i_n]
   letter.comb = sce.short.comb.vec[i_n]
@@ -31,31 +32,16 @@ for(i_n in c(1:9)){
   
   for(i in c(1,4,2,5,3)){
     for(j in c(1:6)){
-    abund=NULL
-    comb = paste0(i,j)
-    print(paste(letter.comb,i,j))
-    for(rep in c(1:100)){
-      if(i_n == 8 & i == 2 & j==4 & rep %in% c(55,58)){
-        next
-      }
-      rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'R',comb,'rep',rep,'.csv')
-      Rs = read.csv(rname,header = FALSE)
-      log.Rs = log2(Rs)
-      freq = hist(as.numeric(log.Rs),plot=FALSE,breaks = x.breaks)
-      counts = freq$counts
-      abund = rbind(abund, counts)
-    }
-    mean.sim = apply(abund,MARGIN=2,FUN=mean)
-    sd.sim = sqrt(apply(abund,MARGIN=2,FUN=var))
-    col.quan = length(mean.sim)
-    if(col.quan<length(x.breaks)){
-      mean.sim <- c(mean.sim,matrix(0,1,length(x.breaks)-col.quan))
-      sd.sim <- c(sd.sim,matrix(0,1,length(x.breaks)-col.quan))
+      comb=paste0(i,j)
+      
+      multitreefile <- paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/','multitree',letter.comb,comb,'.tre')
+      
+      trees <- read.tree(multitreefile)
+      lttplot <- noplotltt95(trees)
       
     }
-    abund.df = rbind(abund.df,cbind(mean.sim,sd.sim,i.true.order,j,c(1:length(x.breaks))))
-    }
     i.true.order=i.true.order+1
+    
   }
   
   colnames(abund.df) <- c('mean','sd','JCvalue','phyvalue','species')
