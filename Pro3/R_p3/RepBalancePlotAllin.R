@@ -46,10 +46,6 @@ for(tens1 in c(1:9)){
   colless_alldf = data.frame()
   for(i in c(1,4,2,5,3)){
     for(j in c(1:6)){
-      
-      if(i_n == 8 & i == 2 & j==4 & rep %in% c(55,58)){
-        next
-      }
       comb=paste0(i,j)
       
       multitreefile <- paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/','multitree',letter.comb,comb,'.tre')
@@ -91,12 +87,14 @@ for(tens1 in c(1:9)){
     scale_fill_manual(values=c("#080808", "#4A225D", "#E83015","#F05E1C","#FFC408"))+
     labs(x="",y="") +
     theme(legend.position = "none",axis.title.x=element_blank(),axis.text.x=element_blank(),
-          axis.ticks.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_blank(),
-          axis.ticks.y=element_blank())
+          axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.x=element_line(),axis.line.x=element_line(),
+          axis.ticks.y=element_line(),axis.line.y=element_line()
+          )
   if(tens1 %in% c(1,2,3)){
     plotl_est[[tens1]] <- plotl_est[[tens1]]+
     theme(axis.title.y=element_text(color="black", size=10, face="bold"),
           axis.text.y=element_text(color="black", size=10, face="bold"),
+          axis.ticks.x=element_line(),axis.line.x=element_line(),
           axis.ticks.y=element_line(),axis.line.y=element_line())#+ ylim(value.min, value.max)
   }
   if(tens1 %in% c(3,6,9)){

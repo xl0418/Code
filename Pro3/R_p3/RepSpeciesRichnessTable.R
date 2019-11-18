@@ -9,7 +9,7 @@ library(gridExtra)
 source(paste0(getwd(),'/g_legend.R'))
 # source('C:/Liang/Code/Pro3/R_p3/barplot3d.R', echo=TRUE)
 source('C:/Liang/Code/Pro3/R_p3/multi3dbar.R', echo=TRUE)
-moviedir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces/'
+moviedir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
 dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces/'
 sce.short = c('H','M','L')
 scenario = NULL
@@ -35,9 +35,7 @@ for(i_n in c(1:9)){
       comb = paste0(i,j)
       ns.vec=NULL
       for(rep in c(1:100)){
-        if(i_n == 8 & i == 2 & j==4 & rep %in% c(55,58)){
-          next
-        }
+
         rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'psi',i,'s_phi',j,'rep',rep,'Ltable.csv')
         L.table = read.csv(rname,header = FALSE)
         ns = nrow(L.table)
@@ -80,14 +78,17 @@ color.plate =brewer.pal(n = 9, name = 'YlOrRd')
   #               '#D0104C','#B5495B','#E87A90'
   #               )
 # Figure size
-r3dDefaults$windowRect <- c(0, 100, 800, 800) 
+r3dDefaults$windowRect <- c(0, 200, 1600, 1600) 
 
 # Animate the 3d plot and save as a gif
 open3d()
-barplot3d(testz,group.dim=c(15,18),alpha=0.8,barcolors = color.plate,
-          y.intercept=c(35,150,250,400),gap = 0.2,scalexy = 30)
+barplot3d(testz,group.dim=c(15,18),alpha=0.5,barcolors = color.plate,
+          y.intercept=c(35,150,250,400),gap = 0.2,scalexy = 50)
 # legend3d("topright", legend = c('Low spatiality','Intermediate spatiality','High spatiality'), pch = 12,
 #          col = c("#8CD790","#EFDC05","#30A9DE"), cex=1.5, inset=c(0.02))
+rgl.viewpoint( theta = 28, phi = 39, fov = 60, zoom = 1, 
+               scale = par3d("scale"), interactive = TRUE, 
+               type = c("userviewpoint", "modelviewpoint") )
 rgl.snapshot(filename=paste0(moviedir,"Species_richness.png"))
 
 if (!rgl.useNULL())

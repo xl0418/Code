@@ -73,7 +73,7 @@ for(i_n in c(1:9)){
       data_lineage = cbind(data_lineage,N1)
     }
     x = data_lineage[,1]
-    z = data_lineage[,2:101]
+    z = data_lineage[,2:length(trees)+1]
     
     data_average_z <- apply(z, 1, median)
     data_q0.025_z <- apply(z, 1 , quantile, 0.025)
@@ -116,7 +116,7 @@ for(i_n in c(1:9)){
   m = matrix(1:30,ncol = 5)
   
   
-  phi_labels = c('1','1e-2','1e-4','1e-6','1e-8','0')
+  phi_labels = c('1',10^-2,10^-4,10^-6,10^-8,'0')
   psi_labels = c('0','0.25','0.5','0.75','1')
 
   

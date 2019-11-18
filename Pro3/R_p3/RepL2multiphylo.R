@@ -31,9 +31,7 @@ for(i_n in c(1:9)){
       comb=paste0(i,j)
       
       for(rep in c(1:100)){
-        if(i_n == 8 & i == 2 & j==4 & rep %in% c(55,58)){
-          next
-        }
+
         rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'psi',i,'s_phi',j,'rep',rep,'Ltable.csv')
         L.table = read.csv(rname,header = FALSE)
         single.phylo = ev2l(L.table)

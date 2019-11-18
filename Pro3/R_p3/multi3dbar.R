@@ -168,10 +168,10 @@ barplot3d<-function(z,group.dim=c(15,18),no.column=3,no.row=3,alpha=1,scalexy=10
          nticks=4,lwd=2)
   # axis for phi
   zlabels <- c('0','0.25','0.5','0.75','1')
-  axes3d("z+-", labels=zlabels,nticks=length(zlabels),at=seq(-15,-55,-10)*scalexy/10,lwd=2)
+  axes3d("z+-", labels=zlabels,nticks=length(zlabels),at=seq(-15,-55,-10)*scalexy/10,lwd=2.5)
   # axis for sigma_phi
   xlabels <- c('1',expression(10^-2),expression(10^-4),expression(10^-6),expression(10^-8),'0')
-  axis3d("x-+",nticks=6,at=seq(155,205,10)*scalexy/10,labels=xlabels,lwd=2)
+  axis3d("x-+",nticks=6,at=seq(155,205,10)*scalexy/10,labels=xlabels,lwd=2.5)
   text3d(matrix(c(0,245,210,100,0,0,-40,-45,20)*scalexy/10,ncol=3),
          texts=c('Diversity',expression(psi), expression(phi) ),
          cex = 2)
@@ -184,6 +184,6 @@ barplot3d<-function(z,group.dim=c(15,18),no.column=3,no.row=3,alpha=1,scalexy=10
                  expression(sigma[JC] == 10),
                  expression(sigma[JC] == 1),
                  expression(sigma[JC] == 0.1)),
-         cex = 1)
+         cex = 1.5)
   
 }
