@@ -9,7 +9,7 @@ library(DDD)
 source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
 emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
-dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_ms_1107_continue40/umtd_con_sim/'
+dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_ms_posterior/pics_con_sim/'
 dir_emp = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/Est/'
 emdata = read.nexus(emdatadir)
 
