@@ -23,7 +23,7 @@ mig_title_fontsize = 16
 x_title_fontsize = 16
 y_title_fontsize = 16
 
-for(i_n in c(1:9)){
+for(i_n in c(1:7)){
   scefolder = scenario[i_n]
   letter.comb = sce.short.comb.vec[i_n]
 
@@ -116,16 +116,15 @@ for(i_n in c(1:9)){
   m = matrix(1:30,ncol = 5)
   
   
-  phi_labels = c('1',10^-2,10^-4,10^-6,10^-8,'0')
   psi_labels = c('0','0.25','0.5','0.75','1')
 
   
-  phi1 <- textGrob(substitute(paste(phi," = ",nn),list(nn = phi_labels[1])), gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
-  phi2 <- textGrob(substitute(paste(phi," = ",nn),list(nn = phi_labels[2])), gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
-  phi3 <- textGrob(substitute(paste(phi," = ",nn),list(nn = phi_labels[3])), gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
-  phi4 <- textGrob(substitute(paste(phi," = ",nn),list(nn = phi_labels[4])), gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
-  phi5 <- textGrob(substitute(paste(phi," = ",nn),list(nn = phi_labels[5])), gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
-  phi6 <- textGrob(substitute(paste(phi," = ",nn),list(nn = phi_labels[6])), gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+  phi1 <- textGrob(expression(phi == 1), gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+  phi2 <- textGrob(expression(phi == 10^-2), gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+  phi3 <- textGrob(expression(phi == 10^-4), gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+  phi4 <- textGrob(expression(phi == 10^-6), gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+  phi5 <- textGrob(expression(phi == 10^-8), gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+  phi6 <- textGrob(expression(phi == 0), gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
   
   psi1 <- textGrob(substitute(paste(psi," = ",nn),list(nn = psi_labels[1])), gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
   psi2 <- textGrob(substitute(paste(psi," = ",nn),list(nn = psi_labels[2])), gp=gpar(fontsize=mu_title_fontsize, fontface=3L))

@@ -134,7 +134,7 @@ results = {
 
 
 data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster' \
-           '/results_ms_1028/'
+           '/results_ms_posterior/'
 tvp_gof = []
 tv_gof = []
 tvm_gof = []
@@ -149,7 +149,7 @@ for datafile in ['smtd_con40.npy', 'umtd_con40.npy', 'pics_con40.npy']:
     model_params = np.repeat(model_index, repeats=population)
     propose_model = model_params
     q5 = np.argsort(fitness)[-int(total_population // 20)]  # best 25%
-    fit_index = np.where(fitness > fitness[q5])[0]
+    fit_index = np.where(fitness > fitness[q5])[0]   #np.max(fitness)*0.95
 
     modelTVPperc = len(np.where(propose_model[fit_index] == 0)[0]) / len(fit_index)
     modelTVperc = len(np.where(propose_model[fit_index] == 1)[0]) / len(fit_index)

@@ -13,7 +13,7 @@ def argsort2D(X):
 dir_path = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 
 obs_file = dir_path + 'treedata/'
-simdata_file = dir_path + 'result_cluster/results_ms_1028/pics_sim/'
+simdata_file = dir_path + 'result_cluster/results_ms_posterior/smtd_con_sim/'
 sim_file_TVP = simdata_file + 'predictsimTVP.csv'
 sim_file_TV = simdata_file + 'predictsimTV.csv'
 sim_file_TVM = simdata_file + 'predictsimTVM.csv'
@@ -169,10 +169,11 @@ ax_tvm.set_title('TVM')
 
 pop_tvp_flatten = pop_TVP_array.flatten()
 pop_tvm_flatten = pop_TVM_array.flatten()
-
+tvp_length =len(pop_tvp_flatten)
+tvm_length = len(pop_tvm_flatten)
 pop_whole = np.concatenate([pop_tvp_flatten, pop_tvm_flatten])
-pop_label = np.tile(range(15), 2000)
-model_label = np.repeat(['AWC', 'MWC'], 15000)
+pop_label = np.tile(range(15), trait_TVP_array.shape[0]+trait_TVM_array.shape[0])
+model_label = np.repeat(['AWC', 'MWC'], [tvp_length,tvm_length])
 popdf_list = {'Abundance': pop_whole, 'Species': pop_label, 'model': model_label}
 popdf_pd = pd.DataFrame(popdf_list)
 species_pop = range(15)

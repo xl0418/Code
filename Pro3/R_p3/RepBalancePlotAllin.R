@@ -7,9 +7,9 @@ library(grid)
 library(gridExtra)
 library(ggthemes)
 source('C:/Liang/Code/Pro3/R_p3/deltar.R', echo=TRUE)
-method = 'colless'
+method = 'deltar'
 dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces/'
-sce.short = c('H','M','L')
+sce.short = rev(c('H','M','L'))
 scenario = NULL
 sce.short.comb.vec = NULL
 for(i.letter in sce.short){
@@ -62,17 +62,17 @@ for(tens1 in c(1:9)){
   colnames(colless_alldf) = c('colvalue','psi','phi')
   
   if(method=='gamma'){
-    value.min <- 0
-    value.max <- 15
+    value.min <- -20
+    value.max <- 5
     gap <- 3
   }else if(method=='deltar'){
     value.min <- -1.2
-    value.max <- 1.2
+    value.max <- 0.5
     gap <- 0.1
     
   }else{
-    value.min <- 5
-    value.max <- 40
+    value.min <- 0
+    value.max <- 125
     gap <- 10
   }
   
@@ -89,13 +89,13 @@ for(tens1 in c(1:9)){
     theme(legend.position = "none",axis.title.x=element_blank(),axis.text.x=element_blank(),
           axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.x=element_line(),axis.line.x=element_line(),
           axis.ticks.y=element_line(),axis.line.y=element_line()
-          )
+          ) + ylim(value.min, value.max)
   if(tens1 %in% c(1,2,3)){
     plotl_est[[tens1]] <- plotl_est[[tens1]]+
     theme(axis.title.y=element_text(color="black", size=10, face="bold"),
           axis.text.y=element_text(color="black", size=10, face="bold"),
           axis.ticks.x=element_line(),axis.line.x=element_line(),
-          axis.ticks.y=element_line(),axis.line.y=element_line())#+ ylim(value.min, value.max)
+          axis.ticks.y=element_line(),axis.line.y=element_line())
   }
   if(tens1 %in% c(3,6,9)){
     plotl_est[[tens1]] <- plotl_est[[tens1]]+

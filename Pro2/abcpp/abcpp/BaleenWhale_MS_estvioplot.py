@@ -20,8 +20,8 @@ dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 #            '/results_ms_1028/'
 # data_name = data_dir + 'modelselec2w_umtd_pics.npy'
 
-data_dir = 'C:/Liang/abcpp_ms10/abcpp/'
-data_name = data_dir + 'umtd_con40.npy'
+data_dir = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_ms_posterior/'
+data_name = data_dir + 'pics_con40.npy'
 
 obs_file = dir_path + 'treedata/'
 
@@ -159,16 +159,16 @@ for no_plots in range(0,4):
     axes[no_plots].ticklabel_format(style='sci', axis='y', scilimits=(0,0),useMathText=True)
 
 
-
-
-Z = est_data['Z']
-diff_norm = np.linalg.norm(Z - obsZ, axis=1)
-plt.hist(diff_norm, bins=200)
-TVP_index = np.where(fitness[:population] > 0)[0]
-TV_index = np.where(fitness[population:2 * population] > 0)[0] + population
-TVM_index = np.where(fitness[2 * population:] > 0)[0] + 2 * population
-plot_tvm_index = np.where(fitness[TVM_index] > np.min(fitness[TVP_index]))[0] + 2 * population
-
-plt.hist(diff_norm[:len(TVP_index)])
-plt.hist(diff_norm[len(TVP_index):len(TVP_index) + len(TV_index)])
-plt.hist(diff_norm[plot_tvm_index])
+#
+#
+# Z = est_data['Z']
+# diff_norm = np.linalg.norm(Z - obsZ, axis=1)
+# plt.hist(diff_norm, bins=200)
+# TVP_index = np.where(fitness[:population] > 0)[0]
+# TV_index = np.where(fitness[population:2 * population] > 0)[0] + population
+# TVM_index = np.where(fitness[2 * population:] > 0)[0] + 2 * population
+# plot_tvm_index = np.where(fitness[TVM_index] > np.min(fitness[TVP_index]))[0] + 2 * population
+#
+# plt.hist(diff_norm[:len(TVP_index)])
+# plt.hist(diff_norm[len(TVP_index):len(TVP_index) + len(TV_index)])
+# plt.hist(diff_norm[plot_tvm_index])
