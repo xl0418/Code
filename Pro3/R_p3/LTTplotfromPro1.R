@@ -2,6 +2,7 @@ library(ggplot2)
 library(gridExtra)
 library(grid)
 library(DDD)
+library(ape)
 dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces/'
 sce.short = c('H','M','L')
 scenario = NULL
@@ -23,7 +24,7 @@ mig_title_fontsize = 16
 x_title_fontsize = 16
 y_title_fontsize = 16
 
-for(i_n in c(1:7)){
+for(i_n in c(1:9)){
   scefolder = scenario[i_n]
   letter.comb = sce.short.comb.vec[i_n]
 
@@ -32,7 +33,7 @@ for(i_n in c(1:7)){
 
   j = 2
   combinations = NULL
-  for(i in c(1:5)){
+  for(i in c(1,4,2,5,3)){
     for(j in c(1:6)){
       comb.temp <- paste0(i,j)
       combinations <- c(combinations,comb.temp)

@@ -33,7 +33,7 @@ for(i_n in c(1:9)){
   
   j = 2
   combinations = NULL
-  for(i in c(1:5)){
+  for(i in c(1,4,2,5,3)){
     for(j in c(1:6)){
       comb.temp <- paste0(i,j)
       combinations <- c(combinations,comb.temp)
