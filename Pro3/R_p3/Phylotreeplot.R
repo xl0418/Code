@@ -49,9 +49,9 @@ for(i_n in c(1:9)){
     multitreefile <- paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,num,'/','multitree',letter.comb,num,'.tre')
     
     trees <- read.tree(multitreefile)
-    single.tree <- trees[[1]]
+    single.tree <- trees[[5]]
     
-    p[[count1]] <- ggtree(single.tree)
+    p[[count1]] <- ggtree(single.tree)+xlim(0,age)
     count1 = count1+1
   }
   
