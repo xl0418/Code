@@ -49,7 +49,7 @@ for(i_n in c(1:9)){
 
 
     for (i in 1:100) {
-      rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'event',comb,'rep',i,'.csv')
+      rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,num,'/',letter.comb,'event',num,'rep',i,'.csv')
       event.table = read.csv(rname,header = FALSE)
       brts= c(-age,event.table[,1]-age)
       data0 = cbind(i,brts,c(2,event.table[,2]))
@@ -61,16 +61,16 @@ for(i_n in c(1:9)){
     time = data[order(data[,2]),2]
     timeu = unique(time)
     data_lineage = timeu
-    for(i in 1:length(trees)){
-      tes = trees[[i]]
-      
-      brts= -unname(sort(branching.times(tes),decreasing = T))
+    for(i in 1:100){
+      rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,num,'/',letter.comb,'event',num,'rep',i,'.csv')
+      event.table = read.csv(rname,header = FALSE)
+      brts= c(-age,event.table[,1]-age)
       M1 = match(brts,timeu)
       M1[1] = 1
       M11 = diff(M1)
       M13 = length(timeu)-max(M1)+1
       M12 = c(M11,M13)
-      N1 = rep(2:(length(brts)+1),M12)
+      N1 = rep(c(2,event.table[,2]),M12)
       data_lineage = cbind(data_lineage,N1)
     }
     x = data_lineage[,1]
@@ -103,7 +103,7 @@ for(i_n in c(1:9)){
       geom_polygon(data = df_min_max, aes(  group = id),fill = "light gray", alpha = 0.8)+
       geom_polygon(data = df_0025, aes( group = id),fill = "dark gray", alpha = 0.8)+
       geom_polygon(data = df_025, aes( group = id), fill = "gray27", alpha = 0.8)+ylab("")+xlab("")+
-      coord_cartesian(xlim=c(-age,0),ylim=c(log(2),log(600))) + scale_y_continuous(breaks = c(log(2),log(10),log(50),log(400)),labels = c(2,10,50,400))+
+      coord_cartesian(xlim=c(-age,0),ylim=c(log(2),log(600))) + scale_y_continuous(breaks = c(log(2),log(10),log(50),log(400)),labels = c(2,10,50,400))
       scale_x_continuous(breaks = -rev(seq(0,1e7,1e7/5)),labels = c('10','8','6','4','2','0'))
     if(count1 %in% c(1:6)){
       p[[count1]] <- p[[count1]]+theme(axis.text.y=element_text(angle=90,size = y_label_fontsize))
@@ -149,6 +149,6 @@ for(i_n in c(1:9)){
   ltt.sce <- grid.arrange(g_ltt1,column_titles,g_ltt1,label,g_ltt4,row_titles,g_ltt1,g_ltt5,g_ltt1,ncol = 3,widths = c(1,16,3),heights = c(1,36,1))
   
   dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-  savefilename <- paste0(dir_save,scefolder,'_ltt.pdf')
+  savefilename <- paste0(dir_save,scefolder,'_stt.pdf')
   ggsave(savefilename,ltt.sce,width = 15,height = 10)
 }
