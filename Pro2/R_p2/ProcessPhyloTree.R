@@ -6,15 +6,6 @@ emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
 dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/treedata/'
 
 emdata = read.nexus(emdatadir)
-plot(emdata,show.tip.label = FALSE)
-emdata_labelchange = emdata
-newlabels = c()
-for(i in c(1:78)){
-  newlabels=c(newlabels,paste0('t',i ))
-}
-emdata_labelchange$tip.label = newlabels
-
-plot(emdata_labelchange,show.tip.label = TRUE)
 
 
 # Pruned tree plot
@@ -52,9 +43,9 @@ while(do){
   L[negative.row,2] = - L[negative.row,2]
   positive.clade = L[negative.row,3]
   L[negative.row,3] = - L[negative.row,3]
-
-}
   
+}
+
 
 
 phylo_prune = DDD::L2phylo(L,dropextinct = dropextinct)

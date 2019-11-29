@@ -24,7 +24,7 @@ mig_title_fontsize = 16
 x_title_fontsize = 16
 y_title_fontsize = 16
 rep.th = 1
-for(i_n in c(1:9)){
+for(i_n in c(5:9)){
   scefolder = scenario[i_n]
   letter.comb = sce.short.comb.vec[i_n]
   
@@ -103,7 +103,7 @@ for(i_n in c(1:9)){
       geom_polygon(data = df_min_max, aes(  group = id),fill = "light gray", alpha = 0.8)+
       geom_polygon(data = df_0025, aes( group = id),fill = "dark gray", alpha = 0.8)+
       geom_polygon(data = df_025, aes( group = id), fill = "gray27", alpha = 0.8)+ylab("")+xlab("")+
-      coord_cartesian(xlim=c(-age,0),ylim=c(log(2),log(600))) + scale_y_continuous(breaks = c(log(2),log(10),log(50),log(400)),labels = c(2,10,50,400))
+      coord_cartesian(xlim=c(-age,0),ylim=c(log(2),log(600))) + scale_y_continuous(breaks = c(log(2),log(10),log(50),log(400)),labels = c(2,10,50,400))+
       scale_x_continuous(breaks = -rev(seq(0,1e7,1e7/5)),labels = c('10','8','6','4','2','0'))
     if(count1 %in% c(1:6)){
       p[[count1]] <- p[[count1]]+theme(axis.text.y=element_text(angle=90,size = y_label_fontsize))
