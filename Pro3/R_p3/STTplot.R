@@ -84,7 +84,8 @@ for(i_n in c(5:9)){
     data_lower_z <- apply(z,1,min)
     data_upper_z <- apply(z,1,max)
     
-    lineage_stat = cbind(x,log(data_average_z),log(data_q0.025_z),log(data_q0.25_z),log(data_q0.75_z),log(data_q0.975_z),log(data_lower_z),log(data_upper_z))
+    # lineage_stat = cbind(x,log(data_average_z),log(data_q0.025_z),log(data_q0.25_z),log(data_q0.75_z),log(data_q0.975_z),log(data_lower_z),log(data_upper_z))
+    lineage_stat = cbind(x,data_average_z,data_q0.025_z,data_q0.25_z,data_q0.75_z,data_q0.975_z,data_lower_z,data_upper_z)
     colnames(lineage_stat) = c("time", "median","0.025","0.25","0.75","0.975","min","max")
     
     time = min(lineage_stat[,1])
@@ -103,7 +104,7 @@ for(i_n in c(5:9)){
       geom_polygon(data = df_min_max, aes(  group = id),fill = "light gray", alpha = 0.8)+
       geom_polygon(data = df_0025, aes( group = id),fill = "dark gray", alpha = 0.8)+
       geom_polygon(data = df_025, aes( group = id), fill = "gray27", alpha = 0.8)+ylab("")+xlab("")+
-      coord_cartesian(xlim=c(-age,0),ylim=c(log(2),log(600))) + scale_y_continuous(breaks = c(log(2),log(10),log(50),log(400)),labels = c(2,10,50,400))+
+      coord_cartesian(xlim=c(-age,0),ylim=c(2,450)) + scale_y_continuous(breaks = c(2,100,250,400) ,labels = c(2,100,250,400))+   #c(log(2),log(10),log(50),log(400))
       scale_x_continuous(breaks = -rev(seq(0,1e7,1e7/5)),labels = c('10','8','6','4','2','0'))
     if(count1 %in% c(1:6)){
       p[[count1]] <- p[[count1]]+theme(axis.text.y=element_text(angle=90,size = y_label_fontsize))
