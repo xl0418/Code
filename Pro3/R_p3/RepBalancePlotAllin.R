@@ -6,8 +6,9 @@ library(ggplot2)
 library(grid)
 library(gridExtra)
 library(ggthemes)
+library(phyloTop)
 source('C:/Liang/Code/Pro3/R_p3/deltar.R', echo=TRUE)
-method = 'deltar'
+method = 'colless'
 dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces/'
 sce.short = rev(c('H','M','L'))
 scenario = NULL
@@ -25,16 +26,27 @@ for(i.letter in sce.short){
 foo <- function(x, metric = "colless") {
   if (metric == "colless") {
     xx <- as.treeshape(x)  # convert to apTreeshape format
-    colless(xx, "yule")  # calculate colless' metric
+    num.tips <- x$Nnode+1
+    apTreeshape::colless(xx, "yule")*2/(num.tips-1)/(num.tips-2)  # calculate colless' metric
   } else if (metric == "gamma") {
     gammaStat(x)
   } else if (metric == "deltar") {
     deltar(x)
+  } else if (metric == "sackin") {
+    sackin.phylo(x)
   } else stop("metric should be one of colless or gamma")
 }
 
 jclabel = c('0','0.25','0.5','0.75','1')
 plabel = c('1','1e-2','1e-4','1e-6','1e-8','0')
+x.ticks.labels = c(
+  ~ "1",
+  ~ list(10^{-2}),
+  ~ list(10^{-4}),
+  ~ list(10^{-6}),
+  ~ list(10^{-8}),
+  ~ "0"
+)
 plotl_est <- list()
 
 for(tens1 in c(1:9)){
@@ -69,11 +81,15 @@ for(tens1 in c(1:9)){
     value.min <- -1.2
     value.max <- 0.5
     gap <- 0.1
+  }else if(method=='sackin'){
+    value.min <- -1.2
+    value.max <- 40000
+    gap <- 0.1
     
   }else{
     value.min <- 0
-    value.max <- 125
-    gap <- 10
+    value.max <- 0.025
+    gap <- 0.005
   }
   
   colless_alldf$psi1 <- factor(colless_alldf$psi, labels = c('psi==0','psi==0.25','psi==0.5','psi==0.75','psi==1'))
@@ -92,17 +108,18 @@ for(tens1 in c(1:9)){
           ) + ylim(value.min, value.max)
   if(tens1 %in% c(1,2,3)){
     plotl_est[[tens1]] <- plotl_est[[tens1]]+
-    theme(axis.title.y=element_text(color="black", size=10, face="bold"),
-          axis.text.y=element_text(color="black", size=10, face="bold"),
+    theme(axis.title.y=element_text(color="black", size=15, face="bold"),
+          axis.text.y=element_text(color="black", size=15, face="bold"),
           axis.ticks.x=element_line(),axis.line.x=element_line(),
           axis.ticks.y=element_line(),axis.line.y=element_line())
   }
   if(tens1 %in% c(3,6,9)){
     plotl_est[[tens1]] <- plotl_est[[tens1]]+
-      theme(axis.title.x=element_text(color="black", size=10, face="bold"),
-            axis.text.x=element_text(color="black", size=10, face="bold"),
+      theme(axis.title.x=element_text(color="black", size=15, face="bold"),
+            axis.text.x=element_text(color="black", size=15, face="bold"),
             axis.ticks.x=element_line(),axis.line.x=element_line(),
-            axis.ticks.y=element_line(),axis.line.y=element_line())+xlab(expression(phi))
+            axis.ticks.y=element_line(),axis.line.y=element_line())+
+      scale_x_discrete(breaks=plabel,labels = x.ticks.labels)
   }
 
 }

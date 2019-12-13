@@ -51,7 +51,7 @@ for(i_n in c(1:9)){
     trees <- read.tree(multitreefile)
     single.tree <- trees[[15]]
     
-    p[[count1]] <- ggtree(single.tree)+xlim(0,age)
+    p[[count1]] <- ggtree(single.tree,layout = "circular")+xlim(0,age)
     count1 = count1+1
   }
   
@@ -90,6 +90,6 @@ for(i_n in c(1:9)){
   ltt.sce <- grid.arrange(g_ltt1,column_titles,g_ltt1,label,g_ltt4,row_titles,g_ltt1,g_ltt5,g_ltt1,ncol = 3,widths = c(1,16,3),heights = c(1,36,1))
   
   dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-  savefilename <- paste0(dir_save,scefolder,'_trees.pdf')
+  savefilename <- paste0(dir_save,scefolder,'_trees_cir.pdf')
   ggsave(savefilename,ltt.sce,width = 15,height = 10)
 }
