@@ -14,14 +14,28 @@ for(i.letter in sce.short){
   }
 }
 ev2l <- function(ltable){
-  ltable[,2] = ltable[,2]+1
-  ltable[,3] = ltable[,3]+1
-  ltable = rbind(c(10^7,0,1,-1),ltable)
-  phy = DDD::L2phylo(ltable)
-  return(phy)
+  if(ltable[1,2] == 0 && ltable[1,3] == 1){
+    ltable[,2] = ltable[,2]+1
+    ltable[,3] = ltable[,3]+1
+    ltable = rbind(c(10^7,0,1,-1),ltable)
+    phy = DDD::L2phylo(ltable)
+    return(phy)
+  }else if(ltable[1,2] == 1 && ltable[1,3] == 1){
+    ltable[1,1] = 10^7
+    ltable[1,2] = 0
+    ltable[,2] = ltable[,2]+1
+    ltable[,3] = ltable[,3]+1
+    ltable = rbind(c(10^7,0,1,-1),ltable)
+    phy = DDD::L2phylo(ltable)
+    return(phy)
+  }else{
+    print(ltable[1,])
+    
+  }
+  
 }
 
-for(i_n in c(1:9)){
+for(i_n in c(2:9)){
   scefolder = scenario[i_n]
   letter.comb = sce.short.comb.vec[i_n]
   for(i in c(1:5)){
@@ -34,6 +48,7 @@ for(i_n in c(1:9)){
 
         rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'psi',i,'s_phi',j,'rep',rep,'Ltable.csv')
         L.table = read.csv(rname,header = FALSE)
+        # print(nrow(L.table))
         single.phylo = ev2l(L.table)
         multitree = c(multitree,list(single.phylo))
       }

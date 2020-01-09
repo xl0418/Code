@@ -24,7 +24,7 @@ mig_title_fontsize = 16
 x_title_fontsize = 16
 y_title_fontsize = 16
 
-for(i_n in c(1:9)){
+for(i_n in c(2:9)){
   scefolder = scenario[i_n]
   letter.comb = sce.short.comb.vec[i_n]
 

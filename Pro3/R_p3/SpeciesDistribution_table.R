@@ -144,7 +144,7 @@ for(i_n in c(1:9)){
                           row_titles,g_ltt1,g_ltt5,g_ltt1,ncol = 3,widths = c(1,16,3),heights = c(1,24,1))
   
   dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-  savefilename <- paste0(dir_save,scefolder,'_species_dis_AWMIPD.tiff')
+  savefilename <- paste0(dir_save,scefolder,'_species_dis_AWMIPD.eps')
   ggsave(savefilename,ltt.sce,width = 15,height = 10)
   
 }

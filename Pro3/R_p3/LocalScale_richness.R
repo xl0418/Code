@@ -22,9 +22,10 @@ for(i.letter in sce.short){
     sce.short.comb.vec = c(sce.short.comb.vec,sce.short.comb)
   }
 }
+plot.letter = c('(A)', '(B)', '(C)', '(D)')
 
 color.sce = c('red','purple','green','yellow')
-scale.vec = c(333,222,111,55)
+scale.vec = rev(c(333,222,111,55))
 for( sce.rich in c(1:length(scale.vec))){
   r_df = NULL
   
@@ -74,13 +75,13 @@ for( sce.rich in c(1:length(scale.vec))){
   # Animate the 3d plot and save as a gif
   open3d()
   barplot3d(testz,group.dim=c(15,18),alpha=0.7,barcolors = color.plate,
-            y.intercept=c(0,100,200,300,400),gap = 0.2,scalexy = 50)
-  legend3d("topleft", legend = c('(A) Global scale 333'), pch = 12,
+            y.intercept=c(0,20,40,60,80),gap = 0.2,scalexy = 10)
+  legend3d("topleft", legend = paste0(plot.letter[sce.rich],' Scale ',local.scale), 
             cex=1.5, inset=c(0.02))
-  rgl.viewpoint( theta = 28, phi = 39, fov = 60, zoom = 1, 
+  rgl.viewpoint( theta = 45, phi = 45, fov = 60, zoom = 1, 
                  scale = par3d("scale"), interactive = TRUE, 
                  type = c("userviewpoint", "modelviewpoint") )
-  rgl.snapshot(filename=paste0(moviedir,"Species_richness_scale",local.scale,".png"))
+  rgl.snapshot(filename=paste0(moviedir,"Species_richness_scale_ss",local.scale,".png"))
 }
 # 
 # if (!rgl.useNULL())

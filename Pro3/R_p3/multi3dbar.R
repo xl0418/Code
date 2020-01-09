@@ -152,7 +152,7 @@ barplot3d<-function(z,group.dim=c(15,18),no.column=3,no.row=3,alpha=1,scalexy=10
   
   dot.gap = 2
   # Background grid lines
-  bg.x = rep(c(rep(10,y[length(y)]/dot.gap+1),seq(10,x[length(x)]+scalexy,dot.gap)),length(y.intercept))
+  bg.x = rep(c(rep(scalexy,(y[length(y)]+scalexy-10)/dot.gap+1),seq(scalexy,x[length(x)]+scalexy,dot.gap)),length(y.intercept))
   bg.y = rep(y.intercept,each=length(bg.x)/length(y.intercept))
   bg.z = rep(c(seq(-10,-y[length(y)]-scalexy,-dot.gap),rep(-y[length(y)]-scalexy,x[length(x)]/2+1)),length(y.intercept))
   rgl.points(bg.x,bg.y,bg.z,col="#000000",lit=FALSE,size = 0.3)
@@ -172,7 +172,7 @@ barplot3d<-function(z,group.dim=c(15,18),no.column=3,no.row=3,alpha=1,scalexy=10
   # axis for sigma_phi
   xlabels <- c('1',expression(10^-2),expression(10^-4),expression(10^-6),expression(10^-8),'0')
   axis3d("x-+",nticks=6,at=seq(155,205,10)*scalexy/10,labels=xlabels,lwd=2.5)
-  text3d(matrix(c(0,245,210,100,0,0,-40,-45,20)*scalexy/10,ncol=3),
+  text3d(matrix(c(0,245,210,100,0,0,0,-45,20)*scalexy/10,ncol=3),
          texts=c('Diversity',expression(psi), expression(phi) ),
          cex = 2)
   # spatial distances indicators

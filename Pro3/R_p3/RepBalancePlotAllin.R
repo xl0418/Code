@@ -7,8 +7,10 @@ library(grid)
 library(gridExtra)
 library(ggthemes)
 library(phyloTop)
+library(quantreg)
+
 source('C:/Liang/Code/Pro3/R_p3/deltar.R', echo=TRUE)
-method = 'colless'
+method = 'beta'
 dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces/'
 sce.short = rev(c('H','M','L'))
 scenario = NULL
@@ -27,13 +29,16 @@ foo <- function(x, metric = "colless") {
   if (metric == "colless") {
     xx <- as.treeshape(x)  # convert to apTreeshape format
     num.tips <- x$Nnode+1
-    apTreeshape::colless(xx, "yule")*2/(num.tips-1)/(num.tips-2)  # calculate colless' metric
+    apTreeshape::colless(xx, "yule")  #*2/(num.tips-1)/(num.tips-2)  # calculate colless' metric
+    #apTreeshape::colless(xx)*2/(num.tips-1)/(num.tips-2)  # calculate colless' metric
   } else if (metric == "gamma") {
     gammaStat(x)
   } else if (metric == "deltar") {
     deltar(x)
   } else if (metric == "sackin") {
     sackin.phylo(x)
+  } else if (metric == "beta") {
+    maxlik.betasplit(xx)$max_lik
   } else stop("metric should be one of colless or gamma")
 }
 
@@ -85,18 +90,23 @@ for(tens1 in c(1:9)){
     value.min <- -1.2
     value.max <- 40000
     gap <- 0.1
+  }else if(method=='beta'){
+    value.min <- -20
+    value.max <- 5
+    gap <- 5
     
   }else{
     value.min <- 0
-    value.max <- 0.025
-    gap <- 0.005
+    value.max <- 200
+    gap <- 50
   }
   
   colless_alldf$psi1 <- factor(colless_alldf$psi, labels = c('psi==0','psi==0.25','psi==0.5','psi==0.75','psi==1'))
   colless_alldf$phi1 <- factor(colless_alldf$phi, labels = c('phi==1','phi==10^-2',
                                                              'phi==10^-4','phi==10^-6','phi==10^-8','phi==0'))
   
-  
+  indexfile <- paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/','Index',method,'.Rda')
+  save(colless_alldf,file = indexfile)
 
   plotl_est[[tens1]] <-ggplot(colless_alldf, aes(x=phi,y=colvalue)) +  # plot histogram of distribution of values
     geom_boxplot(aes(fill=psi), position=position_dodge(.9),outlier.shape = NA)+ theme_tufte() +
