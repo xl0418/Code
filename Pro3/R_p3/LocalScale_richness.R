@@ -25,7 +25,7 @@ for(i.letter in sce.short){
 plot.letter = c('(A)', '(B)', '(C)', '(D)')
 
 color.sce = c('red','purple','green','yellow')
-scale.vec = rev(c(333,222,111,55))
+scale.vec = rev(c(333,111,55))
 for( sce.rich in c(1:length(scale.vec))){
   r_df = NULL
   
@@ -45,7 +45,8 @@ for( sce.rich in c(1:length(scale.vec))){
           rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'M',i,j,'rep',rep,'.csv')
           L.table = read.csv(rname,header = FALSE)
           global.matrix = as.matrix(L.table)
-          for(row.num in c(1:(333-local.scale+1))){
+          submatrix.vec = c(0:(333 %/% local.scale - 1))*local.scale+1
+          for(row.num in submatrix.vec){
             local.grid = global.matrix[row.num:(row.num+local.scale-1),row.num:(row.num+local.scale-1)]
             local.richness = length(unique(as.vector(as.matrix(local.grid))))
             ns.vec = c(ns.vec, local.richness)
@@ -81,9 +82,10 @@ for( sce.rich in c(1:length(scale.vec))){
   rgl.viewpoint( theta = 45, phi = 45, fov = 60, zoom = 1, 
                  scale = par3d("scale"), interactive = TRUE, 
                  type = c("userviewpoint", "modelviewpoint") )
-  rgl.snapshot(filename=paste0(moviedir,"Species_richness_scale_ss",local.scale,".png"))
+  rgl.snapshot(filename=paste0(moviedir,"Species_richness_scale_lesssample",local.scale,".png"))
+  # if (!rgl.useNULL())
+  #   # play3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20)
+  #   movie3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20,dir=moviedir,fps=10)
+
 }
 # 
-# if (!rgl.useNULL())
-#   # play3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20)
-#   movie3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20,dir=moviedir,fps=10)
