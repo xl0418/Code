@@ -16,7 +16,7 @@ def normalized_norm(x, y):
 
 dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster' \
-           '/results_0930_pics/'
+           '/results_0930_umtd_pics/'
 
 obs_file = dir_path + 'treedata/'
 
@@ -41,6 +41,7 @@ ratio_dis = []
 valid_length = []
 timescaling_list = []
 heri_list = []
+ratio_list = []
 count = 0
 particle_size = 100
 K=1e6
@@ -86,6 +87,7 @@ for timescaling_index in range(len(timescale_vec)):
         a_vec = est_data['a'][-1][fit_index]#*1e5
         nu_vec = est_data['nu'][-1][fit_index]#*1e4
         vm_vec = est_data['vm'][-1][fit_index]
+        ratio_alpha_gamma = np.sqrt(a_vec/gamma_vec)
         if 'theta' in est_data:
             theta_vec = est_data['theta'][-1][fit_index]
 
@@ -105,6 +107,7 @@ for timescaling_index in range(len(timescale_vec)):
         a_list.append(a_vec.tolist())
         nu_list.append(nu_vec.tolist())
         vm_list.append(vm_vec.tolist())
+        ratio_list.append(ratio_alpha_gamma.tolist())
         if 'theta' in est_data:
             theta_list.append(theta_vec.tolist())
 
@@ -117,13 +120,17 @@ gamma_list_flat = np.array([item for sublist in gamma_list for item in sublist])
 a_list_flat = np.array([item for sublist in a_list for item in sublist])
 nu_list_flat = np.array([item for sublist in nu_list for item in sublist])
 vm_list_flat = np.array([item for sublist in vm_list for item in sublist])
+ratio_list_flat = np.array([item for sublist in ratio_list for item in sublist])
+
 if 'theta' in est_data:
     theta_list_flat = np.array([item for sublist in theta_list for item in sublist])
-    est_para = ['gamma','alpha','nu','vm','theta'] # ,'vm'
-    est_array = np.concatenate([gamma_list_flat,a_list_flat,nu_list_flat,vm_list_flat,theta_list_flat]) # ,vm_list_flat
+    est_para = ['gamma','alpha','ratio','nu','vm','theta'] # ,'vm'
+    est_array = np.concatenate([gamma_list_flat,a_list_flat,ratio_list_flat,nu_list_flat,vm_list_flat,
+                                theta_list_flat]) # ,vm_list_flat
 else:
-    est_para = ['gamma', 'alpha', 'nu', 'vm']  # ,'vm'
-    est_array = np.concatenate([gamma_list_flat, a_list_flat, nu_list_flat, vm_list_flat])
+    est_para = ['gamma', 'alpha','ratio', 'nu', 'vm']  # ,'vm'
+    est_array = np.concatenate([gamma_list_flat, a_list_flat,ratio_list_flat, nu_list_flat, vm_list_flat])
+
 est_label = np.repeat(est_para,len(gamma_vec)*len(heritability_vec)*len(timescale_vec))
 timescaling_list_flat = np.tile(np.repeat(timescale_vec,len(gamma_vec)*len(heritability_vec)),len(est_para))
 heri_list_flat = np.tile(np.repeat(heritability_vec,len(gamma_vec)),len(est_para)*len(timescale_vec))
@@ -136,8 +143,10 @@ ss_df = pd.DataFrame(ss_list)
 
 # vioplot = sns.catplot(x="est_label", y="est", hue="heri", col="s",
 #      data=ss_df, kind="violin",height=5, aspect=.6)
-vioplot = sns.catplot(x="s", y="est", hue="heri", col="est_label",palette=[ "#FAD689","#CB1B45"],
-     data=ss_df, kind="violin",height=5, aspect=.6,sharey=False,scale ='count',linewidth =1,inner="quartile")
+vioplot = sns.catplot(x="s", y="est", hue="heri", col="est_label",col_wrap = 3,palette=[ "#FAD689",
+                                                                                       "#CB1B45"],
+     data=ss_df, kind="violin",height=5, aspect=.6,sharey=False,scale ='count',linewidth =1,
+                      inner="quartile",legend_out =True)
 # vioplot.set(ylim=(-50,400))
 # vioplot.set_xticklabels(["$\gamma \cdot 10^{-8}$", "$\\alpha \cdot 10^{-5}$", "$\\nu \cdot 10^{-4}$","$V_{m}$"])
 # vioplot.set_axis_labels("", "Estimate value")
@@ -150,13 +159,15 @@ vioplot._legend.set_title('$h^2$')
 axes = vioplot.axes.flatten()
 axes[0].set_title("$\gamma$")
 axes[1].set_title("$\\alpha$")
-axes[2].set_title("$\\nu$")
-axes[2].set_xlabel("Time scaling parameter $s$")
-axes[3].set_title("$V_m$")
-if 'theta' in est_data:
-    axes[4].set_title("$\\theta$")
+axes[2].set_title("$\sqrt{\\alpha/\gamma}$")
 
-for no_plots in range(1,4):
+axes[3].set_title("$\\nu$")
+axes[4].set_xlabel("Time scaling parameter $s$")
+axes[4].set_title("$V_m$")
+if 'theta' in est_data:
+    axes[5].set_title("$\\theta$")
+
+for no_plots in range(1,5):
     axes[no_plots].ticklabel_format(style='sci', axis='y', scilimits=(0,0),useMathText=True)
 
 

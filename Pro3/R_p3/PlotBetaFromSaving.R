@@ -20,6 +20,55 @@ for(i.letter in sce.short){
   }
 }
 
+# Empirical index
+emp.data.file <- 'c:/Liang/Googlebox/Research/Project3/treebase/treebase1000_2.rda'
+load(emp.data.file)
+
+beta.index = c()
+
+
+
+for(treenum in c(1:length(treebase))){
+  if(is.null(treebase[[treenum]]$edge.length)){
+    beta.index = c(beta.index,NA)
+    colless.index = c(colless.index,NA)
+    gamma.index = c(gamma.index,NA)
+    deltar.index = c(deltar.index,NA)
+    
+  }else{print(treenum)
+    tree = multi2di(treebase[[treenum]])
+    species = getExtinct(tree)
+    if(length(species) == 0){
+      print("No extinction...")
+      recontruct.tree = tree
+      beta.index = c(beta.index,tryCatch(foo(recontruct.tree,metric = 'beta'), error=function(err) NA))
+ 
+    }else if(length(species) == tree$Nnode+1){
+      print("All extincted...")
+      beta.index = c(beta.index,NA)
+   
+    }else{
+      recontruct.tree = drop.tip(tree, setdiff(tree$tip.label, species))
+      recontruct.tree = multi2di(recontruct.tree)
+      beta.index = c(beta.index,tryCatch(foo(recontruct.tree,metric = 'beta'), error=function(err) NA))
+    }
+    
+    
+  }
+}
+
+na.beta.pos = which(is.na(beta.index))
+
+invalid.index = unique(c(na.beta.pos,na.colless.pos,na.gamma.pos,na.deltar.pos))
+whole.index = c(1:length(treebase))
+
+valid.index = whole.index[is.na(pmatch(whole.index,invalid.index))]
+
+
+quantiles.values = c(0.25,0.5,0.75)
+
+quantiles.treebase.beta = quantile(beta.index[valid.index],probs = quantiles.values)
+hline.data = quantiles.treebase.beta
 
 jclabel = c('0','0.25','0.5','0.75','1')
 plabel = c('1','1e-2','1e-4','1e-6','1e-8','0')
@@ -33,7 +82,7 @@ x.ticks.labels = c(
 )
 plotl_est <- list()
 value.min <- -2
-value.max <- -1
+value.max <- 0
 for(tens1 in c(1:9)){
   scefolder = scenario[tens1]
   letter.comb = sce.short.comb.vec[tens1]
@@ -49,7 +98,12 @@ for(tens1 in c(1:9)){
     theme(legend.position = "none",axis.title.x=element_blank(),axis.text.x=element_blank(),
           axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.x=element_line(),axis.line.x=element_line(),
           axis.ticks.y=element_line(),axis.line.y=element_line()
-    ) + ylim(value.min, value.max)
+    ) + ylim(value.min, value.max)+geom_hline(yintercept=hline.data[1],
+                                              linetype="dashed", color = "red")+
+    geom_hline(yintercept=hline.data[2],
+               linetype="solid", color = "red")+
+    geom_hline(yintercept=hline.data[3],
+               linetype="dashed", color = "red")
   if(tens1 %in% c(1,2,3)){
     plotl_est[[tens1]] <- plotl_est[[tens1]]+
       theme(axis.title.y=element_text(color="black", size=15, face="bold"),
@@ -96,6 +150,6 @@ wholeplot=grid.arrange(grob3,grob.sigdisp,grob3,grob.sigjc,grob2,mylegend,grob3,
 
 
 dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-savefilename <- paste0(dir_save,method,'_dis.pdf')
+savefilename <- paste0(dir_save,method,'_dis_emp.pdf')
 ggsave(savefilename,wholeplot,width = 15,height = 10)
 

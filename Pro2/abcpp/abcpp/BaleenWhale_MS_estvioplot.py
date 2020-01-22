@@ -21,7 +21,7 @@ dir_path = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/'
 # data_name = data_dir + 'modelselec2w_umtd_pics.npy'
 
 data_dir = 'c:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster/results_ms_posterior/'
-data_name = data_dir + 'pics_con40.npy'
+data_name = data_dir + 'umtd_con40.npy'
 
 obs_file = dir_path + 'treedata/'
 
@@ -89,18 +89,21 @@ a_vec_TVP = est_data['a_data_TVP'][-2, previous_bestfitted_index_TVP]
 nu_vec_TVP = est_data['nu_data_TVP'][-2, previous_bestfitted_index_TVP]
 vm_vec_TVP = est_data['vm_data_TVP'][-2, previous_bestfitted_index_TVP]
 theta_vec_TVP = est_data['theta_data_TVP'][-2, previous_bestfitted_index_TVP]
+ratio_TVP = np.sqrt(a_vec_TVP/gamma_vec_TVP)
 
 gamma_vec_TV = est_data['gamma_data_TV'][-2, previous_bestfitted_index_TV]
 a_vec_TV = est_data['a_data_TV'][-2, previous_bestfitted_index_TV]
 nu_vec_TV = est_data['nu_data_TV'][-2, previous_bestfitted_index_TV]
 vm_vec_TV = est_data['vm_data_TV'][-2, previous_bestfitted_index_TV]
 theta_vec_TV = est_data['theta_data_TV'][-2, previous_bestfitted_index_TV]
+ratio_TV = np.sqrt(a_vec_TV/gamma_vec_TV)
 
 gamma_vec_TVM = est_data['gamma_data_TVM'][-2, previous_bestfitted_index_TVM]
 a_vec_TVM = est_data['a_data_TVM'][-2, previous_bestfitted_index_TVM]
 nu_vec_TVM = est_data['nu_data_TVM'][-2, previous_bestfitted_index_TVM]
 vm_vec_TVM = est_data['vm_data_TVM'][-2, previous_bestfitted_index_TVM]
 theta_vec_TVM = est_data['theta_data_TVM'][-2, previous_bestfitted_index_TVM]
+ratio_TVM = np.sqrt(a_vec_TVM/gamma_vec_TVM)
 
 print('TVP 5th gamma = %.3e  a = %.3e nu = %.3e Vm = %f theta = %f' % (
     np.mean(gamma_vec_TVP) ,
@@ -129,19 +132,23 @@ print('Var: gamma = %.3e  a = %.3e nu = %.3e Vm = %f theta = %f' % (
     np.var(a_vec_TVM) , np.var(nu_vec_TVM) ,
     np.var(vm_vec_TVM), np.var(theta_vec_TVM)))
 
-est_para = ['gamma', 'alpha', 'nu', 'vm', 'theta']  # ,'vm'
+est_para = ['gamma', 'alpha','ratio', 'nu', 'vm', 'theta']  # ,'vm'
 model_para = ['AWC', 'UWC', 'MWC']
-est_array = np.concatenate([gamma_vec_TVP, a_vec_TVP, nu_vec_TVP, vm_vec_TVP, theta_vec_TVP,
-                            gamma_vec_TV, a_vec_TV, nu_vec_TV, vm_vec_TV, theta_vec_TV,
-                            gamma_vec_TVM, a_vec_TVM, nu_vec_TVM, vm_vec_TVM, theta_vec_TVM])
-est_label = np.repeat(np.tile(est_para,3),np.tile(top_pop,5))
+est_array = np.concatenate([gamma_vec_TVP, a_vec_TVP,ratio_TVP, nu_vec_TVP, vm_vec_TVP,
+                            theta_vec_TVP,
+                            gamma_vec_TV, a_vec_TV,ratio_TV, nu_vec_TV, vm_vec_TV, theta_vec_TV,
+                            gamma_vec_TVM, a_vec_TVM,ratio_TVM, nu_vec_TVM, vm_vec_TVM,
+                            theta_vec_TVM])
+est_label = np.repeat(np.tile(est_para,len(model_para)),np.tile(top_pop,len(est_para)))
 model_label = np.repeat(model_para, np.array(top_pop) * len(est_para))
 
 ss_list = {'est': est_array, 'est_label': est_label,
            'model_label': model_label}
 ss_df = pd.DataFrame(ss_list)
 
-vioplot = sns.catplot(x="model_label", y="est", col="est_label",palette=["#CB1B45","#FAD689","#0D5661"],
+vioplot = sns.catplot(x="model_label", y="est", col="est_label",col_wrap=3,palette=["#CB1B45",
+                                                                                    "#FAD689",
+                                                                          "#0D5661"],
                       data=ss_df, kind="box", height=5, aspect=.6, sharey=False)
 # vioplot.set(ylim=(-50,400))
 # vioplot.set_xticklabels(["$\gamma \cdot 10^{-8}$", "$\\alpha \cdot 10^{-5}$", "$\\nu \cdot 10^{
@@ -151,11 +158,13 @@ vioplot.set_axis_labels("", "Estimate value")
 axes = vioplot.axes.flatten()
 axes[0].set_title("$\gamma $")
 axes[1].set_title("$\\alpha $")
-axes[2].set_title("$\\nu $")
-axes[3].set_title("$V_m $")
-axes[4].set_title("$\\theta $")
+axes[2].set_title("$\sqrt{\\alpha/\gamma} $")
 
-for no_plots in range(0,4):
+axes[3].set_title("$\\nu $")
+axes[4].set_title("$V_m $")
+axes[5].set_title("$\\theta $")
+
+for no_plots in range(0,5):
     axes[no_plots].ticklabel_format(style='sci', axis='y', scilimits=(0,0),useMathText=True)
 
 

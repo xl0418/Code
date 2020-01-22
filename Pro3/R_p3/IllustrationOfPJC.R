@@ -1,7 +1,7 @@
 library(ggthemes)
 library(DDD)
 library(ggtree)
-abundance.vec = c(800,10,100,400)
+abundance.vec = rev(c(800,10,100,400))
 phylogenetic.matrix = matrix(c(0,20,20,20,
                                20,0,15,15,
                                20,15,0,5,
@@ -24,7 +24,7 @@ for(phi in phi.range){
 }
 
 phi.con.df = data.frame()
-species.index = rev(c(1:4))
+species.index = c(1:4)
 for(i in c(1:ncol(phi.contribution))){
   phi.con.df = rbind(phi.con.df,cbind(log.phi.range,phi.contribution[,i],species.index[i]))
 }

@@ -8,10 +8,11 @@ library(gridExtra)
 library(ggthemes)
 library(phyloTop)
 library(quantreg)
+library(DDD)
 source('C:/Liang/Code/Pro3/R_p3/g_legend.R', echo=TRUE)
 
 source('C:/Liang/Code/Pro3/R_p3/deltar.R', echo=TRUE)
-method = 'deltar'
+method = 'colless'
 dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces/'
 sce.short = rev(c('H','M','L'))
 scenario = NULL
@@ -27,6 +28,7 @@ for(i.letter in sce.short){
 
 # Compute the colless values and gamma values for a given phylo tree.
 foo <- function(x, metric = "colless") {
+
   if (metric == "colless") {
     xx <- as.treeshape(x)  # convert to apTreeshape format
     num.tips <- x$Nnode+1
@@ -39,9 +41,79 @@ foo <- function(x, metric = "colless") {
   } else if (metric == "sackin") {
     sackin.phylo(x)
   } else if (metric == "beta") {
-    maxlik.betasplit(xx)$max_lik
+    maxlik.betasplit(x)$max_lik
   } else stop("metric should be one of colless or gamma")
+
+
 }
+
+# Empirical index
+emp.data.file <- 'c:/Liang/Googlebox/Research/Project3/treebase/treebase1000_2.rda'
+load(emp.data.file)
+
+beta.index = c()
+colless.index = c()
+gamma.index = c()
+deltar.index = c()
+
+
+
+for(treenum in c(1:length(treebase))){
+    if(is.null(treebase[[treenum]]$edge.length)){
+      beta.index = c(beta.index,NA)
+      colless.index = c(colless.index,NA)
+      gamma.index = c(gamma.index,NA)
+      deltar.index = c(deltar.index,NA)
+      
+    }else{print(treenum)
+      tree = multi2di(treebase[[treenum]])
+      species = getExtinct(tree)
+      if(length(species) == 0){
+        print("No extinction...")
+        recontruct.tree = tree
+        beta.index = c(beta.index,tryCatch(foo(recontruct.tree,metric = 'beta'), error=function(err) NA))
+        colless.index = c(colless.index,tryCatch(foo(recontruct.tree,metric = 'colless'), error=function(err) NA))
+        gamma.index = c(gamma.index,tryCatch(foo(recontruct.tree,metric = 'gamma'), error=function(err) NA))
+        deltar.index = c(deltar.index,tryCatch(foo(recontruct.tree,metric = 'deltar'), error=function(err) NA))
+        
+      }else if(length(species) == tree$Nnode+1){
+        print("All extincted...")
+        beta.index = c(beta.index,NA)
+        colless.index = c(colless.index,NA)
+        gamma.index = c(gamma.index,NA)
+        deltar.index = c(deltar.index,NA)
+        
+      }else{
+        recontruct.tree = drop.tip(tree, setdiff(tree$tip.label, species))
+        recontruct.tree = multi2di(recontruct.tree)
+        beta.index = c(beta.index,tryCatch(foo(recontruct.tree,metric = 'beta'), error=function(err) NA))
+        colless.index = c(colless.index,tryCatch(foo(recontruct.tree,metric = 'colless'), error=function(err) NA))
+        gamma.index = c(gamma.index,tryCatch(foo(recontruct.tree,metric = 'gamma'), error=function(err) NA))
+        deltar.index = c(deltar.index,tryCatch(foo(recontruct.tree,metric = 'deltar'), error=function(err) NA))
+      }
+ 
+ 
+  }
+}
+
+na.beta.pos = which(is.na(beta.index))
+na.colless.pos = which(is.na(colless.index))
+na.gamma.pos = which(is.na(gamma.index))
+na.deltar.pos = which(is.na(deltar.index))
+
+invalid.index = unique(c(na.beta.pos,na.colless.pos,na.gamma.pos,na.deltar.pos))
+whole.index = c(1:length(treebase))
+
+valid.index = whole.index[is.na(pmatch(whole.index,invalid.index))]
+
+
+quantiles.values = c(0.25,0.5,0.75)
+
+quantiles.treebase.beta = quantile(beta.index[valid.index],probs = quantiles.values)
+quantiles.treebase.colless = quantile(colless.index[valid.index],probs = quantiles.values)
+quantiles.treebase.gamma = quantile(gamma.index[valid.index],probs = quantiles.values)
+quantiles.treebase.deltar = quantile(deltar.index[valid.index],probs = quantiles.values)
+
 
 jclabel = c('0','0.25','0.5','0.75','1')
 plabel = c('1','1e-2','1e-4','1e-6','1e-8','0')
@@ -85,7 +157,7 @@ for(tens1 in c(1:9)){
     gap <- 3
   }else if(method=='deltar'){
     value.min <- -1.2
-    value.max <- 0.5
+    value.max <- 1
     gap <- 0.1
   }else if(method=='sackin'){
     value.min <- -1.2
@@ -117,6 +189,24 @@ for(tens1 in c(1:9)){
           axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.x=element_line(),axis.line.x=element_line(),
           axis.ticks.y=element_line(),axis.line.y=element_line()
           ) + ylim(value.min, value.max)
+  if(method == 'beta'){
+    hline.data = quantiles.treebase.beta
+  }else if(method == 'colless'){
+    hline.data = quantiles.treebase.colless
+  }else if(method == 'gamma'){
+    hline.data = quantiles.treebase.gamma
+    
+  }else if(method == 'deltar'){
+    hline.data = quantiles.treebase.deltar
+    
+  }
+  plotl_est[[tens1]] <- plotl_est[[tens1]]+geom_hline(yintercept=hline.data[1],
+                                                      linetype="dashed", color = "red")+
+    geom_hline(yintercept=hline.data[2],
+               linetype="solid", color = "red")+
+    geom_hline(yintercept=hline.data[3],
+               linetype="dashed", color = "red")
+  
   if(tens1 %in% c(1,2,3)){
     plotl_est[[tens1]] <- plotl_est[[tens1]]+
     theme(axis.title.y=element_text(color="black", size=15, face="bold"),
@@ -164,7 +254,7 @@ wholeplot=grid.arrange(grob3,grob.sigdisp,grob3,grob.sigjc,grob2,mylegend,grob3,
 
 
 dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-savefilename <- paste0(dir_save,method,'_dis.pdf')
+savefilename <- paste0(dir_save,method,'_dis_emp.pdf')
 ggsave(savefilename,wholeplot,width = 15,height = 10)
 
 

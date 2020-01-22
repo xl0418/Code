@@ -11,7 +11,7 @@ dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces/'
 sce.short = c('H','M','L')
 scenario = NULL
 sce.short.comb.vec = NULL
-method = 'AWMIPD'
+method = 'newAWMIPD'
 for(i.letter in sce.short){
   for(j.letter in sce.short){
     sce.folder = paste0('sce',i.letter,j.letter)
@@ -59,7 +59,7 @@ y_title_fontsize = 16
 # 
 
 
-for(i_n in c(1:9)){
+for(i_n in c(2:9)){
   print(paste0("Processing Scenario ",i_n,"..."))
   plots_df = list()
   plot.num = 1
@@ -82,18 +82,21 @@ for(i_n in c(1:9)){
       if(method == 'abs'){
         total.dvalues = rowSums(D.matrix)
         D.normalized = (total.dvalues-min(total.dvalues))/(max(total.dvalues)-min(total.dvalues))
-      }else if (method == 'MIPD'){
-        IPD.matrix = 1/D.matrix
-        diag(IPD.matrix) = 0
-        total.dvalues = rowSums(IPD.matrix)/(nrow(D.matrix)-1)
-        D.normalized = (total.dvalues-min(total.dvalues))/(max(total.dvalues)-min(total.dvalues))
-      }else if (method == 'AWMIPD'){
-        AD.matrix = sweep(D.matrix, MARGIN=2, as.matrix(R.table/local.scale^2), `*`)
+      }else if (method == 'newAWMIPD'){
+        AD.matrix = sweep(D.matrix, MARGIN=2, 1/as.matrix( as.numeric(R.table)), `*`)
         IPD.matrix = 1/AD.matrix
         diag(IPD.matrix) = 0
-        total.dvalues = rowSums(IPD.matrix) * as.matrix(R.table/local.scale^2)
+        total.dvalues = rowSums(IPD.matrix) * as.matrix( as.numeric(R.table))
         
-        D.normalized = (total.dvalues-min(total.dvalues))/(max(total.dvalues)-min(total.dvalues))
+        D.normalized =   total.dvalues/sum(total.dvalues)
+        D.normalized = (D.normalized-min(D.normalized))/(max(D.normalized)-min(D.normalized))
+        }else if (method == 'AWMIPD'){
+        AD.matrix = sweep(D.matrix, MARGIN=2, as.matrix( as.numeric(R.table)), `*`)
+        IPD.matrix = 1/AD.matrix
+        diag(IPD.matrix) = 0
+        total.dvalues = rowSums(IPD.matrix) * as.matrix( as.numeric(R.table))
+        
+        D.normalized =   total.dvalues/sum(total.dvalues) #  (total.dvalues-min(total.dvalues))/(max(total.dvalues)-min(total.dvalues))
       }else{
         print('Provide method...')
         break
@@ -144,7 +147,7 @@ for(i_n in c(1:9)){
                           row_titles,g_ltt1,g_ltt5,g_ltt1,ncol = 3,widths = c(1,16,3),heights = c(1,24,1))
   
   dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-  savefilename <- paste0(dir_save,scefolder,'_species_dis_AWMIPD.eps')
+  savefilename <- paste0(dir_save,scefolder,'_species_dis_newAWMIPD.png')
   ggsave(savefilename,ltt.sce,width = 15,height = 10)
   
 }

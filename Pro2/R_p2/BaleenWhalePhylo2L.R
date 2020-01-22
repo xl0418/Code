@@ -3,7 +3,7 @@ library(DDD)
 source('C:/Liang/Code/Pro2/R_p2/phylo2L.R', echo=TRUE)
 source('C:/Liang/Code/Pro2/R_p2/pruneL.R', echo=TRUE)
 emdatadir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/slater_mcct.txt'
-dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/treedata/'
+dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/treedata_full/'
 
 emdata = read.nexus(emdatadir)
 plot(emdata,show.tip.label = FALSE)
@@ -31,7 +31,7 @@ phy_prune = fancyTree(emdata, type="droptip",tip = getExtinct(emdata),cex = 0.7)
 
 L = L_ext
 
-prune = 1
+prune = 0
 if (prune==1){
   L=pruneL(L)
 }
@@ -55,10 +55,10 @@ while(do){
 
 }
   
-
-
-phylo_prune = DDD::L2phylo(L,dropextinct = dropextinct)
-plot(phylo_prune,show.tip.label = FALSE)
+# 
+# 
+# phylo_prune = DDD::L2phylo(L,dropextinct = dropextinct)
+# plot(phylo_prune,show.tip.label = FALSE)
 
 
 time.list = c(sort(c(L[,1],L[which(L[,4]!= -1),4]),decreasing = TRUE),0)
