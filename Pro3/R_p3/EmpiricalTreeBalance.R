@@ -11,3 +11,7 @@ load('c:/Liang/Googlebox/Research/Project3/treebase/treebase100.rda')
 
 class(treebase[[1]])
 treebase[[1]]
+
+
+data(treebase)
+treebase

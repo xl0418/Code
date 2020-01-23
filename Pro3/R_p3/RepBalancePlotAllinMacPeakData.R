@@ -15,47 +15,100 @@ source('C:/Liang/Code/Pro3/R_p3/g_legend.R', echo=TRUE)
 
 source('C:/Liang/Code/Pro3/R_p3/deltar.R', echo=TRUE)
 
+# Compute the colless values and gamma values for a given phylo tree.
+foo <- function(x, metric = "colless") {
+  
+  if (metric == "colless") {
+    xx <- as.treeshape(x)  # convert to apTreeshape format
+    num.tips <- x$Nnode+1
+    #apTreeshape::colless(xx, "yule")  #*2/(num.tips-1)/(num.tips-2)  # calculate colless' metric
+    apTreeshape::colless(xx)*2/(num.tips-1)/(num.tips-2)  # calculate colless' metric
+  } else if (metric == "colless_yule") {
+    xx <- as.treeshape(x)  # convert to apTreeshape format
+    num.tips <- x$Nnode+1
+    apTreeshape::colless(xx, "yule")
+  } else if (metric == "gamma") {
+    gammaStat(x)
+  } else if (metric == "deltar") {
+    deltar(x)
+  } else if (metric == "sackin") {
+    sackin.phylo(x)
+  } else if (metric == "beta") {
+    maxlik.betasplit(x,size.bootstrap = 1000)$max_lik
+  } else stop("metric should be one of colless or gamma")
+  
+  
+}
 # Empirical index
-emp.data.file <- 'c:/Liang/Googlebox/Research/Project3/treebase/treebase1000_2.rda'
-data(treebase)
+data.wd = 'c:/Liang/Googlebox/Research/Project3/treedata_McPeak2008/'
+
 
 beta.index = c()
 colless.index = c()
 gamma.index = c()
 deltar.index = c()
+colless.yule.index = c()
 
 reconstruct.tree.fun <- function(tree){
   tree = multi2di(tree)
   L = DDD::phylo2L(tree)
-  reconstruct.tree = DDD::L2phylo(L)
-  return(reconstruct.tree)
+  if(length(which(L[,4]==-1)) == 1){
+    print('1 species left')
+    return(NA)
+  }else{
+    reconstruct.tree = DDD::L2phylo(L)
+    return(reconstruct.tree)
+  }
+ 
 }
 
-data.size = 4000
-
-for(treenum in c(2001:data.size)){
-  if(is.null(treebase[[treenum]]$edge.length)){
+data.size = 246
+tree.size.vec = NULL
+for(treenum in c(1:data.size)){
+  tree <- read.tree(paste0(data.wd,"/tree",treenum,".tre"))
+  if(is.null(tree$edge.length)){
+    print("no edge.length")
+    tree.size.vec <- c(tree.size.vec,NA)
     beta.index = c(beta.index,NA)
     colless.index = c(colless.index,NA)
     gamma.index = c(gamma.index,NA)
     deltar.index = c(deltar.index,NA)
+    colless.yule.index = c(colless.yule.index,NA)
     
   }else{
     print(treenum)
-    tree = treebase[[treenum]]
     recontruct.tree = tryCatch(reconstruct.tree.fun(tree),error=function(err) NA)
+    
     if(is.na(recontruct.tree)){
       recontruct.tree = NA
+      print('NA tree')
+      tree.size.vec <- c(tree.size.vec,NA)
+      beta.index = c(beta.index,NA)
+      colless.index = c(colless.index,NA)
+      gamma.index = c(gamma.index,NA)
+      deltar.index = c(deltar.index,NA)
+      colless.yule.index = c(colless.yule.index,NA)
       
     }else if( recontruct.tree$Nnode+1 <3) {
-      recontruct.tree = NA
+      print('Small tree')
+      tree.size.vec <- c(tree.size.vec,NA)
+      beta.index = c(beta.index,NA)
+      colless.index = c(colless.index,NA)
+      gamma.index = c(gamma.index,NA)
+      deltar.index = c(deltar.index,NA)
+      colless.yule.index = c(colless.yule.index,NA)
+      
+    }else{
+      tree.size.vec <- c(tree.size.vec,recontruct.tree$Nnode+1)
+      beta.index = c(beta.index,tryCatch(foo(recontruct.tree,metric = 'beta'), error=function(err) NA))
+      colless.index = c(colless.index,tryCatch(foo(recontruct.tree,metric = 'colless'), error=function(err) NA))
+      gamma.index = c(gamma.index,tryCatch(foo(recontruct.tree,metric = 'gamma'), error=function(err) NA))
+      deltar.index = c(deltar.index,tryCatch(foo(recontruct.tree,metric = 'deltar'), error=function(err) NA))
+      colless.yule.index = c(colless.yule.index,tryCatch(foo(recontruct.tree,metric = 'colless_yule'), error=function(err) NA))
+      
     }
-    beta.index = c(beta.index,tryCatch(foo(recontruct.tree,metric = 'beta'), error=function(err) NA))
-    colless.index = c(colless.index,tryCatch(foo(recontruct.tree,metric = 'colless'), error=function(err) NA))
-    gamma.index = c(gamma.index,tryCatch(foo(recontruct.tree,metric = 'gamma'), error=function(err) NA))
-    deltar.index = c(deltar.index,tryCatch(foo(recontruct.tree,metric = 'deltar'), error=function(err) NA))
-  }
-    
+     }
+  
 }
 
 
@@ -63,15 +116,12 @@ na.beta.pos = which(is.na(beta.index))
 na.colless.pos = which(is.na(colless.index))
 na.gamma.pos = which(is.na(gamma.index))
 na.deltar.pos = which(is.na(deltar.index))
+na.colless.yule.pos = which(is.na(colless.yule.index))
 
-invalid.index = unique(c(na.beta.pos,na.colless.pos,na.gamma.pos,na.deltar.pos))
+invalid.index = unique(c(na.beta.pos,na.colless.pos,na.gamma.pos,na.deltar.pos,na.colless.yule.pos))
 whole.index = c(1:data.size)
 
 valid.index = whole.index[is.na(pmatch(whole.index,invalid.index))]
-valid.index_1 = valid.index
-
-treebase1 = treebase[valid.index]
-save(treebase1, file = 'c:/Liang/Googlebox/Research/Project3/treebase/treebase1.rda')
 
 
 quantiles.values = c(0.25,0.5,0.75)
@@ -80,12 +130,11 @@ quantiles.treebase.beta = quantile(beta.index[valid.index],probs = quantiles.val
 quantiles.treebase.colless = quantile(colless.index[valid.index],probs = quantiles.values)
 quantiles.treebase.gamma = quantile(gamma.index[valid.index],probs = quantiles.values)
 quantiles.treebase.deltar = quantile(deltar.index[valid.index],probs = quantiles.values)
-
-gamma_deltar_compare = cbind(gamma.index[valid.index],deltar.index[valid.index],valid.index)
-
+quantiles.treebase.colless.yule = quantile(colless.yule.index[valid.index],probs = quantiles.values)
 
 
-method = 'colless'
+
+method = 'colless_yule'
 dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces/'
 sce.short = rev(c('H','M','L'))
 scenario = NULL
@@ -99,26 +148,6 @@ for(i.letter in sce.short){
   }
 }
 
-# Compute the colless values and gamma values for a given phylo tree.
-foo <- function(x, metric = "colless") {
-
-  if (metric == "colless") {
-    xx <- as.treeshape(x)  # convert to apTreeshape format
-    num.tips <- x$Nnode+1
-    #apTreeshape::colless(xx, "yule")  #*2/(num.tips-1)/(num.tips-2)  # calculate colless' metric
-    apTreeshape::colless(xx)*2/(num.tips-1)/(num.tips-2)  # calculate colless' metric
-  } else if (metric == "gamma") {
-    gammaStat(x)
-  } else if (metric == "deltar") {
-    deltar(x)
-  } else if (metric == "sackin") {
-    sackin.phylo(x)
-  } else if (metric == "beta") {
-    maxlik.betasplit(x)$max_lik
-  } else stop("metric should be one of colless or gamma")
-
-
-}
 
 jclabel = c('0','0.25','0.5','0.75','1')
 plabel = c('1','1e-2','1e-4','1e-6','1e-8','0')
@@ -185,7 +214,7 @@ for(tens1 in c(1:9)){
   # 
   # indexfile <- paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/','Index',method,'.Rda')
   # save(colless_alldf,file = indexfile)
-
+  
   plotl_est[[tens1]] <-ggplot(colless_alldf, aes(x=phi,y=colvalue)) +  # plot histogram of distribution of values
     geom_boxplot(aes(fill=psi), position=position_dodge(.9),outlier.shape = NA)+ theme_tufte() +
     scale_fill_manual(values=c("#080808", "#4A225D", "#E83015","#F05E1C","#FFC408"))+
@@ -193,7 +222,7 @@ for(tens1 in c(1:9)){
     theme(legend.position = "none",axis.title.x=element_blank(),axis.text.x=element_blank(),
           axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.x=element_line(),axis.line.x=element_line(),
           axis.ticks.y=element_line(),axis.line.y=element_line()
-          ) + ylim(value.min, value.max)
+    ) + ylim(value.min, value.max)
   if(method == 'beta'){
     hline.data = quantiles.treebase.beta
   }else if(method == 'colless'){
@@ -214,10 +243,10 @@ for(tens1 in c(1:9)){
   
   if(tens1 %in% c(1,2,3)){
     plotl_est[[tens1]] <- plotl_est[[tens1]]+
-    theme(axis.title.y=element_text(color="black", size=15, face="bold"),
-          axis.text.y=element_text(color="black", size=15, face="bold"),
-          axis.ticks.x=element_line(),axis.line.x=element_line(),
-          axis.ticks.y=element_line(),axis.line.y=element_line())
+      theme(axis.title.y=element_text(color="black", size=15, face="bold"),
+            axis.text.y=element_text(color="black", size=15, face="bold"),
+            axis.ticks.x=element_line(),axis.line.x=element_line(),
+            axis.ticks.y=element_line(),axis.line.y=element_line())
   }
   if(tens1 %in% c(3,6,9)){
     plotl_est[[tens1]] <- plotl_est[[tens1]]+
@@ -227,7 +256,7 @@ for(tens1 in c(1:9)){
             axis.ticks.y=element_line(),axis.line.y=element_line())+
       scale_x_discrete(breaks=plabel,labels = x.ticks.labels)
   }
-
+  
 }
 
 legend_plot = ggplot(colless_alldf, aes(x=phi,y=colvalue)) +  # plot histogram of distribution of values

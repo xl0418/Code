@@ -68,6 +68,8 @@ valid.index = whole.index[is.na(pmatch(whole.index,invalid.index))]
 quantiles.values = c(0.25,0.5,0.75)
 
 quantiles.treebase.beta = quantile(beta.index[valid.index],probs = quantiles.values)
+
+
 hline.data = quantiles.treebase.beta
 
 jclabel = c('0','0.25','0.5','0.75','1')
@@ -150,6 +152,6 @@ wholeplot=grid.arrange(grob3,grob.sigdisp,grob3,grob.sigjc,grob2,mylegend,grob3,
 
 
 dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-savefilename <- paste0(dir_save,method,'_dis_emp.pdf')
+savefilename <- paste0(dir_save,method,'_dis_treebase.pdf')
 ggsave(savefilename,wholeplot,width = 15,height = 10)
 
