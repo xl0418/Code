@@ -148,7 +148,7 @@ for datafile in ['smtd_con40.npy', 'umtd_con40.npy', 'pics_con40.npy']:
     model_index = np.array([0, 1, 2])
     model_params = np.repeat(model_index, repeats=population)
     propose_model = model_params
-    q5 = np.argsort(fitness)[-int(total_population // 20)]  # best 25%
+    q5 = np.argsort(fitness)[-int(total_population // 20)]  # best 5%
     fit_index = np.where(fitness > fitness[q5])[0]   #np.max(fitness)*0.95
 
     modelTVPperc = len(np.where(propose_model[fit_index] == 0)[0]) / len(fit_index)
@@ -223,3 +223,46 @@ axes[1].legend(ncol=3, bbox_to_anchor=(0, 1),
 
 
 plt.show()
+
+
+# GOF distribution for TVP TV TVM
+count = 0
+sslabel = ['smtd','umtd+pics','pics']
+data_dir = 'C:/Liang/Googlebox/Research/Project2/BaleenWhales/result_cluster' \
+           '/results_ms_posterior/'
+for datafile in ['smtd_con40.npy', 'umtd_con40.npy', 'pics_con40.npy']:
+    data_name = data_dir + datafile
+
+    est_data = np.load(data_name,allow_pickle=True).item()
+    population = int(len(est_data['model_data'][0]) / 3)
+    fitness = est_data['fitness'][-1]
+    total_population = len(est_data['model_data'][0])
+    model_index = np.array([0, 1, 2])
+    model_params = np.repeat(model_index, repeats=population)
+    propose_model = model_params
+    q5 = np.argsort(fitness)[-int(total_population // 20)]  # best 5%
+    fit_5value = fitness[q5]   #np.max(fitness)*0.95
+
+    TVP_index = np.where(fitness[:population] > 0)[0]
+    TV_index = np.where(fitness[population:2 * population] > 0)[0] + population
+    TVM_index = np.where(fitness[2 * population:] > 0)[0] + 2 * population
+
+    x_multi = [fitness[TVP_index], fitness[TV_index], fitness[TVM_index]]
+    labels = ['AWC','UWC','MWC']
+    colors_three_models = ['#EE442F', '#601A4A','#85C0F9']
+
+    len(np.where(fitness[TVP_index]>fit_5value)[0])
+
+    fig, axes = plt.subplots(nrows=1, ncols=1)
+    axes.hist(fitness[TVP_index], 50, alpha = 0.7, histtype = 'stepfilled',color =
+    colors_three_models[0])
+    axes.hist(fitness[TV_index], 50, alpha=0.7, histtype='stepfilled', color=
+    colors_three_models[1])
+    axes.hist(fitness[TVM_index], 50, alpha=0.7, histtype='stepfilled', color=
+    colors_three_models[2])
+    axes.set_title('GOF distribution using '+ sslabel[count])
+    axes.legend(labels)
+    axes.vlines(fit_5value,0,1000, colors = 'r',linestyle = '--')
+    # axes.set_xlim(0.2,0.37)
+    axes.set_xlabel('GOF values' , fontsize = 10)
+    count += 1
