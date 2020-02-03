@@ -41,7 +41,7 @@ foo <- function(x, metric = "colless") {
 }
 # Empirical index
 data.wd = 'c:/Liang/Googlebox/Research/Project3/treedata_McPeak2008/'
-
+recon = TRUE
 
 beta.index = c()
 colless.index = c()
@@ -77,8 +77,11 @@ for(treenum in c(1:data.size)){
     
   }else{
     print(treenum)
-    recontruct.tree = tryCatch(reconstruct.tree.fun(tree),error=function(err) NA)
-    
+    if(recon){
+      recontruct.tree = tryCatch(reconstruct.tree.fun(tree),error=function(err) NA)
+    }else{
+      recontruct.tree = tree
+    }
     if(is.na(recontruct.tree)){
       recontruct.tree = NA
       print('NA tree')
@@ -124,7 +127,7 @@ whole.index = c(1:data.size)
 valid.index = whole.index[is.na(pmatch(whole.index,invalid.index))]
 
 
-quantiles.values = c(0.25,0.5,0.75)
+quantiles.values = c(0.05,0.5,0.95)
 
 quantiles.treebase.beta = quantile(beta.index[valid.index],probs = quantiles.values)
 quantiles.treebase.colless = quantile(colless.index[valid.index],probs = quantiles.values)
@@ -288,7 +291,7 @@ wholeplot=grid.arrange(grob3,grob.sigdisp,grob3,grob.sigjc,grob2,mylegend,grob3,
 
 
 dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-savefilename <- paste0(dir_save,method,'_dis_MacPeakdata.pdf')
+savefilename <- paste0(dir_save,method,'_dis_MacPeakdata005.pdf')
 ggsave(savefilename,wholeplot,width = 15,height = 10)
 
 

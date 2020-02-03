@@ -41,7 +41,7 @@ foo <- function(x, metric = "colless") {
 }
 
 # Empirical index
-emp.data.file <- 'c:/Liang/Googlebox/Research/Project3/treebase/treebase.rda'
+emp.data.file <- 'c:/Liang/Googlebox/Research/Project3/treebase/treebase1000_2.rda'
 load(emp.data.file)
 
 beta.index = c()
@@ -90,7 +90,7 @@ valid.index = whole.index[is.na(pmatch(whole.index,invalid.index))]
 # save(treebase, file = 'c:/Liang/Googlebox/Research/Project3/treebase/treebase.rda')
 # 
 
-quantiles.values = c(0.25,0.5,0.75)
+quantiles.values = c(0.05,0.5,0.95)
 
 quantiles.treebase.beta = quantile(beta.index[valid.index],probs = quantiles.values)
 quantiles.treebase.colless = quantile(colless.index[valid.index],probs = quantiles.values)
@@ -254,7 +254,7 @@ wholeplot=grid.arrange(grob3,grob.sigdisp,grob3,grob.sigjc,grob2,mylegend,grob3,
 
 
 dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-savefilename <- paste0(dir_save,method,'_dis_treebase.pdf')
+savefilename <- paste0(dir_save,method,'_dis_treebase_005.pdf')
 ggsave(savefilename,wholeplot,width = 15,height = 10)
 
 

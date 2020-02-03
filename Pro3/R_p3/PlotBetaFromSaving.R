@@ -65,7 +65,7 @@ whole.index = c(1:length(treebase))
 valid.index = whole.index[is.na(pmatch(whole.index,invalid.index))]
 
 
-quantiles.values = c(0.25,0.5,0.75)
+quantiles.values = c(0.05,0.5,0.95)
 
 quantiles.treebase.beta = quantile(beta.index[valid.index],probs = quantiles.values)
 
