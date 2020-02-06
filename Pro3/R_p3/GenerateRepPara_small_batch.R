@@ -2,15 +2,15 @@ psi_vec = c(0,0.5,1,0.25,0.75,1.25,1.5)
 sig_phi = c(sqrt(2)/2,sqrt(2)*1e2/2,sqrt(2)*1e4/2,sqrt(2)*1e6/2,sqrt(2)*1e8/2,-1)
 L = 333
 v=0.0001
-disp_vec = c(0.1,1,10)
+disp_vec = c(0.1,1,10,100)
 spar_vec = c(0.1,1,10)
-name.spar=c('L','M','H')
+name.spar=c('L','M','H','X')
 batch.size=10
-dir = "C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_addition_LM"
+dir = "C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_addition_disp"
 ticks=10000000
 log=1e8
-for(dis.ind in c(1)){
-  for(spar.ind in c(2)){
+for(dis.ind in c(4)){
+  for(spar.ind in c(1:3)){
   # scenario = 0
     s_spar=spar_vec[spar.ind]
     s_disp=disp_vec[dis.ind]
@@ -23,7 +23,7 @@ for(dis.ind in c(1)){
     # dir.simfolder = paste0(dir.scefolder,"/sim_scripts")
     # dir.create(file.path(dir.simfolder), showWarnings = FALSE)
     append = TRUE
-    for(i in c(3,5,6,7)){
+    for(i in c(1:5)){
       for(j in c(1:6)){
         subDir = paste0("spatialpara",formatC(ticks),sce,i,j)
         dir.create(file.path(dir.folder, subDir), showWarnings = FALSE)

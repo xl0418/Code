@@ -6,6 +6,8 @@ library(viridis)
 library("RColorBrewer")
 library(grid)
 library(gridExtra)
+library(ape)
+library(geiger)
 source(paste0(getwd(),'/g_legend.R'))
 # source('C:/Liang/Code/Pro3/R_p3/barplot3d.R', echo=TRUE)
 source('C:/Liang/Code/Pro3/R_p3/multi3dbar.R', echo=TRUE)
@@ -39,29 +41,35 @@ for(i_n in c(1:9)){
       species.area = NULL
       
       comb = paste0(i,j)
-      for(local.scale in c(1:19,seq(20,333,10))){
-        mean.data = NULL
+      multitreefile <- paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/','multitree',letter.comb,comb,'.tre')
+      
+      trees <- read.tree(multitreefile)
+      for(local.scale in seq(10,333,10)){
+        ns.vec=NULL
         print(paste0('i_n = ',i_n,'...','i = ', i, '; j = ',j,'; area = ',local.scale))
         for(rep in c(1:100)){
-          ns.vec=NULL
+          reptrees = trees[[rep]]
           rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'M',i,j,'rep',rep,'.csv')
           L.table = read.csv(rname,header = FALSE)
           global.matrix = as.matrix(L.table)
-  
+          
           submatrix.vec = c(0:(333 %/% local.scale - 1))*local.scale+1
           for(row.num in submatrix.vec){
             local.grid = global.matrix[row.num:(row.num+local.scale-1),row.num:(row.num+local.scale-1)]
-            local.richness = length(unique(as.vector(as.matrix(local.grid))))
-            ns.vec = c(ns.vec, local.richness)
+            local.species = paste0('t',unique(as.vector(as.matrix(local.grid)))+1)
+            species.out = setdiff(reptrees$tip.label,local.species)
+            culledtree <- drop.tip(reptrees, species.out)
+            local.phylo.diversity <- sum(culledtree$edge.length)
+            ns.vec = c(ns.vec, local.phylo.diversity)
           }
-          mean.data = c(mean.data,mean(ns.vec))
+          
         }
-        quantile1 = quantile(mean.data)
+        quantile1 = quantile(ns.vec)
         species.area = rbind(species.area,c(quantile1,i,j,i_n,local.scale))
         
       }
       colnames(species.area) = c('0','25','50','75','100','i','j','i_n','area')
-      data.save.name = paste0(dir.result,'/speciesareamean/',letter.comb,i,j,'mean.Rda')
+      data.save.name = paste0(dir.result,'/phylodiversityarea/',letter.comb,i,j,'phylodiversity.Rda')
       save(species.area,file=data.save.name)
       # load(data.save.name)
     }

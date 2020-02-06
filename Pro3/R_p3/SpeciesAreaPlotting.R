@@ -43,12 +43,12 @@ for(i_n in c(1:9)){
   for(i in c(1,4,2,5,3)){
     for(j in c(1:6)){
       comb = paste0(i,j)
-      data.load.name = paste0(dir.result,'/speciesarea/',letter.comb,i,j,'.Rda')
+      data.load.name = paste0(dir.result,'/speciesareamean/',letter.comb,i,j,'mean.Rda')
       load(data.load.name)
       species.area.df <- as.data.frame(species.area)
 
   
-      area = seq(10,333,10)
+      area = species.area.df$area
       df_lineage = rbind(c(rep(1,5),i,j,i_n,1),species.area.df)
       
       df_lineage$`0` = log(df_lineage$`0`)
@@ -119,7 +119,7 @@ for(i_n in c(1:9)){
   ltt.sce <- grid.arrange(g_ltt1,column_titles,g_ltt1,label,g_ltt4,row_titles,g_ltt1,g_ltt5,g_ltt1,ncol = 3,widths = c(1,16,3),heights = c(1,36,1))
   
   dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-  savefilename <- paste0(dir_save,scefolder,'_species_area_log.pdf')
+  savefilename <- paste0(dir_save,scefolder,'_species_area_log_new.pdf')
   ggsave(savefilename,ltt.sce,width = 15,height = 10)
 }
 
