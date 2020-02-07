@@ -247,7 +247,7 @@ m = matrix(1:20,ncol = 4)
 
 
 col_labels = c('Neutral with high dispersal','High dispersal','Intermediate dispersal','Low dispersal')
-row_labels = c('Tree', 'SAR','SAD','AWMPID','LTT')
+row_labels = c('Tree', 'SAR','SAD','SPD','LTT')
 
 phi1 <- textGrob(row_labels[1], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
 phi2 <- textGrob(row_labels[2], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
