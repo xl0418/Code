@@ -246,7 +246,8 @@ for(plot.comb in c(1:nrow(plot.combination))){
 m = matrix(1:20,ncol = 4)
 
 
-col_labels = c('Neutral with high dispersal','High dispersal','Intermediate dispersal','Low dispersal')
+col_labels = c('Neutral\n high dispersal','SPJC\n high dispersal',
+               'SPJC\n intermediate dispersal','SPJC\n low dispersal')
 row_labels = c('Tree', 'SAR','SAD','SPD','LTT')
 
 phi1 <- textGrob(row_labels[1], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
@@ -273,7 +274,7 @@ g_ltt1 = textGrob("")
 g_a = textGrob("(a)")
 g_b = textGrob("(b)")
 
-ltt.sce <- grid.arrange(column_titles,g_ltt1,g_ltt4,row_titles,ncol = 2,widths = c(20,1),heights = c(1,25))
+ltt.sce <- grid.arrange(column_titles,g_ltt1,g_ltt4,row_titles,ncol = 2,widths = c(20,1),heights = c(2,25))
 
 dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
 savefilename <- paste0(dir_save,'mixing_result.pdf')
