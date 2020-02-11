@@ -246,8 +246,8 @@ for(plot.comb in c(1:nrow(plot.combination))){
 m = matrix(1:20,ncol = 4)
 
 
-col_labels = c('Neutral\n high dispersal','SPJC\n high dispersal',
-               'SPJC\n intermediate dispersal','SPJC\n low dispersal')
+col_labels = c('Neutral\n high dispersal','SPJC high dispersal\n& interaction distance',
+               'SPJC intermediate dispersal\n& high interaction distance','SPJC low dispersal\n& high interaction distance')
 row_labels = c('Tree', 'SAR','SAD','SPD','LTT')
 
 phi1 <- textGrob(row_labels[1], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
