@@ -3,14 +3,14 @@ sig_phi = c(sqrt(2)/2,sqrt(2)*1e2/2,sqrt(2)*1e4/2,sqrt(2)*1e6/2,sqrt(2)*1e8/2,-1
 L = 333
 v=0.0001
 disp_vec = c(0.1,1,10,100)
-spar_vec = c(0.1,1,10)
+spar_vec = c(0.1,1,10,100)
 name.spar=c('L','M','H','X')
 batch.size=10
 dir = "C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_addition_disp"
 ticks=10000000
 log=1e8
-for(dis.ind in c(4)){
-  for(spar.ind in c(1:3)){
+for(dis.ind in c(1:4)){
+  for(spar.ind in c(4)){
   # scenario = 0
     s_spar=spar_vec[spar.ind]
     s_disp=disp_vec[dis.ind]

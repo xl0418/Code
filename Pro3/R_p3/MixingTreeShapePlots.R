@@ -210,7 +210,7 @@ for(plot.comb in plot.combination){
   value.min <- -1.2
   value.max <- 1
   treeshape_plot[[count1]] <- ggplot(deltar_df_col, aes(x=group,y=value)) +  # plot histogram of distribution of values
-    geom_boxplot(color="#9E7A7A",aes(fill=group), position=position_dodge(.9),outlier.shape = NA)+ theme_bw() +
+    geom_boxplot(color="#9E7A7A",aes(fill=group), position=position_dodge(.9))+ theme_bw() +
     scale_fill_manual(values=c("#D0104C", "#DB4D6D", "#EB7A77"))+
     labs(x="",y="") +
     theme(legend.position = "none",axis.title.x=element_blank(),
@@ -224,7 +224,8 @@ for(plot.comb in plot.combination){
                linetype="dashed", color = "red",size = line.size)+
     scale_x_discrete(labels = c())+
     theme(axis.text.y=element_text(angle=90,size = y_label_fontsize),
-          axis.text.x=element_text(size = x_label_fontsize))+
+          axis.text.x=element_text(size = x_label_fontsize),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
     scale_y_continuous(limits = c(value.min,value.max),breaks = seq(-1,1,1),
                        labels = c(-1,0,1))
   
@@ -234,7 +235,7 @@ for(plot.comb in plot.combination){
   value.min <- -15
   value.max <- 5
   treeshape_plot[[count1]] <-ggplot(gamma_df_col, aes(x=group,y=value)) +  # plot histogram of distribution of values
-    geom_boxplot(color = '#3C2F41',aes(fill=group), position=position_dodge(.9),outlier.shape = NA)+ theme_bw() +
+    geom_boxplot(color = '#3C2F41',aes(fill=group), position=position_dodge(.9))+ theme_bw() +
     scale_fill_manual(values=c("#77428D", "#986DB2", "#B28FCE"))+
     labs(x="",y="") +
     theme(legend.position = "none",axis.title.x=element_blank(),axis.text.x=element_blank(),
@@ -248,7 +249,8 @@ for(plot.comb in plot.combination){
                linetype="dashed", color = "#986DB2",size = line.size)+
     scale_x_discrete(labels = c())+
     theme(axis.text.y=element_text(angle=90,size = y_label_fontsize),
-          axis.text.x=element_text(size = x_label_fontsize))+
+          axis.text.x=element_text(size = x_label_fontsize),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
     scale_y_continuous(limits = c(value.min,value.max),breaks = seq(-15,5,5))
   
   
@@ -259,7 +261,7 @@ for(plot.comb in plot.combination){
   value.min <- 0
   value.max <- 1
   treeshape_plot[[count1]] <-ggplot(colless_df_col, aes(x=group,y=value)) +  # plot histogram of distribution of values
-    geom_boxplot(color='#465D4C',aes(fill=group), position=position_dodge(.9),outlier.shape = NA)+ theme_bw() +
+    geom_boxplot(color='#465D4C',aes(fill=group), position=position_dodge(.9))+ theme_bw() +
     scale_fill_manual(values=c("#096148", "#00896C", "#A8D8B9"))+
     labs(x="",y="") +
     theme(legend.position = "none",axis.title.x=element_blank(),axis.text.x=element_blank(),
@@ -273,7 +275,8 @@ for(plot.comb in plot.combination){
                linetype="dashed", color = "#86C166",size = line.size)+
     scale_x_discrete(labels = c())+
     theme(axis.text.y=element_text(angle=90,size = y_label_fontsize),
-          axis.text.x=element_text(size = x_label_fontsize))+
+          axis.text.x=element_text(size = x_label_fontsize),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
     scale_y_continuous(limits = c(value.min,value.max),breaks = seq(0,1,0.5),labels = c('0','0.5','1'))
   
   
@@ -283,7 +286,7 @@ for(plot.comb in plot.combination){
   value.min <- -2
   value.max <- 0
   treeshape_plot[[count1]] <-ggplot(beta_df_col, aes(x=group,y=value)) +  # plot histogram of distribution of values
-    geom_boxplot(color = '#0D5661',aes(fill=group), position=position_dodge(.9),outlier.shape = NA)+ theme_bw() +
+    geom_boxplot(color = '#0D5661',aes(fill=group), position=position_dodge(.9))+ theme_bw() +
     scale_fill_manual(values=c("#006284", "#3A8FB7", "#58B2DC"))+
     labs(x="",y="") +
     theme(legend.position = "none",axis.text.x=element_blank(),
@@ -296,7 +299,8 @@ for(plot.comb in plot.combination){
     geom_hline(yintercept=quantiles.treebase.beta[3],
                linetype="dashed", color = "#0089A7",size = line.size)+
     theme(axis.text.y=element_text(angle=90,size = y_label_fontsize),
-          axis.text.x=element_text(size = x_label_fontsize))+
+          axis.text.x=element_text(size = x_label_fontsize),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
     scale_y_continuous(limits = c(value.min,value.max),breaks = seq(-2,0,1),labels = c('-2','-1','0'))
   
   
@@ -316,8 +320,8 @@ for(plot.comb in plot.combination){
 m = matrix(1:20,ncol = 4)
 
 
-col_labels = c('Neutral','SPJC\n high dispersal',
-               'SPJC\n intermediate dispersal','SPJC\n low dispersal')
+col_labels = c('Neutral','SPJC high dispersal \n& interaction distance',
+               'SPJC intermediate dispersal \n& interaction distance','SPJC low dispersal \n& interaction distance')
 row_labels = c('Tree', 'SAR','SAD','Colless','LTT')
 
 phi1 <- textGrob(row_labels[1], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
