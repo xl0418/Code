@@ -44,10 +44,12 @@ y_title_fontsize = 16
 
 count1 = 1
 p = list()
-
+# AWMIPD mode
+pdmode = 'exp'
+a = 1
 rep.sample = 18
 
-plot.combination = rbind(c(1,1,1),c(1,5,3),c(4,4,4),c(7,5,4))
+plot.combination = rbind(c(1,1,1),c(1,5,3),c(4,4,4),c(7,5,4), c(9,5,4))
 
 
 for(plot.comb in c(1:nrow(plot.combination))){
@@ -154,11 +156,29 @@ for(plot.comb in c(1:nrow(plot.combination))){
   Rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'R',comb,'rep',rep.sample,'.csv')
   R.table = read.csv(Rname,header = FALSE)
   global.matrix = as.matrix(L.table)
-  D.matrix = as.matrix(D.table)
-  AD.matrix = sweep(D.matrix, MARGIN=2, 1/as.matrix( as.numeric(R.table)), `*`)
-  IPD.matrix = 1/AD.matrix
-  diag(IPD.matrix) = 0
-  total.dvalues = rowSums(IPD.matrix) * as.matrix( as.numeric(R.table))
+  D.matrix = as.matrix(D.table) * 2 / 10^7
+  
+  # if (pdmode == 'inv') {
+  #   AD.matrix = sweep(D.matrix, MARGIN=2, 1/as.matrix( as.numeric(R.table)), `*`)
+  #   IPD.matrix = 1/AD.matrix
+  #   diag(IPD.matrix) = 0
+  # } else if (pdmode == 'exp') {
+  #   AD.matrix = sweep(D.matrix, MARGIN=2, 1/as.matrix( as.numeric(R.table)), `*`)
+  #   IPD.matrix = 1/AD.matrix
+  #   diag(IPD.matrix) = 0
+  # }
+  
+  # phylogenetic distance
+  if (pdmode == 'inv') {
+    ID = 1 / D.matrix
+    diag(ID) = 1
+    AD.matrix = sweep(ID, MARGIN = 2, as.matrix(as.numeric(R.table)), `*`)
+  } else if (pdmode == 'exp') {
+    ID = exp(- a * D.matrix)
+    AD.matrix = sweep(ID, MARGIN = 2, as.matrix(as.numeric(R.table)), `*`)
+  }
+  
+  total.dvalues = rowSums(AD.matrix) * as.matrix( as.numeric(R.table))
   
   D.normalized =   total.dvalues/sum(total.dvalues)
   D.normalized = (D.normalized-min(D.normalized))/(max(D.normalized)-min(D.normalized))
@@ -171,7 +191,7 @@ for(plot.comb in c(1:nrow(plot.combination))){
   p[[count1]] <- ggplot(distribution.data, aes(X, Y, fill= D)) + geom_tile()+
     theme(legend.position = '',axis.text = element_blank(),axis.ticks = element_blank(),
           panel.background = element_blank())+
-    xlab("")+ylab("") + scale_fill_gradient2(low="#005CAF",mid = 'white',
+    xlab("")+ylab("") + scale_fill_gradient2(low="#005CAF",mid = 'green',
                                              high="#D0104C",midpoint=0.5)
   
   count1 = count1+1
@@ -243,11 +263,12 @@ for(plot.comb in c(1:nrow(plot.combination))){
 
  
 }
-m = matrix(1:20,ncol = 4)
+m = matrix(1:25,ncol = 5)
 
 
 col_labels = c('Neutral\n high dispersal','SPJC high dispersal\n& interaction distance',
-               'SPJC intermediate dispersal\n& high interaction distance','SPJC low dispersal\n& high interaction distance')
+               'SPJC intermediate dispersal\n& high interaction distance','SPJC low dispersal\n& high interaction distance',
+               'SPJC low dispersal\n& low interaction distance')
 row_labels = c('Tree', 'SAR','SAD','SPD','LTT')
 
 phi1 <- textGrob(row_labels[1], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
@@ -260,10 +281,11 @@ psi1 <- textGrob(col_labels[1], gp=gpar(fontsize=mu_title_fontsize, fontface=3L)
 psi2 <- textGrob(col_labels[2], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
 psi3 <- textGrob(col_labels[3], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
 psi4 <- textGrob(col_labels[4], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+psi5 <- textGrob(col_labels[5], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
 
 
 row_titles <- arrangeGrob(phi1,phi2,phi3,phi4,phi5,ncol = 1)
-column_titles <- arrangeGrob(psi1,psi2,psi3,psi4,ncol = 4)
+column_titles <- arrangeGrob(psi1,psi2,psi3,psi4,psi5,ncol = 5)
 
 
 # label = textGrob("Number of lineages",gp=gpar(fontsize=y_title_fontsize), rot = 90)
@@ -277,7 +299,7 @@ g_b = textGrob("(b)")
 ltt.sce <- grid.arrange(column_titles,g_ltt1,g_ltt4,row_titles,ncol = 2,widths = c(20,1),heights = c(2,25))
 
 dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-savefilename <- paste0(dir_save,'mixing_result.pdf')
+savefilename <- paste0(dir_save,'mixing_result_exp.pdf')
 ggsave(savefilename,ltt.sce,width = 15,height = 10)
 
 

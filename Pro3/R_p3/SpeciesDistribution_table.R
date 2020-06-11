@@ -11,7 +11,7 @@ dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces/'
 sce.short = c('H','M','L')
 scenario = NULL
 sce.short.comb.vec = NULL
-method = 'newAWMIPD'
+method = 'expAWMIPD'
 for(i.letter in sce.short){
   for(j.letter in sce.short){
     sce.folder = paste0('sce',i.letter,j.letter)
@@ -59,7 +59,7 @@ y_title_fontsize = 16
 # 
 
 
-for(i_n in c(2:9)){
+for(i_n in c(1)){
   print(paste0("Processing Scenario ",i_n,"..."))
   plots_df = list()
   plot.num = 1
@@ -97,7 +97,16 @@ for(i_n in c(2:9)){
         total.dvalues = rowSums(IPD.matrix) * as.matrix( as.numeric(R.table))
         
         D.normalized =   total.dvalues/sum(total.dvalues) #  (total.dvalues-min(total.dvalues))/(max(total.dvalues)-min(total.dvalues))
-      }else{
+        } else if (method == 'expAWMIPD') {
+          D.matrix = as.matrix(D.table) * 2 / 10^7
+          ID = exp(- a * D.matrix)
+          AD.matrix = sweep(ID, MARGIN = 2, as.matrix(as.numeric(R.table)), `*`)
+          total.dvalues = rowSums(AD.matrix) * as.matrix( as.numeric(R.table))
+          
+          D.normalized =   total.dvalues/sum(total.dvalues)
+          D.normalized = (D.normalized-min(D.normalized))/(max(D.normalized)-min(D.normalized))
+          
+      } else{
         print('Provide method...')
         break
       }
@@ -110,7 +119,7 @@ for(i_n in c(2:9)){
       plots_df[[plot.num]] <- ggplot(distribution.data, aes(X, Y, fill= D)) + geom_tile()+
         theme(legend.position = '',axis.text = element_blank(),axis.ticks = element_blank(),
               panel.background = element_blank())+
-        xlab("")+ylab("") + scale_fill_gradient2(low="#005CAF",mid = 'white',
+        xlab("")+ylab("") + scale_fill_gradient2(low="#005CAF",mid = 'green',
                                                  high="#D0104C",midpoint=0.5)
       plot.num = plot.num +1
     }
@@ -147,7 +156,7 @@ for(i_n in c(2:9)){
                           row_titles,g_ltt1,g_ltt5,g_ltt1,ncol = 3,widths = c(1,16,3),heights = c(1,24,1))
   
   dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-  savefilename <- paste0(dir_save,scefolder,'_species_dis_newAWMIPD.png')
+  savefilename <- paste0(dir_save,scefolder,'_species_dis_newAWMIPD_exp.png')
   ggsave(savefilename,ltt.sce,width = 15,height = 10)
   
 }
