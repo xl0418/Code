@@ -41,6 +41,12 @@ mig_title_fontsize = 16
 x_title_fontsize = 16
 y_title_fontsize = 16
 
+dispersal_title <- rep(c('high dispersal', 'intermediate dispersal', 'low dispersal'), each = 3)
+interaction_title <- rep(c('high interaction distance', 'intermediate interaction distance', 'low interaction distance'), 3)
+psi_title <- c('0', '0.5', '1', '0.25', '0.75')
+phi_title <- c('0', '-2', '-4', '-6', '-8', 0)
+
+subsampling_scale <- 100
 
 count1 = 1
 p = list()
@@ -49,8 +55,11 @@ pdmode = 'exp'
 a = 1
 rep.sample = 18
 
-plot.combination = rbind(c(1,1,1),c(3,5,3),c(4,4,4),c(7,5,4), c(9,5,4))
+plot.combination = rbind(c(1, 3, 3),
+                         c(1, 4, 4),
+                         c(8, 3, 2))
 
+col_labels = NULL
 
 for(plot.comb in c(1:nrow(plot.combination))){
   i_n = plot.combination[plot.comb,1]
@@ -61,19 +70,63 @@ for(plot.comb in c(1:nrow(plot.combination))){
   letter.comb = sce.short.comb.vec[i_n]
   sce = scenario[i_n]
   print(paste0('i_n = ',i_n,'; comb = ', comb))
-
+  
   multitreefile <- paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/','multitree',letter.comb,comb,'.tre')
   
-  trees <- read.tree(multitreefile)
-  single.tree <- trees[[rep.sample]]
+  replicate_trees <- read.tree(multitreefile)
+  single.tree_example <- replicate_trees[[rep.sample]]
   
-  p[[count1]] <- ggtree(single.tree,layout = "circular") #+xlim(0,age)
+  rname_example = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'M',i,j,'rep',rep.sample,'.csv')
+  L.table_example = read.csv(rname_example,header = FALSE)
+  global.matrix_example = as.matrix(L.table_example)
+  
+  # sub area grid
+  sub_local_matrix_example <- global.matrix_example[(167-subsampling_scale/2):(167+subsampling_scale/2), 
+                                    (167-subsampling_scale/2):(167+subsampling_scale/2)]
+  species_number_example <- unique(as.vector(sub_local_matrix_example))+1
+  species_label_example <- paste0('t', species_number_example)
+  
+  # sub tree
+  subtree_example <- keep.tip(single.tree_example, species_label_example)
+  
+  p[[count1]] <- ggtree(subtree_example,layout = "circular") #+xlim(0,age)
   
   count1 = count1+1
   
   # plot SAR
-  data.load.name = paste0(dir.result,'/speciesareamean/',letter.comb,comb,'mean.Rda')
-  load(data.load.name)
+
+  print('Plotting SAR...')
+  species.area = NULL
+  
+  comb = paste0(i,j)
+  for(local.scale in c(1:19,seq(20,subsampling_scale,10))){
+    mean.data = NULL
+    print(paste0('i_n = ',i_n,'...','i = ', i, '; j = ',j,'; area = ',local.scale))
+    for(rep_sar in c(1:100)){
+      ns.vec=NULL
+      rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'M',i,j,'rep',rep_sar,'.csv')
+      L.table = read.csv(rname,header = FALSE)
+      global.matrix = as.matrix(L.table)
+      sub_local_matrix <- global.matrix[(167-subsampling_scale/2):(167+subsampling_scale/2), 
+                                        (167-subsampling_scale/2):(167+subsampling_scale/2)]
+      
+      # calculate abundances in the sub grid
+      species_number <- unique(as.vector(sub_local_matrix))
+      
+      submatrix.vec = c(0:(subsampling_scale %/% local.scale - 1))*local.scale+1
+      for(row.num in submatrix.vec){
+        local.grid = sub_local_matrix[row.num:(row.num+local.scale-1),row.num:(row.num+local.scale-1)]
+        local.richness = length(unique(as.vector(as.matrix(local.grid))))
+        ns.vec = c(ns.vec, local.richness)
+      }
+      mean.data = c(mean.data,mean(ns.vec))
+    }
+    quantile1 = quantile(mean.data)
+    species.area = rbind(species.area,c(quantile1,i,j,i_n,local.scale))
+    
+  }
+  colnames(species.area) = c('0','25','50','75','100','i','j','i_n','area')
+
   species.area.df <- as.data.frame(species.area)
   area = species.area.df$area
   df_lineage_sar = rbind(c(rep(1,5),i,j,i_n,1),species.area.df)
@@ -98,7 +151,7 @@ for(plot.comb in c(1:nrow(plot.combination))){
     geom_polygon(data = df_min_max_sar, aes(  group = id),fill = "gray70", alpha = 0.8)+
     geom_polygon(data = df_0025_sar, aes( group = id),fill = "gray27", alpha = 0.8)+
     geom_line()+
-    coord_cartesian(xlim=c(log(1),log(330)),ylim=c(0,log(1000))) + 
+    coord_cartesian(xlim=c(log(1),log(subsampling_scale)),ylim=c(0,log(1000))) + 
     scale_y_continuous(name = "No. of species",breaks = log(c(1,10,100)),labels = c('1','10','100'))+
     scale_x_continuous(name = "Area",breaks = log(c(1,10,100)),labels = c('1','10','100'))+
     theme(axis.text.y=element_text(angle=90,size = y_label_fontsize),
@@ -107,12 +160,24 @@ for(plot.comb in c(1:nrow(plot.combination))){
   count1 = count1+1
   
   # SAD
+  print("Plotting SAD...")
   x.breaks = seq(0,17,1)
   
-  abund=NULL
-  for(rep.no in c(1:100)){
-    rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'R',comb,'rep',rep.no,'.csv')
-    Rs = read.csv(rname,header = FALSE)
+  abund <- NULL
+  for(rep_sar in c(1:100)){
+    ns.vec=NULL
+    rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'M',i,j,'rep',rep_sar,'.csv')
+    L.table = read.csv(rname,header = FALSE)
+    global.matrix = as.matrix(L.table)
+    sub_local_matrix <- global.matrix[(167-subsampling_scale/2):(167+subsampling_scale/2), 
+                                      (167-subsampling_scale/2):(167+subsampling_scale/2)]
+    
+    # calculate abundances in the sub grid
+    species_number <- unique(as.vector(sub_local_matrix))
+    Rs <- NULL
+    for (spe in species_number) {
+      Rs <- c(Rs, length(which(as.vector(sub_local_matrix) == spe)))
+    }
     log.Rs = log2(Rs)
     freq = hist(as.numeric(log.Rs),plot=FALSE,breaks = x.breaks)
     counts = freq$counts
@@ -148,45 +213,37 @@ for(plot.comb in c(1:nrow(plot.combination))){
   
   count1 = count1+1
   
-  # AWMPID
-  rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'M',comb,'rep',rep.sample,'.csv')
-  L.table = read.csv(rname,header = FALSE)
-  Dname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'D',comb,'rep',rep.sample,'.csv')
-  D.table = read.csv(Dname,header = FALSE)
-  Rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'R',comb,'rep',rep.sample,'.csv')
-  R.table = read.csv(Rname,header = FALSE)
-  global.matrix = as.matrix(L.table)
-  D.matrix = as.matrix(D.table) * 2 / 10^7
-  
-  # if (pdmode == 'inv') {
-  #   AD.matrix = sweep(D.matrix, MARGIN=2, 1/as.matrix( as.numeric(R.table)), `*`)
-  #   IPD.matrix = 1/AD.matrix
-  #   diag(IPD.matrix) = 0
-  # } else if (pdmode == 'exp') {
-  #   AD.matrix = sweep(D.matrix, MARGIN=2, 1/as.matrix( as.numeric(R.table)), `*`)
-  #   IPD.matrix = 1/AD.matrix
-  #   diag(IPD.matrix) = 0
-  # }
-  
+  # AWMIPD
+  print('Plotting AWMIPD...')
+  # rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'M',comb,'rep',rep.sample,'.csv')
+  # L.table = read.csv(rname,header = FALSE)
+  Dname_example = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'D',comb,'rep',rep.sample,'.csv')
+  D.table_example = read.csv(Dname_example,header = FALSE)
+  Rname_example = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'R',comb,'rep',rep.sample,'.csv')
+  R.table_example = read.csv(Rname_example,header = FALSE)
+  R.table_example <- R.table_example[species_number_example]
+  # global.matrix = as.matrix(L.table)
+  D.matrix_example = as.matrix(D.table_example) * 2 / 10^7
+  D.matrix_example = D.matrix_example[species_number_example,species_number_example]
   # phylogenetic distance
   if (pdmode == 'inv') {
-    ID = 1 / D.matrix
+    ID = 1 / D.matrix_example
     diag(ID) = 1
-    AD.matrix = sweep(ID, MARGIN = 2, as.matrix(as.numeric(R.table)), `*`)
+    AD.matrix = sweep(ID, MARGIN = 2, as.matrix(as.numeric(R.table_example)), `*`)
   } else if (pdmode == 'exp') {
-    ID = exp(- a * D.matrix)
-    AD.matrix = sweep(ID, MARGIN = 2, as.matrix(as.numeric(R.table)), `*`)
+    ID = exp(- a * D.matrix_example)
+    AD.matrix = sweep(ID, MARGIN = 2, as.matrix(as.numeric(R.table_example)), `*`)
   }
   
-  total.dvalues = rowSums(AD.matrix) * as.matrix( as.numeric(R.table))
+  total.dvalues = rowSums(AD.matrix) * as.matrix( as.numeric(R.table_example))
   
   D.normalized =   total.dvalues/sum(total.dvalues)
   D.normalized = (D.normalized-min(D.normalized))/(max(D.normalized)-min(D.normalized))
-  local.x = c(1:333)
-  local.y = c(1:333)
+  local.x = c(1:subsampling_scale)
+  local.y = c(1:subsampling_scale)
   distribution.data = expand.grid(X=local.x,Y=local.y)
-  distribution.data$Z = global.matrix[cbind(distribution.data$X,distribution.data$Y)]
-  distribution.data$D = D.normalized[distribution.data$Z+1]
+  distribution.data$Z = sub_local_matrix_example[cbind(distribution.data$X,distribution.data$Y)]
+  distribution.data$D = D.normalized[match((distribution.data$Z+1), species_number_example) ]
   
   p[[count1]] <- ggplot(distribution.data, aes(X, Y, fill= D)) + geom_tile()+
     theme(legend.position = '',axis.text = element_blank(),axis.ticks = element_blank(),
@@ -197,21 +254,46 @@ for(plot.comb in c(1:nrow(plot.combination))){
   count1 = count1+1
   
   # LTT plot
+  print("Plotting LTT...")
+  subtrees <- list()
+  tree_index <- 1
+  for (rep.ltt in c(1:100)) {
+    single.tree <- replicate_trees[[rep.ltt]]
+    
+    rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'M',i,j,'rep',rep.ltt,'.csv')
+    L.table = read.csv(rname,header = FALSE)
+    global.matrix = as.matrix(L.table)
+    if (length(single.tree$tip.label) == length(unique(as.vector(global.matrix)))) {
+      # sub area grid
+      sub_local_matrix <- global.matrix[(167-subsampling_scale/2):(167+subsampling_scale/2), 
+                                        (167-subsampling_scale/2):(167+subsampling_scale/2)]
+      species_number <- unique(as.vector(sub_local_matrix))+1
+      species_label <- paste0('t', species_number)
+      
+      # sub tree
+      subtree <- keep.tip(single.tree, species_label)
+      subtrees[[tree_index]] <- subtree
+      tree_index <- tree_index+1
+    } else {}
+    
+  }
+  class(subtrees) <- "multiPhylo"
+  trees <- subtrees
   age = 10000000
   data = NULL
-  for (i in 1:length(trees)) {
-    tes = trees[[i]]
+  for (tree_i in 1:length(trees)) {
+    tes = trees[[tree_i]]
     brts= -unname(sort(branching.times(tes),decreasing = T))
-    data0 = cbind(i,brts,c(2:(length(brts)+1)))
-    if(max(brts)<0) data0 = rbind(data0,c(i,0,data0[nrow(data0),3]))
+    data0 = cbind(tree_i,brts,c(2:(length(brts)+1)))
+    if(max(brts)<0) data0 = rbind(data0,c(tree_i,0,data0[nrow(data0),3]))
     data = rbind(data, data0)
     
   }
   time = data[order(data[,2]),2]
   timeu = unique(time)
   data_lineage = timeu
-  for(i in 1:length(trees)){
-    tes = trees[[i]]
+  for(tree_i in 1:length(trees)){
+    tes = trees[[tree_i]]
     
     brts= -unname(sort(branching.times(tes),decreasing = T))
     M1 = match(brts,timeu)
@@ -255,20 +337,18 @@ for(plot.comb in c(1:nrow(plot.combination))){
     coord_cartesian(xlim=c(-age,0),ylim=c(log(2),log(600))) + scale_y_continuous(name="No. of species",breaks = c(log(2),log(10),log(50),log(400)),labels = c(2,10,50,400))+
     scale_x_continuous(name="Time",breaks = -rev(seq(0,1e7,1e7/5)),labels = c('10','8','6','4','2','0'))+
     theme(axis.text.y=element_text(angle=90,size = y_label_fontsize),axis.text.x=element_text(size = x_label_fontsize))
-
+  
   
   
   count1 = count1+1
-  
-
- 
+  col_labels <- c(col_labels,
+                  paste0('SPJC ', dispersal_title[i_n], ' &\n', interaction_title[i_n]))
 }
-m = matrix(1:25,ncol = 5)
+
+m = matrix(1:15,ncol = 3)
 
 
-col_labels = c('Neutral\n high dispersal','SPJC high dispersal\n& interaction distance',
-               'SPJC intermediate dispersal\n& high interaction distance','SPJC low dispersal\n& high interaction distance',
-               'SPJC low dispersal\n& low interaction distance')
+
 row_labels = c('Tree', 'SAR','SAD','SPD','LTT')
 
 phi1 <- textGrob(row_labels[1], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
@@ -277,15 +357,24 @@ phi3 <- textGrob(row_labels[3], gp=gpar(fontsize=mu_title_fontsize, fontface=3L)
 phi4 <- textGrob(row_labels[4], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
 phi5 <- textGrob(row_labels[5], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
 
-psi1 <- textGrob(col_labels[1], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
-psi2 <- textGrob(col_labels[2], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
-psi3 <- textGrob(col_labels[3], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
-psi4 <- textGrob(col_labels[4], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
-psi5 <- textGrob(col_labels[5], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+psi11 <- textGrob(col_labels[1],
+                  gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+psi12 <- textGrob(col_labels[2], 
+                  gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+psi13 <- textGrob(col_labels[3],
+                  gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
 
+
+psi21 <- textGrob(bquote(psi == .(psi_title[plot.combination[1, 2]]) ~ phi == 10^.(phi_title[plot.combination[1, 3]])),
+                  gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+psi22 <- textGrob(bquote(psi == .(psi_title[plot.combination[2, 2]]) ~ phi == 10^.(phi_title[plot.combination[2, 3]])), 
+                  gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+psi23 <- textGrob(bquote(psi == .(psi_title[plot.combination[3, 2]]) ~ phi == 10^.(phi_title[plot.combination[3, 3]])),
+                  gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
 
 row_titles <- arrangeGrob(phi1,phi2,phi3,phi4,phi5,ncol = 1)
-column_titles <- arrangeGrob(psi1,psi2,psi3,psi4,psi5,ncol = 5)
+column_titles1 <- arrangeGrob(psi11,psi12,psi13,ncol = 3)
+column_titles2 <- arrangeGrob(psi21,psi22,psi23,ncol = 3)
 
 
 # label = textGrob("Number of lineages",gp=gpar(fontsize=y_title_fontsize), rot = 90)
@@ -296,11 +385,12 @@ g_ltt1 = textGrob("")
 g_a = textGrob("(a)")
 g_b = textGrob("(b)")
 
-ltt.sce <- grid.arrange(column_titles,g_ltt1,g_ltt4,row_titles,ncol = 2,widths = c(20,1),heights = c(2,25))
+ltt.sce <- grid.arrange(column_titles1,g_ltt1, column_titles2,g_ltt1, g_ltt4,row_titles,ncol = 2,widths = c(20,1),heights = c(2,1,25))
 
-dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-savefilename <- paste0(dir_save,'mixing_result_exp2.pdf')
+dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/newmix/'
+savefilename <- paste0(dir_save,'fullmixing_subtreeexample.pdf')
 ggsave(savefilename,ltt.sce,width = 15,height = 10)
+
 
 
 

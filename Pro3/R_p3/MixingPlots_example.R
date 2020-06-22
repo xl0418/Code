@@ -41,6 +41,11 @@ mig_title_fontsize = 16
 x_title_fontsize = 16
 y_title_fontsize = 16
 
+dispersal_title <- rep(c('high dispersal', 'intermediate dispersal', 'low dispersal'), each = 3)
+interaction_title <- rep(c('high interaction distance', 'intermediate interaction distance', 'low interaction distance'), 3)
+psi_title <- c('0', '0.5', '1', '0.25', '0.75')
+phi_title <- c('0', '-2', '-4', '-6', '-8', 0)
+
 
 count1 = 1
 p = list()
@@ -49,8 +54,11 @@ pdmode = 'exp'
 a = 1
 rep.sample = 18
 
-plot.combination = rbind(c(1,1,1),c(3,5,3),c(4,4,4),c(7,5,4), c(9,5,4))
+plot.combination = rbind(c(1, 3, 3),
+                         c(1, 4, 4),
+                         c(8, 3, 2))
 
+col_labels = NULL
 
 for(plot.comb in c(1:nrow(plot.combination))){
   i_n = plot.combination[plot.comb,1]
@@ -61,7 +69,7 @@ for(plot.comb in c(1:nrow(plot.combination))){
   letter.comb = sce.short.comb.vec[i_n]
   sce = scenario[i_n]
   print(paste0('i_n = ',i_n,'; comb = ', comb))
-
+  
   multitreefile <- paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/','multitree',letter.comb,comb,'.tre')
   
   trees <- read.tree(multitreefile)
@@ -158,16 +166,6 @@ for(plot.comb in c(1:nrow(plot.combination))){
   global.matrix = as.matrix(L.table)
   D.matrix = as.matrix(D.table) * 2 / 10^7
   
-  # if (pdmode == 'inv') {
-  #   AD.matrix = sweep(D.matrix, MARGIN=2, 1/as.matrix( as.numeric(R.table)), `*`)
-  #   IPD.matrix = 1/AD.matrix
-  #   diag(IPD.matrix) = 0
-  # } else if (pdmode == 'exp') {
-  #   AD.matrix = sweep(D.matrix, MARGIN=2, 1/as.matrix( as.numeric(R.table)), `*`)
-  #   IPD.matrix = 1/AD.matrix
-  #   diag(IPD.matrix) = 0
-  # }
-  
   # phylogenetic distance
   if (pdmode == 'inv') {
     ID = 1 / D.matrix
@@ -255,20 +253,18 @@ for(plot.comb in c(1:nrow(plot.combination))){
     coord_cartesian(xlim=c(-age,0),ylim=c(log(2),log(600))) + scale_y_continuous(name="No. of species",breaks = c(log(2),log(10),log(50),log(400)),labels = c(2,10,50,400))+
     scale_x_continuous(name="Time",breaks = -rev(seq(0,1e7,1e7/5)),labels = c('10','8','6','4','2','0'))+
     theme(axis.text.y=element_text(angle=90,size = y_label_fontsize),axis.text.x=element_text(size = x_label_fontsize))
-
+  
   
   
   count1 = count1+1
-  
-
- 
+  col_labels <- c(col_labels,
+                  paste0('SPJC ', dispersal_title[i_n], ' &\n', interaction_title[i_n]))
 }
-m = matrix(1:25,ncol = 5)
+
+m = matrix(1:15,ncol = 3)
 
 
-col_labels = c('Neutral\n high dispersal','SPJC high dispersal\n& interaction distance',
-               'SPJC intermediate dispersal\n& high interaction distance','SPJC low dispersal\n& high interaction distance',
-               'SPJC low dispersal\n& low interaction distance')
+
 row_labels = c('Tree', 'SAR','SAD','SPD','LTT')
 
 phi1 <- textGrob(row_labels[1], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
@@ -277,15 +273,24 @@ phi3 <- textGrob(row_labels[3], gp=gpar(fontsize=mu_title_fontsize, fontface=3L)
 phi4 <- textGrob(row_labels[4], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
 phi5 <- textGrob(row_labels[5], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
 
-psi1 <- textGrob(col_labels[1], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
-psi2 <- textGrob(col_labels[2], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
-psi3 <- textGrob(col_labels[3], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
-psi4 <- textGrob(col_labels[4], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
-psi5 <- textGrob(col_labels[5], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+psi11 <- textGrob(col_labels[1],
+                 gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+psi12 <- textGrob(col_labels[2], 
+                 gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+psi13 <- textGrob(col_labels[3],
+                 gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
 
+
+psi21 <- textGrob(bquote(psi == .(psi_title[plot.combination[1, 2]]) ~ phi == 10^.(phi_title[plot.combination[1, 3]])),
+                 gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+psi22 <- textGrob(bquote(psi == .(psi_title[plot.combination[2, 2]]) ~ phi == 10^.(phi_title[plot.combination[2, 3]])), 
+                 gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
+psi23 <- textGrob(bquote(psi == .(psi_title[plot.combination[3, 2]]) ~ phi == 10^.(phi_title[plot.combination[3, 3]])),
+                 gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
 
 row_titles <- arrangeGrob(phi1,phi2,phi3,phi4,phi5,ncol = 1)
-column_titles <- arrangeGrob(psi1,psi2,psi3,psi4,psi5,ncol = 5)
+column_titles1 <- arrangeGrob(psi11,psi12,psi13,ncol = 3)
+column_titles2 <- arrangeGrob(psi21,psi22,psi23,ncol = 3)
 
 
 # label = textGrob("Number of lineages",gp=gpar(fontsize=y_title_fontsize), rot = 90)
@@ -296,11 +301,14 @@ g_ltt1 = textGrob("")
 g_a = textGrob("(a)")
 g_b = textGrob("(b)")
 
-ltt.sce <- grid.arrange(column_titles,g_ltt1,g_ltt4,row_titles,ncol = 2,widths = c(20,1),heights = c(2,25))
+ltt.sce <- grid.arrange(column_titles1,g_ltt1, column_titles2,g_ltt1, g_ltt4,row_titles,ncol = 2,widths = c(20,1),heights = c(2,1,25))
 
-dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-savefilename <- paste0(dir_save,'mixing_result_exp2.pdf')
+dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/newmix/'
+savefilename <- paste0(dir_save,'fullmixing_example.pdf')
 ggsave(savefilename,ltt.sce,width = 15,height = 10)
+
+
+
 
 
 

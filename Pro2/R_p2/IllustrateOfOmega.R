@@ -1,7 +1,7 @@
 library(ggthemes)
 library(DDD)
 library(ggtree)
-
+library(ggplot2)
 
 omega <- function(deltaz,alpha){
   contri <- alpha*deltaz*exp(-alpha*deltaz^2)
@@ -37,6 +37,9 @@ omega.plot <- ggplot(data=omega.con.df, aes(x=deltaz, y=values,group=alpha))+
 phi.plot.name = 'C:\\Liang\\Googlebox\\Research\\Project2\\BaleenWhales\\result_cluster\\results_ms_posterior\\OMEGA.pdf'
 ggsave(omega.plot,width = 8,height = 6)
 
+
+
+# Another plot
 L.example = matrix(0, 4,4)
 L.example[,1] = c(20,20,15,5)
 L.example[,2] = c(0,1,2,3)

@@ -59,7 +59,7 @@ y_title_fontsize = 16
 # 
 
 
-for(i_n in c(1)){
+for(i_n in c(1:9)){
   print(paste0("Processing Scenario ",i_n,"..."))
   plots_df = list()
   plot.num = 1
