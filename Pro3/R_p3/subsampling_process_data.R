@@ -46,7 +46,7 @@ interaction_title <- rep(c('high interaction distance', 'intermediate interactio
 psi_title <- c('0', '0.5', '1', '0.25', '0.75')
 phi_title <- c('0', '-2', '-4', '-6', '-8', 0)
 
-subsampling_scale <- 100
+subsampling_scale <- 60
 
 count1 = 1
 p = list()
@@ -71,7 +71,7 @@ for(plot.comb in c(1:nrow(plot.combination))){
   sce = scenario[i_n]
   print(paste0('i_n = ',i_n,'; comb = ', comb))
   
-  multitreefile <- paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/','multitree',letter.comb,comb,'.tre')
+  multitreefile <- paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/','multitreen',letter.comb,comb,'.tre')
   
   replicate_trees <- read.tree(multitreefile)
   single.tree_example <- replicate_trees[[rep.sample]]
@@ -261,8 +261,8 @@ for(plot.comb in c(1:nrow(plot.combination))){
     single.tree <- replicate_trees[[rep.ltt]]
     
     rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'M',i,j,'rep',rep.ltt,'.csv')
-    L.table = read.csv(rname,header = FALSE)
-    global.matrix = as.matrix(L.table)
+    M.table = read.csv(rname,header = FALSE)
+    global.matrix = as.matrix(M.table)
     if (length(single.tree$tip.label) == length(unique(as.vector(global.matrix)))) {
       # sub area grid
       sub_local_matrix <- global.matrix[(167-subsampling_scale/2):(167+subsampling_scale/2), 
@@ -274,7 +274,9 @@ for(plot.comb in c(1:nrow(plot.combination))){
       subtree <- keep.tip(single.tree, species_label)
       subtrees[[tree_index]] <- subtree
       tree_index <- tree_index+1
-    } else {}
+    } else {
+      print('Inconsistent diversity...')
+    }
     
   }
   class(subtrees) <- "multiPhylo"
