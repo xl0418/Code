@@ -46,7 +46,7 @@ interaction_title <- rep(c('high interaction distance', 'intermediate interactio
 psi_title <- c('0', '0.5', '1', '0.25', '0.75')
 phi_title <- c('0', '-2', '-4', '-6', '-8', 0)
 
-subsampling_scale <- 60
+subsampling_scale <- 250
 
 count1 = 1
 p = list()
@@ -56,8 +56,11 @@ a = 1
 rep.sample = 18
 
 plot.combination = rbind(c(1, 3, 3),
-                         c(1, 4, 4),
-                         c(8, 3, 2))
+                        c(6, 3, 4),
+                        c(8, 3, 4))
+  # rbind(c(1, 3, 3),
+  #                        c(1, 4, 4),
+  #                        c(8, 3, 2))
 
 col_labels = NULL
 
@@ -389,9 +392,9 @@ g_b = textGrob("(b)")
 
 ltt.sce <- grid.arrange(column_titles1,g_ltt1, column_titles2,g_ltt1, g_ltt4,row_titles,ncol = 2,widths = c(20,1),heights = c(2,1,25))
 
-dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/newmix/'
-savefilename <- paste0(dir_save,'fullmixing_subtreeexample.pdf')
-ggsave(savefilename,ltt.sce,width = 15,height = 10)
+dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
+savefilename <- paste0(dir_save,'mixing_example_subscale_', subsampling_scale,'.png')
+ggsave(savefilename,ltt.sce,width = 15,height = 15)
 
 
 

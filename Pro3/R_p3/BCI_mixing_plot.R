@@ -309,7 +309,7 @@ ltt.sce <- grid.arrange(column_titles,g_ltt1,g_ltt4,row_titles,ncol = 2,widths =
 #              heights = c(1,10,10,10))
 
 dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-savefilename <- paste0(dir_save,'mixing_result_BCI_dbh.pdf')
+savefilename <- paste0(dir_save,'mixing_result_BCI_dbh.png')
 ggsave(savefilename,ltt.sce,width = 15,height = 15)
 
 

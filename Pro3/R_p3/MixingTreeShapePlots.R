@@ -14,11 +14,57 @@ library(apTreeshape)
 library(phyloTop)
 library(quantreg)
 library(treebase)
+library(ggsci)
 source('C:/Liang/Code/Pro3/R_p3/g_legend.R', echo=TRUE)
 source('C:/Liang/Code/Pro3/R_p3/deltar.R', echo=TRUE)
 
 dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces/'
 dir.result = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
+
+
+# Load phylogenetic tree; Input 1
+tree <- read.tree('C:/Liang/Googlebox/Research/Project3/BCI_data/control.tre')
+# Read the BCI data
+mydatapath = 'C:/Liang/Googlebox/Research/Project3/BCI_data/'
+if (!exists('bci.full7')) {
+  attach(paste(mydatapath, 'bci.full7.rdata', sep = ''))
+}
+
+full_data <- bci.full7
+# Extract the species mnemonic and the geographic info; Input 2
+bci_alive_data <-
+  subset(full_data,
+         status = 'A',
+         select = c('sp', 'gx', 'gy'))
+sp_code <- unique(bci_alive_data[, 1])
+
+# Get full species names
+load('C:/Liang/Googlebox/Research/Project3/BCI_data/bci.spptable.Rdata')
+
+sp_name <- NULL
+genus_name <- NULL
+for (i in c(1:length(sp_code))) {
+  index <- which(bci.spptable$sp == sp_code[i])
+  if (length(index) == 0) {
+    sp_name <-
+      c(sp_name, 0)
+    genus_name <-
+      c(genus_name, 0)
+  } else {
+    sp_name <-
+      c(sp_name, bci.spptable$Species[index])
+    genus_name <-
+      c(genus_name, bci.spptable$Genus[index])
+  }
+}
+
+species_name <- paste0(genus_name, '_', sp_name)
+
+# Subsetting the species; Input 4
+species_in <- subset(species_name, (species_name %in% tree$tip.label))
+di_tree <- multi2di(tree)
+bci_tree <- keep.tip(di_tree, species_in)
+# bci_tree = multi2di(bci_tree)
 
 # Compute the colless values and gamma values for a given phylo tree.
 foo <- function(x, metric = "colless") {
@@ -44,6 +90,21 @@ foo <- function(x, metric = "colless") {
   
   
 }
+
+deltar_BCI = foo(bci_tree, metric = "deltar")
+gamma_BCI = foo(bci_tree, metric = "gamma")
+colless_BCI = foo(bci_tree, metric = "colless")
+beta_BCI = foo(bci_tree, metric = "beta")
+# ltt(bci_tree,show.tree=TRUE,log.lineages=F,log="y")
+
+# tree<-pbtree(n=266)
+# ebTree<-phytools:::ebTree
+# gamma<-function(r,tree,g) 
+#   (g-ltt(ebTree(tree,r),plot=FALSE)$gamma)^2
+# fit<-optimize(gamma,c(-10,10),tree=tree,g=5,tol=1e-12)
+# ltt(ebTree(tree,fit$minimum),show.tree=TRUE,log.lineages=F,log="y",
+#     lwd=2)
+
 
 # Empirical index
 emp.data.file <- 'c:/Liang/Googlebox/Research/Project3/treebase/treebase.rda'
@@ -79,6 +140,9 @@ for(treenum in c(1:data.size)){
   
   
 }
+
+# color 
+mypal = pal_npg("nrc", alpha = 0.7)(4)
 
 
 na.beta.pos = which(is.na(beta.index))
@@ -140,8 +204,8 @@ treeshape_plot = list()
 group.vec = c('g1','g2','g3')
 plot.combination = list()
 plot.combination[[1]] = rbind(c(1,1,1),c(5,1,1),c(9,1,1))
-plot.combination[[2]] = rbind(c(1,4,3),c(1,5,3),c(1,3,5))
-plot.combination[[3]] = rbind(c(5,4,3),c(5,5,3),c(5,3,5))
+plot.combination[[2]] = rbind(c(2,4,3),c(2,5,3),c(2,3,5))
+plot.combination[[3]] = rbind(c(6,4,3),c(6,5,3),c(6,3,5))
 plot.combination[[4]] = rbind(c(9,4,3),c(9,5,3),c(9,3,5))
 
 method1 = 'deltar'
@@ -210,18 +274,21 @@ for(plot.comb in plot.combination){
   value.min <- -1.2
   value.max <- 1
   treeshape_plot[[count1]] <- ggplot(deltar_df_col, aes(x=group,y=value)) +  # plot histogram of distribution of values
-    geom_boxplot(color="#9E7A7A",aes(fill=group), position=position_dodge(.9))+ theme_bw() +
-    scale_fill_manual(values=c("#D0104C", "#DB4D6D", "#EB7A77"))+
+    geom_boxplot(color="black",aes(fill=group), position=position_dodge(.9))+ theme_bw() +
+    scale_fill_manual(values=rep("grey", 3))+
     labs(x="",y="") +
     theme(legend.position = "none",axis.title.x=element_blank(),
           axis.title.y=element_blank(),axis.ticks.x=element_line(),axis.line.x=element_line(),
           axis.ticks.y=element_line(),axis.line.y=element_line()
-    ) +geom_hline(yintercept=quantiles.treebase.deltar[1],
-                                              linetype="dashed", color = "red",size = line.size)+
+    ) +
+    geom_hline(yintercept=quantiles.treebase.deltar[1],
+              linetype="dashed", color = "black",size = line.size)+
     geom_hline(yintercept=quantiles.treebase.deltar[2],
-               linetype="solid", color = "red",size = line.size)+
+               linetype="solid", color = "black",size = line.size)+
     geom_hline(yintercept=quantiles.treebase.deltar[3],
-               linetype="dashed", color = "red",size = line.size)+
+               linetype="dashed", color = "black",size = line.size)+
+    geom_hline(yintercept=deltar_BCI,
+               linetype="twodash", color = "red",size = line.size+0.5)+
     scale_x_discrete(labels = c())+
     theme(axis.text.y=element_text(angle=90,size = y_label_fontsize),
           axis.text.x=element_text(size = x_label_fontsize),
@@ -233,20 +300,22 @@ for(plot.comb in plot.combination){
   
   # Plot gamma
   value.min <- -15
-  value.max <- 5
+  value.max <- 6
   treeshape_plot[[count1]] <-ggplot(gamma_df_col, aes(x=group,y=value)) +  # plot histogram of distribution of values
-    geom_boxplot(color = '#3C2F41',aes(fill=group), position=position_dodge(.9))+ theme_bw() +
-    scale_fill_manual(values=c("#77428D", "#986DB2", "#B28FCE"))+
+    geom_boxplot(color = 'black',aes(fill=group), position=position_dodge(.9))+ theme_bw() +
+    scale_fill_manual(values=rep("grey", 3))+
     labs(x="",y="") +
     theme(legend.position = "none",axis.title.x=element_blank(),axis.text.x=element_blank(),
           axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.x=element_line(),axis.line.x=element_line(),
           axis.ticks.y=element_line(),axis.line.y=element_line()
     ) +geom_hline(yintercept=quantiles.treebase.gamma[1],
-                                              linetype="dashed", color = "#986DB2",size = line.size)+
+                                              linetype="dashed", color = "black",size = line.size)+
     geom_hline(yintercept=quantiles.treebase.gamma[2],
-               linetype="solid", color = "#986DB2",size = line.size)+
+               linetype="solid", color = "black",size = line.size)+
     geom_hline(yintercept=quantiles.treebase.gamma[3],
-               linetype="dashed", color = "#986DB2",size = line.size)+
+               linetype="dashed", color = "black",size = line.size)+
+    geom_hline(yintercept=gamma_BCI,
+               linetype="twodash", color = "red",size = line.size+0.5)+
     scale_x_discrete(labels = c())+
     theme(axis.text.y=element_text(angle=90,size = y_label_fontsize),
           axis.text.x=element_text(size = x_label_fontsize),
@@ -261,18 +330,20 @@ for(plot.comb in plot.combination){
   value.min <- 0
   value.max <- 1
   treeshape_plot[[count1]] <-ggplot(colless_df_col, aes(x=group,y=value)) +  # plot histogram of distribution of values
-    geom_boxplot(color='#465D4C',aes(fill=group), position=position_dodge(.9))+ theme_bw() +
-    scale_fill_manual(values=c("#096148", "#00896C", "#A8D8B9"))+
+    geom_boxplot(color='black',aes(fill=group), position=position_dodge(.9))+ theme_bw() +
+    scale_fill_manual(values=rep("grey", 3))+
     labs(x="",y="") +
     theme(legend.position = "none",axis.title.x=element_blank(),axis.text.x=element_blank(),
           axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.x=element_line(),axis.line.x=element_line(),
           axis.ticks.y=element_line(),axis.line.y=element_line()
     ) +geom_hline(yintercept=quantiles.treebase.colless[1],
-                                              linetype="dashed", color = "#86C166",size = line.size)+
+                                              linetype="dashed", color = "black",size = line.size)+
     geom_hline(yintercept=quantiles.treebase.colless[2],
-               linetype="solid", color = "#86C166",size = line.size)+
+               linetype="solid", color = "black",size = line.size)+
     geom_hline(yintercept=quantiles.treebase.colless[3],
-               linetype="dashed", color = "#86C166",size = line.size)+
+               linetype="dashed", color = "black",size = line.size)+
+    geom_hline(yintercept=colless_BCI,
+               linetype="twodash", color = "red",size = line.size+0.5)+
     scale_x_discrete(labels = c())+
     theme(axis.text.y=element_text(angle=90,size = y_label_fontsize),
           axis.text.x=element_text(size = x_label_fontsize),
@@ -286,18 +357,20 @@ for(plot.comb in plot.combination){
   value.min <- -2
   value.max <- 0
   treeshape_plot[[count1]] <-ggplot(beta_df_col, aes(x=group,y=value)) +  # plot histogram of distribution of values
-    geom_boxplot(color = '#0D5661',aes(fill=group), position=position_dodge(.9))+ theme_bw() +
-    scale_fill_manual(values=c("#006284", "#3A8FB7", "#58B2DC"))+
+    geom_boxplot(color = 'black',aes(fill=group), position=position_dodge(.9))+ theme_bw() +
+    scale_fill_manual(values=rep("grey", 3))+
     labs(x="",y="") +
     theme(legend.position = "none",axis.text.x=element_blank(),
           axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.x=element_line(),axis.line.x=element_line(),
           axis.ticks.y=element_line(),axis.line.y=element_line()
     ) +geom_hline(yintercept=quantiles.treebase.beta[1],
-                                              linetype="dashed", color = "#0089A7",size = line.size)+
+                                              linetype="dashed", color = "black",size = line.size)+
     geom_hline(yintercept=quantiles.treebase.beta[2],
-               linetype="solid", color = "#0089A7",size = line.size)+
+               linetype="solid", color = "black",size = line.size)+
     geom_hline(yintercept=quantiles.treebase.beta[3],
-               linetype="dashed", color = "#0089A7",size = line.size)+
+               linetype="dashed", color = "black",size = line.size)+
+    geom_hline(yintercept=beta_BCI,
+               linetype="twodash", color = "red",size = line.size+0.5)+
     theme(axis.text.y=element_text(angle=90,size = y_label_fontsize),
           axis.text.x=element_text(size = x_label_fontsize),
           panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
@@ -320,8 +393,8 @@ for(plot.comb in plot.combination){
 m = matrix(1:20,ncol = 4)
 
 
-col_labels = c('Neutral','SPJC high dispersal \n& interaction distance',
-               'SPJC intermediate dispersal \n& interaction distance','SPJC low dispersal \n& interaction distance')
+col_labels = c('Neutral','SPJC high dispersal \n& intermediate interaction distance',
+               'SPJC intermediate dispersal \n& low interaction distance','SPJC low dispersal \n& interaction distance')
 row_labels = c('Tree', 'SAR','SAD','Colless','LTT')
 
 phi1 <- textGrob(row_labels[1], gp=gpar(fontsize=mu_title_fontsize, fontface=3L))
@@ -351,7 +424,7 @@ g_b = textGrob("(b)")
 ltt.sce <- grid.arrange(column_titles,g_ltt1,g_ltt4,row_titles,ncol = 2,widths = c(20,1),heights = c(2,25))
 
 dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-savefilename <- paste0(dir_save,'mixing_treeshape.pdf')
+savefilename <- paste0(dir_save,'mixing_treeshape.png')
 ggsave(savefilename,ltt.sce,width = 15,height = 10)
 
 

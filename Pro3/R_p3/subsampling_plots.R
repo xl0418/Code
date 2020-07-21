@@ -48,7 +48,7 @@ interaction_title <- rep(c('high interaction distance', 'intermediate interactio
 psi_title <- c('0', '0.5', '1', '0.25', '0.75')
 phi_title <- c('0', '-2', '-4', '-6', '-8', 0)
 
-subsample_scale <- 100
+subsample_scale <- 200
 
 for (scenario_index in seq(1,7,3)) {
   for (phi_index in c(1:5)) {

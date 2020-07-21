@@ -303,9 +303,9 @@ g_b = textGrob("(b)")
 
 ltt.sce <- grid.arrange(column_titles1,g_ltt1, column_titles2,g_ltt1, g_ltt4,row_titles,ncol = 2,widths = c(20,1),heights = c(2,1,25))
 
-dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/newmix/'
-savefilename <- paste0(dir_save,'fullmixing_example.pdf')
-ggsave(savefilename,ltt.sce,width = 15,height = 10)
+dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
+savefilename <- paste0(dir_save,'subsampling_mixing_example_', ,'.png')
+ggsave(savefilename,ltt.sce,width = 15,height = 15)
 
 
 
