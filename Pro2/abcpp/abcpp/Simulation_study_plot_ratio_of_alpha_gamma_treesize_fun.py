@@ -53,7 +53,8 @@ def plotratio(treenovector):
                     gamma_list.append(para_data['gamma'][generation - 1])
                     a_list.append(para_data['a'][generation - 1])
                     fit_list.append(para_data['fitness'][generation - 1])
-                    treesize = treesize_data.shape[0]
+                    extant_data = treesize_data[treesize_data['V4'] == -1]
+                    treesize = extant_data.shape[0]
                     treesize_list.append(np.repeat(treesize, population))
                 else:
                     print('Fail')
