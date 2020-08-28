@@ -73,8 +73,8 @@ def plotratio_type2(tree_no):
         upper2 = 10
         lower2 = 0.05
 
-        upper_m1 = 0.5
-        upper_m2 = 1
+        upper_m1 = 1
+        upper_m2 = 2
         rclass = []
         gamma_con = np.concatenate(gamma_list, axis=0)
         a_con = np.concatenate(a_list, axis=0)

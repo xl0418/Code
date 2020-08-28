@@ -108,6 +108,11 @@ for timescaling_index in range(len(timescale_vec)):
         nu_list.append(nu_vec.tolist())
         vm_list.append(vm_vec.tolist())
         ratio_list.append(ratio_alpha_gamma.tolist())
+        m = np.array(ratio_alpha_gamma.tolist()) / 15.0 + np.sqrt(np.var(np.array(ratio_alpha_gamma.tolist())))
+        m_mean = np.mean(m)
+        m_min = np.min(m)
+        m_max = np.max(m)
+        print(f'm measure: {m_mean}; min: {m_min}; max: {m_max}')
         if 'theta' in est_data:
             theta_list.append(theta_vec.tolist())
 
@@ -121,6 +126,7 @@ a_list_flat = np.array([item for sublist in a_list for item in sublist])
 nu_list_flat = np.array([item for sublist in nu_list for item in sublist])
 vm_list_flat = np.array([item for sublist in vm_list for item in sublist])
 ratio_list_flat = np.array([item for sublist in ratio_list for item in sublist])
+
 
 if 'theta' in est_data:
     theta_list_flat = np.array([item for sublist in theta_list for item in sublist])
