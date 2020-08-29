@@ -131,8 +131,8 @@ def plotratio_type2(tree_no):
                                                                            "Intermediate": "tab:orange",
                         "Close": "g"}, legend=False)
 
-        g.axes[0][0].set(xlabel='Generating parameters', ylabel='Estimated values', title="$\\gamma$")
-        g.axes[0][1].set(xlabel='Generating parameters', ylabel='', title="$\\alpha$")
+        g.axes[0][0].set(xlabel='Generating parameters of $\\gamma$', ylabel='Estimated values of $\\gamma$', title = "")
+        g.axes[0][1].set(xlabel='Generating parameters of $\\alpha$', ylabel='Estimated values of $\\alpha$', title = "")
 
         title = f"Scenario {tree_no} with the tree of {treesize} species"
         plt.subplots_adjust(top=0.7)
