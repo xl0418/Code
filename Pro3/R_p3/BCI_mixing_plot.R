@@ -85,15 +85,26 @@ for (dbh_filter in scenario_vec) {
   species_name <- paste0(genus_name, '_', sp_name)
   sp_code_name <- cbind(sp_code, species_name)
   
+  #Check the number of genera that has more than 1 species
+  dup_general <- length(unique(genus_name[which(duplicated(genus_name))]))
+  total_general <- length(unique(genus_name))
+  print(paste(dup_general, 'out of', total_general, 'generas have more than 1 species'))
+  dup_index <- which(genus_name %in% unique(genus_name[which(duplicated(genus_name))]))
+  
   recognized_species <- which(species_name %in% tree$tip.label)
   recognized_code_name <- sp_code_name[recognized_species,]
   
+  dup_recognized_index <- which(recognized_species %in% dup_index)
   # Calculate the abundance of each species; Input 3
   abundance <- NULL
   for(i in c(1:nrow(recognized_code_name))) {
     abundance_species <- length(which(bci_alive_data[, 1] == recognized_code_name[i, 1]))
     abundance <- c(abundance, abundance_species)
   }
+  
+  dup_abundance <- abundance[dup_recognized_index]
+  sum(dup_abundance)
+  sum(abundance)
   
   # Wrap the sp code, species names and the abundance data into a data frame.
   abundance_data <- data.frame(sp = recognized_code_name[,1], species = recognized_code_name[,2], abundance = abundance)
