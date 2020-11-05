@@ -7,11 +7,10 @@ library("RColorBrewer")
 library(grid)
 library(gridExtra)
 source(paste0(getwd(),'/g_legend.R'))
-source('C:/Liang/Code/Pro3/R_p3/event2L.R', echo=TRUE)
-# source('C:/Liang/Code/Pro3/R_p3/barplot3d.R', echo=TRUE)
-source('C:/Liang/Code/Pro3/R_p3/multi3dbar.R', echo=TRUE)
-moviedir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_final1/'
-dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_final1/1e+07/'
+source('E:/Code/Pro3/R_p3/event2L.R', echo=TRUE)
+source('E:/Code/Pro3/R_p3/multi3dbar.R', echo=TRUE)
+moviedir = 'E:/Googlebox/Research/Project3/replicate_sim_final1/'
+dir = 'E:/Googlebox/Research/Project3/replicate_sim_final1/1e+07/'
 scenario = c('Hevent','Mevent','Levent')
 sce.short = c('H','M','L')
 jclabel = c(0,0.25,0.5,0.75,1)
