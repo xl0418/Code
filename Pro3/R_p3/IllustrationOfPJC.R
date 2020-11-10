@@ -1,6 +1,7 @@
 library(ggthemes)
 library(DDD)
 library(ggtree)
+library(ggplot2)
 abundance.vec = rev(c(800,10,100,400))
 phylogenetic.matrix = matrix(c(0,20,20,20,
                                20,0,15,15,

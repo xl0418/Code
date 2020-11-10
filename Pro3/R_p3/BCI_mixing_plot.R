@@ -9,14 +9,14 @@ library(gridExtra)
 library(ggtree)
 library(ape)
 source(paste0(getwd(),'/g_legend.R'))
-source('C:/Liang/Code/Pro3/R_p3/multi3dbar.R', echo=TRUE)
+source('E:/Code/Pro3/R_p3/multi3dbar.R', echo=TRUE)
 
 
 # Load phylogenetic tree; Input 1
-tree <- read.tree('C:/Liang/Googlebox/Research/Project3/BCI_data/control.tre')
+tree <- read.tree('E:/Googlebox/Research/Project3/BCI_data/control.tre')
 # plot(tree)
 # Read the BCI data
-mydatapath = 'C:/Liang/Googlebox/Research/Project3/BCI_data/'
+mydatapath = 'E:/Googlebox/Research/Project3/BCI_data/'
 if (!exists('bci.full7')) {
   attach(paste(mydatapath, 'bci.full7.rdata', sep = ''))
 }
@@ -63,7 +63,7 @@ for (dbh_filter in scenario_vec) {
   sp_code <- unique(bci_alive_data[, 1])
   
   # Get full species names
-  load('C:/Liang/Googlebox/Research/Project3/BCI_data/bci.spptable.Rdata')
+  load('E:/Googlebox/Research/Project3/BCI_data/bci.spptable.Rdata')
   
   sp_name <- NULL
   genus_name <- NULL
@@ -319,7 +319,7 @@ ltt.sce <- grid.arrange(column_titles,g_ltt1,g_ltt4,row_titles,ncol = 2,widths =
 #              layout_matrix = rbind(c(1,1), c(2,3), c(4, 5), c(6,6)),
 #              heights = c(1,10,10,10))
 
-dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
+dir_save <- 'E:/Googlebox/Research/Project3/replicate_sim_9sces_results/'
 savefilename <- paste0(dir_save,'mixing_result_BCI_dbh.png')
 ggsave(savefilename,ltt.sce,width = 15,height = 15)
 

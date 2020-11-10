@@ -9,11 +9,11 @@ library(gridExtra)
 library(ggtree)
 library(ape)
 source(paste0(getwd(),'/g_legend.R'))
-# source('C:/Liang/Code/Pro3/R_p3/barplot3d.R', echo=TRUE)
-source('C:/Liang/Code/Pro3/R_p3/multi3dbar.R', echo=TRUE)
-moviedir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
-dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces/'
-dir.result = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
+# source('E:/Code/Pro3/R_p3/barplot3d.R', echo=TRUE)
+source('E:/Code/Pro3/R_p3/multi3dbar.R', echo=TRUE)
+moviedir = 'E:/Googlebox/Research/Project3/replicate_sim_9sces_results/'
+dir = 'E:/Googlebox/Research/Project3/replicate_sim_9sces/'
+dir.result = 'E:/Googlebox/Research/Project3/replicate_sim_9sces_results/'
 
 sce.short = c('H','M','L')
 scenario = NULL
@@ -323,7 +323,7 @@ ltt.sce <- grid.arrange(column_titles1,g_ltt1,
                         g_ltt4,row_titles,ncol = 2,
                         widths = c(20,1),heights = c(2,1,25))
 
-dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
+dir_save <- 'E:/Googlebox/Research/Project3/replicate_sim_9sces_results/'
 savefilename <- paste0(dir_save,'mixing_result_exp2.png')
 ggsave(savefilename,ltt.sce,width = 15,height = 10)
 

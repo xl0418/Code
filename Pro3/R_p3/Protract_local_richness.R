@@ -24,6 +24,8 @@ for(i.letter in sce.short){
 }
 plot.letter = c('(A)', '(B)', '(C)', '(D)')
 
+backward.time = 10e3
+
 color.sce = c('red','purple','green','yellow')
 scale.vec = rev(c(333,111,55))
 for( sce.rich in c(1:length(scale.vec))){
@@ -43,15 +45,22 @@ for( sce.rich in c(1:length(scale.vec))){
         ns.vec=NULL
         for(rep in c(1:100)){
           rname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'M',i,j,'rep',rep,'.csv')
-          L.table = read.csv(rname,header = FALSE)
-          global.matrix = as.matrix(L.table)
+          lname = paste0(dir,scefolder,'/results/1e+07/spatialpara1e+07',letter.comb,comb,'/',letter.comb,'psi',i, 's_phi',j,'rep',rep,'Ltable.csv')
+          spatial.table = read.csv(rname,header = FALSE)
+          l.table = read.csv(lname, header = FALSE)
+          speciation.time = l.table[,1]
+          species.id.protracted = which(speciation.time < backward.time)
+          
+          global.matrix = as.matrix(spatial.table)
+          global.matrix[global.matrix %in% species.id.protracted] <- 0
+
           submatrix.vec = c(0:(333 %/% local.scale - 1))*local.scale+1
           for(row.num in submatrix.vec){
             local.grid = global.matrix[row.num:(row.num+local.scale-1),row.num:(row.num+local.scale-1)]
             local.richness = length(unique(as.vector(as.matrix(local.grid))))
             ns.vec = c(ns.vec, local.richness)
           }
-  
+          
         }
         quantile1 = quantile(ns.vec)
         r_df = rbind(r_df,c(quantile1,i,j,i_n))
@@ -78,7 +87,7 @@ for( sce.rich in c(1:length(scale.vec))){
   barplot3d(testz,group.dim=c(15,18),alpha=0.7,barcolors = color.plate,
             y.intercept=c(0,20,40,60,80),gap = 0.2,scalexy = 10)
   legend3d("topleft", legend = paste0(plot.letter[sce.rich],' Scale ',local.scale), 
-            cex=1.5, inset=c(0.02))
+           cex=1.5, inset=c(0.02))
   rgl.viewpoint( theta = 45, phi = 45, fov = 60, zoom = 1, 
                  scale = par3d("scale"), interactive = TRUE, 
                  type = c("userviewpoint", "modelviewpoint") )
@@ -86,6 +95,6 @@ for( sce.rich in c(1:length(scale.vec))){
   # if (!rgl.useNULL())
   #   # play3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20)
   #   movie3d(spin3d(axis = c(0, 1, 0), rpm = 3), duration = 20,dir=moviedir,fps=10)
-
+  
 }
 # 

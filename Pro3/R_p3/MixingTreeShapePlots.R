@@ -15,17 +15,17 @@ library(phyloTop)
 library(quantreg)
 library(treebase)
 library(ggsci)
-source('C:/Liang/Code/Pro3/R_p3/g_legend.R', echo=TRUE)
-source('C:/Liang/Code/Pro3/R_p3/deltar.R', echo=TRUE)
+source('E:/Code/Pro3/R_p3/g_legend.R', echo=TRUE)
+source('E:/Code/Pro3/R_p3/deltar.R', echo=TRUE)
 
-dir = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces/'
-dir.result = 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
+dir = 'E:/Googlebox/Research/Project3/replicate_sim_9sces/'
+dir.result = 'E:/Googlebox/Research/Project3/replicate_sim_9sces_results/'
 
 
 # Load phylogenetic tree; Input 1
-tree <- read.tree('C:/Liang/Googlebox/Research/Project3/BCI_data/control.tre')
+tree <- read.tree('E:/Googlebox/Research/Project3/BCI_data/control.tre')
 # Read the BCI data
-mydatapath = 'C:/Liang/Googlebox/Research/Project3/BCI_data/'
+mydatapath = 'E:/Googlebox/Research/Project3/BCI_data/'
 if (!exists('bci.full7')) {
   attach(paste(mydatapath, 'bci.full7.rdata', sep = ''))
 }
@@ -39,7 +39,7 @@ bci_alive_data <-
 sp_code <- unique(bci_alive_data[, 1])
 
 # Get full species names
-load('C:/Liang/Googlebox/Research/Project3/BCI_data/bci.spptable.Rdata')
+load('E:/Googlebox/Research/Project3/BCI_data/bci.spptable.Rdata')
 
 sp_name <- NULL
 genus_name <- NULL
@@ -107,7 +107,7 @@ beta_BCI = foo(bci_tree, metric = "beta")
 
 
 # Empirical index
-emp.data.file <- 'c:/Liang/Googlebox/Research/Project3/treebase/treebase.rda'
+emp.data.file <- 'E:/Googlebox/Research/Project3/treebase/treebase.rda'
 load(emp.data.file)
 
 beta.index = c()
@@ -423,7 +423,7 @@ g_b = textGrob("(b)")
 
 ltt.sce <- grid.arrange(column_titles,g_ltt1,g_ltt4,row_titles,ncol = 2,widths = c(20,1),heights = c(2,25))
 
-dir_save <- 'C:/Liang/Googlebox/Research/Project3/replicate_sim_9sces_results/'
+dir_save <- 'E:/Googlebox/Research/Project3/replicate_sim_9sces_results/'
 savefilename <- paste0(dir_save,'mixing_treeshape.png')
 ggsave(savefilename,ltt.sce,width = 15,height = 10)
 
