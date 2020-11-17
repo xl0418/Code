@@ -253,8 +253,8 @@ for(plot.comb in c(1:nrow(plot.combination))){
   p[[count1]] <- ggplot(distribution.data, aes(X, Y, fill= D)) + geom_tile()+
     theme(legend.position = '',axis.text = element_blank(),axis.ticks = element_blank(),
           panel.background = element_blank())+
-    xlab("")+ylab("") + scale_fill_gradient2(low="#005CAF",mid = 'green',
-                                             high="#D0104C",midpoint=0.5)
+    xlab("")+ylab("") + scale_fill_gradient2(low="#648FFF",mid = '#DDCC77',
+                                             high="#882255",midpoint=0.5)
   
   count1 = count1+1
   

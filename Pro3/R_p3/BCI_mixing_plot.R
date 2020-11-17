@@ -252,9 +252,9 @@ for (dbh_filter in scenario_vec) {
       panel.background = element_blank()
     ) +
     xlab("") + ylab("") + scale_color_gradient2(
-      low = "#005CAF",
-      mid = 'green',
-      high = "#D0104C",
+      low = "#648FFF",
+      mid = '#DDCC77',
+      high = "#882255",
       midpoint = 0.5,
       name = "AWMIPD"
     )
